@@ -1,0 +1,16 @@
+# Entorno virtual
+.venv/
+rasa_env/
+
+# Cachés de Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Modelos de Rasa (se regeneran)
+models/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
