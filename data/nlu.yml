@@ -1,91 +1,242 @@
 version: "3.1"
-
 nlu:
-- intent: greet
+
+# ---- Conversacionales base ----
+- intent: saludo
   examples: |
+    - hola
+    - hola buenas
+    - buenos días
+    - buenas tardes
+    - qué tal
+    - hola bot
     - hey
-    - hello
-    - hi
-    - hello there
-    - good morning
-    - good evening
-    - moin
-    - hey there
-    - let's go
-    - hey dude
-    - goodmorning
-    - goodevening
-    - good afternoon
+    - hola, ¿me ayudas?
 
-- intent: goodbye
+- intent: despedida
   examples: |
-    - cu
-    - good by
-    - cee you later
-    - good night
-    - bye
-    - goodbye
-    - have a nice day
-    - see you around
-    - bye bye
-    - see you later
+    - adiós
+    - chao
+    - nos vemos
+    - gracias, hasta luego
+    - hablamos después
+    - me despido
 
-- intent: affirm
+- intent: agradecimiento
   examples: |
-    - yes
-    - y
-    - indeed
-    - of course
-    - that sounds good
-    - correct
+    - gracias
+    - muchas gracias
+    - te lo agradezco
+    - bacán, gracias
+    - perfecto, gracias
 
-- intent: deny
+- intent: ayuda
+  examples: |
+    - ¿qué puedes hacer?
+    - ¿cómo me ayudas?
+    - opciones
+    - no sé cómo empezar
+    - necesito asistencia
+
+# ---- Información general ----
+- intent: info_servicios
+  examples: |
+    - qué servicios tienen
+    - qué ofrecen
+    - qué hacen en el gimnasio
+    - qué beneficios incluye la membresía
+    - qué hace el asistente
+
+- intent: precios_planes
+  examples: |
+    - precios
+    - cuánto cuesta el plan mensual
+    - planes y tarifas
+    - valor del plan anual
+    - hay promociones
+    - cuánto sale la matrícula
+
+- intent: horarios
+  examples: |
+    - horarios de atención
+    - a qué hora abren
+    - hasta qué hora están
+    - horario fin de semana
+    - cuándo están disponibles las clases
+
+- intent: ubicacion
+  examples: |
+    - dónde están
+    - dirección del gimnasio
+    - cómo llego
+    - ubicación en mapa
+    - sede más cercana
+
+- intent: contacto_humano
+  examples: |
+    - quiero hablar con un asesor
+    - pásame con un humano
+    - necesito atención humana
+    - me pueden llamar
+    - déjenme un número para contacto
+
+- intent: politicas_privacidad
+  examples: |
+    - cómo tratan mis datos
+    - política de privacidad
+    - ley de protección de datos
+    - cómo protegen mi información
+    - privacidad
+
+# ---- Fitness: rutinas y nutrición ----
+- intent: rutina_consultar
+  examples: |
+    - quiero una rutina de [pecho](musculo) para [hipertrofia](objetivo)
+    - rutina [espalda](musculo) nivel [intermedio](nivel)
+    - dame una rutina [piernas](musculo)
+    - qué rutina recomiendas para [bajar grasa](objetivo)
+    - rutina [fullbody](musculo) para [principiante](nivel)
+    - ejercicios para [hombros](musculo)
+    - plan de [brazos](musculo) para [fuerza](objetivo)
+    - quiero trabajar [core](musculo) nivel [avanzado](nivel)
+    - rutina para [resistencia](objetivo)
+    - me das una rutina para [piernas](musculo) [principiante](nivel)
+
+- intent: nutricion_consejo
+  examples: |
+    - qué debo comer si quiero [hipertrofia](objetivo)
+    - consejos de nutrición para [bajar grasa](objetivo)
+    - dieta para [resistencia](objetivo)
+    - macros recomendados
+    - cuántas proteínas necesito
+    - ideas de colaciones post entrenamiento
+
+- intent: dolor_lesion
+  examples: |
+    - me duele la [rodilla](dolor_zona)
+    - tengo molestia en la [lumbar](dolor_zona)
+    - dolor de [hombro](dolor_zona)
+    - lesioné el [codo](dolor_zona), qué hago
+    - dolor en el [cuello](dolor_zona)
+    - me duele la espalda baja
+
+- intent: progreso_registrar
+  examples: |
+    - quiero registrar mi progreso
+    - anota que hice 10k pasos
+    - agrega que levanté 80 kilos en press banca
+    - registra 45 minutos de cardio
+    - registra mi peso 78 kg
+
+# ---- Reservas de clases ----
+- intent: reserva_crear
+  examples: |
+    - reserva [spinning](clase) para [mañana](fecha) a las [07:00](hora)
+    - agendar [yoga](clase) hoy a las [19:30](hora)
+    - inscribirme a [funcional](clase) el [2025-11-05](fecha) a las [18:00](hora)
+    - quiero reservar [hiit](clase) mañana [20:00](hora)
+    - anotarme en [pilates](clase) el [2025-12-01](fecha) [09:00](hora)
+
+- intent: reserva_cancelar
+  examples: |
+    - cancelar mi reserva
+    - anula la clase de [yoga](clase)
+    - quiero cancelar la clase de hoy a las [19:30](hora)
+    - elimina la inscripción de [spinning](clase) mañana
+    - cancela mi clase reservada
+
+- intent: reserva_consultar
+  examples: |
+    - qué reservas tengo
+    - próxima clase agendada
+    - estado de mi reserva
+    - cuándo es mi clase
+    - a qué hora tengo la clase de [funcional](clase)
+
+# ---- Suscripciones ----
+- intent: suscripcion_alta
+  examples: |
+    - quiero hacerme socio
+    - cómo me suscribo
+    - darme de alta
+    - activar membresía
+    - contratar el plan mensual
+
+- intent: suscripcion_baja
+  examples: |
+    - quiero darme de baja
+    - cancelar membresía
+    - suspender la suscripción
+    - anular mi plan
+    - terminar contrato
+
+# ---- Control conversacional ----
+- intent: afirmar
+  examples: |
+    - sí
+    - correcto
+    - dale
+    - de acuerdo
+    - ok
+
+- intent: negar
   examples: |
     - no
-    - n
-    - never
-    - I don't think so
-    - don't like that
-    - no way
-    - not really
+    - mejor no
+    - no gracias
+    - negativa
 
-- intent: mood_great
+- intent: fuera_de_alcance
   examples: |
-    - perfect
-    - great
-    - amazing
-    - feeling like a king
-    - wonderful
-    - I am feeling very good
-    - I am great
-    - I am amazing
-    - I am going to save the world
-    - super stoked
-    - extremely good
-    - so so perfect
-    - so good
-    - so perfect
+    - cuántos habitantes tiene marte
+    - arréglame el celular roto
+    - receta para torta de chocolate
+    - temas políticos actuales
+    - pregunta sin relación al gimnasio
 
-- intent: mood_unhappy
-  examples: |
-    - my day was horrible
-    - I am sad
-    - I don't feel very well
-    - I am disappointed
-    - super sad
-    - I'm so sad
-    - sad
-    - very sad
-    - unhappy
-    - not good
-    - not very good
-    - extremly sad
-    - so saad
-    - so sad
+# ---- Sinónimos (mapear a entidades canónicas) ----
+entity_synonyms:
+  - value: hipertrofia
+    synonyms: [volumen, masa muscular, ganar músculo]
+  - value: bajar_grasa
+    synonyms: [definición, adelgazar, perder grasa]
+  - value: fuerza
+    synonyms: [power, potencia]
+  - value: resistencia
+    synonyms: [cardio, aguante]
+  - value: fullbody
+    synonyms: [cuerpo completo, total body]
+  - value: funcional
+    synonyms: [funcional training, funcionales]
 
-- intent: bot_challenge
-  examples: |
-    - are you a bot?
-    - are you a human?
-    - am I talking to a bot?
-    - am I talking to a human?
+# ---- Lookups para robustecer NER ----
+lookup_tables:
+  - name: musculo
+    elements: |
+      pecho
+      espalda
+      piernas
+      hombros
+      brazos
+      core
+      fullbody
+  - name: clase
+    elements: |
+      spinning
+      yoga
+      funcional
+      hiit
+      pilates
+      zumba
+  - name: nivel
+    elements: |
+      principiante
+      intermedio
+      avanzado
+
+# ---- Regex útiles (fechas/horas) ----
+regex:
+  - name: hora
+    pattern: "(?:[01]\\d|2[0-3]):[0-5]\\d"
+  - name: fecha_iso
+    pattern: "(?:20\\d{2})-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\\d|3[01])"

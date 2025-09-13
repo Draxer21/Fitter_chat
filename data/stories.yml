@@ -1,30 +1,34 @@
 version: "3.1"
-
 stories:
+  - story: Crear reserva feliz
+    steps:
+      - intent: reserva_crear
+      - action: utter_pedir_clase
+      - intent: informar  # usa tu intent para entity class
+      - action: utter_pedir_fecha
+      - intent: informar
+      - action: utter_pedir_hora
+      - intent: informar
+      - action: utter_confirmar_reserva
+      - intent: afirmar
+      - action: utter_reserva_confirmada
 
-- story: happy path
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_great
-  - action: utter_happy
+  - story: Crear reserva y usuario niega
+    steps:
+      - intent: reserva_crear
+      - action: utter_pedir_clase
+      - intent: informar
+      - action: utter_pedir_fecha
+      - intent: informar
+      - action: utter_pedir_hora
+      - intent: informar
+      - action: utter_confirmar_reserva
+      - intent: negar
+      - action: utter_reserva_cancelada
 
-- story: sad path 1
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: affirm
-  - action: utter_happy
-
-- story: sad path 2
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: deny
-  - action: utter_goodbye
+  - story: Cancelar reserva
+    steps:
+      - intent: reserva_cancelar
+      - action: utter_pedir_codigo_reserva
+      - intent: informar
+      - action: utter_reserva_cancelada

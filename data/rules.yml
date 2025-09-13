@@ -1,13 +1,63 @@
 version: "3.1"
-
 rules:
+  - rule: Afirmar
+    steps:
+      - intent: afirmar
+      - action: utter_afirmar
 
-- rule: Say goodbye anytime the user says goodbye
-  steps:
-  - intent: goodbye
-  - action: utter_goodbye
+  - rule: Negar
+    steps:
+      - intent: negar
+      - action: utter_negar
 
-- rule: Say 'I am a bot' anytime the user challenges
-  steps:
-  - intent: bot_challenge
-  - action: utter_iamabot
+  - rule: Agradecimiento
+    steps:
+      - intent: agradecimiento
+      - action: utter_agradecimiento
+
+  - rule: Ayuda
+    steps:
+      - intent: ayuda
+      - action: utter_ayuda
+
+  - rule: Contacto humano
+    steps:
+      - intent: contacto_humano
+      - action: utter_contacto_humano
+
+  - rule: Horarios
+    steps:
+      - intent: horarios
+      - action: utter_horarios
+
+  - rule: Políticas de privacidad
+    steps:
+      - intent: politicas_privacidad
+      - action: utter_privacidad
+
+  - rule: Precios y planes
+    steps:
+      - intent: precios_planes
+      - action: utter_precios_planes
+
+  - rule: Ubicación
+    steps:
+      - intent: ubicacion
+      - action: utter_ubicacion
+
+  - rule: Fuera de alcance
+    steps:
+      - intent: fuera_de_alcance
+      - action: utter_fuera_de_alcance
+
+  # Reserva: consulta de estado
+  - rule: Consultar reserva (one-turn)
+    steps:
+      - intent: reserva_consultar
+      - action: utter_reserva_estado
+
+  # Fallback (asegúrate de tenerlo en domain/config)
+  - rule: Fallback
+    steps:
+      - intent: nlu_fallback
+      - action: utter_fallback

@@ -1,33 +1,114 @@
 version: "3.1"
 
 intents:
-  - greet
-  - goodbye
-  - affirm
-  - deny
-  - mood_great
-  - mood_unhappy
-  - bot_challenge
+  - saludo
+  - despedida
+  - agradecimiento
+  - ayuda
+  - info_servicios
+  - precios_planes
+  - horarios
+  - ubicacion
+  - contacto_humano
+  - politicas_privacidad
+  - rutina_consultar
+  - nutricion_consejo
+  - dolor_lesion
+  - progreso_registrar
+  - reserva_crear
+  - reserva_cancelar
+  - reserva_consultar
+  - suscripcion_alta
+  - suscripcion_baja
+  - fuera_de_alcance
+  - afirmar
+  - negar
+
+entities:
+  - objetivo        # hipertrofia|fuerza|bajar_grasa|resistencia
+  - musculo         # pecho|espalda|piernas|hombros|brazos|core|fullbody
+  - nivel           # principiante|intermedio|avanzado
+  - clase           # spinning|yoga|funcional|hiit|pilates|zumba
+  - fecha           # hoy|mañana|AAAA-MM-DD
+  - hora            # HH:MM
+  - dolor_zona      # lumbar|rodilla|hombro|codo|cuello
+  - contacto        # email o teléfono (si lo capturas luego)
+
+slots:
+  objetivo:
+    type: text
+    mappings: [{type: from_entity, entity: objetivo}]
+  musculo:
+    type: text
+    mappings: [{type: from_entity, entity: musculo}]
+  nivel:
+    type: text
+    mappings: [{type: from_entity, entity: nivel}]
+  clase:
+    type: text
+    mappings: [{type: from_entity, entity: clase}]
+  fecha:
+    type: text
+    mappings: [{type: from_entity, entity: fecha}]
+  hora:
+    type: text
+    mappings: [{type: from_entity, entity: hora}]
+  dolor_zona:
+    type: text
+    mappings: [{type: from_entity, entity: dolor_zona}]
 
 responses:
-  utter_greet:
-  - text: "Hey! How are you?"
+  utter_saludo:
+    - text: "¡Hola! Soy tu asistente del gimnasio. ¿En qué te ayudo?"
+  utter_despedida:
+    - text: "¡Gracias por escribirnos! Que tengas un gran entrenamiento. 👋"
+  utter_agradecimiento:
+    - text: "¡Con gusto! ¿Algo más en que te apoye?"
+  utter_ayuda:
+    - text: "Puedo sugerirte rutinas, reservar clases, informar precios, horarios y más."
+  utter_info_servicios:
+    - text: "Contamos con rutinas personalizadas, clases dirigidas, nutrición y seguimiento de progresos."
+  utter_precios_planes:
+    - text: "Planes Mensual, Trimestral y Anual. ¿Quieres que te comparta el detalle por WhatsApp o correo?"
+  utter_horarios:
+    - text: "Estamos abiertos de lunes a viernes 06:00–22:00 y fines de semana 08:00–18:00."
+  utter_ubicacion:
+    - text: "Estamos en Av. Ejemplo 123, piso 2. ¿Necesitas el mapa?"
+  utter_contacto_humano:
+    - text: "Te conecto con un asesor humano. Déjame un teléfono o correo y el mejor horario."
+  utter_privacidad:
+    - text: "Tratamos tus datos según la normativa vigente. ¿Quieres ver el resumen de privacidad?"
+  utter_pedir_objetivo:
+    - text: "¿Cuál es tu objetivo? (hipertrofia, fuerza, bajar grasa, resistencia)"
+  utter_pedir_musculo:
+    - text: "¿Qué grupo quieres trabajar? (pecho, espalda, piernas, hombros, brazos, core o fullbody)"
+  utter_pedir_nivel:
+    - text: "¿Cuál es tu nivel? (principiante, intermedio, avanzado)"
+  utter_pedir_clase:
+    - text: "¿Qué clase deseas reservar? (spinning, yoga, funcional, hiit, pilates, zumba)"
+  utter_pedir_fecha:
+    - text: "¿Para qué día? (hoy, mañana o AAAA-MM-DD)"
+  utter_pedir_hora:
+    - text: "¿A qué hora? (ej. 07:00, 19:30)"
+  utter_confirmar_reserva:
+    - text: "Reserva creada ✅: {clase} el {fecha} a las {hora} (demo)."
+  utter_reserva_cancelada:
+    - text: "Listo, tu reserva fue cancelada (demo)."
+  utter_reserva_estado:
+    - text: "Tu próxima reserva (demo) es {clase} el {fecha} a las {hora}."
+  utter_fallback:
+    - text: "No estoy seguro de haber entendido. ¿Puedes reformular o elegir una opción?"
+  utter_fuera_de_alcance:
+    - text: "Esa pregunta está fuera de mi alcance por ahora. ¿Deseas hablar con un asesor?"
 
-  utter_cheer_up:
-  - text: "Here is something to cheer you up:"
-    image: "https://i.imgur.com/nGF1K8f.jpg"
+actions:
+  - action_sugerir_rutina
+  - action_resumen_rutina
+  - action_consejo_nutricion
+  - action_crear_reserva
+  - action_cancelar_reserva
+  - action_consultar_reserva
 
-  utter_did_that_help:
-  - text: "Did that help you?"
-
-  utter_happy:
-  - text: "Great, carry on!"
-
-  utter_goodbye:
-  - text: "Bye"
-
-  utter_iamabot:
-  - text: "I am a bot, powered by Rasa."
 
 session_config:
   session_expiration_time: 60
