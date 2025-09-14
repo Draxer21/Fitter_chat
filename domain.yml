@@ -100,6 +100,39 @@ responses:
     - text: "No estoy seguro de haber entendido. ¿Puedes reformular o elegir una opción?"
   utter_fuera_de_alcance:
     - text: "Esa pregunta está fuera de mi alcance por ahora. ¿Deseas hablar con un asesor?"
+  responses:
+  utter_afirmar:
+    - text: "Perfecto."
+
+  utter_negar:
+    - text: "Entendido. No procederé."
+
+  utter_pedir_codigo_reserva:
+    - text: "Por favor, indícame el código/ID de tu reserva."
+
+  utter_reserva_confirmada:
+    - text: "¡Reserva confirmada! Te enviaremos el comprobante a tu correo."
+
+  utter_dolor_lesion:
+    - text: "Detén el ejercicio de inmediato. Si hay dolor agudo, inflamación o pérdida de fuerza, consulta a un profesional de salud antes de continuar."
+
+  utter_rutina_sugerida:
+    - text: "Con la información entregada, te sugiero una rutina personalizada. ¿Deseas que te la envíe por correo o verla en pantalla?"
+
+  utter_nutricion_consejo:
+    - text: "Según tu objetivo y nivel, te recomiendo un plan nutricional equilibrado. ¿Prefieres pautas generales o un menú ejemplo de 7 días?"
+
+  utter_progreso_registrado:
+    - text: "¡Anotado! Registré tu progreso. ¿Quieres agregar otra métrica (ej. peso, RM, medidas)?"
+
+  utter_suscripcion_alta:
+    - text: "Para activar tu suscripción, confirma tu plan y método de pago. ¿Deseas proceder con el plan Mensual/Trimestral/Anual?"
+
+  utter_suscripcion_baja:
+    - text: "Lamento que te vayas. Puedo gestionar tu baja o pausar la suscripción. ¿Deseas continuar con la baja definitiva?"
+  utter_suscripcion_cambio_plan:
+    - text: "Claro, puedo ayudarte a cambiar tu plan. ¿A qué plan te gustaría cambiarte? (Mensual, Trimestral, Anual)"
+  
 
 actions:
   - action_sugerir_rutina

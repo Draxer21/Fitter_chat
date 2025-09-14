@@ -1,10 +1,11 @@
 version: "3.1"
 stories:
+  # Flujos de reserva (ya existentes)
   - story: Crear reserva feliz
     steps:
       - intent: reserva_crear
       - action: utter_pedir_clase
-      - intent: informar  # usa tu intent para entity class
+      - intent: informar
       - action: utter_pedir_fecha
       - intent: informar
       - action: utter_pedir_hora
@@ -32,3 +33,31 @@ stories:
       - action: utter_pedir_codigo_reserva
       - intent: informar
       - action: utter_reserva_cancelada
+
+  # === Flujos nuevos para cubrir intents y utterances hoy no usados ===
+  - story: Consultar rutina completa
+    steps:
+      - intent: rutina_consultar
+      - action: utter_pedir_musculo
+      - intent: informar
+      - action: utter_pedir_nivel
+      - intent: informar
+      - action: utter_pedir_objetivo
+      - intent: informar
+      - action: utter_rutina_sugerida
+
+  - story: Consejo nutricional completo
+    steps:
+      - intent: nutricion_consejo
+      - action: utter_pedir_objetivo
+      - intent: informar
+      - action: utter_pedir_nivel
+      - intent: informar
+      - action: utter_nutricion_consejo
+
+  - story: Registrar progreso simple
+    steps:
+      - intent: progreso_registrar
+      - action: utter_pedir_objetivo
+      - intent: informar
+      - action: utter_progreso_registrado
