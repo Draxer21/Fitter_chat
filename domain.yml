@@ -1,28 +1,32 @@
 version: "3.1"
 
 intents:
-  - saludo
-  - despedida
-  - agradecimiento
+  - saludar
+  - despedir
   - ayuda
+  - agradecimiento
   - info_servicios
-  - precios_planes
   - horarios
+  - precios_planes
+  - privacidad
   - ubicacion
-  - contacto_humano
-  - politicas_privacidad
-  - rutina_consultar
-  - nutricion_consejo
+  - consejo_nutricion
   - dolor_lesion
-  - progreso_registrar
-  - reserva_crear
-  - reserva_cancelar
-  - reserva_consultar
+  - sugerir_rutina
+  - resumen_rutina
+  - crear_reserva
+  - consultar_reserva
+  - cancelar_reserva
+  - suscripcion_cambio_plan
   - suscripcion_alta
   - suscripcion_baja
+  - contacto_humano
   - fuera_de_alcance
   - afirmar
   - negar
+  - informar
+  - progreso_registrar
+
 
 entities:
   - objetivo        # hipertrofia|fuerza|bajar_grasa|resistencia
@@ -33,6 +37,7 @@ entities:
   - hora            # HH:MM
   - dolor_zona      # lumbar|rodilla|hombro|codo|cuello
   - contacto        # email o teléfono (si lo capturas luego)
+  - codigo_reserva
 
 slots:
   objetivo:
@@ -56,12 +61,16 @@ slots:
   dolor_zona:
     type: text
     mappings: [{type: from_entity, entity: dolor_zona}]
+  codigo_reserva:          # <-- NUEVO
+    type: text
+    mappings: [{type: from_entity, entity: codigo_reserva}]
 
 responses:
   utter_saludo:
     - text: "¡Hola! Soy tu asistente del gimnasio. ¿En qué te ayudo?"
-  utter_despedida:
+  utter_despedir:
     - text: "¡Gracias por escribirnos! Que tengas un gran entrenamiento. 👋"
+    - text: "¡Hasta luego!"
   utter_agradecimiento:
     - text: "¡Con gusto! ¿Algo más en que te apoye?"
   utter_ayuda:
@@ -96,51 +105,35 @@ responses:
     - text: "Listo, tu reserva fue cancelada (demo)."
   utter_reserva_estado:
     - text: "Tu próxima reserva (demo) es {clase} el {fecha} a las {hora}."
-  utter_fallback:
-    - text: "No estoy seguro de haber entendido. ¿Puedes reformular o elegir una opción?"
   utter_fuera_de_alcance:
     - text: "Esa pregunta está fuera de mi alcance por ahora. ¿Deseas hablar con un asesor?"
-  responses:
-  utter_afirmar:
-    - text: "Perfecto."
-
-  utter_negar:
-    - text: "Entendido. No procederé."
-
   utter_pedir_codigo_reserva:
     - text: "Por favor, indícame el código/ID de tu reserva."
-
   utter_reserva_confirmada:
     - text: "¡Reserva confirmada! Te enviaremos el comprobante a tu correo."
-
   utter_dolor_lesion:
     - text: "Detén el ejercicio de inmediato. Si hay dolor agudo, inflamación o pérdida de fuerza, consulta a un profesional de salud antes de continuar."
-
   utter_rutina_sugerida:
     - text: "Con la información entregada, te sugiero una rutina personalizada. ¿Deseas que te la envíe por correo o verla en pantalla?"
-
   utter_nutricion_consejo:
     - text: "Según tu objetivo y nivel, te recomiendo un plan nutricional equilibrado. ¿Prefieres pautas generales o un menú ejemplo de 7 días?"
-
   utter_progreso_registrado:
     - text: "¡Anotado! Registré tu progreso. ¿Quieres agregar otra métrica (ej. peso, RM, medidas)?"
-
   utter_suscripcion_alta:
     - text: "Para activar tu suscripción, confirma tu plan y método de pago. ¿Deseas proceder con el plan Mensual/Trimestral/Anual?"
-
   utter_suscripcion_baja:
     - text: "Lamento que te vayas. Puedo gestionar tu baja o pausar la suscripción. ¿Deseas continuar con la baja definitiva?"
   utter_suscripcion_cambio_plan:
     - text: "Claro, puedo ayudarte a cambiar tu plan. ¿A qué plan te gustaría cambiarte? (Mensual, Trimestral, Anual)"
-  
 
 actions:
+  - action_consejo_nutricion
   - action_sugerir_rutina
   - action_resumen_rutina
-  - action_consejo_nutricion
   - action_crear_reserva
   - action_cancelar_reserva
   - action_consultar_reserva
+  - action_suscripcion_cambio_plan
 
 
 session_config:
