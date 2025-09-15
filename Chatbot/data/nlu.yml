@@ -1,0 +1,255 @@
+version: "3.1"
+nlu:
+
+# ─────────────────────────────
+# BÁSICOS
+# ─────────────────────────────
+- intent: saludar
+  examples: |
+    - hola
+    - buenos días
+    - buenas tardes
+    - buenas noches
+    - qué tal
+    - hola, ¿cómo están?
+    - hola bot
+    - hey
+
+- intent: despedir
+  examples: |
+    - adiós
+    - hasta luego
+    - nos vemos
+    - chao
+    - gracias, eso sería todo
+    - me despido
+    - eso es todo, gracias
+
+- intent: ayuda
+  examples: |
+    - ayuda
+    - necesito ayuda
+    - ¿qué puedes hacer?
+    - ¿cómo funcionas?
+    - explícame tus opciones
+    - guía por favor
+    - muéstrame el menú
+
+- intent: agradecimiento
+  examples: |
+    - gracias
+    - muchas gracias
+    - te agradezco
+    - buen dato, gracias
+    - perfecto, gracias
+    - excelente, gracias
+
+- intent: afirmar
+  examples: |
+    - sí
+    - correcto
+    - de acuerdo
+    - así es
+    - claro que sí
+    - ok, confirma
+    - confirmado
+
+- intent: negar
+  examples: |
+    - no
+    - negativo
+    - no quiero
+    - prefiero que no
+    - mejor no
+    - cancela eso
+
+# ─────────────────────────────
+# INFORMACIÓN / FAQ
+# ─────────────────────────────
+- intent: info_servicios
+  examples: |
+    - ¿qué servicios ofrecen?
+    - cuéntame de sus servicios
+    - ¿qué incluyen las clases?
+    - información de servicios
+    - ¿qué actividades tienen?
+
+- intent: horarios
+  examples: |
+    - ¿cuáles son los horarios?
+    - horario de atención
+    - ¿a qué hora abren?
+    - ¿hasta qué hora están?
+    - ¿horarios de clases?
+
+- intent: precios_planes
+  examples: |
+    - precios y planes
+    - ¿cuánto cuesta el plan?
+    - tarifas mensuales
+    - ¿tienen plan anual?
+    - ¿qué precio tiene la suscripción?
+
+- intent: privacidad
+  examples: |
+    - política de privacidad
+    - cómo manejan mis datos
+    - protección de datos personales
+    - privacidad de la información
+    - ¿qué hacen con mis datos?
+
+- intent: ubicacion
+  examples: |
+    - ubicación
+    - ¿dónde están ubicados?
+    - dirección
+    - ¿cómo llego al gimnasio?
+    - sucursal más cercana
+
+# ─────────────────────────────
+# SEGURIDAD / NUTRICIÓN
+# ─────────────────────────────
+- intent: dolor_lesion
+  examples: |
+    - tengo dolor en la espalda
+    - me lesioné la rodilla
+    - me duele el hombro
+    - siento molestia al entrenar
+    - tengo una lesión
+
+- intent: consejo_nutricion
+  examples: |
+    - dame un consejo de nutrición
+    - ¿qué debo comer después de entrenar?
+    - recomendaciones de dieta
+    - tips de alimentación
+    - sugerencias de nutrición para ganar masa
+    - ¿cómo mejorar mi alimentación?
+
+# ─────────────────────────────
+# RUTINAS
+# ─────────────────────────────
+- intent: sugerir_rutina
+  examples: |
+    - sugiéreme una rutina
+    - quiero una rutina de entrenamiento
+    - dame un plan de ejercicios
+    - recomendar rutina según mi objetivo
+    - necesito una rutina para principiantes
+
+- intent: resumen_rutina
+  examples: |
+    - ver mi rutina
+    - mostrar rutina completa
+    - resumen de mi plan
+    - ¿cuál es mi rutina?
+    - dame el resumen de la rutina
+
+# ─────────────────────────────
+# RESERVAS
+# ─────────────────────────────
+- intent: crear_reserva
+  examples: |
+    - quiero reservar una clase
+    - necesito hacer una reserva
+    - agendar una hora
+    - reservar entrenamiento
+    - quiero agendar para mañana
+
+- intent: consultar_reserva
+  examples: |
+    - quiero consultar mi reserva
+    - dime el estado de mi reserva
+    - revisar mi reserva
+    - ¿tengo alguna reserva?
+    - comprobar si tengo reserva activa
+
+- intent: cancelar_reserva
+  examples: |
+    - quiero cancelar mi reserva
+    - necesito anular una reserva
+    - cancelar clase
+    - eliminar mi reserva
+    - cancelar la hora agendada
+
+# ─────────────────────────────
+# SUSCRIPCIONES
+# ─────────────────────────────
+- intent: suscripcion_cambio_plan
+  examples: |
+    - quiero cambiar mi plan
+    - deseo pasar al plan premium
+    - ¿puedo modificar mi suscripción?
+    - cambiar de mensual a anual
+    - bajar de plan
+    - upgrade de plan
+
+# (Opcionales: úsalos solo si existen en tu dominio/reglas)
+- intent: suscripcion_alta
+  examples: |
+    - quiero suscribirme
+    - dar de alta mi suscripción
+    - activar plan
+    - contratar un plan
+
+- intent: suscripcion_baja
+  examples: |
+    - quiero darme de baja
+    - cancelar suscripción
+    - terminar mi suscripción
+    - baja del plan
+
+# ─────────────────────────────
+# CONTACTO HUMANO / OOB
+# ─────────────────────────────
+- intent: contacto_humano
+  examples: |
+    - quiero hablar con un humano
+    - pásame con un agente
+    - soporte humano por favor
+    - atención al cliente
+
+- intent: fuera_de_alcance
+  examples: |
+    - esto no tiene que ver
+    - no entiendo nada
+    - pregunta fuera de tema
+    - no encuentro lo que busco
+
+# ─────────────────────────────
+# PROGRESO (opcional)
+# ─────────────────────────────
+- intent: progreso_registrar
+  examples: |
+    - registrar mi progreso
+    - anotar peso levantado
+    - guardar mis avances
+    - registrar mis repeticiones de hoy
+
+# ─────────────────────────────
+# INTENT COMODÍN PARA SLOTS
+# ─────────────────────────────
+- intent: informar
+  examples: |
+    - [pecho](musculo)
+    - [espalda](musculo)
+    - [piernas](musculo)
+    - [principiante](nivel)
+    - [intermedio](nivel)
+    - [avanzado](nivel)
+    - [hipertrofia](objetivo)
+    - [resistencia](objetivo)
+    - [bajar de peso](objetivo)
+    - [mañana](fecha)
+    - [hoy](fecha)
+    - [15 de septiembre](fecha)
+    - [19:00](hora)
+    - [7 pm](hora)
+    - [spinning](clase)
+    - [yoga](clase)
+    - mi código es [ABC123](codigo_reserva)
+    - el código es [R-4589](codigo_reserva)
+    - [lunes](fecha)
+    - [martes](fecha)
+    - [08:30](hora)
+    - [18:15](hora)

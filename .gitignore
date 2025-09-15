@@ -1,16 +1,48 @@
-# Entorno virtual
+# ==========================
+# Entornos virtuales Python
+# ==========================
 .venv/
 rasa_env/
+env/
+venv/
 
-# Cachés de Python
+# ==========================
+# Archivos de Python
+# ==========================
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
+*.pdb
+*.egg-info/
+*.egg
 
-# Modelos de Rasa (se regeneran)
-models/
+# ==========================
+# Archivos de Rasa
+# ==========================
+.rasa/
+models/          # modelos entrenados (.tar.gz)
+results/         # resultados de test de rasa
+logs/            # logs generados en entrenamiento/ejecución
 
+# ==========================
+# Node / React (frontend)
+# ==========================
+frontend/node_modules/
+frontend/build/
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# ==========================
 # Archivos de sistema
+# ==========================
 .DS_Store
 Thumbs.db
+
+# ==========================
+# Docker
+# ==========================
+*.log
+docker-compose.override.yml
