@@ -1,6 +1,7 @@
 version: "3.1"
 rules:
-  # ── One-turn / FAQ
+
+  # ───────────── One-turn / FAQ ─────────────
   - rule: Agradecimiento
     steps:
       - intent: agradecimiento
@@ -41,7 +42,7 @@ rules:
       - intent: fuera_de_alcance
       - action: utter_fuera_de_alcance
 
-  # ── Saludo / Despedida
+  # ───────────── Saludo / Despedida ─────────────
   - rule: Saludar
     steps:
       - intent: saludar
@@ -52,37 +53,105 @@ rules:
       - intent: despedir
       - action: utter_despedir
 
-  # ── Información de servicios
+  # ───────────── Información de servicios ─────────────
   - rule: Información de servicios
     steps:
       - intent: info_servicios
       - action: utter_info_servicios
 
-  # ── Seguridad (dolor/lesión)
+  # ───────────── Seguridad (dolor/lesión) ─────────────
   - rule: Dolor o lesión
     steps:
       - intent: dolor_lesion
       - action: utter_dolor_lesion
 
-  # ── Nutrición (inicio guiado)
+  # ───────────── Nutrición (inicio guiado simple) ─────────────
   - rule: Consejo nutricional (inicio)
     steps:
       - intent: consejo_nutricion
-      - action: utter_pedir_objetivo
+      - action: utter_ask_objetivo
 
-  # ── Rutina (inicio guiado)
-  - rule: Sugerir rutina (inicio)
+  # ───────────── Rutina: FORM ─────────────
+  # Activación del formulario de rutina al pedir sugerencia de rutina
+  - rule: Sugerir rutina (activar form)
     steps:
       - intent: sugerir_rutina
-      - action: utter_pedir_musculo
+      - action: rutina_form
+      - active_loop: rutina_form
 
-  # ── Progreso (si usas este intent)
-  - rule: Registrar progreso (inicio)
+  # Envío al completar (submit) el form de rutina
+  - rule: Rutina (submit)
+    condition:
+      - active_loop: rutina_form
     steps:
-      - intent: progreso_registrar
-      - action: utter_pedir_objetivo
+      - action: rutina_form
+      - active_loop: null
+      - action: utter_rutina_sugerida
 
-  # ── Suscripciones
+  # (Opcional) Resumen de rutina a demanda
+  - rule: Resumen de rutina
+    steps:
+      - intent: resumen_rutina
+      - action: action_resumen_rutina
+
+  # ───────────── Reserva: FORM ─────────────
+  # Inicio del formulario de reserva
+  - rule: Crear reserva (activar form)
+    steps:
+      - intent: crear_reserva
+      - action: reserva_form
+      - active_loop: reserva_form
+
+  # Submit del formulario de reserva → confirmar y luego pedir afirmación/negación
+  - rule: Crear reserva (submit → confirmar)
+    condition:
+      - active_loop: reserva_form
+    steps:
+      - action: reserva_form
+      - active_loop: null
+      - action: utter_confirmar_reserva
+
+  # Usuario afirma la creación tras la confirmación
+  - rule: Confirmar creación de reserva
+    steps:
+      - action: utter_confirmar_reserva
+      - intent: afirmar
+      - action: action_crear_reserva
+      - action: utter_reserva_confirmada
+
+  # Usuario niega y se cancela
+  - rule: Cancelar creación de reserva
+    steps:
+      - action: utter_confirmar_reserva
+      - intent: negar
+      - action: utter_reserva_cancelada
+
+  # ───────────── Consultar / Cancelar reserva (código) ─────────────
+  - rule: Consultar reserva (pedir código)
+    steps:
+      - intent: consultar_reserva
+      - action: utter_ask_codigo_reserva
+
+  - rule: Consultar reserva (con código)
+    steps:
+      - slot_was_set:
+          - codigo_reserva: true
+      - action: action_consultar_reserva
+      - action: utter_reserva_estado
+
+  - rule: Cancelar reserva (pedir código)
+    steps:
+      - intent: cancelar_reserva
+      - action: utter_ask_codigo_reserva
+
+  - rule: Cancelar reserva (con código)
+    steps:
+      - slot_was_set:
+          - codigo_reserva: true
+      - action: action_cancelar_reserva
+      - action: utter_reserva_cancelada
+
+  # ───────────── Suscripciones ─────────────
   - rule: Suscripción cambio de plan (acción)
     steps:
       - intent: suscripcion_cambio_plan
@@ -93,34 +162,13 @@ rules:
     steps:
       - intent: suscripcion_alta
       - action: utter_suscripcion_alta
+
   - rule: Suscripción baja
     steps:
       - intent: suscripcion_baja
       - action: utter_suscripcion_baja
 
-  # EN rules.yml — un solo turno
-  - rule: Consultar reserva (primer turno)
-    steps:
-    - intent: consultar_reserva
-    - action: utter_pedir_codigo_reserva
-
-  # Usuario confirma la reserva tras la confirmación del bot
-  - rule: Confirmar creación de reserva
-    steps:
-      - action: utter_confirmar_reserva
-      - intent: afirmar
-      - action: action_crear_reserva
-      - action: utter_reserva_confirmada
-
-# Usuario niega y se cancela el flujo
-  - rule: Cancelar creación de reserva
-    steps:
-      - action: utter_confirmar_reserva
-      - intent: negar
-      - action: utter_reserva_cancelada
-
-
-  # ── Fallback unificado (Two-Stage)
+  # ───────────── Fallback (Two-Stage) ─────────────
   - rule: Two-stage fallback
     steps:
       - intent: nlu_fallback

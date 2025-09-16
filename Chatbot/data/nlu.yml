@@ -127,7 +127,7 @@ nlu:
     - ¿cómo mejorar mi alimentación?
 
 # ─────────────────────────────
-# RUTINAS
+# RUTINAS (incluye CARDIO)
 # ─────────────────────────────
 - intent: sugerir_rutina
   examples: |
@@ -136,6 +136,15 @@ nlu:
     - dame un plan de ejercicios
     - recomendar rutina según mi objetivo
     - necesito una rutina para principiantes
+    - quiero hacer [cardio](musculo)
+    - rutina de [cardio](musculo) para [principiante](nivel)
+    - una rutina [fullbody](musculo) nivel [intermedio](nivel)
+    - rutina de [pecho](musculo)
+    - rutina de [piernas](musculo) para [avanzado](nivel)
+    - [espalda](musculo) para [principiante](nivel)
+    - [hombros](musculo) nivel [intermedio](nivel)
+    - rutina para [brazos](musculo)
+    - rutina para [core](musculo)
 
 - intent: resumen_rutina
   examples: |
@@ -154,7 +163,8 @@ nlu:
     - necesito hacer una reserva
     - agendar una hora
     - reservar entrenamiento
-    - quiero agendar para mañana
+    - quiero agendar para [mañana](fecha)
+    - reservar [spinning](clase) el [2025-09-20](fecha) a las [07:00](hora)
 
 - intent: consultar_reserva
   examples: |
@@ -184,7 +194,6 @@ nlu:
     - bajar de plan
     - upgrade de plan
 
-# (Opcionales: úsalos solo si existen en tu dominio/reglas)
 - intent: suscripcion_alta
   examples: |
     - quiero suscribirme
@@ -234,22 +243,109 @@ nlu:
     - [pecho](musculo)
     - [espalda](musculo)
     - [piernas](musculo)
+    - [hombros](musculo)
+    - [brazos](musculo)
+    - [core](musculo)
+    - [fullbody](musculo)
+    - [cardio](musculo)
     - [principiante](nivel)
     - [intermedio](nivel)
     - [avanzado](nivel)
     - [hipertrofia](objetivo)
+    - [fuerza](objetivo)
     - [resistencia](objetivo)
+    - [bajar grasa](objetivo)
     - [bajar de peso](objetivo)
     - [mañana](fecha)
     - [hoy](fecha)
+    - [2025-09-20](fecha)
     - [15 de septiembre](fecha)
     - [19:00](hora)
+    - [07:00](hora)
     - [7 pm](hora)
-    - [spinning](clase)
-    - [yoga](clase)
-    - mi código es [ABC123](codigo_reserva)
-    - el código es [R-4589](codigo_reserva)
-    - [lunes](fecha)
-    - [martes](fecha)
     - [08:30](hora)
     - [18:15](hora)
+    - [spinning](clase)
+    - [yoga](clase)
+    - [funcional](clase)
+    - [hiit](clase)
+    - [pilates](clase)
+    - [zumba](clase)
+    - mi código es [ABC123](codigo_reserva)
+    - el código es [R-4589](codigo_reserva)
+
+# ─────────────────────────────
+# SINÓNIMOS (normalización de valores)
+# ─────────────────────────────
+- synonym: bajar_grasa
+  examples: |
+    - bajar de peso
+    - perder grasa
+    - definición
+- synonym: core
+  examples: |
+    - abdomen
+    - abdominales
+- synonym: brazos
+  examples: |
+    - bíceps
+    - triceps
+    - tríceps
+- synonym: piernas
+  examples: |
+    - tren inferior
+- synonym: pecho
+  examples: |
+    - pectorales
+- synonym: cardio
+  examples: |
+    - aeróbico
+    - aeróbicos
+    - cardio suave
+    - trabajo cardiovascular
+- synonym: principiante
+  examples: |
+    - novato
+    - beginner
+- synonym: intermedio
+  examples: |
+    - medio
+- synonym: avanzado
+  examples: |
+    - pro
+    - experto
+
+# ─────────────────────────────
+# LOOKUP TABLES (reforzar extracción)
+# ─────────────────────────────
+- lookup: musculo
+  examples: |
+    - pecho
+    - espalda
+    - piernas
+    - hombros
+    - brazos
+    - core
+    - fullbody
+    - cardio
+- lookup: nivel
+  examples: |
+    - principiante
+    - intermedio
+    - avanzado
+- lookup: clase
+  examples: |
+    - spinning
+    - yoga
+    - funcional
+    - hiit
+    - pilates
+    - zumba
+
+# ─────────────────────────────
+# REGEX (formato fecha/hora)
+# ─────────────────────────────
+- regex: fecha
+  pattern: ^\d{4}-\d{2}-\d{2}$
+- regex: hora
+  pattern: ^([01]\d|2[0-3]):[0-5]\d$
