@@ -26,6 +26,8 @@ intents:
   - negar
   - informar
   - progreso_registrar
+  - mostrar_rutina_pantalla
+  - enviar_rutina_correo
 
 entities:
   - objetivo        # hipertrofia|fuerza|bajar_grasa|resistencia
@@ -79,6 +81,11 @@ slots:
     mappings:
       - type: from_entity
         entity: codigo_reserva
+  contacto:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: contacto
 
 forms:
   rutina_form:
@@ -93,7 +100,7 @@ forms:
       - hora
 
 responses:
-  utter_saludo:
+  utter_saludar:
     - text: "¡Hola! Soy tu asistente del gimnasio. ¿En qué te ayudo?"
   utter_despedir:
     - text: "¡Gracias por escribirnos! Que tengas un gran entrenamiento."
@@ -115,8 +122,17 @@ responses:
   utter_privacidad:
     - text: "Tratamos tus datos según la normativa vigente. ¿Quieres ver el resumen de privacidad?"
 
+  # ÚNICA definición (con botones)
+  utter_rutina_sugerida:
+    - text: "Rutina generada para {musculo} (nivel {nivel}). ¿Cómo la prefieres?"
+      buttons:
+        - title: "Ver en pantalla"
+          payload: "/mostrar_rutina_pantalla"
+        - title: "Enviar por correo"
+          payload: "/enviar_rutina_correo"
+
   # -----------------------
-  # PREGUNTAS (nombres estándar de forms)
+  # PREGUNTAS (standard forms)
   # -----------------------
   utter_ask_objetivo:
     - text: "¿Cuál es tu objetivo? (hipertrofia, fuerza, bajar grasa, resistencia)"
@@ -133,7 +149,7 @@ responses:
   utter_ask_codigo_reserva:
     - text: "Por favor, indícame el código/ID de tu reserva."
 
-  # (mantengo tus prompts originales como alias, por compatibilidad con historias previas)
+  # Alias (compatibilidad con historias antiguas)
   utter_pedir_objetivo:
     - text: "¿Cuál es tu objetivo? (hipertrofia, fuerza, bajar grasa, resistencia)"
   utter_pedir_musculo:
@@ -146,6 +162,12 @@ responses:
     - text: "¿Para qué día? (hoy, mañana o AAAA-MM-DD)"
   utter_pedir_hora:
     - text: "¿A qué hora? (ej. 07:00, 19:30)"
+
+  # Contacto/envío
+  utter_ask_contacto:
+    - text: "Indícame tu correo o teléfono para enviarte la rutina (ej. usuario@correo.com o +56 9 1234 5678)."
+  utter_envio_rutina_correo:
+    - text: "Perfecto, enviaré la rutina a {contacto} (demo)."
 
   # -----------------------
   # SALIDAS
@@ -162,8 +184,6 @@ responses:
     - text: "Reserva confirmada. Te enviaremos el comprobante a tu correo."
   utter_dolor_lesion:
     - text: "Detén el ejercicio. Si hay dolor agudo/inflamación, consulta a un profesional antes de continuar."
-  utter_rutina_sugerida:
-    - text: "Rutina generada para {musculo} (nivel {nivel}). ¿Deseas verla en pantalla o por correo?"
   utter_nutricion_consejo:
     - text: "Según tu objetivo y nivel, te recomiendo un plan equilibrado. ¿Prefieres pautas generales o un menú de 7 días?"
   utter_progreso_registrado:

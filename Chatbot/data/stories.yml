@@ -5,7 +5,7 @@ stories:
 - story: saludo
   steps:
     - intent: saludar
-    - action: utter_saludo
+    - action: utter_saludar
 
 - story: despedida
   steps:

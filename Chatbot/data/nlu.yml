@@ -342,10 +342,41 @@ nlu:
     - pilates
     - zumba
 
+# Opciones post-sugerencia
+- intent: mostrar_rutina_pantalla
+  examples: |
+    - pantalla
+    - ver en pantalla
+    - muéstrala aquí
+    - verla acá
+    - ver ahora
+
+- intent: enviar_rutina_correo
+  examples: |
+    - correo
+    - por correo
+    - envíala por email
+    - mandamela al correo
+    - envíame la rutina al mail
+    - quiero que la envíes por correo
+
+# Captura de contacto (email/teléfono) vía intent comodín
+- intent: informar
+  examples: |
+    - mi correo es [usuario@correo.com](contacto)
+    - te dejo mi email [alguien.test+fit@dominio.cl](contacto)
+    - envíala a [persona99@gmail.com](contacto)
+    - mi número es [+56 9 1234 5678](contacto)
+    - [+56 912345678](contacto)
+
+
 # ─────────────────────────────
 # REGEX (formato fecha/hora)
 # ─────────────────────────────
 - regex: fecha
-  pattern: ^\d{4}-\d{2}-\d{2}$
+  examples: |
+    - \d{4}-\d{2}-\d{2}
+
 - regex: hora
-  pattern: ^([01]\d|2[0-3]):[0-5]\d$
+  examples: |
+    - ([01]\d|2[0-3]):[0-5]\d

@@ -217,3 +217,13 @@ class ActionConsultarReserva(Action):
         r = user_reservas[-1]
         dispatcher.utter_message(text=f"Tu reserva ▶ {r['clase']} el {r['fecha']} a las {r['hora']} (demo).")
         return []
+
+class ActionSuscripcionCambioPlan(Action):
+    def name(self) -> Text:
+        return "action_suscripcion_cambio_plan"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+        dispatcher.utter_message(text="¿A qué plan te gustaría cambiarte? (Mensual, Trimestral, Anual)")
+        return []

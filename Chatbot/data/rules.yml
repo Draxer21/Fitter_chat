@@ -46,7 +46,7 @@ rules:
   - rule: Saludar
     steps:
       - intent: saludar
-      - action: utter_saludo
+      - action: utter_saludar
 
   - rule: Despedir
     steps:
@@ -167,6 +167,26 @@ rules:
     steps:
       - intent: suscripcion_baja
       - action: utter_suscripcion_baja
+
+  # Mostrar rutina en pantalla
+  - rule: Mostrar rutina en pantalla
+    steps:
+    - intent: mostrar_rutina_pantalla
+    - action: action_resumen_rutina
+
+# Enviar rutina por correo (pedir contacto)
+  - rule: Enviar rutina por correo (pedir contacto)
+    steps:
+    - intent: enviar_rutina_correo
+    - action: utter_ask_contacto
+
+# Enviar rutina por correo (con contacto provisto)
+  - rule: Enviar rutina por correo (confirmar)
+    steps:
+    - slot_was_set:
+        - contacto: true
+    - action: utter_envio_rutina_correo
+
 
   # ───────────── Fallback (Two-Stage) ─────────────
   - rule: Two-stage fallback

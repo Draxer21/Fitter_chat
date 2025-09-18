@@ -28,7 +28,8 @@ ppipeline:
     early_stopping_metric: "loss"        
   - name: EntitySynonymMapper
   - name: ResponseSelector
-    epochs: 50
+  - name: RegexEntityExtractor
+    epochs: 100
     constrain_similarities: true
 
 policies:
