@@ -1,12 +1,16 @@
-import "./App.css";
+// src/App.js
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Chatbot from "./Chatbot";
+import RutinaPage from "/pages/RutinaPages"; // ajusta la ruta si tu archivo se llama distinto
 
 function App() {
   return (
-    <div style={{ fontFamily: "sans-serif", padding: 20 }}>
-      <h1>FITTER Chatbot</h1>
-      <Chatbot />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Chatbot />} />
+        <Route path="/rutina/:id" element={<RutinaPage />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

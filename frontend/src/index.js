@@ -1,17 +1,20 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+// src/App.js
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Chatbot from "./Chatbot";
+import RutinaPage from "/pages/RutinaPages"; // asegúrate que el archivo se llame igual
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Ruta principal: el chatbot */}
+        <Route path="/" element={<Chatbot />} />
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+        {/* Ruta para abrir rutina en nueva pestaña */}
+        <Route path="/rutina/:id" element={<RutinaPage />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default App;
