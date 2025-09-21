@@ -36,3 +36,77 @@
     transform: rotate(360deg);
   }
 }
+.user {
+  background-color: #d1ffd1;
+  border-radius: 8px;
+  padding: 8px;
+  margin: 4px;
+  text-align: right;
+  align-self: flex-end; /* usuario a la derecha */
+  max-width: 60%;
+}
+
+.bot {
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 8px;
+  margin: 4px;
+  text-align: left;
+  align-self: flex-start; /* bot a la izquierda */
+  max-width: 60%;
+}
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  width: 70%;
+  margin: auto;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  background: #fff;
+}
+
+.messages {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.input-container {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.input-container input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.input-container button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+}
+
+.input-container button:hover {
+  background-color: #45a049;
+}
+.user {
+  background-color: #dcf8c6;
+  border-radius: 15px 15px 0 15px;
+}
+
+.bot {
+  background-color: #ececec;
+  border-radius: 15px 15px 15px 0;
+}
+

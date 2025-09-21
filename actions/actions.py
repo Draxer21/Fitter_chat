@@ -96,19 +96,46 @@ class ActionSugerirRutina(Action):
 # -------------------------------
 # ACCIÓN: Resumen rutina (cierre de formulario)
 # -------------------------------
+# -------------------------------
+# ACCIÓN: Resumen rutina (cierre de formulario)
+# -------------------------------
 class ActionResumenRutina(Action):
     def name(self) -> Text:
         return "action_resumen_rutina"
 
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        objetivo = _slot(tracker, "objetivo")
-        musculo  = _slot(tracker, "musculo")
-        nivel    = _slot(tracker, "nivel")
+        objetivo = _slot(tracker, "objetivo") or "general"
+        musculo  = _slot(tracker, "musculo")  or "fullbody"
+        nivel    = _slot(tracker, "nivel")    or "principiante"
+
+        # ID simple (demo). En producción usa UUID y guarda en BD.
+        routine_id = f"{musculo}-{nivel}-{int(datetime.now().timestamp())}"
+
+        # URL pública del front donde mostrarás la rutina
+        FRONTEND_BASE = "http://localhost:3000"  # ajusta si usas otra
+        url = f"{FRONTEND_BASE}/rutina/{routine_id}"
+
+        # Mensaje textual normal
         dispatcher.utter_message(
-            text=f"Resumen ▶ objetivo: {objetivo}, grupo: {musculo}, nivel: {nivel}. ¿Deseas otra sugerencia?"
+            text=f"Rutina generada ▶ {musculo.title()} · nivel {nivel}. "
+                 f"Objetivo: {objetivo}. ¿Cómo deseas verla?"
         )
+
+        # Mensaje 'custom' con metadatos para que el front pinte el botón
+        dispatcher.utter_message(json_message={
+            "type": "routine_link",
+            "title": "Abrir rutina en una nueva pestaña",
+            "url": url,
+            "routine": {
+                "id": routine_id,
+                "objetivo": objetivo,
+                "musculo": musculo,
+                "nivel": nivel
+            }
+        })
         return []
+
 
 
 # -------------------------------

@@ -92,6 +92,7 @@ forms:
     required_slots:
       - musculo
       - nivel
+      - objetivo
   # (opcional) si quieres asistir reserva por formulario guiado
   reserva_form:
     required_slots:
