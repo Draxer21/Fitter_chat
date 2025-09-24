@@ -1,7 +1,7 @@
 version: "3.1"
 rules:
 
-  # ───────────── One-turn / FAQ ─────────────
+  # ───────── One-turn / FAQ ─────────
   - rule: Agradecimiento
     steps:
       - intent: agradecimiento
@@ -10,7 +10,7 @@ rules:
   - rule: Ayuda
     steps:
       - intent: ayuda
-      - action: utter_ayuda
+      - action: utter_info_servicios
 
   - rule: Contacto humano
     steps:
@@ -42,7 +42,7 @@ rules:
       - intent: fuera_de_alcance
       - action: utter_fuera_de_alcance
 
-  # ───────────── Saludo / Despedida ─────────────
+  # ───────── Saludo / Despedida ─────────
   - rule: Saludar
     steps:
       - intent: saludar
@@ -53,56 +53,71 @@ rules:
       - intent: despedir
       - action: utter_despedir
 
-  # ───────────── Información de servicios ─────────────
-  - rule: Información de servicios
-    steps:
-      - intent: info_servicios
-      - action: utter_info_servicios
-
-  # ───────────── Seguridad (dolor/lesión) ─────────────
-  - rule: Dolor o lesión
-    steps:
-      - intent: dolor_lesion
-      - action: utter_dolor_lesion
-
-  # ───────────── Nutrición (inicio guiado simple) ─────────────
-  - rule: Consejo nutricional (inicio)
+  # ───────── Nutrición (UNA sola regla) ─────────
+  - rule: Consejo nutricional (acción)
     steps:
       - intent: consejo_nutricion
-      - action: utter_ask_objetivo
+      - action: action_consejo_nutricion
 
-  # ───────────── Rutina: FORM ─────────────
-  # Activación del formulario de rutina al pedir sugerencia de rutina
+  # ───────── Rutina: FORM ─────────
   - rule: Sugerir rutina (activar form)
     steps:
       - intent: sugerir_rutina
       - action: rutina_form
       - active_loop: rutina_form
 
-  # Envío al completar (submit) el form de rutina
-  - rule: Rutina (submit)
+  - rule: Rutina (submit → generar)
     condition:
       - active_loop: rutina_form
     steps:
       - action: rutina_form
       - active_loop: null
-      - action: utter_rutina_sugerida
+      - action: utter_resumen_rutina
+      - action: action_generar_rutina
+      # Nota: no definimos reglas post-generación para evitar choques.
+  
+  - rule: Enviar rutina por correo → pedir contacto
+    steps:
+      - intent: enviar_rutina_correo
+      - action: utter_pedir_contacto
 
-  # (Opcional) Resumen de rutina a demanda
-  - rule: Resumen de rutina
+  - rule: Enviar rutina por correo → confirmar con contacto
+    steps:
+      - action: utter_pedir_contacto
+      - intent: informar
+      - action: utter_envio_rutina_correo
+
+
+  # ───────── Triggers directos (opcionales, no confluyentes) ─────────
+  - rule: Mostrar rutina en pantalla (directo)
+    steps:
+      - intent: mostrar_rutina_pantalla
+      - action: rutina_form
+      - active_loop: rutina_form
+
+  - rule: Enviar rutina por correo (pedir contacto directo)
+    steps:
+      - intent: enviar_rutina_correo
+      - action: utter_pedir_contacto
+
+  # ───────── Progreso y Resumen (higiene) ─────────
+  - rule: Registrar progreso
+    steps:
+      - intent: progreso_registrar
+      - action: utter_progreso_registrado
+
+  - rule: Resumen de rutina (a demanda)
     steps:
       - intent: resumen_rutina
       - action: action_resumen_rutina
 
-  # ───────────── Reserva: FORM ─────────────
-  # Inicio del formulario de reserva
+  # ───────── Reserva: FORM ─────────
   - rule: Crear reserva (activar form)
     steps:
       - intent: crear_reserva
       - action: reserva_form
       - active_loop: reserva_form
 
-  # Submit del formulario de reserva → confirmar y luego pedir afirmación/negación
   - rule: Crear reserva (submit → confirmar)
     condition:
       - active_loop: reserva_form
@@ -111,7 +126,6 @@ rules:
       - active_loop: null
       - action: utter_confirmar_reserva
 
-  # Usuario afirma la creación tras la confirmación
   - rule: Confirmar creación de reserva
     steps:
       - action: utter_confirmar_reserva
@@ -119,14 +133,13 @@ rules:
       - action: action_crear_reserva
       - action: utter_reserva_confirmada
 
-  # Usuario niega y se cancela
   - rule: Cancelar creación de reserva
     steps:
       - action: utter_confirmar_reserva
       - intent: negar
       - action: utter_reserva_cancelada
 
-  # ───────────── Consultar / Cancelar reserva (código) ─────────────
+  # ───────── Consultar / Cancelar reserva (código) ─────────
   - rule: Consultar reserva (pedir código)
     steps:
       - intent: consultar_reserva
@@ -151,12 +164,11 @@ rules:
       - action: action_cancelar_reserva
       - action: utter_reserva_cancelada
 
-  # ───────────── Suscripciones ─────────────
+  # ───────── Suscripciones ─────────
   - rule: Suscripción cambio de plan (acción)
     steps:
       - intent: suscripcion_cambio_plan
       - action: action_suscripcion_cambio_plan
-      - action: utter_suscripcion_cambio_plan
 
   - rule: Suscripción alta
     steps:
@@ -168,28 +180,17 @@ rules:
       - intent: suscripcion_baja
       - action: utter_suscripcion_baja
 
-  # Mostrar rutina en pantalla
-  - rule: Mostrar rutina en pantalla
+  # ───────── Binarios mínimos (silencian warnings) ─────────
+  - rule: Afirmación simple
     steps:
-    - intent: mostrar_rutina_pantalla
-    - action: action_resumen_rutina
+      - intent: afirmar
+      - action: utter_affirm
 
-# Enviar rutina por correo (pedir contacto)
-  - rule: Enviar rutina por correo (pedir contacto)
+  - rule: Negación simple
     steps:
-    - intent: enviar_rutina_correo
-    - action: utter_ask_contacto
+      - intent: negar
+      - action: utter_deny
 
-# Enviar rutina por correo (con contacto provisto)
-  - rule: Enviar rutina por correo (confirmar)
+  - rule: Higiene → marcar uso de utter_envio_rutina_correo
     steps:
-    - slot_was_set:
-        - contacto: true
-    - action: utter_envio_rutina_correo
-
-
-  # ───────────── Fallback (Two-Stage) ─────────────
-  - rule: Two-stage fallback
-    steps:
-      - intent: nlu_fallback
-      - action: action_two_stage_fallback
+      - action: utter_envio_rutina_correo

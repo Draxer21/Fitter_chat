@@ -3,7 +3,9 @@ import os
 import json
 from typing import Any, Dict
 from flask import Flask, request, jsonify
-import requests
+import requests  # type: ignore
+import logging
+from logging.handlers import RotatingFileHandler
 
 # --- Opcionales: cargador .env, CORS y rate limit (si las instalas) ---
 try:
@@ -17,12 +19,16 @@ try:
 except Exception:
     CORS = None
 
+# Flask-Limiter tiene API distinta entre v2 y v3
+Limiter = None
+get_remote_address = None
 try:
-    from flask_limiter import Limiter            # pip install Flask-Limiter
-    from flask_limiter.util import get_remote_address
+    from flask_limiter import Limiter as _Limiter            # pip install Flask-Limiter
+    from flask_limiter.util import get_remote_address as _get_remote_address
+    Limiter = _Limiter
+    get_remote_address = _get_remote_address
 except Exception:
-    Limiter = None
-    get_remote_address = None
+    pass
 # ----------------------------------------------------------------------
 
 def create_app() -> Flask:
@@ -37,18 +43,44 @@ def create_app() -> Flask:
     app.config["RASA_PARSE_ENDPOINT"] = os.getenv("RASA_PARSE_ENDPOINT", "/model/parse")
     app.config["CORS_ORIGINS"] = os.getenv("CORS_ORIGINS", "*")
     app.config["RATE_LIMIT_DEFAULT"] = os.getenv("RATE_LIMIT_DEFAULT", "60/minute")
+    app.config["MAX_CONTENT_LENGTH"] = int(os.getenv("MAX_CONTENT_LENGTH", "1048576"))  # 1MB
 
     # CORS (opcional)
     if CORS:
         CORS(app, resources={r"/*": {"origins": app.config["CORS_ORIGINS"]}})
 
-    # Rate limiting (opcional)
+    # Rate limiting (opcional): compat v2/v3
     if Limiter and get_remote_address:
-        Limiter(
-            key_func=get_remote_address,
-            app=app,
-            default_limits=[app.config["RATE_LIMIT_DEFAULT"]],
+        try:
+            # v3 style
+            limiter = Limiter(get_remote_address, app=app, default_limits=[app.config["RATE_LIMIT_DEFAULT"]])
+        except TypeError:
+            # v2 style
+            limiter = Limiter(key_func=get_remote_address, app=app, default_limits=[app.config["RATE_LIMIT_DEFAULT"]])
+        app.limiter = limiter  # por si luego lo quieres usar en decorators
+
+    # -----------------------
+    # Logging a archivo (rotativo)
+    # -----------------------
+    try:
+        logs_path = os.path.join(os.path.dirname(__file__), "logs")
+        os.makedirs(logs_path, exist_ok=True)
+
+        handler = RotatingFileHandler(
+            os.path.join(logs_path, "backend.log"),
+            maxBytes=5 * 1024 * 1024,  # 5 MB
+            backupCount=5,
+            encoding="utf-8"
         )
+        formatter = logging.Formatter("[%(asctime)s] %(levelname)s in %(module)s: %(message)s")
+        handler.setFormatter(formatter)
+
+        app.logger.setLevel(logging.INFO)
+        app.logger.addHandler(handler)
+        app.logger.info("Flask app inicializada y logging activo.")
+    except Exception as e:
+        # Si el FS no permite escribir, no rompas la app
+        app.logger.warning(f"No se pudo inicializar logging a archivo: {e}")
 
     # -----------------------
     # Utilidades internas
@@ -65,9 +97,7 @@ def create_app() -> Flask:
     # -----------------------
     @app.get("/health")
     def health():
-        """
-        Healthcheck simple para monitoreo.
-        """
+        """Healthcheck simple para monitoreo."""
         return {"status": "ok"}, 200
 
     @app.post("/chat/send")
@@ -99,11 +129,11 @@ def create_app() -> Flask:
             )
             resp.raise_for_status()
         except requests.exceptions.RequestException as e:
+            app.logger.exception("Fallo al contactar Rasa en /chat/send")
             return _error(f"No se pudo contactar a Rasa: {e}", 502)
 
-        # Rasa REST devuelve lista de objetos (text, buttons, custom, etc.)
         try:
-            payload = resp.json()
+            payload = resp.json()  # Rasa REST: lista de objetos (text, buttons, custom, etc.)
         except json.JSONDecodeError:
             return _error("Respuesta de Rasa no es JSON válido.", 502)
 
@@ -133,6 +163,7 @@ def create_app() -> Flask:
             )
             resp.raise_for_status()
         except requests.exceptions.RequestException as e:
+            app.logger.exception("Fallo al contactar Rasa en /nlu/parse")
             return _error(f"No se pudo contactar a Rasa NLU: {e}", 502)
 
         try:
@@ -150,7 +181,6 @@ def create_app() -> Flask:
 # -----------------------
 if __name__ == "__main__":
     app = create_app()
-    # Variables útiles para ejecución local
     debug = os.getenv("FLASK_DEBUG", "0") == "1"
     port = int(os.getenv("PORT", "8080"))
     app.run(host="0.0.0.0", port=port, debug=debug)

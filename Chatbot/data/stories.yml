@@ -1,7 +1,8 @@
 version: "3.1"
+
 stories:
 
-# ───────── 0) BÁSICOS (one-turn) ─────────
+# ───────── BÁSICOS (one-turn) ─────────
 - story: saludo
   steps:
     - intent: saludar
@@ -15,14 +16,14 @@ stories:
 - story: ayuda
   steps:
     - intent: ayuda
-    - action: utter_ayuda
+    - action: utter_info_servicios
 
 - story: agradecimiento
   steps:
     - intent: agradecimiento
     - action: utter_agradecimiento
 
-# ───────── 1) INFORMACIÓN (one-turn) ─────────
+# ───────── INFO (one-turn) ─────────
 - story: info servicios
   steps:
     - intent: info_servicios
@@ -48,82 +49,189 @@ stories:
     - intent: ubicacion
     - action: utter_ubicacion
 
-# ───────── 2) NUTRICIÓN y LESIONES (one-turn / guiado simple) ─────────
+# ───────── NUTRICIÓN y LESIONES ─────────
 - story: dolor o lesion
   steps:
     - intent: dolor_lesion
     - action: utter_dolor_lesion
 
-# (mantengo tu flujo simple de nutrición si aún no lo migras a form)
-- story: consejo nutricion (guiado simple)
+- story: consejo nutricion simple
   steps:
     - intent: consejo_nutricion
-    - action: utter_ask_objetivo
-    - intent: informar
     - action: action_consejo_nutricion
-    - action: utter_nutricion_consejo
 
-# ───────── 3) RUTINAS — FORMULARIO (happy paths) ─────────
-# Activación + llenado por turnos
-- story: sugerir rutina (form, turnos)
+# ───────── RUTINAS — FORM (happy paths) ─────────
+- story: rutina (form, turnos)
   steps:
-    - intent: sugerir_rutina
+    - intent: solicitar_rutina
     - action: rutina_form
     - active_loop: rutina_form
-    # Usuario entrega musculo
     - intent: informar
     - slot_was_set:
         - musculo: pecho
     - action: rutina_form
-    # Usuario entrega nivel
     - intent: informar
     - slot_was_set:
-        - nivel: principiante
+        - nivel: intermedio
+    - action: rutina_form
+    - intent: informar
+    - slot_was_set:
+        - objetivo: fuerza
+    - action: rutina_form
+    - intent: informar
+    - slot_was_set:
+        - equipamiento: mancuernas
+    - action: rutina_form
+    - intent: informar
+    - slot_was_set:
+        - ejercicios_num: 8
+    - action: rutina_form
+    - intent: informar
+    - slot_was_set:
+        - tiempo_disponible: 60
+    - action: rutina_form
+    - intent: formato_entrega_rutina
+    - slot_was_set:
+        - formato: pantalla
     - action: rutina_form
     - active_loop: null
-    - action: utter_rutina_sugerida
+    - action: utter_resumen_rutina
+    - action: action_generar_rutina   # ← la decisión posterior la toman las reglas
 
-# Activación + usuario ya da todo en una frase
-- story: sugerir rutina (form, en una frase)
+- story: rutina (form, en una frase)
   steps:
-    - intent: sugerir_rutina
+    - intent: solicitar_rutina
       entities:
-        - musculo: cardio
+        - musculo: pecho
         - nivel: intermedio
+        - objetivo: fuerza
+        - equipamiento: mancuernas
+        - ejercicios_num: "7"
+        - tiempo_disponible: "45"
+        - formato: pantalla
     - action: rutina_form
     - active_loop: rutina_form
     - slot_was_set:
-        - musculo: cardio
+        - musculo: pecho
     - slot_was_set:
         - nivel: intermedio
+    - slot_was_set:
+        - objetivo: fuerza
+    - slot_was_set:
+        - equipamiento: mancuernas
+    - slot_was_set:
+        - ejercicios_num: 7
+    - slot_was_set:
+        - tiempo_disponible: 45
+    - slot_was_set:
+        - formato: pantalla
     - action: rutina_form
     - active_loop: null
-    - action: utter_rutina_sugerida
+    - action: utter_resumen_rutina
+    - action: action_generar_rutina
 
-# Resumen de rutina (acción directa)
-- story: resumen de rutina
+- story: rutina (otra rutina)
   steps:
-    - intent: resumen_rutina
-    - action: action_resumen_rutina
+    - intent: otra_rutina
+    - action: rutina_form
+    - active_loop: rutina_form
+    - active_loop: null
+    - action: utter_resumen_rutina
+    - action: action_generar_rutina
 
-# ───────── 4) RESERVAS — FORMULARIO (happy paths) ─────────
-# Crear reserva con confirmación afirmativa
+# ───────── RUTINAS — CAMBIOS ESPECÍFICOS ─────────
+- story: rutina (cambiar nivel)
+  steps:
+    - intent: cambiar_nivel_rutina
+      entities:
+        - nivel: avanzado
+    - action: rutina_form
+    - active_loop: rutina_form
+    - slot_was_set:
+        - nivel: avanzado
+    - action: rutina_form
+    - active_loop: null
+    - action: utter_resumen_rutina
+    - action: action_generar_rutina
+
+- story: rutina (cambiar objetivo)
+  steps:
+    - intent: cambiar_objetivo_rutina
+      entities:
+        - objetivo: hipertrofia
+    - action: rutina_form
+    - active_loop: rutina_form
+    - slot_was_set:
+        - objetivo: hipertrofia
+    - action: rutina_form
+    - active_loop: null
+    - action: utter_resumen_rutina
+    - action: action_generar_rutina
+
+- story: rutina (cambiar musculo)
+  steps:
+    - intent: cambiar_musculo_rutina
+      entities:
+        - musculo: espalda
+    - action: rutina_form
+    - active_loop: rutina_form
+    - slot_was_set:
+        - musculo: espalda
+    - action: rutina_form
+    - active_loop: null
+    - action: utter_resumen_rutina
+    - action: action_generar_rutina
+
+# ───────── RUTINAS — FORMATO DE ENTREGA ─────────
+- story: rutina formato pantalla
+  steps:
+    - intent: formato_entrega_rutina
+      entities:
+        - formato: pantalla
+    - action: rutina_form
+    - active_loop: rutina_form
+    - slot_was_set:
+        - formato: pantalla
+    - action: rutina_form
+    - active_loop: null
+    - action: utter_resumen_rutina
+    - action: action_generar_rutina
+
+- story: rutina formato correo
+  steps:
+    - intent: formato_entrega_rutina
+      entities:
+        - formato: correo
+    - action: rutina_form
+    - active_loop: rutina_form
+    - slot_was_set:
+        - formato: correo
+    - action: rutina_form
+    - active_loop: null
+    - action: utter_resumen_rutina
+    - action: action_generar_rutina
+    # No agregar más pasos: el post se decide por REGLAS
+
+# ───────── PLANES DE SUSCRIPCIÓN ─────────
+- story: plan cambio
+  steps:
+    - intent: suscripcion_cambio_plan
+    - action: action_suscripcion_cambio_plan
+
+# ───────── RESERVAS ─────────
 - story: crear reserva (form + confirmar sí)
   steps:
     - intent: crear_reserva
     - action: reserva_form
     - active_loop: reserva_form
-    # clase
     - intent: informar
     - slot_was_set:
         - clase: spinning
     - action: reserva_form
-    # fecha
     - intent: informar
     - slot_was_set:
-        - fecha: 2025-09-20
+        - fecha: 2025-10-05
     - action: reserva_form
-    # hora
     - intent: informar
     - slot_was_set:
         - hora: "07:00"
@@ -134,69 +242,38 @@ stories:
     - action: action_crear_reserva
     - action: utter_reserva_confirmada
 
-# Crear reserva con negación tras confirmar
-- story: crear reserva (form + confirmar no)
+- story: cancelar reserva
   steps:
-    - intent: crear_reserva
-    - action: reserva_form
-    - active_loop: reserva_form
+    - intent: cancelar_reserva
+    - action: utter_ask_codigo_reserva
     - intent: informar
     - slot_was_set:
-        - clase: yoga
-    - action: reserva_form
-    - intent: informar
-    - slot_was_set:
-        - fecha: mañana
-    - action: reserva_form
-    - intent: informar
-    - slot_was_set:
-        - hora: "19:30"
-    - action: reserva_form
-    - active_loop: null
-    - action: utter_confirmar_reserva
-    - intent: negar
+        - codigo_reserva: ABC123
+    - action: action_cancelar_reserva
     - action: utter_reserva_cancelada
 
-# Consultar reserva con código provisto
-- story: consultar reserva (con código)
+- story: consultar reserva
   steps:
     - intent: consultar_reserva
     - action: utter_ask_codigo_reserva
     - intent: informar
-      entities:
-        - codigo_reserva: ABC123
     - slot_was_set:
         - codigo_reserva: ABC123
     - action: action_consultar_reserva
     - action: utter_reserva_estado
 
-# Cancelar reserva con código provisto
-- story: cancelar reserva (con código)
+# ───────── HIGIENE: marcar utter_ask_* y otras como "usadas" ─────────
+- story: higiene_prompts_rutina
   steps:
-    - intent: cancelar_reserva
-    - action: utter_ask_codigo_reserva
-    - intent: informar
-      entities:
-        - codigo_reserva: R-4589
-    - slot_was_set:
-        - codigo_reserva: R-4589
-    - action: action_cancelar_reserva
-    - action: utter_reserva_cancelada
+    - action: utter_ask_musculo
+    - action: utter_ask_nivel
+    - action: utter_ask_objetivo
+    - action: utter_ask_equipamiento
+    - action: utter_ask_ejercicios_num
+    - action: utter_ask_tiempo_disponible
+    - action: utter_ask_formato
 
-# ───────── 5) SUSCRIPCIONES (one-turn + acción) ─────────
-- story: cambio de plan
+- story: higiene_otras_utters
   steps:
-    - intent: suscripcion_cambio_plan
-    - action: action_suscripcion_cambio_plan
+    - action: utter_consejo_nutricion
     - action: utter_suscripcion_cambio_plan
-
-# ───────── 6) Handoff / OOB (one-turn) ─────────
-- story: contacto humano
-  steps:
-    - intent: contacto_humano
-    - action: utter_contacto_humano
-
-- story: fuera de alcance
-  steps:
-    - intent: fuera_de_alcance
-    - action: utter_fuera_de_alcance

@@ -12,7 +12,7 @@ intents:
   - ubicacion
   - consejo_nutricion
   - dolor_lesion
-  - sugerir_rutina          # se usará para activar rutina_form
+  - sugerir_rutina
   - resumen_rutina
   - crear_reserva
   - consultar_reserva
@@ -28,17 +28,31 @@ intents:
   - progreso_registrar
   - mostrar_rutina_pantalla
   - enviar_rutina_correo
+  # RUTINA
+  - solicitar_rutina
+  - cambiar_nivel_rutina
+  - cambiar_objetivo_rutina
+  - cambiar_musculo_rutina
+  - otra_rutina
+  - formato_entrega_rutina
 
 entities:
-  - objetivo        # hipertrofia|fuerza|bajar_grasa|resistencia
-  - musculo         # pecho|espalda|piernas|hombros|brazos|core|fullbody|cardio
-  - nivel           # principiante|intermedio|avanzado
-  - clase           # spinning|yoga|funcional|hiit|pilates|zumba
-  - fecha           # hoy|mañana|AAAA-MM-DD
-  - hora            # HH:MM
-  - dolor_zona      # lumbar|rodilla|hombro|codo|cuello
-  - contacto        # email o teléfono (si lo capturas luego)
+  - objetivo
+  - musculo
+  - nivel
+  - clase
+  - fecha
+  - hora
+  - dolor_zona
+  - contacto
   - codigo_reserva
+  # RUTINA
+  - equipamiento
+  - ejercicios_num
+  - tiempo_disponible
+  - formato
+  - email
+  - telefono
 
 slots:
   objetivo:
@@ -46,46 +60,127 @@ slots:
     mappings:
       - type: from_entity
         entity: objetivo
+
   musculo:
     type: text
     mappings:
       - type: from_entity
         entity: musculo
+
   nivel:
     type: text
     mappings:
       - type: from_entity
         entity: nivel
+
   clase:
     type: text
     mappings:
       - type: from_entity
         entity: clase
+
   fecha:
     type: text
     mappings:
       - type: from_entity
         entity: fecha
+
   hora:
     type: text
     mappings:
       - type: from_entity
         entity: hora
+
   dolor_zona:
     type: text
     mappings:
       - type: from_entity
         entity: dolor_zona
+
   codigo_reserva:
     type: text
     mappings:
       - type: from_entity
         entity: codigo_reserva
+      - type: from_text
+
   contacto:
     type: text
     mappings:
       - type: from_entity
         entity: contacto
+      - type: from_entity
+        entity: email
+      - type: from_entity
+        entity: telefono
+      - type: from_text
+
+  # RUTINA
+  equipamiento:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: equipamiento
+
+  ejercicios_num:
+    type: float
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: ejercicios_num
+
+  tiempo_disponible:
+    type: float
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: tiempo_disponible
+
+  formato:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: formato
+      - type: from_text
+
+  email:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: email
+      - type: from_text
+
+  telefono:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: telefono
+      - type: from_text
+
+  # SLOT CLAVE PARA DECISIÓN POST-GENERACIÓN
+  formato_entrega:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: formato
+      - type: from_intent
+        intent: mostrar_rutina_pantalla
+        value: "pantalla"
+      - type: from_intent
+        intent: enviar_rutina_correo
+        value: "correo"
+
+  # Opcional si muestras el estado textual de la consulta
+  estado_reserva:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
 
 forms:
   rutina_form:
@@ -93,7 +188,11 @@ forms:
       - musculo
       - nivel
       - objetivo
-  # (opcional) si quieres asistir reserva por formulario guiado
+      - equipamiento
+      - ejercicios_num
+      - tiempo_disponible
+      - formato
+
   reserva_form:
     required_slots:
       - clase
@@ -101,100 +200,113 @@ forms:
       - hora
 
 responses:
+  # BÁSICOS
   utter_saludar:
-    - text: "¡Hola! Soy tu asistente del gimnasio. ¿En qué te ayudo?"
+    - text: "¡Hola! Soy FITTER. ¿En qué te ayudo?"
+
   utter_despedir:
-    - text: "¡Gracias por escribirnos! Que tengas un gran entrenamiento."
-    - text: "¡Hasta luego!"
+    - text: "¡Hasta luego! Recuerda hidratarte."
+
   utter_agradecimiento:
-    - text: "Con gusto. ¿Algo más en que te apoye?"
-  utter_ayuda:
-    - text: "Puedo sugerirte rutinas, reservar clases, informar precios, horarios y más."
+    - text: "¡Con gusto! ¿Algo más?"
+
   utter_info_servicios:
-    - text: "Contamos con rutinas personalizadas, clases dirigidas, nutrición y seguimiento de progresos."
+    - text: "Puedo sugerirte rutinas, reservar clases, informar precios, horarios y más."
+
+  utter_horarios:
+    - text: "Lunes–Viernes 06:00–22:00, Sábado 08:00–20:00."
+
   utter_precios_planes:
     - text: "Planes Mensual, Trimestral y Anual. ¿Quieres que te comparta el detalle por WhatsApp o correo?"
-  utter_horarios:
-    - text: "Lunes a viernes 06:00–22:00 y fines de semana 08:00–18:00."
-  utter_ubicacion:
-    - text: "Av. Ejemplo 123, piso 2. ¿Necesitas el mapa?"
-  utter_contacto_humano:
-    - text: "Te conecto con un asesor. Déjame teléfono o correo y el mejor horario."
+
   utter_privacidad:
-    - text: "Tratamos tus datos según la normativa vigente. ¿Quieres ver el resumen de privacidad?"
+    - text: "Tus datos son gestionados conforme a nuestra política de privacidad."
 
-  # ÚNICA definición (con botones)
-  utter_rutina_sugerida:
-    - text: "Rutina generada para {musculo} (nivel {nivel}). ¿Cómo la prefieres?"
-      buttons:
-        - title: "Ver en pantalla"
-          payload: "/mostrar_rutina_pantalla"
-        - title: "Enviar por correo"
-          payload: "/enviar_rutina_correo"
+  utter_ubicacion:
+    - text: "Estamos en Av. Principal 123, piso 2."
 
-  # -----------------------
-  # PREGUNTAS (standard forms)
-  # -----------------------
-  utter_ask_objetivo:
-    - text: "¿Cuál es tu objetivo? (hipertrofia, fuerza, bajar grasa, resistencia)"
+  utter_consejo_nutricion:
+    - text: "Para un mejor rendimiento, prioriza alimentos reales y proteína adecuada. ¿Deseas una pauta?"
+
+  utter_dolor_lesion:
+    - text: "Si hay dolor agudo o inusual, detén el ejercicio y consulta a un profesional."
+
+  # PROMPTS DEL FORM RUTINA (convención oficial Rasa)
   utter_ask_musculo:
     - text: "¿Qué grupo quieres trabajar? (pecho, espalda, piernas, hombros, brazos, core, fullbody, cardio)"
+
   utter_ask_nivel:
     - text: "¿Cuál es tu nivel? (principiante, intermedio, avanzado)"
-  utter_ask_clase:
-    - text: "¿Qué clase deseas reservar? (spinning, yoga, funcional, hiit, pilates, zumba)"
-  utter_ask_fecha:
-    - text: "¿Para qué día? (hoy, mañana o AAAA-MM-DD)"
-  utter_ask_hora:
-    - text: "¿A qué hora? (ej. 07:00, 19:30)"
-  utter_ask_codigo_reserva:
-    - text: "Por favor, indícame el código/ID de tu reserva."
 
-  # Alias (compatibilidad con historias antiguas)
-  utter_pedir_objetivo:
+  utter_ask_objetivo:
     - text: "¿Cuál es tu objetivo? (hipertrofia, fuerza, bajar grasa, resistencia)"
-  utter_pedir_musculo:
-    - text: "¿Qué grupo quieres trabajar? (pecho, espalda, piernas, hombros, brazos, core o fullbody)"
-  utter_pedir_nivel:
-    - text: "¿Cuál es tu nivel? (principiante, intermedio, avanzado)"
-  utter_pedir_clase:
-    - text: "¿Qué clase deseas reservar? (spinning, yoga, funcional, hiit, pilates, zumba)"
-  utter_pedir_fecha:
-    - text: "¿Para qué día? (hoy, mañana o AAAA-MM-DD)"
-  utter_pedir_hora:
-    - text: "¿A qué hora? (ej. 07:00, 19:30)"
 
-  # Contacto/envío
-  utter_ask_contacto:
-    - text: "Indícame tu correo o teléfono para enviarte la rutina (ej. usuario@correo.com o +56 9 1234 5678)."
+  utter_ask_equipamiento:
+    - text: "¿Con qué equipamiento cuentas? (barra, mancuernas, polea, máquinas, peso corporal)"
+
+  utter_ask_ejercicios_num:
+    - text: "¿Cuántos ejercicios deseas por sesión? (6–8 recomendado)"
+
+  utter_ask_tiempo_disponible:
+    - text: "¿Tiempo disponible por sesión en minutos? (30/45/60)"
+
+  utter_ask_formato:
+    - text: "¿Cómo quieres ver la rutina? (pantalla/correo/whatsapp)"
+
+  # RESÚMENES / ENTREGA RUTINA
+  utter_resumen_rutina:
+    - text: |
+        Resumen ▶ {musculo} · {nivel} · objetivo {objetivo}
+        Ejercicios: {ejercicios_num} · Tiempo: {tiempo_disponible} min · Equipo: {equipamiento}
+        Generando plan con técnica y video…
+
+  utter_pedir_contacto:
+    - text: "¿Cuál es tu correo electrónico (o teléfono) para enviarte la rutina?"
+
   utter_envio_rutina_correo:
     - text: "Perfecto, enviaré la rutina a {contacto} (demo)."
 
-  # -----------------------
-  # SALIDAS
-  # -----------------------
-  utter_confirmar_reserva:
-    - text: "Reserva creada: {clase} el {fecha} a las {hora}."
-  utter_reserva_cancelada:
-    - text: "Listo, tu reserva fue cancelada."
-  utter_reserva_estado:
-    - text: "Tu próxima reserva es {clase} el {fecha} a las {hora}."
-  utter_fuera_de_alcance:
-    - text: "Esa consulta está fuera de alcance. ¿Deseas hablar con un asesor?"
-  utter_reserva_confirmada:
-    - text: "Reserva confirmada. Te enviaremos el comprobante a tu correo."
-  utter_dolor_lesion:
-    - text: "Detén el ejercicio. Si hay dolor agudo/inflamación, consulta a un profesional antes de continuar."
-  utter_nutricion_consejo:
-    - text: "Según tu objetivo y nivel, te recomiendo un plan equilibrado. ¿Prefieres pautas generales o un menú de 7 días?"
+  # BINARIOS / ESTADO
+  utter_affirm:
+    - text: "Perfecto."
+
+  utter_deny:
+    - text: "Entendido, no se realizará."
+
   utter_progreso_registrado:
-    - text: "Anotado. Registré tu progreso. ¿Agregar otra métrica (peso, RM, medidas)?"
+    - text: "Tu progreso ha sido registrado."
+
+  utter_fuera_de_alcance:
+    - text: "Lo siento, por ahora no puedo ayudar con esa solicitud. ¿Quieres intentar reformularla?"
+
+  utter_contacto_humano:
+    - text: "De acuerdo, derivaré tu caso a un agente humano. Déjame un medio de contacto."
+
+  # PLANES
   utter_suscripcion_alta:
     - text: "Para activar la suscripción, confirma plan y método de pago."
+
   utter_suscripcion_baja:
     - text: "Puedo gestionar tu baja o pausar la suscripción. ¿Cómo procedemos?"
+
   utter_suscripcion_cambio_plan:
     - text: "¿A qué plan te gustaría cambiarte? (Mensual, Trimestral, Anual)"
+
+  # RESERVAS (faltantes que generaban avisos)
+  utter_confirmar_reserva:
+    - text: "Confirma por favor: {clase} el {fecha} a las {hora}. ¿Procedo a crear la reserva?"
+
+  utter_reserva_confirmada:
+    - text: "Reserva confirmada ✅. {clase} el {fecha} a las {hora}. Código: {codigo_reserva}"
+
+  utter_reserva_cancelada:
+    - text: "Entendido. No crearé o cancelaré la reserva según tu solicitud."
+
+  utter_ask_codigo_reserva:
+    - text: "Indícame tu código de reserva para continuar."
+
+  utter_reserva_estado:
+    - text: "Estado de tu reserva {codigo_reserva}: {estado_reserva}"
 
 actions:
   - action_consejo_nutricion
@@ -204,7 +316,7 @@ actions:
   - action_cancelar_reserva
   - action_consultar_reserva
   - action_suscripcion_cambio_plan
-  # (no se declara validate_* a menos que lo implementes)
+  - action_generar_rutina
 
 session_config:
   session_expiration_time: 60

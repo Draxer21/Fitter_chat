@@ -1,323 +1,153 @@
 version: "3.1"
+
 nlu:
 
-# ─────────────────────────────
-# BÁSICOS
-# ─────────────────────────────
+# =========================
+# SALUDO / AYUDA / DESPEDIR
+# =========================
 - intent: saludar
   examples: |
     - hola
-    - buenos días
+    - holi
+    - buenas
+    - buen día
+    - hola fitter
+    - hola, ¿estás ahí?
+    - qué tal
     - buenas tardes
     - buenas noches
-    - qué tal
-    - hola, ¿cómo están?
-    - hola bot
-    - hey
-
-- intent: despedir
-  examples: |
-    - adiós
-    - hasta luego
-    - nos vemos
-    - chao
-    - gracias, eso sería todo
-    - me despido
-    - eso es todo, gracias
 
 - intent: ayuda
   examples: |
-    - ayuda
-    - necesito ayuda
     - ¿qué puedes hacer?
-    - ¿cómo funcionas?
-    - explícame tus opciones
-    - guía por favor
-    - muéstrame el menú
+    - ayuda
+    - ¿en qué me puedes ayudar?
+    - dime tus funciones
+    - ¿cómo funciona esto?
+    - necesito orientación
+    - explícame cómo usarte
+
+- intent: despedir
+  examples: |
+    - chao
+    - adiós
+    - nos vemos
+    - gracias, chau
+    - hasta luego
+    - hablamos
+    - me voy, gracias
 
 - intent: agradecimiento
   examples: |
     - gracias
     - muchas gracias
-    - te agradezco
-    - buen dato, gracias
-    - perfecto, gracias
-    - excelente, gracias
-
-- intent: afirmar
-  examples: |
-    - sí
-    - correcto
-    - de acuerdo
-    - así es
-    - claro que sí
-    - ok, confirma
-    - confirmado
-
-- intent: negar
-  examples: |
-    - no
-    - negativo
-    - no quiero
-    - prefiero que no
-    - mejor no
-    - cancela eso
-
-# ─────────────────────────────
-# INFORMACIÓN / FAQ
-# ─────────────────────────────
-- intent: info_servicios
-  examples: |
-    - ¿qué servicios ofrecen?
-    - cuéntame de sus servicios
-    - ¿qué incluyen las clases?
-    - información de servicios
-    - ¿qué actividades tienen?
-
-- intent: horarios
-  examples: |
-    - ¿cuáles son los horarios?
-    - horario de atención
-    - ¿a qué hora abren?
-    - ¿hasta qué hora están?
-    - ¿horarios de clases?
-
-- intent: precios_planes
-  examples: |
-    - precios y planes
-    - ¿cuánto cuesta el plan?
-    - tarifas mensuales
-    - ¿tienen plan anual?
-    - ¿qué precio tiene la suscripción?
-
-- intent: privacidad
-  examples: |
-    - política de privacidad
-    - cómo manejan mis datos
-    - protección de datos personales
-    - privacidad de la información
-    - ¿qué hacen con mis datos?
-
-- intent: ubicacion
-  examples: |
-    - ubicación
-    - ¿dónde están ubicados?
-    - dirección
-    - ¿cómo llego al gimnasio?
-    - sucursal más cercana
-
-# ─────────────────────────────
-# SEGURIDAD / NUTRICIÓN
-# ─────────────────────────────
-- intent: dolor_lesion
-  examples: |
-    - tengo dolor en la espalda
-    - me lesioné la rodilla
-    - me duele el hombro
-    - siento molestia al entrenar
-    - tengo una lesión
-
-- intent: consejo_nutricion
-  examples: |
-    - dame un consejo de nutrición
-    - ¿qué debo comer después de entrenar?
-    - recomendaciones de dieta
-    - tips de alimentación
-    - sugerencias de nutrición para ganar masa
-    - ¿cómo mejorar mi alimentación?
-
-# ─────────────────────────────
-# RUTINAS (incluye CARDIO)
-# ─────────────────────────────
-- intent: sugerir_rutina
-  examples: |
-    - sugiéreme una rutina
-    - quiero una rutina de entrenamiento
-    - dame un plan de ejercicios
-    - recomendar rutina según mi objetivo
-    - necesito una rutina para principiantes
-    - quiero hacer [cardio](musculo)
-    - rutina de [cardio](musculo) para [principiante](nivel)
-    - una rutina [fullbody](musculo) nivel [intermedio](nivel)
-    - rutina de [pecho](musculo)
-    - rutina de [piernas](musculo) para [avanzado](nivel)
-    - [espalda](musculo) para [principiante](nivel)
-    - [hombros](musculo) nivel [intermedio](nivel)
-    - rutina para [brazos](musculo)
-    - rutina para [core](musculo)
-
-- intent: resumen_rutina
-  examples: |
-    - ver mi rutina
-    - mostrar rutina completa
-    - resumen de mi plan
-    - ¿cuál es mi rutina?
-    - dame el resumen de la rutina
-
-# ─────────────────────────────
-# RESERVAS
-# ─────────────────────────────
-- intent: crear_reserva
-  examples: |
-    - quiero reservar una clase
-    - necesito hacer una reserva
-    - agendar una hora
-    - reservar entrenamiento
-    - quiero agendar para [mañana](fecha)
-    - reservar [spinning](clase) el [2025-09-20](fecha) a las [07:00](hora)
-
-- intent: consultar_reserva
-  examples: |
-    - quiero consultar mi reserva
-    - dime el estado de mi reserva
-    - revisar mi reserva
-    - ¿tengo alguna reserva?
-    - comprobar si tengo reserva activa
-
-- intent: cancelar_reserva
-  examples: |
-    - quiero cancelar mi reserva
-    - necesito anular una reserva
-    - cancelar clase
-    - eliminar mi reserva
-    - cancelar la hora agendada
-
-# ─────────────────────────────
-# SUSCRIPCIONES
-# ─────────────────────────────
-- intent: suscripcion_cambio_plan
-  examples: |
-    - quiero cambiar mi plan
-    - deseo pasar al plan premium
-    - ¿puedo modificar mi suscripción?
-    - cambiar de mensual a anual
-    - bajar de plan
-    - upgrade de plan
-
-- intent: suscripcion_alta
-  examples: |
-    - quiero suscribirme
-    - dar de alta mi suscripción
-    - activar plan
-    - contratar un plan
-
-- intent: suscripcion_baja
-  examples: |
-    - quiero darme de baja
-    - cancelar suscripción
-    - terminar mi suscripción
-    - baja del plan
-
-# ─────────────────────────────
-# CONTACTO HUMANO / OOB
-# ─────────────────────────────
-- intent: contacto_humano
-  examples: |
-    - quiero hablar con un humano
-    - pásame con un agente
-    - soporte humano por favor
-    - atención al cliente
+    - te lo agradezco
+    - bacán, gracias
+    - se agradece
+    - buenísimo, gracias
 
 - intent: fuera_de_alcance
   examples: |
-    - esto no tiene que ver
-    - no entiendo nada
-    - pregunta fuera de tema
-    - no encuentro lo que busco
+    - no entendí
+    - eso no tiene sentido
+    - no es lo que pedí
+    - cambia de tema
+    - no me sirve eso
 
-# ─────────────────────────────
-# PROGRESO (opcional)
-# ─────────────────────────────
-- intent: progreso_registrar
-  examples: |
-    - registrar mi progreso
-    - anotar peso levantado
-    - guardar mis avances
-    - registrar mis repeticiones de hoy
-
-# ─────────────────────────────
-# INTENT COMODÍN PARA SLOTS
-# ─────────────────────────────
+# =========================
+# INFORMAR (genérico)
+# =========================
 - intent: informar
   examples: |
-    - [pecho](musculo)
-    - [espalda](musculo)
-    - [piernas](musculo)
-    - [hombros](musculo)
-    - [brazos](musculo)
-    - [core](musculo)
-    - [fullbody](musculo)
-    - [cardio](musculo)
-    - [principiante](nivel)
-    - [intermedio](nivel)
-    - [avanzado](nivel)
-    - [hipertrofia](objetivo)
-    - [fuerza](objetivo)
-    - [resistencia](objetivo)
-    - [bajar grasa](objetivo)
-    - [bajar de peso](objetivo)
-    - [mañana](fecha)
-    - [hoy](fecha)
-    - [2025-09-20](fecha)
-    - [15 de septiembre](fecha)
-    - [19:00](hora)
-    - [07:00](hora)
-    - [7 pm](hora)
-    - [08:30](hora)
-    - [18:15](hora)
-    - [spinning](clase)
-    - [yoga](clase)
-    - [funcional](clase)
-    - [hiit](clase)
-    - [pilates](clase)
-    - [zumba](clase)
-    - mi código es [ABC123](codigo_reserva)
-    - el código es [R-4589](codigo_reserva)
+    - mi correo es [usuario@correo.com](email)
+    - envíalo al [+56 9 1234 5678](telefono)
+    - utiliza [pantalla](formato)
+    - usa [correo](formato)
+    - tengo [mancuernas](equipamiento)
+    - que sea en [45](tiempo_disponible) minutos
+    - quiero [7](ejercicios_num) ejercicios
+    - mi teléfono es [+56912345678](telefono)
+    - envíalo al [+56 9 1111 2222](telefono)
+    - código [AB1234](codigo_reserva)
+    - el código de reserva es [ZX-90-FF](codigo_reserva)
+    - usa el código [R123456](codigo_reserva)
+    - envíalo a [mi@mail.cl](email) y avísame por [pantalla](formato)
+    - [correo](formato), mi mail es [demo@gmail.com](email)
+    - [pantalla](formato) por ahora
+    - mi contacto: [+56 9 2222 3333](telefono)
+    - no tengo equipo, es [nada](equipamiento)
+    - sin equipamiento, solo [cuerpo libre](equipamiento)
+    - hazlo con [peso corporal](equipamiento)
+    - quiero [seis](ejercicios_num) ejercicios
+    - tal vez [ocho](ejercicios_num)
 
-# ─────────────────────────────
-# SINÓNIMOS (normalización de valores)
-# ─────────────────────────────
-- synonym: bajar_grasa
+# =========================
+# RUTINAS — INTENCIÓN PRINCIPAL
+# =========================
+- intent: solicitar_rutina
   examples: |
-    - bajar de peso
-    - perder grasa
-    - definición
-- synonym: core
-  examples: |
-    - abdomen
-    - abdominales
-- synonym: brazos
-  examples: |
-    - bíceps
-    - triceps
-    - tríceps
-- synonym: piernas
-  examples: |
-    - tren inferior
-- synonym: pecho
-  examples: |
-    - pectorales
-- synonym: cardio
-  examples: |
-    - aeróbico
-    - aeróbicos
-    - cardio suave
-    - trabajo cardiovascular
-- synonym: principiante
-  examples: |
-    - novato
-    - beginner
-- synonym: intermedio
-  examples: |
-    - medio
-- synonym: avanzado
-  examples: |
-    - pro
-    - experto
+    - quiero una rutina
+    - necesito una rutina
+    - arma una rutina por favor
+    - genera una rutina de [pecho](musculo)
+    - rutina para [brazos](musculo)
+    - rutina fullbody
+    - quiero trabajar [pecho](musculo) y [brazos](musculo)
+    - rutina [intermedio](nivel) para [fuerza](objetivo)
+    - una rutina con [mancuernas](equipamiento)
+    - rutina de [piernas](musculo) en [60](tiempo_disponible) min
+    - dame una rutina para [hipertrofia](objetivo)
+    - arma una rutina de [espalda](musculo) con [barra](equipamiento)
+    - necesito un plan de ejercicios
+    - plan para [resistencia](objetivo)
 
-# ─────────────────────────────
-# LOOKUP TABLES (reforzar extracción)
-# ─────────────────────────────
+- intent: otra_rutina
+  examples: |
+    - otra rutina
+    - dame otra
+    - sugiere otra
+    - cambia los ejercicios
+    - muéstrame una distinta
+    - otra opción
+    - inténtalo de nuevo
+
+# =========================
+# RUTINAS — CAMBIOS ESPECÍFICOS
+# =========================
+- intent: cambiar_nivel_rutina
+  examples: |
+    - cambia el nivel a [intermedio](nivel)
+    - pon el nivel [avanzado](nivel)
+    - bájalo a [principiante](nivel)
+    - quiero nivel [intermedio](nivel) para la rutina
+
+- intent: cambiar_objetivo_rutina
+  examples: |
+    - cambia el objetivo a [fuerza](objetivo)
+    - quiero [hipertrofia](objetivo)
+    - objetivo [bajar_grasa](objetivo)
+    - ahora [resistencia](objetivo)
+
+- intent: cambiar_musculo_rutina
+  examples: |
+    - ahora [pecho](musculo) y [brazos](musculo)
+    - mejor [espalda](musculo)
+    - quiero [piernas](musculo)
+    - cambia a [fullbody](musculo)
+
+- intent: formato_entrega_rutina
+  examples: |
+    - muéstrala en [pantalla](formato)
+    - envíala por [correo](formato)
+    - envíala por [whatsapp](formato)
+    - [pantalla](formato) por favor
+    - mándala por [mail](formato)
+    - envíala al [email](formato)
+    - mejor por [wsp](formato)
+
+# =========================
+# ENTIDADES — EXPRESIONES
+# =========================
 - lookup: musculo
   examples: |
     - pecho
@@ -328,55 +158,276 @@ nlu:
     - core
     - fullbody
     - cardio
+
 - lookup: nivel
   examples: |
     - principiante
     - intermedio
     - avanzado
-- lookup: clase
-  examples: |
-    - spinning
-    - yoga
-    - funcional
-    - hiit
-    - pilates
-    - zumba
 
-# Opciones post-sugerencia
-- intent: mostrar_rutina_pantalla
+- lookup: objetivo
   examples: |
-    - pantalla
-    - ver en pantalla
-    - muéstrala aquí
-    - verla acá
-    - ver ahora
+    - fuerza
+    - hipertrofia
+    - bajar_grasa
+    - resistencia
+
+- lookup: equipamiento
+  examples: |
+    - barra
+    - mancuernas
+    - polea
+    - máquinas
+    - maquinas
+    - peso corporal
+    - peso_corporal
+    - nada
+    - sin equipo
+    - sin equipamiento
+    - cuerpo libre
+
+# =========================
+# SINÓNIMOS (normalización)
+# =========================
+- synonym: correo
+  examples: |
+    - mail
+    - email
+    - e-mail
+
+- synonym: pantalla
+  examples: |
+    - aqui
+    - aquí
+    - en la app
+    - acá
+    - aca
+
+- synonym: whatsapp
+  examples: |
+    - wsp
+    - wasap
+    - wtsap
+
+- synonym: peso corporal
+  examples: |
+    - nada
+    - sin equipo
+    - sin equipamiento
+    - cuerpo libre
+    - peso_corporal
+
+# =========================
+# SINÓNIMOS (normalización) — Números en palabra → dígitos
+# =========================
+- synonym: "6"
+  examples: |
+    - seis
+
+- synonym: "7"
+  examples: |
+    - siete
+
+- synonym: "8"
+  examples: |
+    - ocho
+
+
+# =========================
+# REGEX / PATRONES
+# =========================
+- regex: ejercicios_num
+  examples: |
+    - ^(?:6|7|8|seis|siete|ocho)$
+
+- regex: tiempo_disponible
+  examples: |
+    - ^(30|45|60)$
+
+- regex: email
+  examples: |
+    - [a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}
+
+- regex: telefono
+  examples: |
+    - ^(?:\+?56\s?9\s?\d{4}\s?\d{4}|\+?\d[\d\s\-]{7,})$
+
+# =========================
+# RESPUESTAS RÁPIDAS DE RUTINAS
+# =========================
+- intent: sugerir_rutina
+  examples: |
+    - dame una idea de rutina
+    - sugiere ejercicios para [brazos](musculo)
+    - qué harías para [fuerza](objetivo)
+    - un ejemplo de rutina [intermedio](nivel)
+    - una sugerencia rápida fullbody
+    - idea rápida para hoy
+
+# =========================
+# PLANES DE SUSCRIPCIÓN (SEPARADO)
+# =========================
+- intent: suscripcion_cambio_plan
+  examples: |
+    - quiero cambiarme al plan [Anual](plan)
+    - cambiar de plan a [Mensual](plan)
+    - pásame a [Trimestral](plan)
+    - cambiar plan
+
+- intent: suscripcion_alta
+  examples: |
+    - quiero suscribirme
+    - darme de alta
+    - activar suscripción
+    - empezar la suscripción
+
+- intent: suscripcion_baja
+  examples: |
+    - darme de baja
+    - cancelar suscripción
+    - terminar plan
+    - anular la suscripción
+
+# =========================
+# RESERVAS
+# =========================
+- intent: crear_reserva
+  examples: |
+    - quiero reservar [yoga](clase) para [mañana](fecha) a las [18:00](hora)
+    - reserva [spinning](clase) el [2025-10-05](fecha) a las [19:30](hora)
+    - agenda [hiit](clase) hoy a las [20:00](hora)
+
+- intent: cancelar_reserva
+  examples: |
+    - cancela mi reserva
+    - cancelar la reserva de [yoga](clase) del [2025-10-05](fecha) a las [19:30](hora)
+    - anula la clase
+    - quiero cancelar mi reserva
+
+- intent: consultar_reserva
+  examples: |
+    - ver mi reserva
+    - consultar reserva
+    - cuál es mi próxima reserva
+    - estado de mi reserva
+
+# =========================
+# INFORMACIÓN DEL GIMNASIO
+# =========================
+- intent: info_servicios
+  examples: |
+    - ¿qué servicios tienen?
+    - servicios disponibles
+    - ¿qué ofrece el gimnasio?
+    - qué cosas hacen
+
+- intent: horarios
+  examples: |
+    - ¿cuáles son los horarios?
+    - a qué hora abren
+    - horario de atención
+    - cuándo atienden
+
+- intent: precios_planes
+  examples: |
+    - precios de los planes
+    - cuánto cuesta el plan mensual
+    - valores de los planes
+    - tarifas de los planes
+
+- intent: ubicacion
+  examples: |
+    - dirección
+    - dónde están ubicados
+    - ubicación del gimnasio
+    - en qué calle están
+
+- intent: privacidad
+  examples: |
+    - política de privacidad
+    - cómo usan mis datos
+    - privacidad de la información
+    - protección de datos
+
+# =========================
+# NUTRICIÓN
+# =========================
+- intent: consejo_nutricion
+  examples: |
+    - dame un consejo de nutrición
+    - nutrición para [hipertrofia](objetivo)
+    - qué como para [bajar_grasa](objetivo)
+    - recomendaciones de alimentación
+    - ideas de comidas para [fuerza](objetivo)
+
+# =========================
+# DOLOR / LESIÓN (PANTALLAJE)
+# =========================
+- intent: dolor_lesion
+  examples: |
+    - me duele la [espalda](dolor_zona)
+    - tengo molestia en la [rodilla](dolor_zona)
+    - dolor de [hombro](dolor_zona)
+    - me lesioné el [codo](dolor_zona)
+    - molestia en el [cuello](dolor_zona)
+
+# =========================
+# BINARIOS / CONTACTO / ENTREGAS / PROGRESO / RESUMEN
+# =========================
+- intent: afirmar
+  examples: |
+    - sí
+    - claro que sí
+    - correcto
+    - afirmativo
+    - dale
+    - de una
+
+- intent: negar
+  examples: |
+    - no
+    - para nada
+    - negativo
+    - no quiero
+    - mejor no
+    - nop
+
+- intent: contacto_humano
+  examples: |
+    - quiero hablar con una persona
+    - necesito soporte humano
+    - pásame con un agente
+    - quiero atención humana
+    - me atiende alguien?
 
 - intent: enviar_rutina_correo
   examples: |
-    - correo
-    - por correo
-    - envíala por email
-    - mandamela al correo
-    - envíame la rutina al mail
-    - quiero que la envíes por correo
+    - mándame la rutina por correo
+    - envía la rutina a mi email
+    - quiero la rutina en mi correo
+    - envíamela por mail
+    - envíala a mi correo electrónico
 
-# Captura de contacto (email/teléfono) vía intent comodín
-- intent: informar
+- intent: mostrar_rutina_pantalla
   examples: |
-    - mi correo es [usuario@correo.com](contacto)
-    - te dejo mi email [alguien.test+fit@dominio.cl](contacto)
-    - envíala a [persona99@gmail.com](contacto)
-    - mi número es [+56 9 1234 5678](contacto)
-    - [+56 912345678](contacto)
+    - muéstrame la rutina en pantalla
+    - quiero verla aquí mismo
+    - ver rutina ahora
+    - mostrar rutina en la app
+    - ver la rutina por pantalla
 
-
-# ─────────────────────────────
-# REGEX (formato fecha/hora)
-# ─────────────────────────────
-- regex: fecha
+- intent: progreso_registrar
   examples: |
-    - \d{4}-\d{2}-\d{2}
+    - quiero registrar mi progreso
+    - registrar mis avances
+    - anotar mis pesos y repeticiones
+    - guardar progreso de hoy
+    - actualizar mi progreso
 
-- regex: hora
+- intent: resumen_rutina
   examples: |
-    - ([01]\d|2[0-3]):[0-5]\d
+    - muéstrame el resumen de la rutina
+    - ver resumen de ejercicios
+    - dame un resumen de la rutina
+    - quiero el resumen de hoy
+    - dame el resumen

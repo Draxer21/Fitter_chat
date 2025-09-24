@@ -1,20 +1,76 @@
-.App {
-  text-align: center;
+/* =========
+   Setup & tokens
+   ========= */
+:root {
+  --bg: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --primary: #10b981;                /* verde */
+  --primary-press: #0ea371;
+  --user-bubble: #dcf8c6;            /* estilo WhatsApp */
+  --bot-bubble: #f3f4f6;
+  --link: #3b82f6;
+
+  --radius: 12px;
+  --radius-bubble: 16px;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.06);
+  --container-w: 900px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Dark theme auto si el SO lo pide */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b1020;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --border: #1f2937;
+    --primary: #34d399;
+    --primary-press: #22c17e;
+    --user-bubble: #1f2937;
+    --bot-bubble: #111827;
+    --link: #60a5fa;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.3);
+  }
 }
+
+/* =========
+   Base
+   ========= */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body, #root { height: 100%; }
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =========
+   App shell (sigues pudiendo usar el logo y su animación)
+   ========= */
+.App { text-align: center; }
+
+.App-logo { height: 40vmin; pointer-events: none; }
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
     animation: App-logo-spin infinite 20s linear;
   }
 }
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
 
 .App-header {
-  background-color: #282c34;
+  background-color: #282c34; /* se mantiene tu header de CRA */
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -24,89 +80,160 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
-}
+/* Enlaces por si necesitas */
+.App-link { color: var(--link); }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-.user {
-  background-color: #d1ffd1;
-  border-radius: 8px;
-  padding: 8px;
-  margin: 4px;
-  text-align: right;
-  align-self: flex-end; /* usuario a la derecha */
-  max-width: 60%;
-}
-
-.bot {
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  padding: 8px;
-  margin: 4px;
-  text-align: left;
-  align-self: flex-start; /* bot a la izquierda */
-  max-width: 60%;
-}
+/* =========
+   Chat container
+   ========= */
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 80vh;
-  width: 70%;
-  margin: auto;
-  border: 1px solid #ccc;
-  border-radius: 10px;
+  /* svh evita saltos en móvil por barra del navegador */
+  min-height: 70svh;
+  height: 80svh;
+  width: min(90%, var(--container-w));
+  margin: 24px auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   padding: 10px;
-  background: #fff;
+  background: var(--bg);
+  box-shadow: var(--shadow);
+  overflow: hidden;
 }
 
+/* Mejor en mobile: full width/alto */
+@media (max-width: 640px) {
+  .chat-container {
+    width: 100%;
+    height: 90svh;
+    margin: 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+}
+
+/* =========
+   Messages
+   ========= */
 .messages {
   flex: 1;
   display: flex;
   flex-direction: column;
+  gap: 8px;
   overflow-y: auto;
-  padding: 10px;
+  padding: 12px;
+  overscroll-behavior: contain;
+  /* deja espacio por si aparece teclado móvil o el input crece */
+  padding-bottom: max(12px, env(safe-area-inset-bottom));
+  scroll-behavior: smooth;
 }
 
+/* Scrollbar (no rompe otros navegadores) */
+.messages::-webkit-scrollbar { width: 10px; }
+.messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
+.messages { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+
+/* =========
+   Burbujas
+   ========= */
+.message {
+  max-width: 70%;
+  width: fit-content;
+  padding: 10px 12px;
+  border-radius: var(--radius-bubble);
+  word-break: break-word;
+  white-space: pre-wrap;  /* respeta saltos y permite wrap */
+  line-height: 1.35;
+}
+
+/* Usuario a la derecha */
+.user {
+  align-self: flex-end;
+  background-color: var(--user-bubble);
+  border-radius: var(--radius-bubble) var(--radius-bubble) 0 var(--radius-bubble);
+}
+
+/* Bot a la izquierda */
+.bot {
+  align-self: flex-start;
+  background-color: var(--bot-bubble);
+  border-radius: var(--radius-bubble) var(--radius-bubble) var(--radius-bubble) 0;
+}
+
+/* Asegura separación vertical coherente */
+.message + .message { margin-top: 4px; }
+
+/* =========
+   Input area
+   ========= */
 .input-container {
   display: flex;
   gap: 8px;
   margin-top: 10px;
+  padding: 8px;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
 }
 
+.input-container input[type="text"],
+.input-container input[type="search"],
 .input-container input {
   flex: 1;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
 }
 
+.input-container input::placeholder { color: var(--muted); }
+
+/* Estados de enfoque accesibles */
+.input-container input:focus-visible {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--primary) 25%, transparent);
+}
+
+/* Botón */
 .input-container button {
   padding: 10px 16px;
   border: none;
-  border-radius: 8px;
-  background-color: #4CAF50;
-  color: white;
+  border-radius: 10px;
+  background-color: var(--primary);
+  color: #ffffff;
   cursor: pointer;
+  transition: transform .06s ease, box-shadow .12s ease, background-color .2s ease;
+  box-shadow: var(--shadow);
 }
 
-.input-container button:hover {
-  background-color: #45a049;
-}
-.user {
-  background-color: #dcf8c6;
-  border-radius: 15px 15px 0 15px;
+.input-container button:hover { background-color: var(--primary-press); }
+
+.input-container button:active { transform: translateY(1px) scale(0.99); }
+
+.input-container button:focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--primary) 60%, white);
+  outline-offset: 2px;
 }
 
-.bot {
-  background-color: #ececec;
-  border-radius: 15px 15px 15px 0;
+.input-container button:disabled {
+  opacity: .6;
+  cursor: not-allowed;
 }
 
+/* =========
+   Utilidades
+   ========= */
+.hidden { display: none !important; }
+.center { display: grid; place-items: center; }
+
+/* Opcional: mensaje de sistema/errores */
+.system {
+  align-self: center;
+  background: transparent;
+  color: var(--muted);
+  font-size: 0.9rem;
+  padding: 4px 8px;
+}
