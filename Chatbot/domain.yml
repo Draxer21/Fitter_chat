@@ -124,18 +124,20 @@ slots:
         entity: equipamiento
 
   ejercicios_num:
-    type: float
+    type: text   # ← cambiado de float a text para evitar problemas con synonyms
     influence_conversation: true
     mappings:
       - type: from_entity
         entity: ejercicios_num
+      - type: from_text
 
   tiempo_disponible:
-    type: float
+    type: text   # ← cambiado de float a text para evitar problemas con synonyms
     influence_conversation: true
     mappings:
       - type: from_entity
         entity: tiempo_disponible
+      - type: from_text
 
   formato:
     type: text
@@ -231,7 +233,7 @@ responses:
   utter_dolor_lesion:
     - text: "Si hay dolor agudo o inusual, detén el ejercicio y consulta a un profesional."
 
-  # PROMPTS DEL FORM RUTINA (convención oficial Rasa)
+  # PROMPTS DEL FORM RUTINA
   utter_ask_musculo:
     - text: "¿Qué grupo quieres trabajar? (pecho, espalda, piernas, hombros, brazos, core, fullbody, cardio)"
 
@@ -292,7 +294,7 @@ responses:
   utter_suscripcion_cambio_plan:
     - text: "¿A qué plan te gustaría cambiarte? (Mensual, Trimestral, Anual)"
 
-  # RESERVAS (faltantes que generaban avisos)
+  # RESERVAS
   utter_confirmar_reserva:
     - text: "Confirma por favor: {clase} el {fecha} a las {hora}. ¿Procedo a crear la reserva?"
 

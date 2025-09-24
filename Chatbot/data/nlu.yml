@@ -223,15 +223,38 @@ nlu:
 - synonym: "6"
   examples: |
     - seis
+    - Seis
+    - 6
 
 - synonym: "7"
   examples: |
     - siete
+    - Siete
+    - 7
 
 - synonym: "8"
   examples: |
     - ocho
+    - Ocho
+    - 8
 
+- synonym: "30"
+  examples: |
+    - treinta
+    - Treinta
+    - 30
+
+- synonym: "45"
+  examples: |
+    - cuarenta y cinco
+    - Cuarenta y cinco
+    - 45
+
+- synonym: "60"
+  examples: |
+    - sesenta
+    - Sesenta
+    - 60
 
 # =========================
 # REGEX / PATRONES
@@ -265,7 +288,7 @@ nlu:
     - idea rápida para hoy
 
 # =========================
-# PLANES DE SUSCRIPCIÓN (SEPARADO)
+# PLANES DE SUSCRIPCIÓN
 # =========================
 - intent: suscripcion_cambio_plan
   examples: |
@@ -361,7 +384,7 @@ nlu:
     - ideas de comidas para [fuerza](objetivo)
 
 # =========================
-# DOLOR / LESIÓN (PANTALLAJE)
+# DOLOR / LESIÓN
 # =========================
 - intent: dolor_lesion
   examples: |
