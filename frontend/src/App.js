@@ -1,10 +1,18 @@
 // src/App.js
 import { Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import "./styles/legacy/login/style_index.css";
+import "./styles/legacy/producto/style_index.css";
+
 
 import RutinaPage from "./pages/RutinaPage";
-// ⬇️ Usa el widget flotante (no la página Chatbot)
 import ChatWidget from "./ChatWidget";
+import Navbar from "./components/Navbar";
+import TiendaPage from "./pages/TiendaPage";
+import CarritoPage from "./pages/CarritoPage";
+import BoletaPage from "./pages/BoletaPage";
+import LoginPage from "./pages/LoginPage";
+import TablaProductos from "./pages/TablaProductos";
 
 // Scroll al top en cada navegación
 function ScrollToTop() {

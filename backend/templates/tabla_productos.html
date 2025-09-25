@@ -1,0 +1,148 @@
+ {% load static %}
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fitter - Gestión de Inventario</title>
+    <!-- BOOTSTRAP CSS-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- JQUERY -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <!-- CSS DEL TABLA_PRODUCTOS-->
+    <link rel="stylesheet" href="{% static 'tabla_productos/style_tabla_productos.css' %}">
+    <!-- FONT AWESOME -->
+    <script src="https://kit.fontawesome.com/b7c3ab0519.js" crossorigin="anonymous"></script>
+    <!-- CSS DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+    <!-- JS DataTables con soporte para exportación a PDF, Excel, etc. -->
+    <script
+        src="https://cdn.datatables.net/v/dt/jszip-3.10.1/dt-2.1.8/b-3.1.2/b-colvis-3.1.2/b-html5-3.1.2/b-print-3.1.2/datatables.min.js"></script>
+
+    <!-- PDFMake (necesario para la exportación a PDF) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+    {% include 'nav.html' %}
+    <main class="flex-grow-1">
+        <h1>Gestión de Inventario</h1>
+        <div id="contenedor_tabla" class="container d-flex justify-content-center">
+            <div class="table-responsive">
+                <table id="productosTable" class="table table-dark table-striped table-bordered ">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Precio</th>
+                            <th>Descripción</th>
+                            <th>Categoría</th>
+                            <th>Stock</th>
+                            <th>Imagen</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for productos in productos %}
+                        <tr>
+                            <td>{{ productos.id }}</td>
+                            <td>{{ productos.nombre }}</td>
+                            <td>{{ productos.precio }}</td>
+                            <td>{{ productos.descripcion }}</td>
+                            <td>{{ productos.categoria }}</td>
+                            <td>{{ productos.stock }}</td>
+                            <td> <img src="" alt="">{{ productos.imagen }}</td>
+                            <td>
+                                <div id="botones_acciones" class="container d-flex justify-content-center p-0">
+                                    <a
+                                                href="/actualizarProducto/{{ productos.id }}"><button type="button" class="btn btn-warning me-3"><i class="fa-solid fa-pencil"
+                                                style="color: #ffffff;"></i></button></a>
+                                                <a
+                                                href="/eliminarProducto/{{ productos.id }}"><button type="button" class="btn btn-danger"><i class="fa-solid fa-trash"
+                                                style="color: #ffffff;"></i></button></a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                $('#productosTable').DataTable({
+                    responsive: true,
+                    scrollX: true,
+                    lengthMenu: [
+                        [5, 10, 15, 20],
+                        [5, 10, 15, 20]
+                    ],
+                    language: {
+                        url: 'https://cdn.datatables.net/plug-ins/1.11.5/i18n/es-CL.json'  // Usamos el idioma Español Chile
+                    },
+                    buttons: [
+                        {
+                            extend: 'excelHtml5',
+                            text: '<i class="fas fa-file-excel"></i> Excel',
+                            className: 'btn btn-success',
+                            exportOptions: {
+                                columns: ':visible:not(:last-child):not(:nth-child(7))' // Excluir la última columna (Acciones) y la de Imagen
+                            }
+                        },
+                        {
+                            extend: 'pdfHtml5',
+                            text: '<i class="fas fa-file-pdf"></i> PDF',
+                            className: 'btn btn-danger',
+                            orientation: 'landscape',
+                            exportOptions: {
+                                columns: ':visible:not(:last-child):not(:nth-child(7))' // Excluir la última columna (Acciones) y la de Imagen
+                            },
+                            customize: function (doc) {
+                                // Ajusta los anchos de las columnas para el PDF, excluyendo la columna de Imagen y la de Acciones
+                                doc.content[1].table.widths = ['10%', '20%', '15%', '25%', '15%', '15%']; // Ajuste de anchos según el contenido
+
+                                // Aplicar estilo a las celdas
+                                doc.content[1].table.body.forEach(function (row, i) {
+                                    row.forEach(function (cell) {
+                                        cell.alignment = 'center'; // Centra el contenido
+                                    });
+
+                                    // Estilos específicos para la columna Descripción
+                                    if (i !== 0) {
+                                        // row[3].fillColor = '#f3f3f3';
+                                        row[3].fontSize = 10;
+                                        row[3].noWrap = false;
+                                    }
+
+                                    // Estilos específicos para la columna Nombre
+                                    if (i !== 0) {
+                                        row[1].fontSize = 10;
+                                        row[1].noWrap = false;
+                                    }
+                                });
+                            }
+                        },
+                    ],
+                    layout: {
+                        topStart: 'buttons',
+                        top1Start: 'pageLength'
+                    }
+                });
+            });
+        </script>
+
+
+    </main>
+    <!-- BOOTSTRAP JS (con Bundle para dependencias de Popper.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    {% include 'footer.html' %}
+</body>
+
+</html>

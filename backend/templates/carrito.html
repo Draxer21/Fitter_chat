@@ -1,0 +1,103 @@
+<div class="container" style="max-width: 1200px; margin: 0 auto;">
+  <div class="alert" role="alert" style="background-color: rgba(0, 0, 0, 0.904);">
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th scope="row" colspan="5" class="text-center">CARRITO</th>
+          </tr>
+          <tr>
+            <th scope="col">NOMBRE</th>
+            <th scope="col">CANTIDAD</th>
+            <th scope="col">PRECIO UNITARIO</th>
+            <th scope="col">PRECIO TOTAL DEL PRODUCTO</th>
+            <th scope="col">ELIMINAR/AGREGAR</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if request.session.carrito.items %}
+          {% for key, value in request.session.carrito.items %}
+          <tr>
+            <td>{{value.nombre}}</td>
+            <td>{{value.cantidad}}</td>
+            <td>$ {{value.precio_unitario}}</td>
+            <td>$ {{value.acumulado}}</td>
+            <td>
+              <a href="{% url 'Sub' value.producto_id %}" class="badge btn btn-dark badge-dark">-</a>
+              <a href="{% url 'Add' value.producto_id %}" class="badge btn btn-dark badge-dark">+</a>
+            </td>
+          </tr>
+          {% endfor %}
+          {% else %}
+          <tr>
+            <td colspan="5">
+              <div class="alert alert-danger text-center"> Sin Productos </div>
+            </td>
+          </tr>
+          {% endif %}
+          <tr>
+            <th scope="row">Total:</th>
+            <td colspan="4">$ {{total_carrito}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <hr>
+  </div>
+  <div class="row text-center">
+    <div class="col-6">
+      <a href="{% url 'CLS' %}" class="btn btn-danger">Limpiar</a>
+    </div>
+    <div class="col-6">
+      <button id="hacer-compra" type="submit" class="btn btn-success">Hacer Compra</button>
+    </div>
+  </div>
+</div>
+<script>
+  document.getElementById("hacer-compra").addEventListener("click", function(event) {
+      event.preventDefault();  // Prevenir el comportamiento por defecto del botón
+
+      // Llamada AJAX para validar el carrito
+      fetch("{% url 'validar_carrito' %}", {
+          method: "GET",
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.error) {
+              Swal.fire({
+                  title: "Error",
+                  text: data.error,
+                  icon: "error",
+                  confirmButtonText: "OK"
+              });
+          } else if (data.errores) {
+              let errores = data.errores.join('<br>');
+              Swal.fire({
+                  title: "Error",
+                  html: errores,
+                  icon: "error",
+                  confirmButtonText: "OK"
+              });
+          } else {
+              Swal.fire({
+                  title: "¡Compra exitosa!",
+                  text: "Gracias por tu compra. Serás redirigido a tu boleta",
+                  icon: "success",
+                  confirmButtonText: "OK"
+              }).then((result) => {
+                  if (result.isConfirmed) {
+                      window.location.href = "{% url 'Boleta' %}";
+                  }
+              });
+          }
+      })
+      .catch(error => {
+          Swal.fire({
+              title: "Error",
+              text: "Hubo un problema con la validación del carrito.",
+              icon: "error",
+              confirmButtonText: "OK"
+          });
+      });
+  });
+</script>

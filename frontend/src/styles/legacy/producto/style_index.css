@@ -1,0 +1,201 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    list-style: none;
+}
+
+/* BODY(IMAGEN DE FONDO) */
+body {
+    
+    background-image:linear-gradient(rgba(255,255,255,.62), rgba(53, 51, 51, 0.62)),url('../../../assets/img/fitter_logo.png');   
+    background-size:cover; 
+    background-position: center top; /* Centra la imagen */
+    background-repeat: no-repeat; 
+    
+}
+
+/* NAVBAR */
+.custom-navbar{
+    background-color: #1a1a1a; /* Darker color for gym theme */
+}
+
+.nav-link{
+    color: gainsboro;
+}
+
+.title-form{
+    padding: 10px;
+}
+
+.logo_peluqueria{ /* Renamed to logo_fitter in nav.html, but keeping class name for now */
+    width: 65px;
+    height: 65px;
+}
+
+.productos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.productos > div {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: 220px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.productos > div:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.productos img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.productos h2 {
+    font-size: 18px;
+    color: #333;
+    margin: 10px 0 5px;
+}
+
+.productos p {
+    color: #777;
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.productos .precio {
+    font-weight: bold;
+    color: #444;
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+.producto a{
+    text-decoration: none;
+}
+.producto h4 {
+    color: black;
+    font-size: 20px; /* Ajusta el tamaño si es necesario */
+    text-align: center; /* Opcional: centra el texto */
+    word-break: break-word; /* Rompe palabras largas */
+    white-space: normal; /* Permite que el texto ocupe varias líneas */
+    overflow: hidden; /* Evita el desbordamiento */
+    text-overflow: ellipsis; /* Muestra puntos suspensivos si es necesario */
+    display: block; /* Asegura que el elemento ocupe toda la línea */
+    max-width: 100%; /* Limita el ancho al contenedor */
+}
+
+
+
+button {
+    background-color: #4CAF50; /* Green for gym theme */
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+
+
+/* FOOTER */
+
+.footer{
+    background-color: #1a1a1a; /* Darker color for gym theme */
+    padding: 50px 0; /* primero es vertical y el segundo es horizontal */
+    
+}
+
+.container-footer{
+    width: 100%;
+    margin: 0 auto;
+    
+}
+
+.footer-row{
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    justify-content: center;
+    
+}
+
+.footer-links{
+    width: 30%;
+    padding: 0 15px;
+}
+
+.footer-links h4{
+    font-size: 20px;
+    color: white;
+    margin-bottom: 25px;
+    font-weight: 500;
+    border-bottom: 2px solid #4CAF50; /* Green accent for gym theme */
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+.footer-links ul li a{
+    font-size: 18px;
+    text-decoration: none;
+    color: gainsboro;
+    display: block;
+    margin-bottom: 7px;
+    transition: all 0.5s ease;
+    text-align: center;
+}
+
+.footer-links ul li a:hover{
+    color: white;
+    padding-left: 3px;
+}
+
+.footer-links ul{
+    padding: 0px;
+}
+
+.social-links a{
+    display: inline-block;
+    min-height: 40px;
+    width: 40px;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin: auto 7px ;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 50%;
+    color: white;
+    
+}
+
+@media(max-width:767px){
+    .footer-row{
+        text-align: center;
+    }
+
+    .footer-links{
+        width: 100%;
+        margin-bottom: 30px;
+        
+    }
+    
+    
+}

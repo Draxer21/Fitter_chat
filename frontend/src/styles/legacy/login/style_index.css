@@ -1,0 +1,72 @@
+.productos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.productos > div {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    width: 220px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.productos > div:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.productos img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.productos h2 {
+    font-size: 18px;
+    color: #333;
+    margin: 10px 0 5px;
+}
+
+.productos p {
+    color: #777;
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.productos .precio {
+    font-weight: bold;
+    color: #444;
+    font-size: 16px;
+    margin-top: 5px;
+}
+
+button {
+    background-color: #4CAF50; /* Green for gym theme */
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+footer {
+  background: #1a1a1a; /* Darker color for gym theme */
+  min-height: 5em;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
