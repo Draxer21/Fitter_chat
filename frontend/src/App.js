@@ -1,10 +1,10 @@
 // src/App.js
-import { Suspense, lazy, useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 
-import Chatbot from "./Chatbot";               // <--- Asegúrate de que Chatbot.jsx está en src/
-import RutinaPage from "./pages/RutinaPage";   // <--- Ajusta al nombre real del archivo
-
+import RutinaPage from "./pages/RutinaPage";
+// ⬇️ Usa el widget flotante (no la página Chatbot)
+import ChatWidget from "./ChatWidget";
 
 // Scroll al top en cada navegación
 function ScrollToTop() {
@@ -14,7 +14,6 @@ function ScrollToTop() {
   }, [pathname]);
   return null;
 }
-
 
 function NotFound() {
   return (
@@ -26,12 +25,13 @@ function NotFound() {
   );
 }
 
-function App() {
+export default function App() {
   const basename = process.env.PUBLIC_URL || "/";
 
   return (
     <BrowserRouter basename={basename}>
       <ScrollToTop />
+
       <header className="app-header" style={{ padding: 12, fontWeight: 600 }}>
         Fitter Chatbot
       </header>
@@ -39,14 +39,16 @@ function App() {
       <main>
         <Suspense fallback={<div style={{ padding: 16 }}>Cargando…</div>}>
           <Routes>
-            <Route path="/" element={<Chatbot />} />
+            {/* tu landing, si la tienes; si no, puedes apuntar a otra página */}
+            <Route path="/" element={<div style={{ padding: 24 }}>Bienvenido a Fitter</div>} />
             <Route path="/rutina/:id" element={<RutinaPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
       </main>
+
+      {/* 🔽 AQUÍ el agregado flotante, visible en todas las rutas */}
+      <ChatWidget />
     </BrowserRouter>
   );
 }
-
-export default App;

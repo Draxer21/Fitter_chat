@@ -1,7 +1,19 @@
 // Chatbot.jsx
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-export default function Chatbot() {
+function getOrCreateSenderId() {
+  const k = "rasa_uid";
+  let v = localStorage.getItem(k);
+  if (!v) {
+    v = `web-${Math.random().toString(36).slice(2, 10)}`;
+    localStorage.setItem(k, v);
+  }
+  return v;
+}
+
+export default function Chatbot({ endpoint = "/chat/send", senderId }) {
+  const uidRef = useRef(senderId || getOrCreateSenderId());
+
   const [messages, setMessages] = useState(() => [
     { id: 1, from: "bot", text: "¡Hola! Soy FITTER. ¿En qué te ayudo?" }
   ]);
@@ -12,33 +24,26 @@ export default function Chatbot() {
   const scrollRef = useRef(null);
   const abortRef = useRef(null);
 
-  // Autoscroll al final cuando cambian los mensajes
+  // Autoscroll
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, loading]);
 
-  // Limpia petición pendiente al desmontar
-  useEffect(() => {
-    return () => {
-      if (abortRef.current) abortRef.current.abort();
-    };
-  }, []);
+  // Limpieza al desmontar
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   const pushMessage = (msg) => {
     setMessages((prev) => [...prev, { id: nextId.current++, ...msg }]);
   };
 
   const normalizeBotPayloads = (data) => {
-    // Rasa REST suele ser un array; cada item puede tener text, buttons, custom/json_message, image, etc.
     if (!Array.isArray(data)) return [];
     return data.map((m) => ({
       id: nextId.current++,
       from: "bot",
       text: typeof m.text === "string" ? m.text : undefined,
       custom: m.custom || m.json_message || null,
-      image: m.image || (m.attachment && m.attachment.type === "image" ? m.attachment.payload?.src : undefined),
+      image: m.image || (m.attachment?.type === "image" ? m.attachment?.payload?.src : undefined),
       buttons: Array.isArray(m.buttons) ? m.buttons : undefined
     }));
   };
@@ -47,41 +52,31 @@ export default function Chatbot() {
     const text = input.trim();
     if (!text || loading) return;
 
-    // limpia error visible
     setErrorText("");
-
-    // pinta mensaje de usuario y resetea input
     pushMessage({ from: "user", text });
     setInput("");
     setLoading(true);
 
-    // abort controller para cancelar si desmonta
-    if (abortRef.current) abortRef.current.abort();
+    abortRef.current?.abort();
     const controller = new AbortController();
     abortRef.current = controller;
 
     try {
-      const res = await fetch("/chat/send", {
+      const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sender: "web-user", message: text }),
+        body: JSON.stringify({ sender: uidRef.current, message: text }),
         signal: controller.signal
       });
 
       if (!res.ok) {
         const t = await res.text().catch(() => "");
-        throw new Error(`HTTP ${res.status}${t ? `: ${t.slice(0, 140)}` : ""}`);
+        throw new Error(`HTTP ${res.status}${t ? `: ${t.slice(0, 160)}` : ""}`);
       }
 
       const data = await res.json();
       const botMsgs = normalizeBotPayloads(data);
-
-      if (botMsgs.length === 0) {
-        // Si por alguna razón Rasa devolvió vacío, al menos avisamos
-        pushMessage({ from: "bot", text: "No recibí respuesta. ¿Puedes intentar de nuevo?" });
-      } else {
-        setMessages((prev) => [...prev, ...botMsgs]);
-      }
+      setMessages((prev) => botMsgs.length ? [...prev, ...botMsgs] : [...prev, { from: "bot", id: nextId.current++, text: "No recibí respuesta. ¿Puedes intentar de nuevo?" }]);
     } catch (e) {
       const msg = e?.name === "AbortError" ? "Solicitud cancelada." : "Error de conexión con el backend.";
       setErrorText(typeof e?.message === "string" ? e.message : msg);
@@ -98,7 +93,6 @@ export default function Chatbot() {
     }
   };
 
-  // Burbuja de mensaje (usa estilos inline simples; si ya tienes CSS, cambia className a .message .user/.bot)
   const Bubble = ({ children, from }) => (
     <span
       className="message"
@@ -109,7 +103,7 @@ export default function Chatbot() {
         background: from === "user" ? "#DCF8C6" : "#F1F0F0",
         maxWidth: "85%",
         whiteSpace: "pre-wrap",
-        wordBreak: "break-word",
+        wordBreak: "break-word"
       }}
     >
       {children}
@@ -129,15 +123,7 @@ export default function Chatbot() {
             <button
               type="button"
               onClick={() => window.open(m.custom.url, "_blank", "noopener,noreferrer")}
-              style={{
-                marginTop: hasText ? 6 : 0,
-                padding: "6px 12px",
-                borderRadius: 8,
-                border: "none",
-                background: "#007bff",
-                color: "white",
-                cursor: "pointer"
-              }}
+              style={{ marginTop: hasText ? 6 : 0, padding: "6px 12px", borderRadius: 8, border: "none", background: "#007bff", color: "white", cursor: "pointer" }}
               aria-label={m.custom.title || "Abrir rutina"}
             >
               {m.custom.title || "Abrir rutina"}
@@ -147,12 +133,7 @@ export default function Chatbot() {
         {m.image && (
           <>
             {(hasText || hasRoutineLink) ? <br /> : null}
-            <img
-              src={m.image}
-              alt="Imagen enviada por el bot"
-              style={{ display: "block", maxWidth: "100%", borderRadius: 8, marginTop: 6 }}
-              loading="lazy"
-            />
+            <img src={m.image} alt="Imagen enviada por el bot" style={{ display: "block", maxWidth: "100%", borderRadius: 8, marginTop: 6 }} loading="lazy" />
           </>
         )}
         {Array.isArray(m.buttons) && m.buttons.length > 0 && (
@@ -164,21 +145,13 @@ export default function Chatbot() {
                   key={`btn-${m.id}-${idx}`}
                   type="button"
                   onClick={() => {
-                    // Si el botón trae payload, mándalo como texto → Rasa lo sabrá interpretar (intent/payload)
                     const payload = b?.payload || b?.title || "";
                     if (payload) {
                       setInput(payload);
-                      // Enviar de inmediato como UX snappy
                       setTimeout(sendMessage, 0);
                     }
                   }}
-                  style={{
-                    padding: "6px 10px",
-                    borderRadius: 8,
-                    border: "1px solid #ddd",
-                    background: "#fff",
-                    cursor: "pointer"
-                  }}
+                  style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid #ddd", background: "#fff", cursor: "pointer" }}
                 >
                   {b?.title || "Opción"}
                 </button>
@@ -204,42 +177,17 @@ export default function Chatbot() {
       role="region"
       aria-label="Chat con asistente FITTER"
     >
-      <div
-        ref={scrollRef}
-        style={{ height: 360, overflowY: "auto", marginBottom: 10, padding: 6 }}
-        aria-live="polite"
-      >
+      <div ref={scrollRef} style={{ height: 360, overflowY: "auto", marginBottom: 10, padding: 6 }} aria-live="polite">
         {messages.map((m) => (
-          <div
-            key={m.id}
-            style={{
-              textAlign: m.from === "user" ? "right" : "left",
-              margin: "6px 0"
-            }}
-          >
+          <div key={m.id} style={{ textAlign: m.from === "user" ? "right" : "left", margin: "6px 0" }}>
             <Bubble from={m.from}>{renderMessageContent(m)}</Bubble>
           </div>
         ))}
-
-        {loading && (
-          <div style={{ fontStyle: "italic", color: "#666", padding: "4px 6px" }}>
-            Escribiendo…
-          </div>
-        )}
+        {loading && <div style={{ fontStyle: "italic", color: "#666", padding: "4px 6px" }}>Escribiendo…</div>}
       </div>
 
       {errorText && (
-        <div
-          style={{
-            color: "#b91c1c",
-            background: "#fee2e2",
-            border: "1px solid #fecaca",
-            borderRadius: 8,
-            padding: "6px 10px",
-            marginBottom: 8
-          }}
-          role="alert"
-        >
+        <div style={{ color: "#b91c1c", background: "#fee2e2", border: "1px solid #fecaca", borderRadius: 8, padding: "6px 10px", marginBottom: 8 }} role="alert">
           {errorText}
         </div>
       )}
@@ -251,29 +199,14 @@ export default function Chatbot() {
           onKeyDown={onKeyDown}
           placeholder="Escribe tu mensaje…"
           rows={1}
-          style={{
-            flex: 1,
-            padding: 10,
-            borderRadius: 8,
-            border: "1px solid #ccc",
-            resize: "vertical",
-            minHeight: 42,
-            maxHeight: 160
-          }}
+          style={{ flex: 1, padding: 10, borderRadius: 8, border: "1px solid #ccc", resize: "vertical", minHeight: 42, maxHeight: 160 }}
           aria-label="Cuadro de mensaje"
           disabled={loading}
         />
         <button
           onClick={sendMessage}
           disabled={loading || input.trim().length === 0}
-          style={{
-            padding: "10px 14px",
-            borderRadius: 8,
-            border: "none",
-            background: loading ? "#9ca3af" : "#4CAF50",
-            color: "white",
-            cursor: loading ? "not-allowed" : "pointer"
-          }}
+          style={{ padding: "10px 14px", borderRadius: 8, border: "none", background: loading ? "#9ca3af" : "#4CAF50", color: "white", cursor: loading ? "not-allowed" : "pointer" }}
           aria-busy={loading}
           aria-label="Enviar mensaje"
         >
