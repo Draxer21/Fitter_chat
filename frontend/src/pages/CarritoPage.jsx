@@ -1,69 +1,65 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { API } from "../services/apijs";
 import "../styles/legacy/carrito/style_carrito.css";
 
 export default function CarritoPage() {
-  const nav = useNavigate();
-  const [state, setState] = useState({ items: {}, total: 0, unidades: 0 });
-
+  const [state, setState] = useState({ items:{}, total:0 });
   const load = () => API.carrito.estado().then(setState);
-  useEffect(() => { load(); }, []);
+  useEffect(()=>{ load(); }, []);
 
-  const inc = (id) => API.carrito.add(id).then(load);
-  const dec = (id) => API.carrito.dec(id).then(load);
-  const del = (id) => API.carrito.remove(id).then(load);
-  const clear = () => API.carrito.clear().then(load);
-  const validar = async () => {
+  const inc  = (id) => API.carrito.add(id).then(load);
+  const dec  = (id) => API.carrito.dec(id).then(load);
+  const del  = (id) => API.carrito.remove(id).then(load);
+  const cls  = ()    => API.carrito.clear().then(load);
+  const buy  = async () => {
     const r = await API.carrito.validar();
-    if (r?.exito) nav("/boleta");
-    else if (r?.errores) alert(r.errores.join("\n"));
-    else alert("Error validando.");
+    if (r?.errores) alert(r.errores.join("\n"));
+    else if (r?.error) alert(r.error);
+    else window.location.href = "/boleta";
   };
 
-  const items = Object.values(state.items || {});
+  const rows = Object.values(state.items || {});
   return (
-    <div className="legacy-scope" style={{ padding: 16 }}>
-      <h2>Carrito</h2>
-      {items.length === 0 ? (
-        <p>Tu carrito está vacío.</p>
-      ) : (
-        <table className="tabla-carrito">
-          <thead>
-            <tr>
-              <th>Producto</th>
-              <th>Cant.</th>
-              <th>PU</th>
-              <th>Total</th>
-              <th />
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((it) => (
-              <tr key={it.producto_id}>
-                <td>{it.nombre}</td>
-                <td>
-                  <button onClick={() => dec(it.producto_id)}>-</button>
-                  <span style={{ margin: "0 8px" }}>{it.cantidad}</span>
-                  <button onClick={() => inc(it.producto_id)}>+</button>
-                </td>
-                <td>${it.precio_unitario.toFixed(2)}</td>
-                <td>${it.acumulado.toFixed(2)}</td>
-                <td>
-                  <button onClick={() => del(it.producto_id)}>Eliminar</button>
-                </td>
+    <div className="container" style={{maxWidth: 1200, margin: "0 auto"}}>
+      <div className="alert" role="alert" style={{backgroundColor: "rgba(0,0,0,0.904)"}}>
+        <div className="table-responsive">
+          <table className="table table-bordered">
+            <thead>
+              <tr><th scope="row" colSpan={5} className="text-center">CARRITO</th></tr>
+              <tr>
+                <th>NOMBRE</th><th>CANTIDAD</th><th>PRECIO UNITARIO</th>
+                <th>PRECIO TOTAL DEL PRODUCTO</th><th>ELIMINAR/AGREGAR</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-
-      <div style={{ marginTop: 12 }}>
-        <strong>Total: ${Number(state.total || 0).toFixed(2)}</strong>
+            </thead>
+            <tbody>
+              {rows.length>0 ? rows.map(v=>(
+                <tr key={v.producto_id}>
+                  <td>{v.nombre}</td>
+                  <td>{v.cantidad}</td>
+                  <td>${v.precio_unitario.toFixed(2)}</td>
+                  <td>${v.acumulado.toFixed(2)}</td>
+                  <td>
+                    <button onClick={()=>dec(v.producto_id)} className="badge btn btn-dark badge-dark">-</button>{" "}
+                    <button onClick={()=>inc(v.producto_id)} className="badge btn btn-dark badge-dark">+</button>{" "}
+                    <button onClick={()=>del(v.producto_id)} className="badge btn btn-danger">x</button>
+                  </td>
+                </tr>
+              )) : (
+                <tr><td colSpan={5}><div className="alert alert-danger text-center">Sin Productos</div></td></tr>
+              )}
+              <tr>
+                <th scope="row">Total:</th>
+                <td colSpan={4}>${Number(state.total||0).toFixed(2)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <hr />
       </div>
-      <div style={{ marginTop: 12, display: "flex", gap: 8 }}>
-        <button onClick={clear}>Limpiar</button>
-        <button onClick={validar}>Validar compra</button>
+
+      <div className="row text-center">
+        <div className="col-6"><button onClick={cls} className="btn btn-danger">Limpiar</button></div>
+        <div className="col-6"><button onClick={buy} className="btn btn-success">Hacer Compra</button></div>
       </div>
     </div>
   );

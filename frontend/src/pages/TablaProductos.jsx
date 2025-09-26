@@ -1,86 +1,59 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { API } from "../services/apijs";
 import "../styles/legacy/tabla_productos/style_tabla_productos.css";
-import "../styles/legacy/tabla_productos/style_agregar_producto.css";
 
 export default function TablaProductos() {
   const [items, setItems] = useState([]);
-  const [f, setF] = useState({ nombre: "", precio: 0, stock: 0 });
   const [err, setErr] = useState("");
 
-  const load = () =>
-    API.productos
-      .list()
-      .then(setItems)
-      .catch((e) => setErr(e.message));
+  const load = ()=> API.productos.list().then(setItems).catch(e=>setErr(e.message));
+  useEffect(()=>{ load(); }, []);
 
-  useEffect(() => { load(); }, []);
-
-  const save = async (e) => {
-    e.preventDefault();
-    setErr("");
-    try {
-      await API.productos.create(f);
-      setF({ nombre: "", precio: 0, stock: 0 });
-      load();
-    } catch (e) {
-      setErr(e.message);
-    }
-  };
-
-  const del = async (id) => {
-    if (!window.confirm("¿Eliminar producto?")) return;
-    await API.productos.del(id);
-    load();
-  };
+  const del = async(id) => { if(window.confirm("¿Eliminar producto?")){ await API.productos.del(id); load(); } };
 
   return (
-    <div className="legacy-scope" style={{ padding: 16 }}>
-      <h2>Productos (admin)</h2>
+    <main className="flex-grow-1">
+      <div className="container">
+        <h1>Gestión de Inventario</h1>
+        <div className="d-flex justify-content-end mb-2">
+          <Link to="/admin/productos/nuevo" className="btn btn-success">Añadir Producto/Servicio</Link>
+        </div>
 
-      <form onSubmit={save} className="form-agregar">
-        <input
-          placeholder="Nombre"
-          value={f.nombre}
-          onChange={(e) => setF({ ...f, nombre: e.target.value })}
-          required
-        />
-        <input
-          type="number"
-          step="0.01"
-          placeholder="Precio"
-          value={f.precio}
-          onChange={(e) => setF({ ...f, precio: +e.target.value })}
-          required
-        />
-        <input
-          type="number"
-          placeholder="Stock"
-          value={f.stock}
-          onChange={(e) => setF({ ...f, stock: +e.target.value })}
-          required
-        />
-        <button>Agregar</button>
-      </form>
+        {err && <div className="alert alert-danger">{err}</div>}
 
-      {err && <div style={{ color: "#b91c1c", marginTop: 8 }}>{err}</div>}
-
-      <table className="tabla-productos" style={{ marginTop: 12 }}>
-        <thead>
-          <tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Stock</th><th /></tr>
-        </thead>
-        <tbody>
-          {items.map((p) => (
-            <tr key={p.id}>
-              <td>{p.id}</td>
-              <td>{p.nombre}</td>
-              <td>${p.precio.toFixed(2)}</td>
-              <td>{p.stock}</td>
-              <td><button onClick={() => del(p.id)}>Eliminar</button></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        <div className="table-responsive">
+          <table className="table table-dark table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>ID</th><th>Nombre</th><th>Precio</th>
+                <th>Descripción</th><th>Categoría</th><th>Stock</th><th>Imagen</th><th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map(pr=>(
+                <tr key={pr.id}>
+                  <td>{pr.id}</td>
+                  <td>{pr.nombre}</td>
+                  <td>{pr.precio.toFixed(2)}</td>
+                  <td>{pr.descripcion || ""}</td>
+                  <td>{pr.categoria || ""}</td>
+                  <td>{pr.stock}</td>
+                  <td><img src="/fitter_logo.png" alt="" style={{width:40}} /></td>
+                  <td className="text-center">
+                    <div className="d-flex justify-content-center">
+                      {/* Link de edición opcional */}
+                      {/* <Link to={`/admin/productos/${pr.id}`} className="btn btn-warning me-2"><i className="fa-solid fa-pencil" /></Link> */}
+                      <button className="btn btn-danger" onClick={()=>del(pr.id)}><i className="fa-solid fa-trash" /></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {items.length===0 && <tr><td colSpan={8} className="text-center">Sin productos</td></tr>}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
   );
 }

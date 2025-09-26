@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import Blueprint, current_app, jsonify, request
 import requests
+from ..extensions import db
 
 bp = Blueprint("chat", __name__)
 

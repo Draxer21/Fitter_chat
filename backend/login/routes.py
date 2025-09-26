@@ -1,5 +1,6 @@
 # backend/login/routes.py
 from flask import Blueprint, request, session, jsonify
+from ..extensions import db
 
 bp = Blueprint("login", __name__)
 

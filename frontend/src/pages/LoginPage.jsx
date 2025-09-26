@@ -3,60 +3,56 @@ import { API } from "../services/apijs";
 import "../styles/legacy/login/style_login.css";
 
 export default function LoginPage() {
-  const [me, setMe] = useState({ auth: false, user: null });
-  const [user, setUser] = useState("");
-  const [pwd, setPwd] = useState("");
-  const [err, setErr] = useState("");
+  const [me, setMe] = useState({auth:false});
+  const [usuario, setUsuario] = useState("");
+  const [contrasena, setContrasena] = useState("");
+  const [msg, setMsg] = useState("");
 
-  useEffect(() => {
-    API.auth.me().then(setMe).catch(() => {});
-  }, []);
+  useEffect(()=>{ API.auth.me().then(setMe).catch(()=>{}); }, []);
 
   const submit = async (e) => {
-    e.preventDefault();
-    setErr("");
-    try {
-      const r = await API.auth.login(user, pwd);
-      setMe({ auth: true, user: r.user });
-    } catch {
-      setErr("Credenciales inválidas.");
-    }
+    e.preventDefault(); setMsg("");
+    try{
+      const r = await API.auth.login(usuario, contrasena);
+      setMe({auth:true, user:r.user});
+    }catch{ setMsg("Credenciales inválidas."); }
   };
-
-  const out = async () => {
-    await API.auth.logout();
-    setMe({ auth: false, user: null });
-  };
+  const logout = async ()=>{ await API.auth.logout(); setMe({auth:false}); };
 
   return (
-    <div className="legacy-scope" style={{ padding: 16 }}>
-      <h2>Login</h2>
-      {me.auth ? (
-        <>
-          <p>Autenticado como <strong>{me.user}</strong></p>
-          <button onClick={out}>Salir</button>
-        </>
-      ) : (
-        <form onSubmit={submit} className="login-form">
-          <input
-            value={user}
-            onChange={(e) => setUser(e.target.value)}
-            placeholder="usuario"
-            autoComplete="username"
-            required
-          />
-          <input
-            type="password"
-            value={pwd}
-            onChange={(e) => setPwd(e.target.value)}
-            placeholder="clave"
-            autoComplete="current-password"
-            required
-          />
-          {err && <div style={{ color: "#b91c1c", marginTop: 8 }}>{err}</div>}
-          <button type="submit">Entrar</button>
-        </form>
-      )}
-    </div>
+    <main>
+      <div className="d-flex justify-content-center align-items-center" style={{height:"67.5vh"}}>
+        <div className="container mt-5 border mx-auto" style={{backgroundColor:"rgba(0,0,0,.904)", width:500, borderRadius:13, color:"white"}}>
+          <h2 className="text-center m-4">Acceso de Administrador <br/>Fitter Gym Chain</h2>
+
+          {me.auth ? (
+            <div className="text-center">
+              <p>Sesión iniciada como <strong>{me.user}</strong></p>
+              <button className="btn btn-light" onClick={logout}>Cerrar Sesión</button>
+            </div>
+          ) : (
+            <form className="w-50 mx-auto" onSubmit={submit}>
+              <div className="form-group mb-3">
+                <label htmlFor="usuario">Nombre de Usuario</label>
+                <input id="usuario" className="form-control" value={usuario} onChange={e=>setUsuario(e.target.value)} placeholder="Introduce tu Nombre de Usuario" />
+              </div>
+              <div className="form-group mb-3">
+                <label htmlFor="contrasena">Contraseña</label>
+                <input type="password" id="contrasena" className="form-control" value={contrasena} onChange={e=>setContrasena(e.target.value)} placeholder="Contraseña" />
+              </div>
+              <div className="text-center">
+                <p>¿No tienes cuenta? <a href="/registro">Regístrate aquí</a></p>
+              </div>
+              {msg && <div className="alert alert-danger mt-2">{msg}</div>}
+              <div className="d-flex justify-content-center m-3">
+                <button type="submit" className="btn" style={{backgroundColor:"black", color:"white", borderColor:"rgba(255,255,255,.568)"}}>
+                  Iniciar Sesión
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
+      </div>
+    </main>
   );
 }
