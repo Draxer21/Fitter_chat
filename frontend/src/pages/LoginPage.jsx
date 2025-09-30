@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { API } from "../services/apijs";
 import "../styles/legacy/login/style_login.css";
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [me, setMe] = useState({auth:false});
   const [usuario, setUsuario] = useState("");
   const [contrasena, setContrasena] = useState("");
@@ -15,6 +17,10 @@ export default function LoginPage() {
     try{
       const r = await API.auth.login(usuario, contrasena);
       setMe({auth:true, user:r.user});
+      // Si hay parámetro next en la URL, redirigimos allí
+      const params = new URLSearchParams(window.location.search);
+      const next = params.get('next');
+      if (next) navigate(next);
     }catch{ setMsg("Credenciales inválidas."); }
   };
   const logout = async ()=>{ await API.auth.logout(); setMe({auth:false}); };

@@ -11,7 +11,22 @@ export default function CarritoPage() {
   const dec  = (id) => API.carrito.dec(id).then(load);
   const del  = (id) => API.carrito.remove(id).then(load);
   const cls  = ()    => API.carrito.clear().then(load);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+
   const buy  = async () => {
+    // Comprueba si el usuario está autenticado; si no, muestra modal que ofrece ir a login
+    try {
+      const me = await API.auth.me();
+      if (!me || me?.error) {
+        // No logeado -> mostrar modal de invitación a iniciar sesión
+        setShowLoginPrompt(true);
+        return;
+      }
+    } catch (e) {
+      setShowLoginPrompt(true);
+      return;
+    }
+
     const r = await API.carrito.validar();
     if (r?.errores) alert(r.errores.join("\n"));
     else if (r?.error) alert(r.error);
@@ -61,6 +76,30 @@ export default function CarritoPage() {
         <div className="col-6"><button onClick={cls} className="btn btn-danger">Limpiar</button></div>
         <div className="col-6"><button onClick={buy} className="btn btn-success">Hacer Compra</button></div>
       </div>
+
+      {/* Modal prompt para invitar a iniciar sesión si no está autenticado */}
+      {showLoginPrompt && (
+        <>
+          <div className="modal d-block" tabIndex={-1} role="dialog" style={{ backgroundColor: 'transparent' }}>
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Necesitas iniciar sesión</h5>
+                  <button type="button" className="btn-close" aria-label="Close" onClick={() => setShowLoginPrompt(false)} />
+                </div>
+                <div className="modal-body">
+                  <p>Para completar la compra debes iniciar sesión. ¿Deseas ir al formulario de inicio de sesión ahora?</p>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowLoginPrompt(false)}>Cancelar</button>
+                  <button type="button" className="btn btn-primary" onClick={() => { window.location.href = '/login?next=/carrito'; }}>Ir a Login</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="modal-backdrop fade show" style={{ opacity: 0.5 }} />
+        </>
+      )}
     </div>
   );
 }

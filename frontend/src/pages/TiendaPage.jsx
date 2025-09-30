@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { API } from "../services/apijs";
 import "../styles/legacy/producto/style_index.css";
 import "../styles/legacy/producto/style_detalle.css";
+import Logo from "../components/Logo";
 
 export default function TiendaPage() {
   const [items, setItems] = useState([]);
@@ -34,7 +35,7 @@ export default function TiendaPage() {
         {items.map((p) => (
           <div key={p.id} className="producto">
             {/* Usa una imagen genérica; ajusta si más adelante sirves una por producto */}
-            <img src="/fitter_logo.png" alt="Producto" />
+            <Logo src="/fitter_logo.png" alt="Producto" width={120} />
             <h4 title={p.nombre}>{p.nombre}</h4>
             <p className="precio">${p.precio.toFixed(2)}</p>
             <p>Stock: {p.stock}</p>

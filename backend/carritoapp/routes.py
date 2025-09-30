@@ -20,6 +20,12 @@ def _get_carrito() -> Dict[str, Any]:
     c = session.get("carrito")
     return c if isinstance(c, dict) else {}
 
+
+# Endpoint esperado por el frontend: devuelve el estado actual del carrito en sesión
+@bp.get("/estado")
+def estado_carrito():
+    return jsonify(_get_carrito()), 200
+
 def _to_int(v, default=0) -> int:
     try:
         return int(v)
@@ -159,3 +165,21 @@ def generar_boleta():
         carrito=carrito,
         total_carrito=float(total),  # o str(total) si quieres mantener 2 decimales exactos
     )
+
+
+@bp.get('/boleta_json')
+def generar_boleta_json():
+    """Devuelve la boleta en formato JSON (esperado por el frontend)."""
+    carrito = _get_carrito()
+    if not carrito:
+        return jsonify({"error": "Carrito vacío."}), 400
+
+    total = Decimal('0.00')
+    for item in carrito.values():
+        total += _to_decimal(item.get('acumulado'), Decimal('0.00'))
+
+    return jsonify({
+        "fecha": datetime.now().isoformat(),
+        "carrito": carrito,
+        "total_carrito": float(total),
+    }), 200

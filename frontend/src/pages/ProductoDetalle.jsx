@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { API } from "../services/apijs";
 import "../styles/legacy/producto/style_detalle.css";
+import Logo from "../components/Logo";
 
 export default function ProductoDetalle() {
   const { id } = useParams();
@@ -20,7 +21,7 @@ export default function ProductoDetalle() {
       <div className="container">
         <div className="producto-detalle">
           <h1>{p.nombre}</h1>
-          <img src="/fitter_logo.png" style={{width:300, height:300}} alt={p.nombre} />
+          <Logo src="/fitter_logo.png" style={{width:300, height:300}} alt={p.nombre} />
           <p className="categoria">Categoría: {p.categoria || "—"}</p>
           <p className="precio">Precio: ${p.precio.toFixed(2)}</p>
           <p className="descripcion">{p.descripcion || ""}</p>

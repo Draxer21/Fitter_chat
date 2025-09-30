@@ -6,17 +6,17 @@
 }
 
 
-/* BODY(IMAGEN DE FONDO) */
+
 body {
-    /* Changed background image to a gym-related one */
-    background-image: linear-gradient(rgba(255, 255, 255, 0.62),rgba(255, 255, 255, 0.62)),url('../../../assets/img/fitter_logo.png'); /* Assuming you'll add a gym_background.jpg in static/ */
-    background-size:cover; /* Changed to cover for better gym image display */
+
+    background-image: linear-gradient(rgba(255, 255, 255, 0.62),rgba(255, 255, 255, 0.62)),url("data:image/svg+xml;utf8,<svg%20xmlns=http://www.w3.org/2000/svg%20width=240%20height=80><rect%20width=240%20height=80%20fill=%231a1a1a/><text%20x=120%20y=45%20fill=white%20font-size=32%20font-family=Arial%20dominant-baseline=middle%20text-anchor=middle>FITTER</text></svg>"); 
+    background-size:cover; 
     background-position: center; /* Centra la imagen */
-    background-repeat: no-repeat; /* Changed to no-repeat */
+    background-repeat: no-repeat; 
     
 }
 
-.logo_peluqueria{ /* Renamed to logo_fitter in nav.html, but keeping class name for now */
+.logo_peluqueria{ 
     width: 65px;
     height: 65px;
 }
@@ -26,7 +26,7 @@ body {
 
 /* NAVBAR */
 .custom-navbar{
-    background-color: #1a1a1a; /* Darker color for gym theme */
+    background-color: #1a1a1a; 
 }
 
 .nav-link{
@@ -39,7 +39,7 @@ body {
 /* FOOTER */
 
 .footer{
-    background-color: #1a1a1a; /* Darker color for gym theme */
+    background-color: #1a1a1a; 
     padding: 50px 0; /* primero es vertical y el segundo es horizontal */
     
 }
@@ -68,7 +68,7 @@ body {
     color: white;
     margin-bottom: 25px;
     font-weight: 500;
-    border-bottom: 2px solid #4CAF50; /* Green accent for gym theme */
+    border-bottom: 2px solid #4CAF50; 
     padding-bottom: 10px;
     display: inline-block;
 }

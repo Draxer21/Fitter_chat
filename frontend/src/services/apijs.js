@@ -6,8 +6,18 @@ export const API = {
   productos: {
     list: (q="") => fetch(`${BASE}/producto/${q}`, { credentials:"include" }).then(j),
     get:  (id) => fetch(`${BASE}/producto/${id}`, { credentials:"include" }).then(j),
-    create:(d)=> fetch(`${BASE}/producto/`, { method:"POST", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify(d) }).then(j),
-    update:(id,d)=> fetch(`${BASE}/producto/${id}`, { method:"PUT", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify(d) }).then(j),
+    create:(d)=> {
+      if (d instanceof FormData) {
+        return fetch(`${BASE}/producto/`, { method:"POST", credentials:"include", body: d }).then(j);
+      }
+      return fetch(`${BASE}/producto/`, { method:"POST", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify(d) }).then(j);
+    },
+    update:(id,d)=> {
+      if (d instanceof FormData) {
+        return fetch(`${BASE}/producto/${id}`, { method:"PUT", credentials:"include", body: d }).then(j);
+      }
+      return fetch(`${BASE}/producto/${id}`, { method:"PUT", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify(d) }).then(j);
+    },
     del:  (id) => fetch(`${BASE}/producto/${id}`, { method:"DELETE", credentials:"include" }).then(j),
   },
   carrito: {

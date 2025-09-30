@@ -3,6 +3,7 @@ import { Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import "./styles/legacy/login/style_index.css";
 import "./styles/legacy/producto/style_index.css";
+import "./styles/fixed-layout.css";
 
 import HomePage from "./pages/HomePage";
 import RutinaPage from "./pages/RutinaPage";
@@ -15,6 +16,10 @@ import LoginPage from "./pages/LoginPage";
 import TablaProductos from "./pages/TablaProductos";
 import ProductoDetalle from "./pages/ProductoDetalle";
 import ProductoForm from "./pages/ProductoForm";
+import Footer from "./components/Footer";
+import RegistroPage from "./pages/RegistroPage";
+
+
 
 
 function ScrollToTop() {
@@ -36,14 +41,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <header className="app-header" style={{ padding: 12, fontWeight: 600 }}>
-        Fitter Chatbot
-      </header>
+      <Navbar /> 
 
-      {/* Barra de navegación (si no la usas, quítala) */}
-      <Navbar />
-
-      <main>
+  <main className="app-content-safe-area">
         <Suspense fallback={<div style={{ padding: 16 }}>Cargando…</div>}>
           <Routes>
             {/* ✅ Home REAL: / */}
@@ -51,6 +51,7 @@ export default function App() {
 
             <Route path="/tienda" element={<HomePage />} />{/* si quieres alias */}
             <Route path="/producto/:id" element={<ProductoDetalle />} />
+            <Route path="/registro" element={<RegistroPage />} />
             <Route path="/carrito" element={<CarritoPage />} />
             <Route path="/boleta" element={<BoletaPage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -61,6 +62,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </main>
+      <Footer />
 
       {/* Widget flotante del chat en todas las rutas */}
       <ChatWidget />

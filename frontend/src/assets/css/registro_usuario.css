@@ -1,0 +1,12 @@
+/* Styles specific to the registration form */
+.card p, .card h2 { margin-bottom: 0.5rem; }
+
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+/* Responsive tweaks */
+@media (max-width: 576px) {
+  .card { padding: 1.5rem !important; }
+}

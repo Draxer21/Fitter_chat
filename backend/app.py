@@ -30,7 +30,7 @@ def create_app() -> Flask:
     # Base de datos
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
         "SQLALCHEMY_DATABASE_URI",
-        "postgresql+psycopg2://rasa_user:rasa123@127.0.0.1:5432/rasa_db"
+        "postgresql+psycopg2://bryan:1234@127.0.0.1:5432/rasa_db"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 

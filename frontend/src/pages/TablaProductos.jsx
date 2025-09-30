@@ -1,14 +1,21 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { API } from "../services/apijs";
 import "../styles/legacy/tabla_productos/style_tabla_productos.css";
+import Logo from "../components/Logo";
 
 export default function TablaProductos() {
   const [items, setItems] = useState([]);
   const [err, setErr] = useState("");
+  const nav = useNavigate();
 
   const load = ()=> API.productos.list().then(setItems).catch(e=>setErr(e.message));
-  useEffect(()=>{ load(); }, []);
+  useEffect(()=>{
+    let mounted = true;
+    // comprobar privilegios admin
+    API.auth.me().then(r=>{ if(!r?.is_admin) nav('/login'); else { if(mounted) load(); } }).catch(()=>nav('/login'));
+    return ()=>{ mounted = false; };
+  }, []);
 
   const del = async(id) => { if(window.confirm("¿Eliminar producto?")){ await API.productos.del(id); load(); } };
 
@@ -39,7 +46,7 @@ export default function TablaProductos() {
                   <td>{pr.descripcion || ""}</td>
                   <td>{pr.categoria || ""}</td>
                   <td>{pr.stock}</td>
-                  <td><img src="/fitter_logo.png" alt="" style={{width:40}} /></td>
+                  <td><Logo src="/fitter_logo.png" alt="" style={{width:40}} /></td>
                   <td className="text-center">
                     <div className="d-flex justify-content-center">
                       {/* Link de edición opcional */}

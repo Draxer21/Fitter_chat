@@ -1,0 +1,101 @@
+/* fixed-layout.css
+   Provides safe spacing when navbar is fixed-top and footer is fixed-bottom
+*/
+
+:root {
+  --app-navbar-height: 72px; /* approximate navbar height */
+  --app-footer-height: 200px; /* reserve reasonable footer height to avoid overlap */
+}
+
+/* Ensure navbar/footer have consistent heights */
+.custom-navbar {
+  /* height: var(--app-navbar-height); */
+  display: flex;
+  align-items: center;
+}
+
+.footer {
+  position: relative; /* not fixed by default - stacked layout */
+  min-height: var(--app-footer-height);
+  display: flex;
+  align-items: flex-start;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+  flex-direction: column;
+}
+
+/* Make footer visually black with light text */
+.footer {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+.footer a { color: #ffffff !important; text-decoration: none; }
+.footer a:hover { color: #dddddd !important; text-decoration: underline; }
+
+/* Footer brand/logo styles */
+.footer-brand { display:flex; flex-direction:column; align-items:center; justify-content:center; margin: 0 0 1rem 0; }
+.footer-logo { font-size: 2.4rem; margin: 0; font-weight: 800; letter-spacing: -1px; }
+.footer-logo .logo-fi { color: #0d6efd; /* blue */ }
+.footer-logo .logo-tter { color: #dc3545; /* red */ }
+.footer-tagline { margin: 0.25rem 0 1rem 0; color: #cccccc; }
+
+/* Footer links layout tweaks */
+.footer-row { display:flex; gap:3rem; align-items:flex-start; justify-content:center; flex-wrap:wrap; width:100%; }
+.footer-links { color: #fff; text-align:center; flex: 1 1 220px; }
+.footer-links h4 { color: #fff; }
+
+/* Footer sections and separators */
+.footer-section { width: 100%; padding: 1rem 0; display:flex; align-items:center; justify-content:center; }
+.footer-top { padding-top: 1.25rem; padding-bottom: 0.75rem; }
+.footer-middle { padding: 1.5rem 0; }
+.footer-bottom { padding-bottom: 1.25rem; color: #cfcfcf; }
+.footer-separator { border: 0; height: 2px; background: #ffffff; margin: 1rem 0; opacity: 0.95; }
+
+/* Make links clearer on black background */
+.footer-links ul { padding-left: 0; list-style: none; margin:0; }
+.footer-links li { margin: 0.35rem 0; }
+.social-links a { display:inline-block; margin-right:0.6rem; color: #fff; background: #222; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; }
+
+/* container centering */
+.container-footer { max-width: 1100px; margin: 0 auto; width: 100%; display:flex; flex-direction:column; align-items:center; }
+
+/* Ensure the footer reserved area matches the visual size */
+:root { --app-footer-height: 260px; }
+.app-content-safe-area { padding-bottom: calc(var(--app-footer-height) + 1rem); min-height: calc(100vh - var(--app-navbar-height) - var(--app-footer-height)); }
+
+/* Utility to add top + bottom padding to main so content isn't hidden */
+.app-content-safe-area {
+  padding-top: calc(var(--app-navbar-height) + 1rem);
+  padding-bottom: calc(var(--app-footer-height) + 1rem);
+  min-height: calc(100vh - var(--app-navbar-height) - var(--app-footer-height));
+}
+
+/* Small responsive tweak: reduce reserved space on very small screens */
+@media (max-width: 576px) {
+  :root {
+    --app-navbar-height: 64px;
+    --app-footer-height: 220px;
+  }
+}
+
+/* Disable fixed footer on small / tablet devices (keep fixed on desktop >= 992px only) */
+@media (max-width: 991.98px) {
+  .footer {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 100% !important;
+    box-shadow: none !important;
+  }
+
+  /* reduce reserved bottom padding on small screens but still leave space */
+  :root {
+    --app-footer-height: 220px;
+  }
+
+  .app-content-safe-area {
+    padding-bottom: calc(var(--app-footer-height) + 1rem);
+    min-height: calc(100vh - var(--app-navbar-height) - var(--app-footer-height));
+  }
+}

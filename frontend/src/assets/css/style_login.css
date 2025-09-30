@@ -1,0 +1,15 @@
+/* Minimal styles for login/register pages - keep small and non-invasive */
+.registro-bg {
+  background: #f8f9fa; /* light gray background */
+}
+
+.card {
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+/* Reuse Bootstrap-like utility classes if Bootstrap isn't present */
+.text-dark { color: #222 !important; }
+.text-primary { color: #0d6efd !important; }
+.fw-bold { font-weight: 700 !important; }
+.fw-medium { font-weight: 500 !important; }
