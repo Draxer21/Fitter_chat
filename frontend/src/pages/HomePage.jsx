@@ -4,6 +4,12 @@ import { API } from "../services/apijs";
 import "../styles/legacy/producto/style_index.css";
 import HomeHero from "../components/HomeHero";
 import Logo from "../components/Logo";
+import { formatearPrecio } from "../utils/formatPrice";
+
+const stockDisponible = (valor) => {
+  const n = Number(valor);
+  return Number.isFinite(n) ? n : 0;
+};
 
 export default function HomePage() {
   const { search } = useLocation();
@@ -15,10 +21,20 @@ export default function HomePage() {
 
   useEffect(() => {
     const q = categoria ? `?categoria=${encodeURIComponent(categoria)}` : "";
-    API.productos.list(q).then(setItems).catch(e => setErr(e.message)).finally(()=>setLoading(false));
+    API.productos
+      .list(q)
+      .then(setItems)
+      .catch((e) => setErr(e.message))
+      .finally(() => setLoading(false));
   }, [categoria]);
 
-  const add = async (id) => { try { await API.carrito.add(id); } catch(e){ alert(e.message); } };
+  const add = async (id) => {
+    try {
+      await API.carrito.add(id);
+    } catch (e) {
+      alert(e.message);
+    }
+  };
 
   return (
     <main className="flex-grow-1">
@@ -33,18 +49,31 @@ export default function HomePage() {
         {err && <div className="container text-danger">Error: {err}</div>}
 
         <div className="productos">
-          {items.map(p => (
-            <div key={p.id} className="producto">
-              <Link to={`/producto/${p.id}`}>
-                <Logo src="/fitter_logo.png" alt={p.nombre} width={160} />
-                <h4>{p.nombre}</h4>
-                <p>Categoría: {p.categoria || "—"}</p>
-                <p>Disponibilidad: {p.stock}</p>
-                <p>Precio: ${p.precio.toFixed(2)}</p>
-              </Link>
-              <button className="btn btn-primary" onClick={() => add(p.id)}>Añadir al Carrito</button>
-            </div>
-          ))}
+          {items.map((p) => {
+            const disponible = stockDisponible(p.stock);
+            const sinStock = disponible <= 0;
+            return (
+              <div key={p.id} className="producto">
+                <Link to={`/producto/${p.id}`}>
+                  <Logo src="/fitter_logo.png" alt={p.nombre} width={160} />
+                  <h4>{p.nombre}</h4>
+                  <p>Categoría: {p.categoria || "—"}</p>
+                  <p>Disponibilidad: {disponible}</p>
+                  <p>Precio: {formatearPrecio(p.precio)}</p>
+                </Link>
+                <button
+                  className="btn btn-primary"
+                  disabled={sinStock}
+                  onClick={() => {
+                    if (sinStock) return;
+                    add(p.id);
+                  }}
+                >
+                  {sinStock ? "Sin stock" : "Añadir al Carrito"}
+                </button>
+              </div>
+            );
+          })}
           {!loading && items.length === 0 && <p>No hay productos o servicios disponibles.</p>}
         </div>
       </section>

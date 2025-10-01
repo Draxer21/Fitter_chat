@@ -1,164 +1,147 @@
-import React, { useState } from 'react';
+﻿import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import Navbar from '../components/Navbar'; // Asume que tienes un componente Navbar
-import Footer from '../components/Footer'; // Asume que tienes un componente Footer
-import Alert from '../components/Alert';   // Componente simple para mostrar mensajes
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
+import Alert from '../components/Alert';
+import { API } from '../services/apijs';
 
-// Importa tus estilos CSS
 import '../assets/css/style_login.css';
 import '../assets/css/registro_usuario.css';
 
-const RegisterPage = () => {
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [password2, setPassword2] = useState('');
-    const [messages, setMessages] = useState([]); // Para mensajes de éxito/error
-    const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
+const normalize = (value) => (value || '').trim();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setMessages([]); // Limpiar mensajes anteriores
-        setLoading(true);
+export default function RegisterPage() {
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [password2, setPassword2] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-        // Frontend validation (basic)
-        if (!username || !email || !password || !password2) {
-            setMessages([{ type: 'danger', text: 'Todos los campos son obligatorios.' }]);
-            setLoading(false);
-            return;
-        }
-        if (password !== password2) {
-            setMessages([{ type: 'danger', text: 'Las contraseñas no coinciden.' }]);
-            setLoading(false);
-            return;
-        }
-        if (password.length < 6) { // Ejemplo de validación de longitud
-            setMessages([{ type: 'danger', text: 'La contraseña debe tener al menos 6 caracteres.' }]);
-            setLoading(false);
-            return;
-        }
-        // Basic email regex
-        if (!/\S+@\S+\.\S+/.test(email)) {
-            setMessages([{ type: 'danger', text: 'El formato del correo electrónico no es válido.' }]);
-            setLoading(false);
-            return;
-        }
+  const showMessage = (type, text) => setMessages([{ type, text }]);
 
-        try {
-            // Ajusta esta URL a tu endpoint de registro en el backend Flask
-            const response = await fetch('http://localhost:5000/auth/register', { // Asume que tu backend Flask corre en 5000
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ username, email, password, password2 }),
-            });
+  const validate = () => {
+    const name = normalize(fullName);
+    const mail = normalize(email).toLowerCase();
+    const pass = normalize(password);
+    const passConfirm = normalize(password2);
 
-            const data = await response.json();
+    if (!name || !mail || !pass || !passConfirm) {
+      showMessage('danger', 'Nombre, correo y password son obligatorios');
+      return null;
+    }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) {
+      showMessage('danger', 'Correo no es valido');
+      return null;
+    }
+    if (pass.length < 6) {
+      showMessage('danger', 'Password debe tener al menos 6 caracteres');
+      return null;
+    }
+    if (pass !== passConfirm) {
+      showMessage('danger', 'Las contrasenas no coinciden');
+      return null;
+    }
+    return { full_name: name, email: mail, password: pass };
+  };
 
-            if (response.ok) {
-                setMessages([{ type: 'success', text: '¡Registro exitoso! Redirigiendo a iniciar sesión...' }]);
-                setTimeout(() => {
-                    navigate('/login'); // Redirige a la página de login
-                }, 2000);
-            } else {
-                // Manejar errores específicos del backend
-                const errorText = data.error || 'Error en el registro. Inténtalo de nuevo.';
-                setMessages([{ type: 'danger', text: errorText }]);
-            }
-        } catch (error) {
-            console.error('Error al registrar:', error);
-            setMessages([{ type: 'danger', text: 'Error de conexión. Por favor, inténtalo más tarde.' }]);
-        } finally {
-            setLoading(false);
-        }
-    };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setMessages([]);
+    const payload = validate();
+    if (!payload) {
+      return;
+    }
 
-    return (
-        <div className="registro-bg d-flex flex-column min-vh-100">
-            <Navbar /> {/* Asume que tu Navbar no necesita props específicas para esta página */}
+    try {
+      setLoading(true);
+      await API.auth.register(payload);
+      showMessage('success', 'Registro exitoso, redirigiendo a iniciar sesion...');
+      setTimeout(() => navigate('/login', { replace: true }), 1500);
+    } catch (error) {
+      showMessage('danger', error?.message || 'No fue posible registrar la cuenta');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            <main className="container mt-4 mb-5 flex-grow-1 d-flex justify-content-center align-items-center">
-                <div className="card p-5" style={{ maxWidth: '500px', width: '100%' }}>
-                    <h2 className="mb-4 text-center text-dark fw-bold">Crear Cuenta</h2>
-                    <form id="formulario" onSubmit={handleSubmit} noValidate>
-                        {messages.map((msg, index) => (
-                            <Alert key={index} type={msg.type} message={msg.text} />
-                        ))}
+  return (
+    <div className='registro-bg d-flex flex-column min-vh-100'>
+      <Navbar />
 
-                        <div className="mb-3">
-                            <label htmlFor="username" className="form-label">Nombre de usuario</label>
-                            <input
-                                type="text"
-                                className="form-control"
-                                id="username"
-                                name="username"
-                                placeholder="Introduce tu nombre de usuario"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                                required
-                            />
-                            {/* Aquí podrías añadir mensajes de error específicos para cada campo si tu backend los devuelve */}
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="email" className="form-label">Correo electrónico</label>
-                            <input
-                                type="email"
-                                className="form-control"
-                                id="email"
-                                name="email"
-                                placeholder="Introduce tu correo electrónico"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label htmlFor="password" className="form-label">Contraseña</label>
-                            <input
-                                type="password"
-                                className="form-control"
-                                id="password"
-                                name="password"
-                                placeholder="Contraseña"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label htmlFor="password2" className="form-label">Confirmar contraseña</label>
-                            <input
-                                type="password"
-                                className="form-control"
-                                id="password2"
-                                name="password2"
-                                placeholder="Confirmar contraseña"
-                                value={password2}
-                                onChange={(e) => setPassword2(e.target.value)}
-                                required
-                            />
-                        </div>
-                        <button
-                            type="submit"
-                            className="btn btn-primary w-100 py-2 fw-bold"
-                            disabled={loading}
-                        >
-                            {loading ? 'Registrando...' : 'Registrarse'}
-                        </button>
-                    </form>
-                    <div className="text-center mt-4">
-                        <p className="text-dark mb-0">¿Ya tienes una cuenta?</p>
-                        <Link to="/login" className="text-primary text-decoration-none fw-medium">Inicia sesión aquí</Link>
-                    </div>
-                </div>
-            </main>
+      <main className='container mt-4 mb-5 flex-grow-1 d-flex justify-content-center align-items-center'>
+        <div className='card p-5' style={{ maxWidth: 500, width: '100%' }}>
+          <h2 className='mb-4 text-center text-dark fw-bold'>Crear Cuenta</h2>
+          <form id='formulario' onSubmit={handleSubmit} noValidate>
+            {messages.map((msg, index) => (
+              <Alert key={index} type={msg.type} message={msg.text} />
+            ))}
 
-            <Footer /> {/* Asume que tu Footer no necesita props específicas */}
+            <div className='mb-3'>
+              <label htmlFor='registerName' className='form-label'>Nombre completo</label>
+              <input
+                id='registerName'
+                className='form-control'
+                value={fullName}
+                onChange={(event) => setFullName(event.target.value)}
+                placeholder='Tu nombre y apellido'
+                required
+              />
+            </div>
+
+            <div className='mb-3'>
+              <label htmlFor='registerEmail' className='form-label'>Correo electronico</label>
+              <input
+                id='registerEmail'
+                type='email'
+                className='form-control'
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                placeholder='correo@dominio.com'
+                required
+              />
+            </div>
+
+            <div className='mb-3'>
+              <label htmlFor='registerPassword' className='form-label'>Password</label>
+              <input
+                id='registerPassword'
+                type='password'
+                className='form-control'
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder='Password segura'
+                required
+              />
+            </div>
+
+            <div className='mb-4'>
+              <label htmlFor='registerPassword2' className='form-label'>Confirmar password</label>
+              <input
+                id='registerPassword2'
+                type='password'
+                className='form-control'
+                value={password2}
+                onChange={(event) => setPassword2(event.target.value)}
+                placeholder='Repite tu password'
+                required
+              />
+            </div>
+
+            <button type='submit' className='btn btn-primary w-100 py-2 fw-bold' disabled={loading}>
+              {loading ? 'Registrando...' : 'Registrarse'}
+            </button>
+          </form>
+
+          <div className='text-center mt-4'>
+            <p className='text-dark mb-0'>Ya tienes una cuenta?</p>
+            <Link to='/login' className='text-primary text-decoration-none fw-medium'>Inicia sesion aqui</Link>
+          </div>
         </div>
-    );
-};
+      </main>
 
-export default RegisterPage;
-
+      <Footer />
+    </div>
+  );
+}

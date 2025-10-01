@@ -30,7 +30,7 @@ def create_app() -> Flask:
     # Base de datos
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
         "SQLALCHEMY_DATABASE_URI",
-        "postgresql+psycopg2://bryan:1234@127.0.0.1:5432/rasa_db"
+        "postgresql+psycopg2://rasa_user:rasa123@127.0.0.1:5432/rasa_db"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -46,29 +46,50 @@ def create_app() -> Flask:
     app.json.ensure_ascii = False
     app.json.sort_keys = False
 
-    # CORS (única inicialización)
-    cors_origins = os.getenv("CORS_ORIGINS", "*")
+    # CORS (unica inicializacion)
+    raw_cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000")
+    cors_supports_credentials = os.getenv("CORS_SUPPORTS_CREDENTIALS", "true").lower() not in {"0", "false", "no"}
+    if not raw_cors_origins.strip():
+        parsed_cors_origins = ["http://localhost:3000"]
+    elif raw_cors_origins.strip() == "*":
+        parsed_cors_origins = ["*"]
+    else:
+        parsed_cors_origins = [origin.strip() for origin in raw_cors_origins.split(",") if origin.strip()]
+    if not parsed_cors_origins:
+        parsed_cors_origins = ["http://localhost:3000"]
+    wildcard_cors = parsed_cors_origins == ["*"]
+    if wildcard_cors and cors_supports_credentials:
+        app.logger.warning(
+            "CORS con supports_credentials=True y origins='*' no es valido en navegadores. "
+            "Define CORS_ORIGINS con una lista de origenes explicitos en produccion. "
+            "Se deshabilita supports_credentials para continuar."
+        )
+        cors_supports_credentials = False
     cors.init_app(
         app,
-        supports_credentials=True,
-        resources={r"/*": {"origins": cors_origins}}
+        supports_credentials=cors_supports_credentials,
+        resources={r"/*": {"origins": "*" if wildcard_cors else parsed_cors_origins}}
     )
-    if cors_origins == "*" and True:  # supports_credentials=True por diseño
-        app.logger.warning(
-            "CORS con supports_credentials=True y origins='*' no es válido en navegadores. "
-            "Define CORS_ORIGINS con una lista de orígenes explícitos en producción."
-        )
 
     # Rate limiting (compat v2/v3)
     if Limiter and get_remote_address:
+        limiter_defaults = [os.getenv("RATE_LIMIT_DEFAULT", "60/minute")]
+        limiter_storage_uri = os.getenv("RATELIMIT_STORAGE_URI")
+        limiter_kwargs = {
+            "default_limits": limiter_defaults,
+            "storage_uri": limiter_storage_uri or "memory://",
+        }
+        strategy = os.getenv("RATELIMIT_STRATEGY")
+        if strategy:
+            limiter_kwargs["strategy"] = strategy
         try:
             # v3 style
-            limiter = Limiter(get_remote_address, app=app,
-                              default_limits=[os.getenv("RATE_LIMIT_DEFAULT", "60/minute")])
+            limiter = Limiter(get_remote_address, app=app, **limiter_kwargs)
         except TypeError:
             # v2 style
-            limiter = Limiter(key_func=get_remote_address, app=app,
-                              default_limits=[os.getenv("RATE_LIMIT_DEFAULT", "60/minute")])
+            limiter = Limiter(key_func=get_remote_address, app=app, **limiter_kwargs)
+        if not limiter_storage_uri:
+            app.logger.warning("RATELIMIT_STORAGE_URI no esta definido. Se usa memoria en proceso.")
         app.limiter = limiter  # por si luego quieres usar decorators
 
     # Logging rotativo (tolerante a FS)
@@ -95,7 +116,8 @@ def create_app() -> Flask:
 
     # ---------------- Init extensiones ----------------
     db.init_app(app)
-    migrate.init_app(app, db)
+    migrations_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "migrations"))
+    migrate.init_app(app, db, directory=migrations_dir)
 
     # Carga modelos para que Alembic detecte metadata
     with app.app_context():
@@ -103,6 +125,10 @@ def create_app() -> Flask:
             from .gestor_inventario import models  # noqa: F401
         except Exception as e:
             app.logger.warning(f"No se pudieron cargar modelos de gestor_inventario: {e}")
+        try:
+            from .login import models as login_models  # noqa: F401
+        except Exception as e:
+            app.logger.warning(f"No se pudieron cargar modelos de login: {e}")
 
     # ---------------- Blueprints ----------------
     try:

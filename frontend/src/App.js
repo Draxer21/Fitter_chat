@@ -57,6 +57,7 @@ export default function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/admin/productos" element={<TablaProductos />} />
             <Route path="/admin/productos/nuevo" element={<ProductoForm />} />
+            <Route path="/admin/productos/:id/editar" element={<ProductoForm />} />
             <Route path="/rutina/:id" element={<RutinaPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
