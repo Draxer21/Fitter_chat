@@ -53,6 +53,7 @@ entities:
   - formato
   - email
   - telefono
+  - plan
 
 slots:
   objetivo:
@@ -124,7 +125,7 @@ slots:
         entity: equipamiento
 
   ejercicios_num:
-    type: text   # ← cambiado de float a text para evitar problemas con synonyms
+    type: text  # cambiado de float a text para evitar problemas con sinónimos
     influence_conversation: true
     mappings:
       - type: from_entity
@@ -132,7 +133,7 @@ slots:
       - type: from_text
 
   tiempo_disponible:
-    type: text   # ← cambiado de float a text para evitar problemas con synonyms
+    type: text  # cambiado de float a text para evitar problemas con sinónimos
     influence_conversation: true
     mappings:
       - type: from_entity
@@ -161,6 +162,14 @@ slots:
     mappings:
       - type: from_entity
         entity: telefono
+      - type: from_text
+
+  plan:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: plan
       - type: from_text
 
   # SLOT CLAVE PARA DECISIÓN POST-GENERACIÓN
@@ -204,69 +213,69 @@ forms:
 responses:
   # BÁSICOS
   utter_saludar:
-    - text: "¡Hola! Soy FITTER. ¿En qué te ayudo?"
+    - text: "¡Hola! Soy FITTER. ¿En qué puedo ayudarte?"
 
   utter_despedir:
-    - text: "¡Hasta luego! Recuerda hidratarte."
+    - text: "¡Hasta luego! Recuerda mantenerte hidratado."
 
   utter_agradecimiento:
-    - text: "¡Con gusto! ¿Algo más?"
+    - text: "¡Con gusto! ¿Hay algo más en lo que pueda ayudarte?"
 
   utter_info_servicios:
-    - text: "Puedo sugerirte rutinas, reservar clases, informar precios, horarios y más."
+    - text: "Puedo sugerirte rutinas, reservar clases, informar precios, horarios y mucho más."
 
   utter_horarios:
-    - text: "Lunes–Viernes 06:00–22:00, Sábado 08:00–20:00."
+    - text: "Lunes a viernes: 06:00–22:00 · Sábado: 08:00–20:00."
 
   utter_precios_planes:
-    - text: "Planes Mensual, Trimestral y Anual. ¿Quieres que te comparta el detalle por WhatsApp o correo?"
+    - text: "Contamos con planes Mensual, Trimestral y Anual. ¿Deseas que te comparta el detalle por WhatsApp o correo?"
 
   utter_privacidad:
     - text: "Tus datos son gestionados conforme a nuestra política de privacidad."
 
   utter_ubicacion:
-    - text: "Estamos en Av. Principal 123, piso 2."
+    - text: "Estamos ubicados en Av. Principal 123, piso 2."
 
   utter_consejo_nutricion:
-    - text: "Para un mejor rendimiento, prioriza alimentos reales y proteína adecuada. ¿Deseas una pauta?"
+    - text: "Para un mejor rendimiento, prioriza alimentos reales y una adecuada ingesta de proteínas. ¿Quieres que te entregue una pauta personalizada?"
 
   utter_dolor_lesion:
-    - text: "Si hay dolor agudo o inusual, detén el ejercicio y consulta a un profesional."
+    - text: "Si sientes un dolor agudo o inusual, detén el ejercicio y consulta a un profesional."
 
   # PROMPTS DEL FORM RUTINA
   utter_ask_musculo:
-    - text: "¿Qué grupo quieres trabajar? (pecho, espalda, piernas, hombros, brazos, core, fullbody, cardio)"
+    - text: "¿Qué grupo muscular deseas trabajar? (pecho, espalda, piernas, hombros, brazos, core, fullbody, cardio)"
 
   utter_ask_nivel:
-    - text: "¿Cuál es tu nivel? (principiante, intermedio, avanzado)"
+    - text: "¿Cuál es tu nivel de entrenamiento? (principiante, intermedio, avanzado)"
 
   utter_ask_objetivo:
-    - text: "¿Cuál es tu objetivo? (hipertrofia, fuerza, bajar grasa, resistencia)"
+    - text: "¿Cuál es tu objetivo? (hipertrofia, fuerza, pérdida de grasa, resistencia)"
 
   utter_ask_equipamiento:
-    - text: "¿Con qué equipamiento cuentas? (barra, mancuernas, polea, máquinas, peso corporal)"
+    - text: "¿Con qué equipamiento cuentas? (barra, mancuernas, poleas, máquinas, peso corporal)"
 
   utter_ask_ejercicios_num:
-    - text: "¿Cuántos ejercicios deseas por sesión? (6–8 recomendado)"
+    - text: "¿Cuántos ejercicios deseas por sesión? (recomendado: 6–8)"
 
   utter_ask_tiempo_disponible:
-    - text: "¿Tiempo disponible por sesión en minutos? (30/45/60)"
+    - text: "¿Cuánto tiempo tienes disponible por sesión en minutos? (30 / 45 / 60)"
 
   utter_ask_formato:
-    - text: "¿Cómo quieres ver la rutina? (pantalla/correo/whatsapp)"
+    - text: "¿Cómo prefieres recibir la rutina? (pantalla / correo / WhatsApp)"
 
-  # RESÚMENES / ENTREGA RUTINA
+  # RESÚMENES / ENTREGA DE RUTINA
   utter_resumen_rutina:
     - text: |
-        Resumen ▶ {musculo} · {nivel} · objetivo {objetivo}
+        Resumen ▶ {musculo} · {nivel} · Objetivo: {objetivo}
         Ejercicios: {ejercicios_num} · Tiempo: {tiempo_disponible} min · Equipo: {equipamiento}
         Generando plan con técnica y video…
 
   utter_pedir_contacto:
-    - text: "¿Cuál es tu correo electrónico (o teléfono) para enviarte la rutina?"
+    - text: "¿Cuál es tu correo electrónico o número de teléfono para enviarte la rutina?"
 
   utter_envio_rutina_correo:
-    - text: "Perfecto, enviaré la rutina a {contacto} (demo)."
+    - text: "Perfecto, enviaré la rutina a {contacto} (modo demostración)."
 
   # BINARIOS / ESTADO
   utter_affirm:
@@ -276,30 +285,30 @@ responses:
     - text: "Entendido, no se realizará."
 
   utter_progreso_registrado:
-    - text: "Tu progreso ha sido registrado."
+    - text: "Tu progreso ha sido registrado exitosamente."
 
   utter_fuera_de_alcance:
-    - text: "Lo siento, por ahora no puedo ayudar con esa solicitud. ¿Quieres intentar reformularla?"
+    - text: "Lo siento, por ahora no puedo ayudarte con esa solicitud. ¿Deseas reformularla?"
 
   utter_contacto_humano:
-    - text: "De acuerdo, derivaré tu caso a un agente humano. Déjame un medio de contacto."
+    - text: "De acuerdo, derivaré tu caso a un agente humano. Por favor, déjame un medio de contacto."
 
   # PLANES
   utter_suscripcion_alta:
-    - text: "Para activar la suscripción, confirma plan y método de pago."
+    - text: "Para activar tu suscripción, confirma el plan y el método de pago."
 
   utter_suscripcion_baja:
-    - text: "Puedo gestionar tu baja o pausar la suscripción. ¿Cómo procedemos?"
+    - text: "Puedo gestionar tu baja o pausar tu suscripción. ¿Cómo deseas proceder?"
 
   utter_suscripcion_cambio_plan:
-    - text: "¿A qué plan te gustaría cambiarte? (Mensual, Trimestral, Anual)"
+    - text: "¿A qué plan deseas cambiarte? (Mensual, Trimestral, Anual)"
 
   # RESERVAS
   utter_confirmar_reserva:
-    - text: "Confirma por favor: {clase} el {fecha} a las {hora}. ¿Procedo a crear la reserva?"
+    - text: "Por favor confirma: {clase} el {fecha} a las {hora}. ¿Procedo a crear la reserva?"
 
   utter_reserva_confirmada:
-    - text: "Reserva confirmada ✅. {clase} el {fecha} a las {hora}. Código: {codigo_reserva}"
+    - text: "Reserva confirmada ✅ {clase} el {fecha} a las {hora}. Código: {codigo_reserva}"
 
   utter_reserva_cancelada:
     - text: "Entendido. No crearé o cancelaré la reserva según tu solicitud."

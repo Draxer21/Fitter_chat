@@ -80,6 +80,14 @@ nlu:
     - hazlo con [peso corporal](equipamiento)
     - quiero [seis](ejercicios_num) ejercicios
     - tal vez [ocho](ejercicios_num)
+    - mi nivel actual es [principiante](nivel)
+    - tengo [barra](equipamiento) y [mancuernas](equipamiento)
+    - cuento con [peso corporal](equipamiento) nada más
+    - dispongo de [25](tiempo_disponible) minutos libres
+    - anota mi correo [persona@example.com](email)
+    - te dejo mi número [+56 9 8888 7777](telefono)
+    - el código de reserva es [FT-2025](codigo_reserva)
+    - serían [5](ejercicios_num) ejercicios por favor
 
 # =========================
 # RUTINAS — INTENCIÓN PRINCIPAL
@@ -100,6 +108,14 @@ nlu:
     - arma una rutina de [espalda](musculo) con [barra](equipamiento)
     - necesito un plan de ejercicios
     - plan para [resistencia](objetivo)
+    - podrías armarme una rutina full body?
+    - necesito ideas de ejercicios para [piernas](musculo) y [glúteos](musculo)
+    - quiero una rutina enfocada en [resistencia](objetivo)
+    - arma algo rápido para hacer en [30](tiempo_disponible) minutos
+    - me diseñas un plan con [mancuernas](equipamiento)?
+    - busco una rutina nivel [principiante](nivel) para [espalda](musculo)
+    - genera una rutina corta con trabajo de [peso corporal](equipamiento)
+    - dame ejercicios para trabajar [core](musculo)
 
 - intent: otra_rutina
   examples: |
@@ -110,6 +126,9 @@ nlu:
     - muéstrame una distinta
     - otra opción
     - inténtalo de nuevo
+    - puedes generarme otra idea totalmente distinta?
+    - quiero una variante con nuevos ejercicios
+    - proponme una rutina alternativa
 
 # =========================
 # RUTINAS — CAMBIOS ESPECÍFICOS
@@ -120,6 +139,10 @@ nlu:
     - pon el nivel [avanzado](nivel)
     - bájalo a [principiante](nivel)
     - quiero nivel [intermedio](nivel) para la rutina
+    - dejemos el nivel en [principiante](nivel)
+    - pásalo a nivel [avanzado](nivel)
+    - súbelo a [intermedio](nivel) por favor
+    - mejor que sea para alguien [principiante](nivel)
 
 - intent: cambiar_objetivo_rutina
   examples: |
@@ -127,6 +150,10 @@ nlu:
     - quiero [hipertrofia](objetivo)
     - objetivo [bajar_grasa](objetivo)
     - ahora [resistencia](objetivo)
+    - ahora quiero objetivo de [resistencia](objetivo)
+    - apuntemos a [hipertrofia](objetivo)
+    - cambia el objetivo a [bajar_grasa](objetivo) rápido
+    - me interesa enfocarlo en [fuerza](objetivo)
 
 - intent: cambiar_musculo_rutina
   examples: |
@@ -134,6 +161,10 @@ nlu:
     - mejor [espalda](musculo)
     - quiero [piernas](musculo)
     - cambia a [fullbody](musculo)
+    - enfócate en [hombros](musculo)
+    - mejor hagamos algo para [glúteos](musculo)
+    - quiero cambiar a [espalda](musculo) y [bíceps](musculo)
+    - pon ejercicios para [core](musculo) ahora
 
 - intent: formato_entrega_rutina
   examples: |
@@ -144,6 +175,9 @@ nlu:
     - mándala por [mail](formato)
     - envíala al [email](formato)
     - mejor por [wsp](formato)
+    - prefiero verla en [pantalla](formato)
+    - muéstrala directamente en [pantalla](formato)
+    - mándame un [correo](formato) con la rutina
 
 # =========================
 # ENTIDADES — EXPRESIONES
@@ -164,6 +198,7 @@ nlu:
     - principiante
     - intermedio
     - avanzado
+    - novato
 
 - lookup: objetivo
   examples: |
@@ -194,6 +229,7 @@ nlu:
     - mail
     - email
     - e-mail
+    - correo electrónico
 
 - synonym: pantalla
   examples: |
@@ -202,12 +238,43 @@ nlu:
     - en la app
     - acá
     - aca
+    - mostrar en pantalla
+    - aquí mismo
 
 - synonym: whatsapp
   examples: |
     - wsp
     - wasap
     - wtsap
+
+- synonym: mancuernas
+  examples: |
+    - pesas
+    - kettlebell
+    - kettlebells
+    - mancuernas ajustables
+
+- synonym: piernas
+  examples: |
+    - glúteos
+    - tren inferior
+    - piernas y glúteos
+
+- synonym: brazos
+  examples: |
+    - bíceps
+    - tríceps
+    - brazos superiores
+
+- synonym: core
+  examples: |
+    - abdomen
+    - zona media
+
+- synonym: fullbody
+  examples: |
+    - full body
+    - cuerpo completo
 
 - synonym: peso corporal
   examples: |
@@ -216,6 +283,7 @@ nlu:
     - sin equipamiento
     - cuerpo libre
     - peso_corporal
+    - solo mi cuerpo
 
 # =========================
 # SINÓNIMOS (normalización) — Números en palabra → dígitos
@@ -286,6 +354,10 @@ nlu:
     - un ejemplo de rutina [intermedio](nivel)
     - una sugerencia rápida fullbody
     - idea rápida para hoy
+    - qué propones para entrenar hoy?
+    - dame un ejemplo rápido para [fullbody](musculo)
+    - alguna idea express para nivel [avanzado](nivel)
+    - recomiéndame ejercicios si tengo [mancuernas](equipamiento)
 
 # =========================
 # PLANES DE SUSCRIPCIÓN
@@ -296,6 +368,9 @@ nlu:
     - cambiar de plan a [Mensual](plan)
     - pásame a [Trimestral](plan)
     - cambiar plan
+    - llévame al plan [Mensual](plan)
+    - quiero pasarme al plan [Trimestral](plan)
+    - cámbiame al plan [Anual](plan) mejor
 
 - intent: suscripcion_alta
   examples: |
@@ -430,6 +505,9 @@ nlu:
     - quiero la rutina en mi correo
     - envíamela por mail
     - envíala a mi correo electrónico
+    - podrías mandarla a mi email cuando termines?
+    - la quiero en mi buzón de correo electrónico
+    - por favor envíamela por mail a [user@test.cl](email)
 
 - intent: mostrar_rutina_pantalla
   examples: |
@@ -438,6 +516,9 @@ nlu:
     - ver rutina ahora
     - mostrar rutina en la app
     - ver la rutina por pantalla
+    - prefiero verla aquí mismo en pantalla
+    - muéstrala directo en la app ahora
+    - despliega la rutina en el chat por favor
 
 - intent: progreso_registrar
   examples: |

@@ -1,4 +1,4 @@
-# This file contains the different endpoints your bot can use.
+﻿# This file contains the different endpoints your bot can use.
 
 # Server where the models are pulled from.
 # https://rasa.com/docs/rasa/model-storage#fetching-models-from-a-server
@@ -47,4 +47,5 @@ action_endpoint:
 tracker_store:
   type: SQL
   dialect: "postgresql"
-  url: "postgresql://admin:admin123@localhost:5432/rasa_db"
+  url: "postgresql://rasa_user:rasa123@127.0.0.1:5432/rasa_db"
+

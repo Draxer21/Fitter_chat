@@ -1,4 +1,4 @@
-# actions/actions.py
+﻿# actions/actions.py
 from __future__ import annotations
 from typing import Any, Text, Dict, List, Optional, Tuple
 from datetime import datetime, date, timedelta
@@ -483,18 +483,50 @@ class ActionGenerarRutina(Action):
             ejercicios = pick_exercises("fullbody", "mancuernas", ejercicios_num)
             fallback_notice = " (fallback a Fullbody por catálogo no disponible)"
 
+        structured_ejercicios: List[Dict[str, Any]] = []
         bloques: List[str] = []
         for i, (nombre, url) in enumerate(ejercicios, start=1):
-            bloques.append(f"{i}. {nombre} · {s_min}-{s_max} x {r_min}-{r_max} · {rpe_text} · {rir_text} ▶ Video: {url}")
+            bloques.append(
+                f"{i}. {nombre} · {s_min}-{s_max} x {r_min}-{r_max} · {rpe_text} · {rir_text} · Video: {url}"
+            )
+            structured_ejercicios.append({
+                "orden": i,
+                "nombre": nombre,
+                "video": url,
+                "series": f"{s_min}-{s_max}",
+                "repeticiones": f"{r_min}-{r_max}",
+                "rpe": rpe_text,
+                "rir": rir_text
+            })
+
+        routine_id = f"rutina-{int(datetime.now().timestamp())}"
 
         header = (
-            f"Rutina ▶ {musculo.capitalize()} · {nivel} · objetivo {objetivo}{fallback_notice}\n"
+            f"Rutina · {musculo.capitalize()} · {nivel} · objetivo {objetivo}{fallback_notice}\n"
             f"Sesión ~{tiempo} min · {ejercicios_num} ejercicios · Equipo: {equip}\n"
-            f"Progresión: +2.5–5% carga o +1 rep/serie manteniendo {rir_text}."
+            f"Progresión: +2.5-5% carga o +1 rep/serie manteniendo {rir_text}."
         )
         texto = header + ("\n\n" + "\n".join(bloques) if bloques else "\n\n(No se encontraron ejercicios en el catálogo).")
 
         dispatcher.utter_message(text=texto)
+
+        dispatcher.utter_message(json_message={
+            "type": "routine_detail",
+            "routine_id": routine_id,
+            "header": header.split("\n", 1)[0],
+            "summary": {
+                "tiempo_min": tiempo,
+                "ejercicios": ejercicios_num,
+                "equipamiento": equip,
+                "objetivo": objetivo,
+                "nivel": nivel,
+                "musculo": musculo,
+                "fallback": bool(fallback_notice.strip()),
+                "progresion": f"+2.5-5% carga o +1 rep/serie manteniendo {rir_text}."
+            },
+            "fallback_notice": fallback_notice.strip() or None,
+            "exercises": structured_ejercicios
+        })
         return []
 
 # =========================================================
@@ -671,3 +703,7 @@ class ActionSuscripcionCambioPlan(Action):
 
         dispatcher.utter_message(text="¿A qué plan te gustaría cambiarte? (Mensual, Trimestral, Anual)")
         return []
+
+
+
+

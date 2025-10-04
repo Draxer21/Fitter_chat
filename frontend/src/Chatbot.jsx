@@ -1,4 +1,4 @@
-// Chatbot.jsx
+﻿// Chatbot.jsx
 import { useEffect, useRef, useState } from "react";
 
 function getOrCreateSenderId() {
@@ -20,6 +20,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorText, setErrorText] = useState("");
+  const [expandedRoutines, setExpandedRoutines] = useState({});
   const nextId = useRef(2);
   const scrollRef = useRef(null);
   const abortRef = useRef(null);
@@ -93,25 +94,35 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
     }
   };
 
+  const toggleRoutine = (id) => {
+    setExpandedRoutines((prev) => ({
+      ...prev,
+      [id]: !prev[id]
+    }));
+  };
+
   const Bubble = ({ children, from }) => (
-    <span
+    <div
       className="message"
       style={{
         display: "inline-block",
         padding: "8px 12px",
         borderRadius: from === "user" ? "16px 16px 0 16px" : "16px 16px 16px 0",
         background: from === "user" ? "#DCF8C6" : "#F1F0F0",
+        color: from === "user" ? "#0b1120" : "#111827",
         maxWidth: "85%",
         whiteSpace: "pre-wrap",
         wordBreak: "break-word"
       }}
     >
       {children}
-    </span>
+    </div>
   );
 
   const renderMessageContent = (m) => {
     const hasRoutineLink = m?.custom?.type === "routine_link" && typeof m?.custom?.url === "string";
+    const routineDetail = m?.custom?.type === "routine_detail" ? m.custom : null;
+    const isRoutineExpanded = routineDetail ? !!expandedRoutines[m.id] : false;
     const hasText = typeof m.text === "string" && m.text.length > 0;
 
     return (
@@ -128,6 +139,55 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
             >
               {m.custom.title || "Abrir rutina"}
             </button>
+          </>
+        )}
+        {routineDetail && (
+          <>
+            {(hasText || hasRoutineLink) ? <br /> : null}
+            <button
+              type="button"
+              onClick={() => toggleRoutine(m.id)}
+              style={{ marginTop: hasText || hasRoutineLink ? 6 : 0, padding: "6px 12px", borderRadius: 8, border: "1px solid #2563eb", background: "#1d4ed8", color: "white", cursor: "pointer" }}
+            >
+              {isRoutineExpanded ? "Ocultar rutina" : "Ver rutina aquí"}
+            </button>
+            {isRoutineExpanded && (
+              <div style={{ marginTop: 8, background: "rgba(255,255,255,0.85)", padding: "8px 10px", borderRadius: 8, textAlign: "left", lineHeight: 1.45 }}>
+                {routineDetail.header && <p style={{ margin: 0, fontWeight: 600 }}>{routineDetail.header}</p>}
+                <div style={{ fontSize: "0.85rem", marginTop: 6, display: "grid", gap: 4 }}>
+                  <span><strong>Tiempo:</strong> {routineDetail.summary?.tiempo_min ?? "—"} min</span>
+                  <span><strong>Ejercicios:</strong> {routineDetail.summary?.ejercicios ?? "—"}</span>
+                  <span><strong>Equipo:</strong> {routineDetail.summary?.equipamiento ?? "—"}</span>
+                  <span><strong>Objetivo:</strong> {routineDetail.summary?.objetivo ?? "—"}</span>
+                  <span><strong>Nivel:</strong> {routineDetail.summary?.nivel ?? "—"}</span>
+                </div>
+                {routineDetail.fallback_notice && (
+                  <p style={{ marginTop: 6, fontSize: "0.8rem", color: "#92400e" }}>
+                    {routineDetail.fallback_notice}
+                  </p>
+                )}
+                {Array.isArray(routineDetail.exercises) && routineDetail.exercises.length > 0 && (
+                  <ol style={{ marginTop: 10, paddingLeft: 18, display: "grid", gap: 6 }}>
+                    {routineDetail.exercises.map((ex) => (
+                      <li key={`${m.id}-${ex?.orden ?? ex?.nombre}`} style={{ fontSize: "0.85rem" }}>
+                        <strong>{ex?.nombre || "Ejercicio"}</strong>
+                        <div>Series: {ex?.series || "—"} · Reps: {ex?.repeticiones || "—"} · RPE: {ex?.rpe || "—"} · RIR: {ex?.rir || "—"}</div>
+                        {ex?.video && (
+                          <a href={ex.video} target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb" }}>
+                            Ver video
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                  </ol>
+                )}
+                {routineDetail.summary?.progresion && (
+                  <p style={{ marginTop: 8, fontSize: "0.8rem", color: "#374151" }}>
+                    {routineDetail.summary.progresion}
+                  </p>
+                )}
+              </div>
+            )}
           </>
         )}
         {m.image && (
@@ -216,3 +276,8 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
     </div>
   );
 }
+
+
+
+
+
