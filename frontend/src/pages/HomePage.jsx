@@ -3,6 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import { API } from "../services/apijs";
 import "../styles/legacy/producto/style_index.css";
 import HomeHero from "../components/HomeHero";
+import Memberships from "../components/Memberships";
 import Logo from "../components/Logo";
 import { formatearPrecio } from "../utils/formatPrice";
 
@@ -77,6 +78,8 @@ export default function HomePage() {
           {!loading && items.length === 0 && <p>No hay productos o servicios disponibles.</p>}
         </div>
       </section>
+
+      <Memberships />
     </main>
   );
 }

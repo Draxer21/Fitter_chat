@@ -6,7 +6,7 @@ from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from typing import Any, Dict
 
-from flask import Blueprint, jsonify, render_template
+from flask import Blueprint, jsonify, render_template, request
 from sqlalchemy import select
 
 from ..extensions import db
@@ -18,6 +18,67 @@ bp = Blueprint("carrito", __name__)
 # --------- Utilidades ---------
 def _get_carrito() -> Dict[str, Any]:
     return Carrito().snapshot()
+
+
+def _luhn_checksum(card_num: str) -> bool:
+    """Validate card number using Luhn algorithm."""
+    def digits_of(n):
+        return [int(d) for d in str(n)]
+    digits = digits_of(card_num)
+    odd_digits = digits[-1::-2]
+    even_digits = digits[-2::-2]
+    checksum = sum(odd_digits)
+    for d in even_digits:
+        checksum += sum(digits_of(d*2))
+    return checksum % 10 == 0
+
+
+def validar_y_deducir() -> bool:
+    """Valida stock y deduce atómicamente sin limpiar carrito. Retorna True si éxito."""
+    carrito_obj = Carrito()
+    snapshot = carrito_obj.snapshot()
+    items_data = snapshot.get("items", {})
+    if not items_data:
+        return False  # vacío
+
+    # Normaliza lista de (producto_id, cantidad)
+    items: Dict[int, int] = {}
+    for item in items_data.values():
+        pid = _to_int(item.get("producto_id"), default=0)
+        cant = max(1, _to_int(item.get("cantidad"), default=0))
+        if pid > 0:
+            items[pid] = items.get(pid, 0) + cant
+
+    if not items:
+        return False
+
+    try:
+        with db.session.begin():
+            # Cargar y bloquear productos
+            productos = (
+                db.session.execute(
+                    select(Producto).where(Producto.id.in_(list(items.keys()))).with_for_update()
+                )
+                .scalars()
+                .all()
+            )
+            by_id = {p.id: p for p in productos}
+
+            # Validar stocks
+            for pid, cant in items.items():
+                prod = by_id.get(pid)
+                if not prod or cant > (prod.stock or 0):
+                    return False
+
+            # Descontar
+            for pid, cant in items.items():
+                prod = by_id[pid]
+                prod.stock = (prod.stock or 0) - cant
+
+        return True
+    except Exception:
+        db.session.rollback()
+        return False
 
 
 # Endpoint esperado por el frontend: devuelve el estado actual del carrito en sesión
@@ -87,60 +148,55 @@ def limpiar_carrito():
 
 @bp.post("/validar")
 def validar_carrito():
-    """Valida y descuenta stock de todos los ítems del carrito atómicamente."""
-    carrito_obj = Carrito()
-    snapshot = carrito_obj.snapshot()
-    items_data = snapshot.get("items", {})
-    if not items_data:
-        return jsonify({"error": "El carrito está vacío."}), 400
-
-    # 1) Normaliza lista de (producto_id, cantidad)
-    items: Dict[int, int] = {}
-    for item in items_data.values():
-        pid = _to_int(item.get("producto_id"), default=0)
-        cant = max(1, _to_int(item.get("cantidad"), default=0))
-        if pid > 0:
-            items[pid] = items.get(pid, 0) + cant  # agrupa por producto
-
-    if not items:
-        return jsonify({"error": "Carrito inválido."}), 400
-
-    try:
-        with db.session.begin():
-            # 2) Cargar y bloquear todos los productos del carrito
-            productos = (
-                db.session.execute(
-                    select(Producto).where(Producto.id.in_(list(items.keys()))).with_for_update()
-                )
-                .scalars()
-                .all()
-            )
-            by_id = {p.id: p for p in productos}
-
-            # 3) Validar stocks
-            errores = []
-            for pid, cant in items.items():
-                prod = by_id.get(pid)
-                if not prod:
-                    errores.append(f"Producto {pid} no existe.")
-                    continue
-                if cant > (prod.stock or 0):
-                    errores.append(f"Stock insuficiente para {prod.nombre}. Quedan {prod.stock}.")
-
-            if errores:
-                return jsonify({"errores": errores}), 400
-
-            # 4) Descontar y commit (dentro del begin)
-            for pid, cant in items.items():
-                prod = by_id[pid]
-                prod.stock = (prod.stock or 0) - cant
-
-        nuevo_estado = carrito_obj.limpiar()
+    """Valida y descuenta stock, luego limpia carrito."""
+    if validar_y_deducir():
+        nuevo_estado = Carrito().limpiar()
         return jsonify({"exito": "Compra validada.", "carrito": nuevo_estado}), 200
+    else:
+        return jsonify({"error": "Error validando carrito o stock insuficiente."}), 400
 
-    except Exception:
-        db.session.rollback()
-        return jsonify({"error": "Error validando carrito."}), 500
+
+@bp.post("/pagar")
+def procesar_pago():
+    """Valida pago simulado y procesa compra."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Datos de pago requeridos."}), 400
+
+    card_num = data.get("card_num", "").replace(" ", "").replace("-", "")
+    exp = data.get("exp", "")  # MM/YY
+    cvv = data.get("cvv", "")
+    name = data.get("name", "").strip()
+
+    # Validate card number
+    if not card_num.isdigit() or not (13 <= len(card_num) <= 19) or not _luhn_checksum(card_num):
+        return jsonify({"error": "Número de tarjeta inválido."}), 400
+
+    # Validate expiration
+    try:
+        mm, yy = exp.split("/")
+        mm = int(mm)
+        yy = int("20" + yy)  # assume 20xx
+        now = datetime.now()
+        exp_date = datetime(yy, mm, 1)
+        if exp_date < now:
+            return jsonify({"error": "Tarjeta expirada."}), 400
+    except:
+        return jsonify({"error": "Fecha de expiración inválida (MM/YY)."}), 400
+
+    # Validate CVV
+    if not cvv.isdigit() or len(cvv) != 3:
+        return jsonify({"error": "CVV inválido."}), 400
+
+    # Validate name
+    if not name:
+        return jsonify({"error": "Nombre del titular requerido."}), 400
+
+    # If all valid, process cart
+    if validar_y_deducir():
+        return jsonify({"exito": "Pago procesado y compra validada."}), 200
+    else:
+        return jsonify({"error": "Error procesando compra o stock insuficiente."}), 400
 
 
 @bp.get("/boleta")

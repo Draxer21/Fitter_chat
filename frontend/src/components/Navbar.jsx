@@ -115,11 +115,7 @@ export default function Navbar() {
               </a>
             </li>
 
-            {!me?.auth ? (
-              <li className='nav-item'>
-                <NavLink className='nav-link' to='/login'>Acceso de Administrador</NavLink>
-              </li>
-            ) : (
+            {me?.auth && (
               <li className='nav-item dropdown'>
                 <a className='nav-link dropdown-toggle' href='#!' id='userMenuLink' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
                   Hola, {me.user || 'Usuario'}
@@ -136,6 +132,11 @@ export default function Navbar() {
           </ul>
 
           <ul className='navbar-nav ms-auto'>
+            {!me?.auth && (
+              <li className='nav-item me-2'>
+                <NavLink className='btn btn-warning rounded-pill' to='/login'>Inscríbete ya</NavLink>
+              </li>
+            )}
             <li className='nav-item'>
               <NavLink className='nav-link d-flex align-items-center' to='/carrito' aria-label='Carrito de Compras'>
                 <svg
@@ -143,17 +144,17 @@ export default function Navbar() {
                   width='28'
                   height='28'
                   viewBox='0 0 24 24'
-                  fill='none'
-                  stroke='#ffffff'
-                  strokeWidth='1.5'
+                  fill='white'
+                  stroke='white'
+                  strokeWidth='0'
                   strokeLinecap='round'
                   strokeLinejoin='round'
-                  aria-hidden='false'
+                  aria-hidden='true'
                   role='img'
                 >
                   <title>Carrito de compras</title>
-                  <circle cx='9' cy='21' r='1' fill='#ffffff' />
-                  <circle cx='20' cy='21' r='1' fill='#ffffff' />
+                  <circle cx='9' cy='21' r='1' />
+                  <circle cx='20' cy='21' r='1' />
                   <path d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6' />
                 </svg>
               </NavLink>

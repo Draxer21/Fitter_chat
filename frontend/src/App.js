@@ -9,9 +9,9 @@ import HomePage from "./pages/HomePage";
 import RutinaPage from "./pages/RutinaPage";
 import ChatWidget from "./ChatWidget";
 import Navbar from "./components/Navbar";
-import TiendaPage from "./pages/TiendaPage";
 import CarritoPage from "./pages/CarritoPage";
 import BoletaPage from "./pages/BoletaPage";
+import PagoPage from "./pages/PagoPage";
 import LoginPage from "./pages/LoginPage";
 import TablaProductos from "./pages/TablaProductos";
 import ProductoDetalle from "./pages/ProductoDetalle";
@@ -53,6 +53,7 @@ export default function App() {
             <Route path="/producto/:id" element={<ProductoDetalle />} />
             <Route path="/registro" element={<RegistroPage />} />
             <Route path="/carrito" element={<CarritoPage />} />
+            <Route path="/pago" element={<PagoPage />} />
             <Route path="/boleta" element={<BoletaPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/admin/productos" element={<TablaProductos />} />

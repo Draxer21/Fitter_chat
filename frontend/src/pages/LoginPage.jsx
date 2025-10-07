@@ -83,12 +83,12 @@ export default function LoginPage() {
     <main>
       <div className='d-flex justify-content-center align-items-center' style={{ height: '67.5vh' }}>
         <div className='container mt-5 border mx-auto' style={{ backgroundColor: 'rgba(0,0,0,.904)', width: 500, borderRadius: 13, color: 'white' }}>
-          <h2 className='text-center m-4'>Acceso de Administrador Fitter Gym Chain</h2>
+          <h2 className='text-center m-4'>Ingreso Usuario</h2>
 
           {me.auth ? (
             <div className='text-center'>
               <p>
-                Sesion iniciada como <strong>{me.user?.full_name || me.user?.email || 'Usuario'}</strong>
+                Ingreso usuario: <strong>{me.user?.full_name || me.user?.email || 'Usuario'}</strong>
               </p>
               <button className='btn btn-light' onClick={logout}>
                 Cerrar Sesion
