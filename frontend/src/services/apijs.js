@@ -51,7 +51,12 @@ export const API = {
   },
   auth: {
     me:    () => fetch(`${BASE}/auth/me`, { credentials:"include" }).then(j),
-    login: (u,p)=> fetch(`${BASE}/auth/login`, { method:"POST", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify({ email:u, user:u, password:p, pwd:p }) }).then(j),
+    login: (u,p)=> fetch(`${BASE}/auth/login`, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      credentials:"include",
+      body: JSON.stringify({ username:u, user:u, password:p, pwd:p })
+    }).then(j),
     logout:() => fetch(`${BASE}/auth/logout`, { method:"POST", credentials:"include" }).then(j),
     register: (payload) => fetch(`${BASE}/auth/register`, { method:"POST", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify(payload) }).then(j),
   },

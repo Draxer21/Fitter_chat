@@ -11,27 +11,35 @@ bp = Blueprint("login", __name__)
 def _normalize_email(value: str) -> str:
     return (value or "").strip().lower()
 
+def _normalize_username(value: str) -> str:
+    return (value or "").strip().lower()
+
 
 @bp.post("/register")
 def register():
     data = request.get_json(force=True, silent=True) or {}
     full_name = (data.get("full_name") or "").strip()
     email = _normalize_email(data.get("email"))
+    username = _normalize_username(data.get("username") or data.get("user"))
     password = data.get("password") or ""
     is_admin = bool(data.get("is_admin"))
 
-    if not full_name or not email or not password:
-        return jsonify({"error": "Nombre, correo y password son obligatorios"}), 400
+    if not full_name or not email or not username or not password:
+        return jsonify({"error": "Nombre, usuario, correo y password son obligatorios"}), 400
 
     if "@" not in email:
         return jsonify({"error": "Correo no es valido"}), 400
+    if not 3 <= len(username) <= 32:
+        return jsonify({"error": "El usuario debe tener entre 3 y 32 caracteres"}), 400
+    if not username.replace("-", "").replace("_", "").isalnum():
+        return jsonify({"error": "El usuario solo acepta letras, numeros, guion y guion bajo"}), 400
 
     try:
-        user = User.create(email=email, password=password, full_name=full_name, is_admin=is_admin)
+        user = User.create(email=email, username=username, password=password, full_name=full_name, is_admin=is_admin)
         db.session.commit()
     except IntegrityError:
         db.session.rollback()
-        return jsonify({"error": "El correo ya esta registrado"}), 409
+        return jsonify({"error": "El correo o usuario ya esta registrado"}), 409
 
     session["uid"] = user.id
     session["is_admin"] = user.is_admin
@@ -41,13 +49,17 @@ def register():
 @bp.post("/login")
 def do_login():
     data = request.get_json(force=True, silent=True) or {}
-    email = _normalize_email(data.get("user") or data.get("email"))
+    identifier = (data.get("username") or data.get("user") or data.get("email") or "").strip().lower()
     password = data.get("pwd") or data.get("password") or ""
 
-    if not email or not password:
+    if not identifier or not password:
         return jsonify({"error": "Credenciales invalidas"}), 401
 
-    user = User.query.filter_by(email=email).first()
+    if "@" in identifier:
+        user = User.query.filter_by(email=identifier).first()
+    else:
+        user = User.query.filter_by(username=identifier).first()
+
     if not user or not user.check_password(password):
         return jsonify({"error": "Credenciales invalidas"}), 401
 

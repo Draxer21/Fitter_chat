@@ -1,6 +1,7 @@
 ﻿import { useEffect, useState } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { API } from '../services/apijs';
+import { useLocale } from '../contexts/LocaleContext';
 import '../styles/legacy/login/style_login.css';
 
 const normalize = (value) => (value || '').trim();
@@ -8,8 +9,9 @@ const normalize = (value) => (value || '').trim();
 export default function LoginPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
+  const { t } = useLocale();
   const [me, setMe] = useState({ auth: false });
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,18 +43,18 @@ export default function LoginPage() {
   const submit = async (event) => {
     event.preventDefault();
     setMessage('');
-    const normalizedEmail = normalize(email).toLowerCase();
+    const normalizedUsername = normalize(username).toLowerCase();
     const normalizedPassword = normalize(password);
-    if (!normalizedEmail || !normalizedPassword) {
-      setMessage('Debes ingresar correo y password');
+    if (!normalizedUsername || !normalizedPassword) {
+      setMessage(t('login.required'));
       return;
     }
     try {
       setLoading(true);
-      const response = await API.auth.login(normalizedEmail, normalizedPassword);
+      const response = await API.auth.login(normalizedUsername, normalizedPassword);
       if (response?.user) {
         setMe({ auth: true, user: response.user });
-        setEmail('');
+        setUsername('');
         setPassword('');
         const next = params.get('next');
         if (next) {
@@ -61,10 +63,10 @@ export default function LoginPage() {
           navigate('/admin/productos', { replace: true });
         }
       } else {
-        setMessage('No fue posible iniciar sesion');
+        setMessage(t('login.error'));
       }
     } catch (error) {
-      setMessage(error?.message || 'Credenciales invalidas.');
+      setMessage(error?.message || t('login.credentials.invalid'));
     } finally {
       setLoading(false);
     }
@@ -83,48 +85,47 @@ export default function LoginPage() {
     <main>
       <div className='d-flex justify-content-center align-items-center' style={{ height: '67.5vh' }}>
         <div className='container mt-5 border mx-auto' style={{ backgroundColor: 'rgba(0,0,0,.904)', width: 500, borderRadius: 13, color: 'white' }}>
-          <h2 className='text-center m-4'>Ingreso Usuario</h2>
+          <h2 className='text-center m-4'>{t('login.title')}</h2>
 
           {me.auth ? (
             <div className='text-center'>
               <p>
-                Ingreso usuario: <strong>{me.user?.full_name || me.user?.email || 'Usuario'}</strong>
+                {t('login.loggedInAs')}: <strong>{me.user?.full_name || me.user?.username || 'Usuario'}</strong>
               </p>
               <button className='btn btn-light' onClick={logout}>
-                Cerrar Sesion
+                {t('login.logout')}
               </button>
             </div>
           ) : (
             <form className='w-50 mx-auto' onSubmit={submit}>
               <div className='form-group mb-3'>
-                <label htmlFor='loginEmail'>Correo electronico</label>
+                <label htmlFor='loginUsername'>{t('login.username.label')}</label>
                 <input
-                  id='loginEmail'
-                  type='email'
+                  id='loginUsername'
                   className='form-control'
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder='correo@dominio.com'
-                  autoComplete='email'
+                  value={username}
+                  onChange={(event) => setUsername(event.target.value)}
+                  placeholder={t('login.username.placeholder')}
+                  autoComplete='username'
                   required
                 />
               </div>
               <div className='form-group mb-3'>
-                <label htmlFor='loginPassword'>Password</label>
+                <label htmlFor='loginPassword'>{t('login.password.label')}</label>
                 <input
                   type='password'
                   id='loginPassword'
                   className='form-control'
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
-                  placeholder='Password'
+                  placeholder={t('login.password.placeholder')}
                   autoComplete='current-password'
                   required
                 />
               </div>
               <div className='text-center mb-2'>
-                <span>No tienes cuenta? </span>
-                <Link to='/registro'>Registrate aqui</Link>
+                <span>{t('login.noAccount')} </span>
+                <Link to='/registro'>{t('login.gotoRegister')}</Link>
               </div>
               {message && <div className='alert alert-danger mt-2'>{message}</div>}
               <div className='d-flex justify-content-center m-3'>
@@ -134,7 +135,7 @@ export default function LoginPage() {
                   style={{ backgroundColor: 'black', color: 'white', borderColor: 'rgba(255,255,255,.568)' }}
                   disabled={loading}
                 >
-                  {loading ? 'Iniciando...' : 'Iniciar Sesion'}
+                  {loading ? t('login.loading') : t('login.submit')}
                 </button>
               </div>
             </form>
@@ -144,3 +145,4 @@ export default function LoginPage() {
     </main>
   );
 }
+

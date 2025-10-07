@@ -4,14 +4,19 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Alert from '../components/Alert';
 import { API } from '../services/apijs';
+import { useLocale } from '../contexts/LocaleContext';
 
 import '../assets/css/style_login.css';
 import '../assets/css/registro_usuario.css';
 
 const normalize = (value) => (value || '').trim();
 
+const usernamePattern = /^[a-zA-Z0-9_-]{3,32}$/;
+
 export default function RegisterPage() {
+  const { t } = useLocale();
   const [fullName, setFullName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
@@ -23,27 +28,32 @@ export default function RegisterPage() {
 
   const validate = () => {
     const name = normalize(fullName);
+    const user = normalize(username).toLowerCase();
     const mail = normalize(email).toLowerCase();
     const pass = normalize(password);
     const passConfirm = normalize(password2);
 
-    if (!name || !mail || !pass || !passConfirm) {
-      showMessage('danger', 'Nombre, correo y password son obligatorios');
+    if (!name || !user || !mail || !pass || !passConfirm) {
+      showMessage('danger', t('register.error.required'));
       return null;
     }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(mail)) {
-      showMessage('danger', 'Correo no es valido');
+      showMessage('danger', t('register.error.email'));
+      return null;
+    }
+    if (!usernamePattern.test(user)) {
+      showMessage('danger', t('register.error.username'));
       return null;
     }
     if (pass.length < 6) {
-      showMessage('danger', 'Password debe tener al menos 6 caracteres');
+      showMessage('danger', t('register.error.passwordLength'));
       return null;
     }
     if (pass !== passConfirm) {
-      showMessage('danger', 'Las contrasenas no coinciden');
+      showMessage('danger', t('register.error.passwordMismatch'));
       return null;
     }
-    return { full_name: name, email: mail, password: pass };
+    return { full_name: name, username: user, email: mail, password: pass };
   };
 
   const handleSubmit = async (event) => {
@@ -57,10 +67,10 @@ export default function RegisterPage() {
     try {
       setLoading(true);
       await API.auth.register(payload);
-      showMessage('success', 'Registro exitoso, redirigiendo a iniciar sesion...');
+      showMessage('success', t('register.success'));
       setTimeout(() => navigate('/login', { replace: true }), 1500);
     } catch (error) {
-      showMessage('danger', error?.message || 'No fue posible registrar la cuenta');
+      showMessage('danger', error?.message || t('register.error.required'));
     } finally {
       setLoading(false);
     }
@@ -72,14 +82,14 @@ export default function RegisterPage() {
 
       <main className='container mt-4 mb-5 flex-grow-1 d-flex justify-content-center align-items-center'>
         <div className='card p-5' style={{ maxWidth: 500, width: '100%' }}>
-          <h2 className='mb-4 text-center text-dark fw-bold'>Crear Cuenta</h2>
+          <h2 className='mb-4 text-center text-dark fw-bold'>{t('register.title')}</h2>
           <form id='formulario' onSubmit={handleSubmit} noValidate>
             {messages.map((msg, index) => (
               <Alert key={index} type={msg.type} message={msg.text} />
             ))}
 
             <div className='mb-3'>
-              <label htmlFor='registerName' className='form-label'>Nombre completo</label>
+              <label htmlFor='registerName' className='form-label'>{t('register.fullname')}</label>
               <input
                 id='registerName'
                 className='form-control'
@@ -91,7 +101,19 @@ export default function RegisterPage() {
             </div>
 
             <div className='mb-3'>
-              <label htmlFor='registerEmail' className='form-label'>Correo electronico</label>
+              <label htmlFor='registerUsername' className='form-label'>{t('register.username')}</label>
+              <input
+                id='registerUsername'
+                className='form-control'
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                placeholder='tu_usuario'
+                required
+              />
+            </div>
+
+            <div className='mb-3'>
+              <label htmlFor='registerEmail' className='form-label'>{t('register.email')}</label>
               <input
                 id='registerEmail'
                 type='email'
@@ -104,7 +126,7 @@ export default function RegisterPage() {
             </div>
 
             <div className='mb-3'>
-              <label htmlFor='registerPassword' className='form-label'>Password</label>
+              <label htmlFor='registerPassword' className='form-label'>{t('register.password')}</label>
               <input
                 id='registerPassword'
                 type='password'
@@ -117,7 +139,7 @@ export default function RegisterPage() {
             </div>
 
             <div className='mb-4'>
-              <label htmlFor='registerPassword2' className='form-label'>Confirmar password</label>
+              <label htmlFor='registerPassword2' className='form-label'>{t('register.password.confirm')}</label>
               <input
                 id='registerPassword2'
                 type='password'
@@ -130,13 +152,13 @@ export default function RegisterPage() {
             </div>
 
             <button type='submit' className='btn btn-primary w-100 py-2 fw-bold' disabled={loading}>
-              {loading ? 'Registrando...' : 'Registrarse'}
+              {loading ? t('register.loading') : t('register.submit')}
             </button>
           </form>
 
           <div className='text-center mt-4'>
-            <p className='text-dark mb-0'>Ya tienes una cuenta?</p>
-            <Link to='/login' className='text-primary text-decoration-none fw-medium'>Inicia sesion aqui</Link>
+            <p className='text-dark mb-0'>{t('register.haveAccount')}</p>
+            <Link to='/login' className='text-primary text-decoration-none fw-medium'>{t('register.gotoLogin')}</Link>
           </div>
         </div>
       </main>

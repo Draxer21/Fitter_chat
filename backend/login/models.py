@@ -11,6 +11,7 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
+    username = db.Column(db.String(80), unique=True, nullable=False, index=True)
     full_name = db.Column(db.String(120), nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
@@ -31,6 +32,7 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
+            "username": self.username,
             "full_name": self.full_name,
             "is_admin": self.is_admin,
             "created_at": self.created_at.isoformat(),
@@ -38,8 +40,21 @@ class User(db.Model):
         }
 
     @classmethod
-    def create(cls, *, email: str, password: str, full_name: str, is_admin: bool = False) -> "User":
-        user = cls(email=email.lower().strip(), full_name=full_name.strip(), is_admin=is_admin)
+    def create(
+        cls,
+        *,
+        email: str,
+        username: str,
+        password: str,
+        full_name: str,
+        is_admin: bool = False,
+    ) -> "User":
+        user = cls(
+            email=email.lower().strip(),
+            username=username.strip().lower(),
+            full_name=full_name.strip(),
+            is_admin=is_admin,
+        )
         user.set_password(password)
         db.session.add(user)
         return user

@@ -1,7 +1,8 @@
-import { NavLink, useNavigate } from 'react-router-dom';
+﻿import { NavLink, useNavigate } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import Logo from '../components/Logo';
 import { API } from '../services/apijs';
+import { useLocale } from '../contexts/LocaleContext';
 
 const closeBootstrapModal = (ref) => {
   const Modal = window.bootstrap && window.bootstrap.Modal;
@@ -16,6 +17,7 @@ const closeBootstrapModal = (ref) => {
 };
 
 export default function Navbar() {
+  const { t, locale, setLocale } = useLocale();
   const [me, setMe] = useState({ auth: false, is_admin: false, user: '' });
   const [supportEmail, setSupportEmail] = useState('');
   const [supportDesc, setSupportDesc] = useState('');
@@ -61,6 +63,12 @@ export default function Navbar() {
     await handleLogout();
   };
 
+  const toggleLocale = () => {
+    setLocale(locale === 'es' ? 'en' : 'es');
+  };
+
+  const currentUserLabel = me?.user?.username || me?.user?.full_name || me?.user?.email || 'Usuario';
+
   return (
     <>
       <nav className='navbar navbar-expand-lg navbar-dark custom-navbar p-3 fixed-top shadow-sm'>
@@ -83,47 +91,47 @@ export default function Navbar() {
         <div className='collapse navbar-collapse' id='navbarNavDropdown'>
           <ul className='navbar-nav'>
             <li className='nav-item'>
-              <NavLink className='nav-link' to='/'>Inicio</NavLink>
+              <NavLink className='nav-link' to='/'>{t('nav.home')}</NavLink>
             </li>
 
             <li className='nav-item dropdown'>
               <a className='nav-link dropdown-toggle' href='#!' id='navbarDropdownMenuLink' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
-                Productos y Servicios
+                {t('nav.products')}
               </a>
               <div className='dropdown-menu' aria-labelledby='navbarDropdownMenuLink'>
-                <NavLink className='dropdown-item' to='/?categoria=Membership'>Membresias</NavLink>
-                <NavLink className='dropdown-item' to='/?categoria=Personal%20Training'>Entrenamiento Personal</NavLink>
-                <NavLink className='dropdown-item' to='/?categoria=Supplements'>Suplementos</NavLink>
-                <NavLink className='dropdown-item' to='/?categoria=Merchandise'>Mercancia</NavLink>
+                <NavLink className='dropdown-item' to='/?categoria=Membership'>{t('nav.products.memberships')}</NavLink>
+                <NavLink className='dropdown-item' to='/?categoria=Personal%20Training'>{t('nav.products.training')}</NavLink>
+                <NavLink className='dropdown-item' to='/?categoria=Supplements'>{t('nav.products.supplements')}</NavLink>
+                <NavLink className='dropdown-item' to='/?categoria=Merchandise'>{t('nav.products.merch')}</NavLink>
               </div>
             </li>
 
             {me?.is_admin && (
               <>
                 <li className='nav-item'>
-                  <NavLink className='nav-link' to='/admin/productos'>Control de Inventario</NavLink>
+                  <NavLink className='nav-link' to='/admin/productos'>{t('nav.admin.inventory')}</NavLink>
                 </li>
                 <li className='nav-item'>
-                  <NavLink className='nav-link' to='/admin/productos/nuevo'>Anadir Producto/Servicio</NavLink>
+                  <NavLink className='nav-link' to='/admin/productos/nuevo'>{t('nav.admin.addProduct')}</NavLink>
                 </li>
               </>
             )}
 
             <li className='nav-item'>
               <a className='nav-link' href='#!' data-bs-toggle='modal' data-bs-target='#supportModal'>
-                Soporte
+                {t('nav.support')}
               </a>
             </li>
 
             {me?.auth && (
               <li className='nav-item dropdown'>
                 <a className='nav-link dropdown-toggle' href='#!' id='userMenuLink' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
-                  Hola, {me.user || 'Usuario'}
+                  {t('nav.greeting')}, {currentUserLabel}
                 </a>
                 <ul className='dropdown-menu dropdown-menu-end' aria-labelledby='userMenuLink'>
                   <li>
                     <button className='dropdown-item' type='button' data-bs-toggle='modal' data-bs-target='#logoutModal'>
-                      Cerrar sesion
+                      {t('nav.logout')}
                     </button>
                   </li>
                 </ul>
@@ -131,10 +139,15 @@ export default function Navbar() {
             )}
           </ul>
 
-          <ul className='navbar-nav ms-auto'>
+          <ul className='navbar-nav ms-auto align-items-center gap-2'>
+            <li className='nav-item'>
+              <button type='button' className='btn btn-outline-light btn-sm' onClick={toggleLocale}>
+                {locale === 'es' ? 'EN' : 'ES'}
+              </button>
+            </li>
             {!me?.auth && (
               <li className='nav-item me-2'>
-                <NavLink className='btn btn-warning rounded-pill' to='/login'>Inscríbete ya</NavLink>
+                <NavLink className='btn btn-warning rounded-pill' to='/login'>{t('nav.login.cta')}</NavLink>
               </li>
             )}
             <li className='nav-item'>
@@ -167,13 +180,13 @@ export default function Navbar() {
         <div className='modal-dialog modal-sm modal-dialog-centered'>
           <div className='modal-content'>
             <div className='modal-header'>
-              <h5 className='modal-title' id='logoutModalLabel'>Confirmar cierre de sesion</h5>
+              <h5 className='modal-title' id='logoutModalLabel'>{t('nav.logout.confirmTitle')}</h5>
               <button type='button' className='btn-close' data-bs-dismiss='modal' aria-label='Close' />
             </div>
-            <div className='modal-body'>Esta seguro de que desea cerrar sesion?</div>
+            <div className='modal-body'>{t('nav.logout.confirmBody')}</div>
             <div className='modal-footer'>
-              <button type='button' className='btn btn-secondary' data-bs-dismiss='modal'>Cancelar</button>
-              <button type='button' className='btn btn-danger' onClick={confirmLogout}>Confirmar</button>
+              <button type='button' className='btn btn-secondary' data-bs-dismiss='modal'>{t('nav.logout.cancel')}</button>
+              <button type='button' className='btn btn-danger' onClick={confirmLogout}>{t('nav.logout.accept')}</button>
             </div>
           </div>
         </div>
@@ -184,7 +197,7 @@ export default function Navbar() {
           <div className='modal-content'>
             <div className='modal-header' style={{ backgroundColor: 'black' }}>
               <h1 className='modal-title fs-5' id='supportModalLabel' style={{ color: '#ffffff' }}>
-                Contactar Soporte
+                {t('support.title')}
               </h1>
               <button type='button' className='btn-close' data-bs-dismiss='modal' aria-label='Close' style={{ backgroundColor: '#ffffff' }} />
             </div>
@@ -211,20 +224,20 @@ export default function Navbar() {
               <br />
               <br />
               <br />
-              <h4>Ticket de Soporte</h4>
+              <h4>{t('support.ticket.title')}</h4>
               <form onSubmit={handleSupportSubmit}>
                 <div className='form-group'>
-                  <label htmlFor='ticketEmail'>Correo Electronico</label>
+                  <label htmlFor='ticketEmail'>{t('support.ticket.email')}</label>
                   <input
                     className='form-control'
                     id='ticketEmail'
                     value={supportEmail}
                     onChange={(event) => setSupportEmail(event.target.value)}
-                    placeholder='Introduce tu correo'
+                    placeholder='name@example.com'
                   />
                 </div>
                 <div className='form-group'>
-                  <label htmlFor='ticketDesc'>Describe tu problema</label>
+                  <label htmlFor='ticketDesc'>{t('support.ticket.desc')}</label>
                   <textarea
                     className='form-control'
                     id='ticketDesc'
@@ -234,7 +247,7 @@ export default function Navbar() {
                   />
                 </div>
                 <button type='submit' className='btn btn-primary' style={{ marginTop: 8 }}>
-                  Enviar
+                  {t('support.ticket.submit')}
                 </button>
               </form>
             </div>
@@ -244,3 +257,4 @@ export default function Navbar() {
     </>
   );
 }
+
