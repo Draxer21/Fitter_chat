@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { API } from "../services/apijs";
 import "../styles/legacy/producto/style_index.css";
@@ -46,19 +46,20 @@ export default function HomePage() {
           Nuestras Ofertas{categoria ? ` en ${categoria}` : ""}
         </h2>
 
-        {loading && <div className="container">Cargando…</div>}
+        {loading && <div className="container">Cargando.</div>}
         {err && <div className="container text-danger">Error: {err}</div>}
 
         <div className="productos">
           {items.map((p) => {
             const disponible = stockDisponible(p.stock);
             const sinStock = disponible <= 0;
+            const imageSrc = p.imagen_url || "/fitter_logo.png";
             return (
               <div key={p.id} className="producto">
                 <Link to={`/producto/${p.id}`}>
-                  <Logo src="/fitter_logo.png" alt={p.nombre} width={160} />
+                  <Logo src={imageSrc} alt={p.nombre} className="producto__imagen" />
                   <h4>{p.nombre}</h4>
-                  <p>Categoría: {p.categoria || "—"}</p>
+                  <p>Categoría: {p.categoria || "-"}</p>
                   <p>Disponibilidad: {disponible}</p>
                   <p>Precio: {formatearPrecio(p.precio)}</p>
                 </Link>

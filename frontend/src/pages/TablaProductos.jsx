@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API } from "../services/apijs";
 import "../styles/legacy/tabla_productos/style_tabla_productos.css";
-import Logo from "../components/Logo";
 import { formatearPrecio } from "../utils/formatPrice";
 
 const stockDisponible = (valor) => {
@@ -74,6 +73,7 @@ export default function TablaProductos() {
             <tbody>
               {items.map((pr) => {
                 const stock = stockDisponible(pr.stock);
+                const imageSrc = pr.imagen_url || "/fitter_logo.png";
                 return (
                   <tr key={pr.id}>
                     <td>{pr.id}</td>
@@ -83,7 +83,7 @@ export default function TablaProductos() {
                     <td>{pr.categoria || ""}</td>
                     <td>{stock}</td>
                     <td>
-                      <Logo src="/fitter_logo.png" alt="" style={{ width: 40 }} />
+                      <img src={imageSrc} alt={pr.nombre} style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 6 }} />
                     </td>
                     <td className="text-center">
                       <div className="d-flex justify-content-center gap-2">

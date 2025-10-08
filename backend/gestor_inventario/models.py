@@ -2,6 +2,7 @@
 from __future__ import annotations
 from datetime import datetime
 from decimal import Decimal
+from flask import url_for
 from ..extensions import db
 
 # tabla puente M2M
@@ -54,8 +55,11 @@ class Producto(db.Model):
     def imagen_url(self) -> str | None:
         if not self.imagen_filename:
             return None
-        # sirve desde /static/uploads/<filename>
-        return f"/static/uploads/{self.imagen_filename}"
+        try:
+            return url_for("static", filename=f"uploads/{self.imagen_filename}", _external=True)
+        except RuntimeError:
+            # fuera de contexto de solicitud (p. ej. CLI/migraciones)
+            return f"/static/uploads/{self.imagen_filename}"
 
     def to_dict(self) -> dict:
         return {

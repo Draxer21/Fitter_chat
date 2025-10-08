@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { API } from "../services/apijs";
 import "../styles/legacy/producto/style_detalle.css";
-import Logo from "../components/Logo";
 import { formatearPrecio } from "../utils/formatPrice";
 
 const stockDisponible = (valor) => {
@@ -32,18 +31,19 @@ export default function ProductoDetalle() {
   };
 
   if (err) return <div className="container text-danger">Error: {err}</div>;
-  if (!p) return <div className="container">Cargando…</div>;
+  if (!p) return <div className="container">Cargando.</div>;
 
   const disponible = stockDisponible(p.stock);
   const sinStock = disponible <= 0;
+  const imageSrc = p.imagen_url || "/fitter_logo.png";
 
   return (
     <main>
       <div className="container">
         <div className="producto-detalle">
           <h1>{p.nombre}</h1>
-          <Logo src="/fitter_logo.png" style={{ width: 300, height: 300 }} alt={p.nombre} />
-          <p className="categoria">Categoría: {p.categoria || "—"}</p>
+          <img src={imageSrc} alt={p.nombre} style={{ maxWidth: 300, maxHeight: 300, objectFit: "cover" }} />
+          <p className="categoria">Categoría: {p.categoria || "-"}</p>
           <p className="categoria">Disponibilidad: {disponible}</p>
           <p className="precio">Precio: {formatearPrecio(p.precio)}</p>
           <p className="descripcion">{p.descripcion || ""}</p>
