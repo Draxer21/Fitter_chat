@@ -6,6 +6,7 @@ import HomeHero from "../components/HomeHero";
 import Memberships from "../components/Memberships";
 import Logo from "../components/Logo";
 import { formatearPrecio } from "../utils/formatPrice";
+import { useLocale } from "../contexts/LocaleContext";
 
 const stockDisponible = (valor) => {
   const n = Number(valor);
@@ -15,6 +16,7 @@ const stockDisponible = (valor) => {
 export default function HomePage() {
   const { search } = useLocation();
   const categoria = useMemo(() => new URLSearchParams(search).get("categoria") || "", [search]);
+  const { t } = useLocale();
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,11 +45,12 @@ export default function HomePage() {
 
       <section className="container py-5">
         <h2 style={{ textAlign: "center", margin: "20px 0 50px 0" }}>
-          Nuestras Ofertas{categoria ? ` en ${categoria}` : ""}
+          {t("home.offers.title")}
+          {categoria ? ` ${t("home.offers.in")} ${categoria}` : ""}
         </h2>
 
-        {loading && <div className="container">Cargando.</div>}
-        {err && <div className="container text-danger">Error: {err}</div>}
+        {loading && <div className="container">{t("home.offers.loading")}</div>}
+        {err && <div className="container text-danger">{t("home.offers.errorPrefix")} {err}</div>}
 
         <div className="productos">
           {items.map((p) => {
@@ -59,9 +62,9 @@ export default function HomePage() {
                 <Link to={`/producto/${p.id}`}>
                   <Logo src={imageSrc} alt={p.nombre} className="producto__imagen" />
                   <h4>{p.nombre}</h4>
-                  <p>Categoría: {p.categoria || "-"}</p>
-                  <p>Disponibilidad: {disponible}</p>
-                  <p>Precio: {formatearPrecio(p.precio)}</p>
+                  <p>{t("home.offers.categoryLabel")}: {p.categoria || "-"}</p>
+                  <p>{t("home.offers.availabilityLabel")}: {disponible}</p>
+                  <p>{t("home.offers.priceLabel")}: {formatearPrecio(p.precio)}</p>
                 </Link>
                 <button
                   className="btn btn-primary"
@@ -71,12 +74,12 @@ export default function HomePage() {
                     add(p.id);
                   }}
                 >
-                  {sinStock ? "Sin stock" : "Añadir al Carrito"}
+                  {sinStock ? t("home.offers.button.outOfStock") : t("home.offers.button.addToCart")}
                 </button>
               </div>
             );
           })}
-          {!loading && items.length === 0 && <p>No hay productos o servicios disponibles.</p>}
+          {!loading && items.length === 0 && <p>{t("home.offers.empty")}</p>}
         </div>
       </section>
 
