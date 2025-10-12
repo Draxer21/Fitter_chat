@@ -30,6 +30,7 @@ intents:
   - enviar_rutina_correo
   # RUTINA
   - solicitar_rutina
+  - solicitar_dieta
   - cambiar_nivel_rutina
   - cambiar_objetivo_rutina
   - cambiar_musculo_rutina
@@ -46,6 +47,8 @@ entities:
   - dolor_zona
   - contacto
   - codigo_reserva
+  - alergia
+  - condicion_salud
   # RUTINA
   - equipamiento
   - ejercicios_num
@@ -116,6 +119,28 @@ slots:
         entity: telefono
       - type: from_text
 
+  condiciones_salud:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: condicion_salud
+      - type: from_text
+        conditions:
+          - active_loop: rutina_form
+            requested_slot: condiciones_salud
+
+  alergias:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: alergia
+      - type: from_text
+        conditions:
+          - active_loop: rutina_form
+            requested_slot: alergias
+
   # RUTINA
   equipamiento:
     type: text
@@ -172,6 +197,18 @@ slots:
         entity: plan
       - type: from_text
 
+  ultima_rutina:
+    type: any
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  ultima_dieta:
+    type: any
+    influence_conversation: false
+    mappings:
+      - type: custom
+
   # SLOT CLAVE PARA DECISIÓN POST-GENERACIÓN
   formato_entrega:
     type: text
@@ -202,6 +239,8 @@ forms:
       - equipamiento
       - ejercicios_num
       - tiempo_disponible
+      - condiciones_salud
+      - alergias
       - formato
 
   reserva_form:
@@ -260,6 +299,12 @@ responses:
 
   utter_ask_tiempo_disponible:
     - text: "¿Cuánto tiempo tienes disponible por sesión en minutos? (30 / 45 / 60)"
+
+  utter_ask_condiciones_salud:
+    - text: "Tienes alguna condicion medica que debamos considerar? (hipertension, asma, lesiones). Si no aplica responde \"ninguna\"."
+
+  utter_ask_alergias:
+    - text: "Presentas alergias o intolerancias alimentarias? Dime cuales o responde \"ninguna\"."
 
   utter_ask_formato:
     - text: "¿Cómo prefieres recibir la rutina? (pantalla / correo / WhatsApp)"
@@ -328,6 +373,7 @@ actions:
   - action_consultar_reserva
   - action_suscripcion_cambio_plan
   - action_generar_rutina
+  - action_generar_dieta
 
 session_config:
   session_expiration_time: 60

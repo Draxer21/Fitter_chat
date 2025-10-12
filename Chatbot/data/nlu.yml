@@ -180,6 +180,21 @@ nlu:
     - mándame un [correo](formato) con la rutina
 
 # =========================
+# DIETA COMPLEMENTARIA
+# =========================
+- intent: solicitar_dieta
+  examples: |
+    - necesito una dieta complementaria
+    - genera una dieta acorde a la rutina
+    - dime que comer junto con mi plan
+    - arma una dieta para hipertrofia
+    - recomendame un plan de comidas para bajar grasa
+    - que alimentos deberia comer segun mi rutina
+    - quiero sugerencias de alimentacion
+    - podrias enviarme una dieta diaria
+
+
+# =========================
 # ENTIDADES — EXPRESIONES
 # =========================
 - lookup: musculo
@@ -535,3 +550,21 @@ nlu:
     - dame un resumen de la rutina
     - quiero el resumen de hoy
     - dame el resumen
+
+- lookup: alergia
+  examples: |
+    - gluten
+    - lactosa
+    - mani
+    - frutos secos
+    - mariscos
+    - huevo
+
+- lookup: condicion_salud
+  examples: |
+    - hipertension
+    - diabetes
+    - asma
+    - cardiopatia
+    - lesion lumbar
+    - problemas cardiacos

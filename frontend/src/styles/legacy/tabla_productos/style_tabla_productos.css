@@ -122,3 +122,13 @@ h1{
     
     
 }
+
+.tabla-productos-wrapper{
+    width: 100%;
+    min-height: 60vh;
+}
+
+.tabla-productos-wrapper table{
+    width: 100%;
+    margin-bottom: 0;
+}

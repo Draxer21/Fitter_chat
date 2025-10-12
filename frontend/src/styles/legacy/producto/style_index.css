@@ -1,3 +1,112 @@
+.home-offers-section {
+    --offers-bg: #ffffff;
+    width: 100%;
+    background: var(--offers-bg);
+}
+
+.home-offers-section .offers-status {
+    margin-bottom: 0;
+}
+
+.productos-scroll-wrapper {
+    position: relative;
+    width: 100%;
+    padding: 0 56px;
+    margin: 16px 0 0;
+    max-width: none;
+    box-sizing: border-box;
+    background: var(--offers-bg);
+}
+
+.productos-scroll-wrapper::before,
+.productos-scroll-wrapper::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 64px;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.productos-scroll-wrapper--show-left::before,
+.productos-scroll-wrapper--show-right::after {
+    opacity: 1;
+}
+
+.productos-scroll-wrapper::before {
+    left: 0;
+    background: linear-gradient(to right, var(--offers-bg), rgba(255,255,255,0));
+}
+
+.productos-scroll-wrapper::after {
+    right: 0;
+    background: linear-gradient(to left, var(--offers-bg), rgba(255,255,255,0));
+}
+
+.productos-scroll-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: background 0.2s ease;
+}
+
+.productos-scroll-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.productos-scroll-btn:focus {
+    outline: 2px solid rgba(76, 175, 80, 0.8);
+    outline-offset: 2px;
+}
+
+.productos-scroll-btn--left {
+    left: 8px;
+}
+
+.productos-scroll-btn--right {
+    right: 8px;
+}
+
+@media(max-width:767px){
+    .productos-scroll-wrapper {
+        padding: 0 32px;
+        margin: 0;
+    }
+
+    .productos-scroll-btn {
+        width: 32px;
+        height: 32px;
+    }
+
+    .productos-scroll-wrapper::before,
+    .productos-scroll-wrapper::after {
+        width: 28px;
+    }
+
+    .productos-scroll {
+        gap: 14px;
+        padding: 18px 0 26px;
+    }
+
+    .productos-scroll > .producto {
+        width: min(240px, 85vw);
+    }
+}
+
 *{
     margin: 0;
     padding: 0;
@@ -33,25 +142,48 @@ body {
     height: 65px;
 }
 
-.productos {
+.productos-scroll {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
+    gap: 18px;
+    overflow-x: auto;
+    padding: 20px 0 32px;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+    -webkit-overflow-scrolling: touch;
+    justify-content: flex-start;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    scroll-padding-left: 20px;
+    scroll-padding-right: 20px;
 }
 
-.productos > div {
+.productos-scroll::-webkit-scrollbar {
+    height: 8px;
+}
+
+.productos-scroll::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.productos-scroll::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.2);
+    border-radius: 9999px;
+}
+
+.productos-scroll > .producto {
     background-color: #fff;
     border: 1px solid #ddd;
-    border-radius: 10px;
-    width: 220px;
-    padding: 15px;
+    border-radius: 14px;
+    flex: 0 0 auto;
+    width: clamp(220px, 22vw, 320px);
+    padding: 18px 18px 20px;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
     transition: transform 0.3s, box-shadow 0.3s;
+    scroll-snap-align: start;
 }
 
-.productos > div:hover {
+.productos-scroll > .producto:hover {
     transform: translateY(-5px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
@@ -123,6 +255,21 @@ button:hover {
 }
 
 
+.productos-scroll-btn {
+    background: rgba(0, 0, 0, 0.6) !important;
+    color: #fff !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+.productos-scroll-btn:hover {
+    background: rgba(0, 0, 0, 0.8) !important;
+}
+
+.productos-scroll-btn:focus {
+    outline: 2px solid rgba(76, 175, 80, 0.8);
+    outline-offset: 2px;
+}
 
 /* FOOTER */
 
@@ -196,6 +343,15 @@ button:hover {
 @media(max-width:767px){
     .footer-row{
         text-align: center;
+    }
+
+    .productos-scroll {
+        gap: 14px;
+        padding: 10px 2px 12px;
+    }
+
+    .productos-scroll > .producto {
+        width: 200px;
     }
 
     .footer-links{

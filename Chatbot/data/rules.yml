@@ -60,6 +60,11 @@ rules:
       - action: action_consejo_nutricion
 
   # ───────── Rutina: FORM ─────────
+  - rule: Generar dieta complementaria
+    steps:
+      - intent: solicitar_dieta
+      - action: action_generar_dieta
+
   - rule: Sugerir rutina (activar form)
     steps:
       - intent: sugerir_rutina

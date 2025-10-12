@@ -1,4 +1,4 @@
-﻿// Chatbot.jsx
+// Chatbot.jsx
 import { useEffect, useRef, useState } from "react";
 
 function getOrCreateSenderId() {
@@ -20,7 +20,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorText, setErrorText] = useState("");
-  const [expandedRoutines, setExpandedRoutines] = useState({});
+  const [expandedCards, setExpandedCards] = useState({});
   const nextId = useRef(2);
   const scrollRef = useRef(null);
   const abortRef = useRef(null);
@@ -94,10 +94,10 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
     }
   };
 
-  const toggleRoutine = (id) => {
-    setExpandedRoutines((prev) => ({
+  const toggleCard = (key) => {
+    setExpandedCards((prev) => ({
       ...prev,
-      [id]: !prev[id]
+      [key]: !prev[key]
     }));
   };
 
@@ -122,7 +122,15 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
   const renderMessageContent = (m) => {
     const hasRoutineLink = m?.custom?.type === "routine_link" && typeof m?.custom?.url === "string";
     const routineDetail = m?.custom?.type === "routine_detail" ? m.custom : null;
-    const isRoutineExpanded = routineDetail ? !!expandedRoutines[m.id] : false;
+    const routineKey = routineDetail ? `routine-${m.id}` : null;
+    const isRoutineExpanded = routineKey ? !!expandedCards[routineKey] : false;
+    const dietPlan = m?.custom?.type === "diet_plan" ? m.custom : null;
+    const dietSummary = dietPlan?.summary || {};
+    const dietMeals = Array.isArray(dietPlan?.meals) ? dietPlan.meals : [];
+    const dietAdjustments = Array.isArray(dietSummary.health_adjustments) ? dietSummary.health_adjustments : [];
+    const allergenHits = Array.isArray(dietSummary.allergen_hits) ? dietSummary.allergen_hits : [];
+    const dietKey = dietPlan ? `diet-${m.id}` : null;
+    const isDietExpanded = dietKey ? !!expandedCards[dietKey] : false;
     const hasText = typeof m.text === "string" && m.text.length > 0;
 
     return (
@@ -146,21 +154,36 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
             {(hasText || hasRoutineLink) ? <br /> : null}
             <button
               type="button"
-              onClick={() => toggleRoutine(m.id)}
+              onClick={() => routineKey && toggleCard(routineKey)}
               style={{ marginTop: hasText || hasRoutineLink ? 6 : 0, padding: "6px 12px", borderRadius: 8, border: "1px solid #2563eb", background: "#1d4ed8", color: "white", cursor: "pointer" }}
             >
-              {isRoutineExpanded ? "Ocultar rutina" : "Ver rutina aquí"}
+              {isRoutineExpanded ? "Ocultar rutina" : "Ver rutina aqui"}
             </button>
             {isRoutineExpanded && (
               <div style={{ marginTop: 8, background: "rgba(255,255,255,0.85)", padding: "8px 10px", borderRadius: 8, textAlign: "left", lineHeight: 1.45 }}>
                 {routineDetail.header && <p style={{ margin: 0, fontWeight: 600 }}>{routineDetail.header}</p>}
                 <div style={{ fontSize: "0.85rem", marginTop: 6, display: "grid", gap: 4 }}>
-                  <span><strong>Tiempo:</strong> {routineDetail.summary?.tiempo_min ?? "—"} min</span>
-                  <span><strong>Ejercicios:</strong> {routineDetail.summary?.ejercicios ?? "—"}</span>
-                  <span><strong>Equipo:</strong> {routineDetail.summary?.equipamiento ?? "—"}</span>
-                  <span><strong>Objetivo:</strong> {routineDetail.summary?.objetivo ?? "—"}</span>
-                  <span><strong>Nivel:</strong> {routineDetail.summary?.nivel ?? "—"}</span>
+                  <span><strong>Tiempo:</strong> {routineDetail.summary?.tiempo_min ?? "-"} min</span>
+                  <span><strong>Ejercicios:</strong> {routineDetail.summary?.ejercicios ?? "-"}</span>
+                  <span><strong>Equipo:</strong> {routineDetail.summary?.equipamiento ?? "-"}</span>
+                  <span><strong>Objetivo:</strong> {routineDetail.summary?.objetivo ?? "-"}</span>
+                  <span><strong>Nivel:</strong> {routineDetail.summary?.nivel ?? "-"}</span>
                 </div>
+                {Array.isArray(routineDetail.summary?.health_notes) && routineDetail.summary.health_notes.length > 0 && (
+                  <div style={{ marginTop: 8, fontSize: "0.8rem", background: "#FEF3C7", borderRadius: 8, padding: "6px 8px", color: "#92400e" }}>
+                    <strong>Precauciones:</strong>
+                    <ul style={{ margin: "6px 0 0 16px", padding: 0 }}>
+                      {routineDetail.summary.health_notes.map((note, idx) => (
+                        <li key={`routine-health-${m.id}-${idx}`}>{note}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {Array.isArray(routineDetail.summary?.allergies) && routineDetail.summary.allergies.length > 0 && (
+                  <p style={{ marginTop: 6, fontSize: "0.8rem", color: "#6b7280" }}>
+                    Alergias registradas: {routineDetail.summary.allergies.join(", ")}
+                  </p>
+                )}
                 {routineDetail.fallback_notice && (
                   <p style={{ marginTop: 6, fontSize: "0.8rem", color: "#92400e" }}>
                     {routineDetail.fallback_notice}
@@ -171,7 +194,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
                     {routineDetail.exercises.map((ex) => (
                       <li key={`${m.id}-${ex?.orden ?? ex?.nombre}`} style={{ fontSize: "0.85rem" }}>
                         <strong>{ex?.nombre || "Ejercicio"}</strong>
-                        <div>Series: {ex?.series || "—"} · Reps: {ex?.repeticiones || "—"} · RPE: {ex?.rpe || "—"} · RIR: {ex?.rir || "—"}</div>
+                        <div>Series: {ex?.series || "-"} · Reps: {ex?.repeticiones || "-"} · RPE: {ex?.rpe || "-"} · RIR: {ex?.rir || "-"}</div>
                         {ex?.video && (
                           <a href={ex.video} target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb" }}>
                             Ver video
@@ -190,15 +213,81 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
             )}
           </>
         )}
+        {dietPlan && (
+          <>
+            {(hasText || hasRoutineLink || routineDetail) ? <br /> : null}
+            <button
+              type="button"
+              onClick={() => dietKey && toggleCard(dietKey)}
+              style={{ marginTop: hasText || hasRoutineLink || routineDetail ? 6 : 0, padding: "6px 12px", borderRadius: 8, border: "1px solid #059669", background: "#047857", color: "white", cursor: "pointer" }}
+            >
+              {isDietExpanded ? "Ocultar dieta" : "Ver plan de dieta"}
+            </button>
+            {isDietExpanded && (
+              <div style={{ marginTop: 8, background: "rgba(236, 253, 245, 0.9)", padding: "8px 10px", borderRadius: 8, textAlign: "left", lineHeight: 1.45 }}>
+                <p style={{ margin: 0, fontWeight: 600 }}>Objetivo: {dietPlan.objective || "equilibrada"}</p>
+                <div style={{ fontSize: "0.85rem", marginTop: 6, display: "grid", gap: 4 }}>
+                  {dietSummary.calorias && <span><strong>Calorias:</strong> {dietSummary.calorias}</span>}
+                  {dietSummary.macros?.proteinas && <span><strong>Proteinas:</strong> {dietSummary.macros.proteinas}</span>}
+                  {dietSummary.macros?.carbohidratos && <span><strong>Carbohidratos:</strong> {dietSummary.macros.carbohidratos}</span>}
+                  {dietSummary.macros?.grasas && <span><strong>Grasas:</strong> {dietSummary.macros.grasas}</span>}
+                </div>
+                {dietAdjustments.length > 0 && (
+                  <div style={{ marginTop: 8, fontSize: "0.8rem", background: "#fef3c7", borderRadius: 8, padding: "6px 8px", color: "#b45309" }}>
+                    <strong>Ajustes de salud:</strong>
+                    <ul style={{ margin: "6px 0 0 16px", padding: 0 }}>
+                      {dietAdjustments.map((note, idx) => (
+                        <li key={`diet-adjust-${m.id}-${idx}`}>{note}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {dietMeals.length > 0 && (
+                  <ol style={{ marginTop: 10, paddingLeft: 18, display: "grid", gap: 6 }}>
+                    {dietMeals.map((meal, idx) => (
+                      <li key={`diet-meal-${m.id}-${idx}`} style={{ fontSize: "0.85rem" }}>
+                        <strong>{meal?.name || `Comida ${idx + 1}`}</strong>
+                        <div>{Array.isArray(meal?.items) && meal.items.length > 0 ? meal.items.join(", ") : "Sin detalle"}</div>
+                        {meal?.notes && <div style={{ marginTop: 4, fontSize: "0.78rem", color: "#374151" }}>Nota: {meal.notes}</div>}
+                      </li>
+                    ))}
+                  </ol>
+                )}
+                {allergenHits.length > 0 && (
+                  <div style={{ marginTop: 8, fontSize: "0.8rem", background: "#fee2e2", borderRadius: 8, padding: "6px 8px", color: "#b91c1c" }}>
+                    <strong>Atencion alergias:</strong>
+                    <ul style={{ margin: "6px 0 0 16px", padding: 0 }}>
+                      {allergenHits.map((hit, idx) => (
+                        <li key={`diet-allergen-${m.id}-${idx}`}>
+                          {hit?.meal ? `${hit.meal}: ` : ""}{Array.isArray(hit?.items) ? hit.items.join(", ") : "Revisa ingredientes"}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {dietSummary.hydration && (
+                  <p style={{ marginTop: 8, fontSize: "0.8rem", color: "#2563eb" }}>
+                    Hidratacion: {dietSummary.hydration}
+                  </p>
+                )}
+                {Array.isArray(dietSummary.allergies) && dietSummary.allergies.length > 0 && (
+                  <p style={{ marginTop: 4, fontSize: "0.8rem", color: "#6b7280" }}>
+                    Alergias consideradas: {dietSummary.allergies.join(", ")}
+                  </p>
+                )}
+              </div>
+            )}
+          </>
+        )}
         {m.image && (
           <>
-            {(hasText || hasRoutineLink) ? <br /> : null}
+            {(hasText || hasRoutineLink || routineDetail || dietPlan) ? <br /> : null}
             <img src={m.image} alt="Imagen enviada por el bot" style={{ display: "block", maxWidth: "100%", borderRadius: 8, marginTop: 6 }} loading="lazy" />
           </>
         )}
         {Array.isArray(m.buttons) && m.buttons.length > 0 && (
           <>
-            {(hasText || hasRoutineLink || m.image) ? <br /> : null}
+            {(hasText || hasRoutineLink || routineDetail || dietPlan || m.image) ? <br /> : null}
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 6 }}>
               {m.buttons.map((b, idx) => (
                 <button
@@ -213,7 +302,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
                   }}
                   style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid #ddd", background: "#fff", cursor: "pointer" }}
                 >
-                  {b?.title || "Opción"}
+                  {b?.title || "Opcion"}
                 </button>
               ))}
             </div>
@@ -222,6 +311,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
       </>
     );
   };
+
 
   return (
     <div

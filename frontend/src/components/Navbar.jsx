@@ -24,6 +24,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const supportModalRef = useRef(null);
   const logoutModalRef = useRef(null);
+  const collapseRef = useRef(null);
 
   useEffect(() => {
     let mounted = true;
@@ -63,6 +64,23 @@ export default function Navbar() {
     await handleLogout();
   };
 
+
+  const closeNavbarCollapse = () => {
+    const Collapse = window.bootstrap && window.bootstrap.Collapse;
+    if (!Collapse || !collapseRef.current) return;
+    let instance = Collapse.getInstance(collapseRef.current);
+    if (!instance) {
+      instance = new Collapse(collapseRef.current, { toggle: false });
+    }
+    instance.hide();
+  };
+
+  const handleCategoryNavigate = (category) => {
+    const query = category ? `?categoria=${encodeURIComponent(category)}` : '';
+    navigate(`/${query}#offers`);
+    closeNavbarCollapse();
+  };
+
   const toggleLocale = () => {
     setLocale(locale === 'es' ? 'en' : 'es');
   };
@@ -88,7 +106,7 @@ export default function Navbar() {
           <span className='navbar-toggler-icon' />
         </button>
 
-        <div className='collapse navbar-collapse' id='navbarNavDropdown'>
+        <div className='collapse navbar-collapse' id='navbarNavDropdown' ref={collapseRef}>
           <ul className='navbar-nav'>
             <li className='nav-item'>
               <NavLink className='nav-link' to='/'>{t('nav.home')}</NavLink>
@@ -99,10 +117,18 @@ export default function Navbar() {
                 {t('nav.products')}
               </a>
               <div className='dropdown-menu' aria-labelledby='navbarDropdownMenuLink'>
-                <NavLink className='dropdown-item' to='/?categoria=Membership'>{t('nav.products.memberships')}</NavLink>
-                <NavLink className='dropdown-item' to='/?categoria=Personal%20Training'>{t('nav.products.training')}</NavLink>
-                <NavLink className='dropdown-item' to='/?categoria=Supplements'>{t('nav.products.supplements')}</NavLink>
-                <NavLink className='dropdown-item' to='/?categoria=Merchandise'>{t('nav.products.merch')}</NavLink>
+                <button type='button' className='dropdown-item' onClick={() => handleCategoryNavigate('Membership')}>
+                  {t('nav.products.memberships')}
+                </button>
+                <button type='button' className='dropdown-item' onClick={() => handleCategoryNavigate('Personal Training')}>
+                  {t('nav.products.training')}
+                </button>
+                <button type='button' className='dropdown-item' onClick={() => handleCategoryNavigate('Supplements')}>
+                  {t('nav.products.supplements')}
+                </button>
+                <button type='button' className='dropdown-item' onClick={() => handleCategoryNavigate('Merchandise')}>
+                  {t('nav.products.merch')}
+                </button>
               </div>
             </li>
 

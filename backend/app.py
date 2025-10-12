@@ -3,11 +3,12 @@ import os
 import json
 import logging
 from typing import Any, Dict, Optional
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, session
 from logging.handlers import RotatingFileHandler
 import requests
 
-from .extensions import db, migrate, cors  # ← única instancia compartida
+from .extensions import db, migrate, cors  # unica instancia compartida
+from .chat.models import ChatUserContext
 
 # (opcional) rate limit si lo tienes instalado
 Limiter = None
@@ -40,6 +41,7 @@ def create_app() -> Flask:
     app.config["RASA_PARSE_ENDPOINT"] = os.getenv("RASA_PARSE_ENDPOINT", "/model/parse")
     app.config["RASA_TIMEOUT_SEND"] = float(os.getenv("RASA_TIMEOUT_SEND", "15"))
     app.config["RASA_TIMEOUT_PARSE"] = float(os.getenv("RASA_TIMEOUT_PARSE", "10"))
+    app.config["CHAT_CONTEXT_API_KEY"] = os.getenv("CHAT_CONTEXT_API_KEY", "")
 
     # Seguridad / tamaño de payload
     app.config["MAX_CONTENT_LENGTH"] = int(os.getenv("MAX_CONTENT_LENGTH", "1048576"))  # 1MB
@@ -181,6 +183,44 @@ def create_app() -> Flask:
     def _error(msg: str, code: int = 400):
         return jsonify({"error": msg}), code
 
+    def _context_api_key_valid() -> bool:
+        expected = (app.config.get("CHAT_CONTEXT_API_KEY") or "").strip()
+        if not expected:
+            return False
+        provided = (
+            request.headers.get("X-Context-Key")
+            or request.headers.get("X-Api-Key")
+            or request.headers.get("Authorization")
+            or ""
+        ).strip()
+        if provided.lower().startswith("bearer "):
+            provided = provided.split(" ", 1)[1].strip()
+        return provided == expected
+
+    def _session_uid() -> Optional[int]:
+        try:
+            uid = session.get("uid")
+        except Exception:
+            return None
+        try:
+            return int(uid) if uid is not None else None
+        except (TypeError, ValueError):
+            return None
+
+    def _ensure_context_access(ctx: Optional[ChatUserContext]) -> bool:
+        if _context_api_key_valid():
+            return True
+        uid = _session_uid()
+        if uid is None:
+            return False
+        if ctx is None:
+            return True
+        if ctx.user_id and ctx.user_id != uid:
+            return False
+        if not ctx.user_id:
+            ctx.user_id = uid
+        return True
+
     # ---------------- Endpoints propios ----------------
     @app.get("/health")
     def health():
@@ -188,37 +228,135 @@ def create_app() -> Flask:
 
     @app.post("/chat/send")
     def chat_send():
-        # Validación y límites
         try:
             data: Dict[str, Any] = request.get_json(force=True, silent=False)
         except Exception:
-            return _error("JSON inválido", 400)
+            db.session.rollback()
+            return _error("JSON invalido", 400)
 
         sender = str(data.get("sender", "web-user")).strip() or "web-user"
+        sender = sender[:80]
         message = str(data.get("message", "")).strip()
         if not message:
+            db.session.rollback()
             return _error("El campo 'message' es obligatorio.", 400)
         if len(message) > int(os.getenv("MAX_MESSAGE_LEN", "5000")):
+            db.session.rollback()
             return _error("El mensaje es demasiado largo.", 413)
+
+        ctx = ChatUserContext.get_or_create(sender, _session_uid())
+        if not _ensure_context_access(ctx):
+            db.session.rollback()
+            return _error("No autorizado para este contexto.", 401)
+
+        rasa_payload: Dict[str, Any] = {"sender": sender, "message": message}
+        metadata = ctx.to_metadata()
+        if metadata:
+            rasa_payload["metadata"] = {"persisted_context": metadata}
 
         try:
             resp = session.post(
                 _rasa_url(app.config["RASA_REST_WEBHOOK"]),
-                json={"sender": sender, "message": message},
+                json=rasa_payload,
                 timeout=app.config["RASA_TIMEOUT_SEND"],
             )
             resp.raise_for_status()
-            payload = resp.json()  # Rasa responde array de objetos
+            payload = resp.json()
             if not isinstance(payload, (list, tuple)):
-                # Normaliza a lista por si Rasa/GW devolviera un objeto
                 payload = [payload]
         except requests.exceptions.RequestException as e:
             app.logger.exception("Fallo al contactar Rasa en /chat/send")
+            db.session.rollback()
             return _error(f"No se pudo contactar a Rasa: {e}", 502)
         except json.JSONDecodeError:
-            return _error("Respuesta de Rasa no es JSON válido.", 502)
+            db.session.rollback()
+            return _error("Respuesta de Rasa no es JSON valido.", 502)
 
+        updated_context = False
+        for item in payload:
+            if not isinstance(item, dict):
+                continue
+            custom_payload = item.get("custom")
+            if not custom_payload and isinstance(item.get("json_message"), dict):
+                custom_payload = item["json_message"]
+            if not isinstance(custom_payload, dict):
+                continue
+            msg_type = str(custom_payload.get("type") or "").strip().lower()
+            if msg_type == "routine_detail":
+                ctx.set_last_routine(custom_payload)
+                updated_context = True
+            elif msg_type == "diet_plan":
+                ctx.set_last_diet(custom_payload)
+                updated_context = True
+
+        if not updated_context:
+            ctx.touch()
+
+        db.session.commit()
         return jsonify(payload), 200
+
+    @app.get("/chat/context/<sender>")
+    def chat_context_get(sender: str):
+        sender = (sender or "").strip()[:80]
+        ctx = ChatUserContext.query.filter_by(sender_id=sender).one_or_none()
+        if not ctx:
+            if _context_api_key_valid() or _session_uid() is not None:
+                return jsonify({"found": False}), 404
+            return _error("Contexto no encontrado.", 404)
+        if not _ensure_context_access(ctx):
+            db.session.rollback()
+            return _error("No autorizado para este contexto.", 401)
+        db.session.commit()
+        return jsonify({"context": ctx.to_dict()}), 200
+
+    @app.post("/chat/context/<sender>")
+    def chat_context_update(sender: str):
+        try:
+            data: Dict[str, Any] = request.get_json(force=True, silent=False)
+        except Exception:
+            db.session.rollback()
+            return _error("JSON invalido", 400)
+
+        sender = (sender or "").strip()[:80]
+        ctx = ChatUserContext.get_or_create(sender, _session_uid())
+        if not _ensure_context_access(ctx):
+            db.session.rollback()
+            return _error("No autorizado para este contexto.", 401)
+
+        updated = False
+        if "allergies" in data:
+            raw = data.get("allergies")
+            ctx.set_allergies(raw if isinstance(raw, str) else (str(raw) if raw is not None else None))
+            updated = True
+        if "medical_conditions" in data:
+            raw = data.get("medical_conditions")
+            ctx.set_medical_conditions(raw if isinstance(raw, str) else (str(raw) if raw is not None else None))
+            updated = True
+        if "notes" in data:
+            note = data.get("notes")
+            if isinstance(note, str):
+                ctx.notes = note.strip() or None
+            elif note is None:
+                ctx.notes = None
+            else:
+                ctx.notes = str(note).strip() or None
+            updated = True
+        if isinstance(data.get("last_routine"), dict):
+            ctx.set_last_routine(data["last_routine"])
+            updated = True
+        if isinstance(data.get("last_diet"), dict):
+            ctx.set_last_diet(data["last_diet"])
+            updated = True
+        history_entry = data.get("history_entry")
+        if isinstance(history_entry, dict):
+            ctx.append_history(history_entry)
+            updated = True
+
+        if not updated:
+            ctx.touch()
+
+        db.session.commit()
+        return jsonify({"ok": True, "context": ctx.to_dict()}), 200
 
     @app.post("/nlu/parse")
     def nlu_parse():

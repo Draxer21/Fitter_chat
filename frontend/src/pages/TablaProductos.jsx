@@ -12,6 +12,7 @@ const stockDisponible = (valor) => {
 export default function TablaProductos() {
   const [items, setItems] = useState([]);
   const [err, setErr] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const nav = useNavigate();
 
   const load = () =>
@@ -44,19 +45,56 @@ export default function TablaProductos() {
     }
   };
 
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const filteredItems = normalizedQuery
+    ? items.filter((pr) => {
+        const fields = [
+          pr.id?.toString(),
+          pr.nombre,
+          pr.descripcion,
+          pr.categoria,
+        ];
+        return fields.some((field) =>
+          String(field ?? "").toLowerCase().includes(normalizedQuery)
+        );
+      })
+    : items;
+  const hasSearch = normalizedQuery.length > 0;
+
   return (
     <main className="flex-grow-1">
-      <div className="container">
+      <div className="container-fluid px-4">
         <h1>Gestion de Inventario</h1>
-        <div className="d-flex justify-content-end mb-2">
-          <Link to="/admin/productos/nuevo" className="btn btn-success">
-            Anadir Producto/Servicio
-          </Link>
+        <div className="row g-3 align-items-center mb-3">
+          <div className="col-12 col-md-8">
+            <form
+              className="input-group"
+              role="search"
+              onSubmit={(e) => e.preventDefault()}
+            >
+              <span className="input-group-text bg-dark text-white border-secondary">
+                <i className="fa-solid fa-magnifying-glass" aria-hidden="true" />
+              </span>
+              <input
+                type="search"
+                className="form-control"
+                placeholder="Buscar por nombre, descripción o categoría"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label="Buscar producto en inventario"
+              />
+            </form>
+          </div>
+          <div className="col-12 col-md-4 d-grid d-md-flex justify-content-md-end">
+            <Link to="/admin/productos/nuevo" className="btn btn-success">
+              Anadir Producto/Servicio
+            </Link>
+          </div>
         </div>
 
         {err && <div className="alert alert-danger">{err}</div>}
 
-        <div className="table-responsive">
+        <div className="table-responsive tabla-productos-wrapper mt-3">
           <table className="table table-dark table-striped table-bordered">
             <thead>
               <tr>
@@ -71,7 +109,7 @@ export default function TablaProductos() {
               </tr>
             </thead>
             <tbody>
-              {items.map((pr) => {
+              {filteredItems.map((pr) => {
                 const stock = stockDisponible(pr.stock);
                 const imageSrc = pr.imagen_url || "/fitter_logo.png";
                 return (
@@ -106,10 +144,10 @@ export default function TablaProductos() {
                   </tr>
                 );
               })}
-              {items.length === 0 && (
+              {filteredItems.length === 0 && (
                 <tr>
                   <td colSpan={8} className="text-center">
-                    Sin productos
+                    {hasSearch ? "Sin coincidencias" : "Sin productos"}
                   </td>
                 </tr>
               )}

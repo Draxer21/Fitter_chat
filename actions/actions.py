@@ -7,15 +7,72 @@ import random
 import re
 import logging
 
+import requests
+
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormValidationAction  # <- Validador de formularios
+from rasa_sdk.events import SlotSet
 
 logger = logging.getLogger(__name__)
 
 # =========================================================
 # Helpers
 # =========================================================
+BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL", "http://localhost:5000").strip().rstrip("/")
+CONTEXT_TIMEOUT = float(os.getenv("CHAT_CONTEXT_TIMEOUT", "4"))
+
+
+def send_context_update(sender_id: str, payload: Dict[str, Any]) -> None:
+    """Propaga información del usuario al backend para persistir contexto."""
+    if not sender_id or not payload:
+        return
+    base = BACKEND_BASE_URL
+    if not base:
+        return
+    url = f"{base.rstrip('/')}/chat/context/{sender_id}"
+    try:
+        requests.post(url, json=payload, timeout=CONTEXT_TIMEOUT)
+    except Exception as exc:
+        logger.warning("No se pudo actualizar contexto para %s: %s", sender_id, exc)
+
+
+def parse_health_flags(text: Optional[str]) -> Dict[str, bool]:
+    raw = (text or "").strip().lower()
+    if not raw or raw in {"ninguna", "ninguno", "ningunas", "ningunos", "sin", "no"}:
+        return {}
+    flags = {
+        "hipertension": any(k in raw for k in ("hipertension", "hipertensión", "presion alta", "tension alta")),
+        "cardiaco": any(k in raw for k in ("cardi", "corazon", "cardiopatia", "arritmia", "infarto")),
+        "diabetes": "diabet" in raw,
+        "asma": "asma" in raw or "respir" in raw,
+    }
+    return {k: v for k, v in flags.items() if v}
+
+
+def build_health_notes(flags: Dict[str, bool]) -> List[str]:
+    notes: List[str] = []
+    if flags.get("hipertension") or flags.get("cardiaco"):
+        notes.append("Manten intensidad moderada (RPE ≤ 7) y evita bloqueos de respiración.")
+    if flags.get("diabetes"):
+        notes.append("Controla glucosa antes/después y prioriza carbohidratos complejos.")
+    if flags.get("asma"):
+        notes.append("Incluye calentamientos largos y ten el inhalador disponible.")
+    return notes
+
+
+def parse_allergy_list(text: Optional[str]) -> List[str]:
+    raw = (text or "").strip().lower()
+    if not raw or raw in {"ninguna", "ninguno", "ningunas", "ningunos", "no"}:
+        return []
+    normalized = raw.replace(" y ", ",").replace("/", ",")
+    return [
+        item.strip()
+        for item in re.split(r"[;,]", normalized)
+        if item.strip()
+    ]
+
+
 def _slot(tracker: Tracker, name: str) -> Optional[str]:
     v = tracker.get_slot(name)
     return str(v).strip() if v is not None else None
@@ -293,8 +350,8 @@ CATALOGO: Dict[str, Dict[str, List[Tuple[str, str, str]]]] = {
 SCHEMES: Dict[str, Dict[str, Dict[str, Any]]] = {
     "fuerza": {
         "principiante": {"series": (3, 4), "reps": (4, 6), "rires": "RIR 2", "rpe": "RPE 8"},
-        "intermedio":   {"series": (4, 5), "reps": (3, 5), "rires": "RIR 1–2", "rpe": "RPE 8–9"},
-        "avanzado":     {"series": (5, 6), "reps": (2, 4), "rires": "RIR 0–1", "rpe": "RPE 9–9.5"}
+        "intermedio":   {"series": (4, 5), "reps": (3, 5), "rires": "RIR 1-2", "rpe": "RPE 8-9"},
+        "avanzado":     {"series": (5, 6), "reps": (2, 4), "rires": "RIR 0-1", "rpe": "RPE 9-9.5"}
     },
     "hipertrofia": {
         "principiante": {"series": (3, 4), "reps": (8, 12), "rires": "RIR 2", "rpe": "RPE 7–8"},
@@ -307,7 +364,145 @@ SCHEMES: Dict[str, Dict[str, Dict[str, Any]]] = {
     },
     "resistencia": {
         "principiante": {"series": (3, 4), "reps": (12, 20), "rires": "RIR 2–3", "rpe": "RPE 6–7"},
-        "intermedio":   {"series": (3, 4), "reps": (12, 20), "rires": "RIR 2–3", "rpe": "RPE 6–7"}
+        "intermedio":   {"series": (3, 4), "reps": (12, 20), "rires": "RIR 2-3", "rpe": "RPE 6-7"}
+    }
+}
+
+DIET_BASES: Dict[str, Dict[str, Any]] = {
+    "hipertrofia": {
+        "calorias": "Mantenimiento + 200 kcal",
+        "macros": {"proteinas": "2.0 g/kg", "carbohidratos": "5 g/kg", "grasas": "0.9 g/kg"},
+        "meals": [
+            {
+                "name": "Desayuno",
+                "items": ["Avena con leche descremada y frutos rojos", "Tortilla de 2 huevos + 2 claras"],
+                "notes": "Agrega una fruta extra si entrenas en la manana."
+            },
+            {
+                "name": "Almuerzo",
+                "items": ["Pechuga de pollo a la plancha", "Arroz integral", "Ensalada con aceite de oliva"],
+                "notes": "Incluye verduras de colores para micronutrientes."
+            },
+            {
+                "name": "Merienda",
+                "items": ["Yogur griego natural", "Nueces o mani sin sal"],
+                "notes": "Ideal 90 min antes del entrenamiento."
+            },
+            {
+                "name": "Cena",
+                "items": ["Salmón u otra proteina grasa", "Batata asada", "Verduras al vapor"],
+                "notes": "Añade semillas de chia o lino para omega 3."
+            }
+        ],
+        "hydration": "2.5 L de agua con un vaso adicional por cada 20 min de entrenamiento intenso."
+    },
+    "fuerza": {
+        "calorias": "Mantenimiento ± 0-100 kcal",
+        "macros": {"proteinas": "1.8 g/kg", "carbohidratos": "4 g/kg", "grasas": "1 g/kg"},
+        "meals": [
+            {
+                "name": "Desayuno",
+                "items": ["Pan integral con palta", "Huevos revueltos", "Cafe sin azucar"],
+                "notes": "Añade sal y potasio moderados para rendimiento."
+            },
+            {
+                "name": "Almuerzo",
+                "items": ["Carne magra", "Quinoa", "Brocoli al vapor"],
+                "notes": "Utiliza hierbas en vez de salsas altas en sodio."
+            },
+            {
+                "name": "Snack post entrenamiento",
+                "items": ["Batido de proteina", "Banana"],
+                "notes": "Consumir dentro de 45 min tras entrenar."
+            },
+            {
+                "name": "Cena",
+                "items": ["Pavo o tofu", "Pure de papas", "Verduras salteadas"],
+                "notes": "Prioriza grasas saludables como aceite de oliva."
+            }
+        ],
+        "hydration": "2.2 L de agua + 500 ml durante la sesion con electrolitos ligeros."
+    },
+    "bajar_grasa": {
+        "calorias": "Déficit aproximado -300 kcal",
+        "macros": {"proteinas": "2.0 g/kg", "carbohidratos": "3 g/kg", "grasas": "0.8 g/kg"},
+        "meals": [
+            {
+                "name": "Desayuno",
+                "items": ["Smoothie verde (espinaca, pepino, manzana)", "Yogur alto en proteina"],
+                "notes": "Añade semillas para saciedad."
+            },
+            {
+                "name": "Almuerzo",
+                "items": ["Filete de pescado blanco", "Ensalada grande con legumbres"],
+                "notes": "Evita aderezos con azúcar."
+            },
+            {
+                "name": "Colacion",
+                "items": ["Hummus con zanahoria y apio"],
+                "notes": "Buena opcion baja en calorias y alta en fibra."
+            },
+            {
+                "name": "Cena",
+                "items": ["Wok de tofu o pollo", "Verduras salteadas", "Arroz de coliflor"],
+                "notes": "Mantén las porciones controladas."
+            }
+        ],
+        "hydration": "3.0 L de agua repartidos en el dia (apoyo a saciedad)."
+    },
+    "resistencia": {
+        "calorias": "Mantenimiento + 100 kcal en dias de entrenamiento largo",
+        "macros": {"proteinas": "1.6 g/kg", "carbohidratos": "5-7 g/kg", "grasas": "0.8 g/kg"},
+        "meals": [
+            {
+                "name": "Desayuno pre entrenamiento",
+                "items": ["Avena con banana y miel", "Bebida isotonica suave"],
+                "notes": "Consumir 90 min antes de la sesion."
+            },
+            {
+                "name": "Almuerzo",
+                "items": ["Pasta integral con pollo", "Verduras salteadas"],
+                "notes": "Agrega sodio controlado si sudas mucho."
+            },
+            {
+                "name": "Snack",
+                "items": ["Barra casera de avena y frutos secos"],
+                "notes": "Ideal entre sesiones dobles."
+            },
+            {
+                "name": "Cena",
+                "items": ["Legumbres (lentejas/ch garbanzos)", "Ensalada variada", "Fruta"],
+                "notes": "Recupera glucogeno con carbohidratos complejos."
+            }
+        ],
+        "hydration": "Bebe 35 ml por kg de peso + reposiciona 500 ml por cada hora de cardio."
+    },
+    "equilibrada": {
+        "calorias": "Mantenimiento",
+        "macros": {"proteinas": "1.6 g/kg", "carbohidratos": "4 g/kg", "grasas": "0.9 g/kg"},
+        "meals": [
+            {
+                "name": "Desayuno",
+                "items": ["Yogur natural con granola", "Fruta de temporada"],
+                "notes": "Incluye frutos secos si necesitas energia extra."
+            },
+            {
+                "name": "Almuerzo",
+                "items": ["Pechuga de pollo", "Arroz integral", "Ensalada de hojas"],
+                "notes": "Sazona con hierbas y limon."
+            },
+            {
+                "name": "Merienda",
+                "items": ["Sandwich integral con pavo", "Verduras crudas"],
+                "notes": "Buena combinacion de proteina y carbohidrato."
+            },
+            {
+                "name": "Cena",
+                "items": ["Omelette de verduras", "Pan integral o quinoa"],
+                "notes": "Añade aguacate para grasas saludables."
+            }
+        ],
+        "hydration": "2.0 L de agua al dia como base."
     }
 }
 
@@ -379,6 +574,17 @@ class ValidateRutinaForm(FormValidationAction):
 
     def _norm_text(self, x: Any) -> Text:
         return (str(x or "")).strip().lower()
+
+    def _canonical_optional(self, value: Any) -> Optional[str]:
+        if value is None:
+            return None
+        original = str(value).strip()
+        norm = self._norm_text(value)
+        if not original:
+            return "ninguna"
+        if norm in {"ninguna", "ninguno", "ningunas", "ningunos", "no", "ningun problema"}:
+            return "ninguna"
+        return original
 
     def validate_equipamiento(
         self,
@@ -452,6 +658,36 @@ class ValidateRutinaForm(FormValidationAction):
                 return {"musculo": None}
         return {"musculo": v}
 
+    def validate_condiciones_salud(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        limpio = self._canonical_optional(value)
+        if limpio == "ninguna":
+            return {"condiciones_salud": "ninguna"}
+        if limpio is None:
+            dispatcher.utter_message(text="Indicame si padeces alguna condicion (ej. hipertension, asma) o responde 'ninguna'.")
+            return {"condiciones_salud": None}
+        return {"condiciones_salud": limpio}
+
+    def validate_alergias(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        limpio = self._canonical_optional(value)
+        if limpio == "ninguna":
+            return {"alergias": "ninguna"}
+        if limpio is None:
+            dispatcher.utter_message(text="Senalame alergias o intolerancias (ej. lactosa, gluten) o responde 'ninguna'.")
+            return {"alergias": None}
+        return {"alergias": limpio}
+
 # =========================================================
 # ACCIÓN: Generar rutina completa
 # =========================================================
@@ -462,13 +698,19 @@ class ActionGenerarRutina(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
-        musculo  = (_slot(tracker, "musculo") or "brazos").lower()
-        nivel    = (_slot(tracker, "nivel") or "intermedio").lower()
+        musculo = (_slot(tracker, "musculo") or "brazos").lower()
+        nivel = (_slot(tracker, "nivel") or "intermedio").lower()
         objetivo = (_slot(tracker, "objetivo") or "fuerza").lower()
-        equip    = (_slot(tracker, "equipamiento") or "mancuernas").lower()
+        equip = (_slot(tracker, "equipamiento") or "mancuernas").lower()
+
+        condiciones = _slot(tracker, "condiciones_salud") or "ninguna"
+        alergias = _slot(tracker, "alergias") or "ninguna"
+        health_flags = parse_health_flags(condiciones)
+        health_notes = build_health_notes(health_flags)
+        allergy_list = parse_allergy_list(alergias)
 
         ejercicios_num = _safe_int(_slot(tracker, "ejercicios_num"), default=7, min_v=4, max_v=12)
-        tiempo         = _safe_int(_slot(tracker, "tiempo_disponible"), default=45, min_v=15, max_v=120)
+        tiempo = _safe_int(_slot(tracker, "tiempo_disponible"), default=45, min_v=15, max_v=120)
 
         plan = SCHEMES.get(objetivo, {}).get(nivel) or SCHEMES.get("fuerza", {}).get("intermedio")
         s_min, s_max = plan["series"]
@@ -476,18 +718,26 @@ class ActionGenerarRutina(Action):
         rpe_text = plan["rpe"]
         rir_text = plan["rires"]
 
+        if health_flags.get("hipertension") or health_flags.get("cardiaco"):
+            rpe_text = "RPE <= 7"
+            rir_text = "RIR 2 (evita el fallo)"
+            if "Manten intensidad moderada" not in health_notes:
+                health_notes.append("Manten intensidad moderada (RPE <= 7).")
+        if health_flags.get("diabetes") and "Revisa glucosa" not in health_notes:
+            health_notes.append("Revisa glucosa antes y despues de entrenar.")
+
         ejercicios = pick_exercises(musculo, equip, ejercicios_num)
 
         fallback_notice = ""
         if not ejercicios:
             ejercicios = pick_exercises("fullbody", "mancuernas", ejercicios_num)
-            fallback_notice = " (fallback a Fullbody por catálogo no disponible)"
+            fallback_notice = " (fallback a fullbody por catologo no disponible)"
 
         structured_ejercicios: List[Dict[str, Any]] = []
         bloques: List[str] = []
         for i, (nombre, url) in enumerate(ejercicios, start=1):
             bloques.append(
-                f"{i}. {nombre} · {s_min}-{s_max} x {r_min}-{r_max} · {rpe_text} · {rir_text} · Video: {url}"
+                f"{i}. {nombre} | {s_min}-{s_max} series x {r_min}-{r_max} reps | {rpe_text} | {rir_text} | Video: {url}"
             )
             structured_ejercicios.append({
                 "orden": i,
@@ -501,19 +751,27 @@ class ActionGenerarRutina(Action):
 
         routine_id = f"rutina-{int(datetime.now().timestamp())}"
 
-        header = (
-            f"Rutina · {musculo.capitalize()} · {nivel} · objetivo {objetivo}{fallback_notice}\n"
-            f"Sesión ~{tiempo} min · {ejercicios_num} ejercicios · Equipo: {equip}\n"
-            f"Progresión: +2.5-5% carga o +1 rep/serie manteniendo {rir_text}."
-        )
-        texto = header + ("\n\n" + "\n".join(bloques) if bloques else "\n\n(No se encontraron ejercicios en el catálogo).")
+        header_lines: List[str] = [
+            f"Rutina - {musculo.title()} - nivel {nivel} - objetivo {objetivo}{fallback_notice}",
+            f"Sesion aproximada {tiempo} min | {ejercicios_num} ejercicios | Equipo: {equip}",
+            f"Progresion sugerida: +2.5-5% carga o +1 rep/serie manteniendo {rir_text}."
+        ]
+        if health_notes or allergy_list:
+            extra_bits: List[str] = []
+            if health_notes:
+                extra_bits.append("; ".join(health_notes))
+            if allergy_list:
+                extra_bits.append("Alergias registradas: " + ", ".join(allergy_list))
+            header_lines.append("Precaucion salud: " + " | ".join(extra_bits))
+        header = "\n".join(header_lines)
+        texto = header + ("\n\n" + "\n".join(bloques) if bloques else "\n\n(No se encontraron ejercicios en el catalogo.)")
 
         dispatcher.utter_message(text=texto)
 
-        dispatcher.utter_message(json_message={
+        routine_summary = {
             "type": "routine_detail",
             "routine_id": routine_id,
-            "header": header.split("\n", 1)[0],
+            "header": header_lines[0],
             "summary": {
                 "tiempo_min": tiempo,
                 "ejercicios": ejercicios_num,
@@ -522,16 +780,132 @@ class ActionGenerarRutina(Action):
                 "nivel": nivel,
                 "musculo": musculo,
                 "fallback": bool(fallback_notice.strip()),
-                "progresion": f"+2.5-5% carga o +1 rep/serie manteniendo {rir_text}."
+                "progresion": f"+2.5-5% carga o +1 rep/serie manteniendo {rir_text}.",
+                "health_notes": health_notes or None,
+                "allergies": allergy_list or None,
+                "medical_conditions": condiciones if condiciones.lower() not in {"", "ninguna", "ninguno", "no"} else None,
             },
             "fallback_notice": fallback_notice.strip() or None,
             "exercises": structured_ejercicios
-        })
-        return []
+        }
+
+        dispatcher.utter_message(json_message=routine_summary)
+
+        context_payload: Dict[str, Any] = {}
+        if condiciones and condiciones.lower() not in {"", "ninguna", "ninguno", "no"}:
+            context_payload["medical_conditions"] = condiciones
+        if alergias and alergias.lower() not in {"", "ninguna", "ninguno", "no"}:
+            context_payload["allergies"] = alergias
+        if context_payload:
+            send_context_update(tracker.sender_id, context_payload)
+
+        return [SlotSet("ultima_rutina", routine_summary)]
 
 # =========================================================
-# ACCIÓN: Sugerir rutina (breve)
+# ACCION: Generar dieta complementaria
 # =========================================================
+class ActionGenerarDieta(Action):
+    def name(self) -> Text:
+        return "action_generar_dieta"
+
+    def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        objetivo = (_slot(tracker, "objetivo") or "equilibrada").lower()
+        nivel = (_slot(tracker, "nivel") or "intermedio").lower()
+        alergias = _slot(tracker, "alergias") or "ninguna"
+        condiciones = _slot(tracker, "condiciones_salud") or "ninguna"
+
+        plan = DIET_BASES.get(objetivo) or DIET_BASES.get("equilibrada")
+        plan_label = objetivo if objetivo in DIET_BASES else "equilibrada"
+        health_flags = parse_health_flags(condiciones)
+        allergy_list = parse_allergy_list(alergias)
+
+        adjustments: List[str] = []
+        if health_flags.get("hipertension") or health_flags.get("cardiaco"):
+            adjustments.append("Reduce sodio: condimenta con hierbas, evita embutidos y frituras.")
+        if health_flags.get("diabetes"):
+            adjustments.append("Distribuye carbohidratos complejos en porciones moderadas cada 3-4 horas.")
+        if health_flags.get("asma"):
+            adjustments.append("Incluye alimentos antiinflamatorios (omega 3, frutas variadas).")
+
+        meals = plan.get("meals", [])
+        filtered_meals: List[Dict[str, Any]] = []
+        allergen_hits: List[Dict[str, Any]] = []
+        for meal in meals:
+            joined = " ".join(meal.get("items", [])).lower()
+            if allergy_list and any(token in joined for token in allergy_list):
+                allergen_hits.append({"meal": meal.get("name"), "items": meal.get("items", [])})
+                continue
+            filtered_meals.append(meal)
+
+        if not filtered_meals:
+            filtered_meals = meals
+
+        if allergy_list and allergen_hits:
+            adjustments.append("Reemplaza ingredientes en las comidas marcadas por alternativas seguras.")
+
+        macros = plan.get("macros", {})
+        hydration = plan.get("hydration")
+
+        lines: List[str] = [
+            f"Plan alimenticio sugerido para objetivo {plan_label} (nivel {nivel}).",
+            f"Calorias estimadas: {plan.get('calorias', 'mantenimiento')}",
+            "Macros orientativas:",
+            f"- Proteinas: {macros.get('proteinas', '-')}",
+            f"- Carbohidratos: {macros.get('carbohidratos', '-')}",
+            f"- Grasas: {macros.get('grasas', '-')}",
+        ]
+        if adjustments:
+            lines.append("Ajustes de salud:")
+            for note in adjustments:
+                lines.append(f"- {note}")
+        if allergy_list and not allergen_hits:
+            lines.append("Se han considerado tus alergias registradas.")
+        if not allergy_list:
+            lines.append("Si tienes alergias alimentarias, avisa para personalizar mas el plan.")
+
+        lines.append("Menu diario ejemplo:")
+        for meal in filtered_meals:
+            items = ", ".join(meal.get("items", []))
+            lines.append(f"- {meal.get('name', 'Comida')}: {items}")
+            note = meal.get("notes")
+            if note:
+                lines.append(f"  Nota: {note}")
+        if hydration:
+            lines.append(f"Hidratacion recomendada: {hydration}")
+
+        text_response = "\n".join(lines)
+        dispatcher.utter_message(text=text_response)
+
+        diet_payload = {
+            "type": "diet_plan",
+            "objective": plan_label,
+            "summary": {
+                "calorias": plan.get("calorias"),
+                "macros": macros,
+                "hydration": hydration,
+                "health_adjustments": adjustments or None,
+                "allergies": allergy_list or None,
+                "medical_conditions": condiciones if condiciones.lower() not in {"", "ninguna", "ninguno", "no"} else None,
+                "allergen_hits": allergen_hits or None,
+            },
+            "meals": filtered_meals,
+        }
+
+        dispatcher.utter_message(json_message=diet_payload)
+
+        context_payload: Dict[str, Any] = {}
+        if condiciones and condiciones.lower() not in {"", "ninguna", "ninguno", "no"}:
+            context_payload["medical_conditions"] = condiciones
+        if alergias and alergias.lower() not in {"", "ninguna", "ninguno", "no"}:
+            context_payload["allergies"] = alergias
+        if context_payload:
+            send_context_update(tracker.sender_id, context_payload)
+
+        return [SlotSet("ultima_dieta", diet_payload)]
+
+
 class ActionSugerirRutina(Action):
     def name(self) -> Text:
         return "action_sugerir_rutina"
@@ -603,8 +977,34 @@ class ActionConsejoNutricion(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
         objetivo = (_slot(tracker, "objetivo") or "general").lower()
-        consejo = NUTRICION_TIPS.get(objetivo, "Prioriza proteína adecuada, vegetales, fibra y buena hidratación.")
-        dispatcher.utter_message(text=f"Nutrición ▶ objetivo {objetivo}: {consejo}")
+        consejo = NUTRICION_TIPS.get(objetivo, "Prioriza proteina adecuada, vegetales, fibra y buena hidratacion.")
+        alergias = _slot(tracker, "alergias") or ""
+        condiciones = _slot(tracker, "condiciones_salud") or ""
+
+        extras: List[str] = []
+        if alergias and alergias.lower() not in {"", "ninguna", "ninguno", "no"}:
+            extras.append(f"Evita ingredientes con: {alergias}.")
+        flags = parse_health_flags(condiciones)
+        if flags.get("hipertension") or flags.get("cardiaco"):
+            extras.append("Usa poco sodio y elige grasas monoinsaturadas.")
+        if flags.get("diabetes"):
+            extras.append("Controla porciones de carbohidratos y prioriza fibra.")
+        if flags.get("asma"):
+            extras.append("Mantente hidratado y suma alimentos antiinflamatorios.")
+
+        mensaje = f"Nutricion segun objetivo {objetivo}: {consejo}"
+        if extras:
+            mensaje += " Ajustes: " + " ".join(extras)
+        dispatcher.utter_message(text=mensaje)
+
+        context_payload: Dict[str, Any] = {}
+        if alergias and alergias.lower() not in {"", "ninguna", "ninguno", "no"}:
+            context_payload["allergies"] = alergias
+        if condiciones and condiciones.lower() not in {"", "ninguna", "ninguno", "no"}:
+            context_payload["medical_conditions"] = condiciones
+        if context_payload:
+            send_context_update(tracker.sender_id, context_payload)
+
         return []
 
 # =========================================================
