@@ -6,7 +6,7 @@ from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from typing import Any, Dict
 
-from flask import Blueprint, jsonify, render_template, request
+from flask import Blueprint, current_app, jsonify, render_template, request
 from sqlalchemy import select
 
 from ..extensions import db
@@ -33,13 +33,15 @@ def _luhn_checksum(card_num: str) -> bool:
     return checksum % 10 == 0
 
 
-def validar_y_deducir() -> bool:
-    """Valida stock y deduce atómicamente sin limpiar carrito. Retorna True si éxito."""
+def validar_y_deducir() -> tuple[bool, str | None]:
+    """Valida stock y deduce atómicamente sin limpiar carrito.
+
+    Retorna una tupla (éxito, mensaje_de_error)."""
     carrito_obj = Carrito()
     snapshot = carrito_obj.snapshot()
     items_data = snapshot.get("items", {})
     if not items_data:
-        return False  # vacío
+        return False, "Carrito vacío."
 
     # Normaliza lista de (producto_id, cantidad)
     items: Dict[int, int] = {}
@@ -50,7 +52,7 @@ def validar_y_deducir() -> bool:
             items[pid] = items.get(pid, 0) + cant
 
     if not items:
-        return False
+        return False, "No hay productos válidos en el carrito."
 
     try:
         with db.session.begin():
@@ -67,18 +69,22 @@ def validar_y_deducir() -> bool:
             # Validar stocks
             for pid, cant in items.items():
                 prod = by_id.get(pid)
-                if not prod or cant > (prod.stock or 0):
-                    return False
+                if not prod:
+                    return False, f"Producto ID {pid} no encontrado."
+                stock_disponible = prod.stock or 0
+                if cant > stock_disponible:
+                    return False, f"Stock insuficiente para {prod.nombre}. Solo quedan {stock_disponible} unidades."
 
             # Descontar
             for pid, cant in items.items():
                 prod = by_id[pid]
                 prod.stock = (prod.stock or 0) - cant
 
-        return True
-    except Exception:
+        return True, None
+    except Exception as exc:
         db.session.rollback()
-        return False
+        current_app.logger.exception("Error al validar y deducir stock: %s", exc)
+        return False, "Error interno al validar carrito."
 
 
 # Endpoint esperado por el frontend: devuelve el estado actual del carrito en sesión
@@ -149,11 +155,12 @@ def limpiar_carrito():
 @bp.post("/validar")
 def validar_carrito():
     """Valida y descuenta stock, luego limpia carrito."""
-    if validar_y_deducir():
+    exito, mensaje = validar_y_deducir()
+    if exito:
         nuevo_estado = Carrito().limpiar()
         return jsonify({"exito": "Compra validada.", "carrito": nuevo_estado}), 200
     else:
-        return jsonify({"error": "Error validando carrito o stock insuficiente."}), 400
+        return jsonify({"error": mensaje or "Error validando carrito o stock insuficiente."}), 400
 
 
 @bp.post("/pagar")
@@ -193,10 +200,11 @@ def procesar_pago():
         return jsonify({"error": "Nombre del titular requerido."}), 400
 
     # If all valid, process cart
-    if validar_y_deducir():
+    exito, mensaje = validar_y_deducir()
+    if exito:
         return jsonify({"exito": "Pago procesado y compra validada."}), 200
     else:
-        return jsonify({"error": "Error procesando compra o stock insuficiente."}), 400
+        return jsonify({"error": mensaje or "Error procesando compra o stock insuficiente."}), 400
 
 
 @bp.get("/boleta")

@@ -23,7 +23,7 @@ class ProductPayload:
     nombre: str
     categoria: str
     categorias: Sequence[str]
-    precio: str  # stored as string to keep precision when converted to Decimal
+    precio: str  
     descripcion: str
     stock: int
     imagen_filename: str | None = None
