@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useParams } from "react-router-dom";
 import { API } from "../services/apijs";
+import { useAuth } from "../contexts/AuthContext";
 import "../styles/legacy/tabla_productos/style_agregar_producto.css";
 
 const CATEGORIES = ["Membership", "Personal Training", "Supplements", "Merchandise"];
@@ -14,6 +15,7 @@ export default function ProductoForm() {
   const nav = useNavigate();
   const { id } = useParams();
   const isEdit = Boolean(id);
+  const { isAdmin, initialized, refresh } = useAuth();
   const [f, setF] = useState({ nombre: "", precio: 0, descripcion: "", categoria: CATEGORIES[0], stock: 0 });
   const [err, setErr] = useState("");
   const [imagenFile, setImagenFile] = useState(null);
@@ -21,13 +23,14 @@ export default function ProductoForm() {
   const [loading, setLoading] = useState(isEdit);
 
   useEffect(() => {
-    API.auth
-      .me()
-      .then((r) => {
-        if (!r?.is_admin) nav("/login");
-      })
-      .catch(() => nav("/login"));
-  }, [nav]);
+    if (!initialized) {
+      refresh().catch(() => {});
+      return;
+    }
+    if (!isAdmin) {
+      nav("/login");
+    }
+  }, [initialized, isAdmin, nav, refresh]);
 
   useEffect(() => {
     if (!isEdit) return;
@@ -213,3 +216,5 @@ export default function ProductoForm() {
     </div>
   );
 }
+
+

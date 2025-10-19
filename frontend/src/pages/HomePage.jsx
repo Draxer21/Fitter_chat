@@ -7,6 +7,7 @@ import Memberships from "../components/Memberships";
 import Logo from "../components/Logo";
 import { formatearPrecio } from "../utils/formatPrice";
 import { useLocale } from "../contexts/LocaleContext";
+import { useCart } from "../contexts/CartContext";
 
 const stockDisponible = (valor) => {
   const n = Number(valor);
@@ -17,6 +18,7 @@ export default function HomePage() {
   const { search, hash } = useLocation();
   const categoria = useMemo(() => new URLSearchParams(search).get("categoria") || "", [search]);
   const { t } = useLocale();
+  const { addItem } = useCart();
 
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +38,7 @@ export default function HomePage() {
 
   const add = async (id) => {
     try {
-      await API.carrito.add(id);
+      await addItem(id);
     } catch (e) {
       alert(e.message);
     }

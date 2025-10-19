@@ -1,8 +1,9 @@
-﻿import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { API } from "../services/apijs";
 import "../styles/legacy/tabla_productos/style_tabla_productos.css";
 import { formatearPrecio } from "../utils/formatPrice";
+import { useAuth } from "../contexts/AuthContext";
 
 const stockDisponible = (valor) => {
   const stock = Number(valor);
@@ -13,50 +14,51 @@ export default function TablaProductos() {
   const [items, setItems] = useState([]);
   const [err, setErr] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const nav = useNavigate();
+  const navigate = useNavigate();
+  const { isAdmin, initialized, refresh } = useAuth();
 
-  const load = () =>
-    API.productos
-      .list()
-      .then(setItems)
-      .catch((e) => setErr(e.message));
-
-  useEffect(() => {
-    let mounted = true;
-    API.auth
-      .me()
-      .then((r) => {
-        if (!r?.is_admin) {
-          nav("/login");
-          return;
-        }
-        if (mounted) load();
-      })
-      .catch(() => nav("/login"));
-    return () => {
-      mounted = false;
-    };
+  const load = useCallback(async () => {
+    try {
+      const data = await API.productos.list();
+      setItems(data);
+      setErr("");
+    } catch (e) {
+      setErr(e.message || "No se pudo cargar el inventario.");
+    }
   }, []);
 
-  const del = async (id) => {
-    if (window.confirm('Eliminar producto?')) {
-      await API.productos.del(id);
-      load();
+  useEffect(() => {
+    if (!initialized) {
+      refresh().catch(() => {});
+      return;
     }
-  };
+    if (!isAdmin) {
+      navigate("/login");
+      return;
+    }
+    load();
+  }, [initialized, isAdmin, load, navigate, refresh]);
+
+  const del = useCallback(
+    async (id) => {
+      if (!window.confirm("Eliminar producto?")) {
+        return;
+      }
+      try {
+        await API.productos.del(id);
+        await load();
+      } catch (e) {
+        setErr(e.message || "No se pudo eliminar el producto.");
+      }
+    },
+    [load]
+  );
 
   const normalizedQuery = searchQuery.trim().toLowerCase();
   const filteredItems = normalizedQuery
     ? items.filter((pr) => {
-        const fields = [
-          pr.id?.toString(),
-          pr.nombre,
-          pr.descripcion,
-          pr.categoria,
-        ];
-        return fields.some((field) =>
-          String(field ?? "").toLowerCase().includes(normalizedQuery)
-        );
+        const fields = [pr.id?.toString(), pr.nombre, pr.descripcion, pr.categoria];
+        return fields.some((field) => String(field ?? "").toLowerCase().includes(normalizedQuery));
       })
     : items;
   const hasSearch = normalizedQuery.length > 0;
@@ -67,18 +69,14 @@ export default function TablaProductos() {
         <h1>Gestion de Inventario</h1>
         <div className="row g-3 align-items-center mb-3">
           <div className="col-12 col-md-8">
-            <form
-              className="input-group"
-              role="search"
-              onSubmit={(e) => e.preventDefault()}
-            >
+            <form className="input-group" role="search" onSubmit={(e) => e.preventDefault()}>
               <span className="input-group-text bg-dark text-white border-secondary">
                 <i className="fa-solid fa-magnifying-glass" aria-hidden="true" />
               </span>
               <input
                 type="search"
                 className="form-control"
-                placeholder="Buscar por nombre, descripción o categoría"
+                placeholder="Buscar por nombre, descripcion o categoria"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 aria-label="Buscar producto en inventario"
@@ -125,18 +123,10 @@ export default function TablaProductos() {
                     </td>
                     <td className="text-center">
                       <div className="d-flex justify-content-center gap-2">
-                        <Link
-                          to={`/admin/productos/${pr.id}/editar`}
-                          className="btn btn-warning"
-                          aria-label={`Editar ${pr.nombre}`}
-                        >
+                        <Link to={`/admin/productos/${pr.id}/editar`} className="btn btn-warning" aria-label={`Editar ${pr.nombre}`}>
                           <i className="fa-solid fa-pencil" />
                         </Link>
-                        <button
-                          className="btn btn-danger"
-                          onClick={() => del(pr.id)}
-                          aria-label={`Eliminar ${pr.nombre}`}
-                        >
+                        <button className="btn btn-danger" onClick={() => del(pr.id)} aria-label={`Eliminar ${pr.nombre}`}>
                           <i className="fa-solid fa-trash" />
                         </button>
                       </div>

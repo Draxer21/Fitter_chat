@@ -1,6 +1,6 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
-import { API } from '../services/apijs';
+import { useAuth } from '../contexts/AuthContext';
 import { useLocale } from '../contexts/LocaleContext';
 import '../styles/legacy/login/style_login.css';
 
@@ -10,35 +10,23 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const { t } = useLocale();
-  const [me, setMe] = useState({ auth: false });
+  const { user, isAuthenticated, login: loginUser, logout: logoutUser, initialized, authenticating } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
-    API.auth
-      .me()
-      .then((data) => {
-        if (mounted && data?.auth) {
-          setMe(data);
-        }
-      })
-      .catch(() => {});
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (me?.auth) {
+    if (!initialized) {
+      return;
+    }
+    if (isAuthenticated) {
       const next = params.get('next');
       if (next) {
         navigate(next, { replace: true });
       }
     }
-  }, [me, navigate, params]);
+  }, [initialized, isAuthenticated, navigate, params]);
 
   const submit = async (event) => {
     event.preventDefault();
@@ -51,20 +39,11 @@ export default function LoginPage() {
     }
     try {
       setLoading(true);
-      const response = await API.auth.login(normalizedUsername, normalizedPassword);
-      if (response?.user) {
-        setMe({ auth: true, user: response.user });
-        setUsername('');
-        setPassword('');
-        const next = params.get('next');
-        if (next) {
-          navigate(next, { replace: true });
-        } else {
-          navigate('/admin/productos', { replace: true });
-        }
-      } else {
-        setMessage(t('login.error'));
-      }
+      await loginUser(normalizedUsername, normalizedPassword);
+      setUsername('');
+      setPassword('');
+      const next = params.get('next');
+      navigate(next || '/admin/productos', { replace: true });
     } catch (error) {
       setMessage(error?.message || t('login.credentials.invalid'));
     } finally {
@@ -73,12 +52,7 @@ export default function LoginPage() {
   };
 
   const logout = async () => {
-    try {
-      await API.auth.logout();
-    } catch (error) {
-      // ignore logout failures
-    }
-    setMe({ auth: false });
+    await logoutUser();
   };
 
   return (
@@ -87,10 +61,10 @@ export default function LoginPage() {
         <div className='container mt-5 border mx-auto' style={{ backgroundColor: 'rgba(0,0,0,.904)', width: 500, borderRadius: 13, color: 'white' }}>
           <h2 className='text-center m-4'>{t('login.title')}</h2>
 
-          {me.auth ? (
+          {isAuthenticated ? (
             <div className='text-center'>
               <p>
-                {t('login.loggedInAs')}: <strong>{me.user?.full_name || me.user?.username || 'Usuario'}</strong>
+                {t('login.loggedInAs')}: <strong>{user?.full_name || user?.username || 'Usuario'}</strong>
               </p>
               <button className='btn btn-light' onClick={logout}>
                 {t('login.logout')}
@@ -133,9 +107,9 @@ export default function LoginPage() {
                   type='submit'
                   className='btn'
                   style={{ backgroundColor: 'black', color: 'white', borderColor: 'rgba(255,255,255,.568)' }}
-                  disabled={loading}
+                  disabled={loading || authenticating}
                 >
-                  {loading ? t('login.loading') : t('login.submit')}
+                  {loading || authenticating ? t('login.loading') : t('login.submit')}
                 </button>
               </div>
             </form>

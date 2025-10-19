@@ -87,7 +87,34 @@ nlu:
     - anota mi correo [persona@example.com](email)
     - te dejo mi número [+56 9 8888 7777](telefono)
     - el código de reserva es [FT-2025](codigo_reserva)
-    - serían [5](ejercicios_num) ejercicios por favor
+    - serán [5](ejercicios_num) ejercicios por favor
+    - clase de [spinning](clase)
+    - para el [2025-10-05](fecha)
+    - a las [07:00](hora)
+    - hagamos [7](ejercicios_num) ejercicios
+    - ninguna
+    - mejor anota [yoga](clase)
+    - que sea el [2025-10-06](fecha)
+    - prográmalo a las [18:30](hora)
+    - ok, agenda [pilates](clase)
+    - el código es [ABC123](codigo_reserva)
+    - mi objetivo es [hipertrofia](objetivo)
+    - solo tengo [barra](equipamiento)
+    - es a las [07:00](hora)
+    - la clase es [spinning](clase)
+    - el horario es [07:00](hora)
+    - ninguna condicion
+    - ninguna alergia
+    - sin condiciones de salud
+    - no tengo alergias
+    - ninguna en realidad
+    - es para el [2025-10-05](fecha)
+    - reserva para las [18:30](hora)
+    - clase [yoga](clase)
+    - solo tengo [mancuernas](equipamiento)
+    - mi contacto es [cliente@fitter.com](email)
+
+
 
 # =========================
 # RUTINAS — INTENCIÓN PRINCIPAL
@@ -409,6 +436,29 @@ nlu:
     - quiero reservar [yoga](clase) para [mañana](fecha) a las [18:00](hora)
     - reserva [spinning](clase) el [2025-10-05](fecha) a las [19:30](hora)
     - agenda [hiit](clase) hoy a las [20:00](hora)
+    - quiero reservar una clase
+    - necesito crear una reserva
+    - podrías agendarme una clase?
+    - quiero agendar una clase para mañana
+    - ayúdame a reservar una clase grupal
+    - me gustaría crear una reserva en el gimnasio
+    - podrias agendarme una clase?
+    - quiero agendar una clase para manana
+    - ayudame a reservar una clase grupal
+    - me gustaria crear una reserva en el gimnasio
+    - agenda una clase para el viernes
+    - quisiera reservar una clase temprano
+    - necesito crear una reserva.
+    - necesito crear una reserva para mañana
+    - me ayudas a reservar?
+    - puedes crear una reserva?
+    - reservar clase de [spinning](clase)
+    - quisiera reservar para el [2025-10-06](fecha)
+    - reserva una clase a las [18:30](hora)
+    - quiero agendar la clase de [yoga](clase)
+    - deseo reservar una clase grupal
+
+
 
 - intent: cancelar_reserva
   examples: |
@@ -416,6 +466,21 @@ nlu:
     - cancelar la reserva de [yoga](clase) del [2025-10-05](fecha) a las [19:30](hora)
     - anula la clase
     - quiero cancelar mi reserva
+    - quiero cancelar la reserva
+    - cancela la clase del sabado
+    - por favor cancela mi reserva
+    - necesito anular mi reserva
+    - cancela la clase programada
+    - cancelar la reserva para esta tarde
+    - cancelala por favor
+    - anula mi clase de spinning
+    - cancela la reserva, por favor
+    - necesito cancelar la clase
+    - por favor anula la reserva
+    - cancela la reserva agendada
+    - quiero anular mi clase programada
+
+
 
 - intent: consultar_reserva
   examples: |
@@ -495,6 +560,16 @@ nlu:
     - afirmativo
     - dale
     - de una
+    - si, confirma por favor
+    - claro, confirma la reserva
+    - si por favor confirmala
+    - ok confirma la clase
+    - perfecto, confirma
+    - sí confirma ahora
+    - afirmativo, confirma
+    - dale, confirma la reserva
+
+
 
 - intent: negar
   examples: |
@@ -504,6 +579,17 @@ nlu:
     - no quiero
     - mejor no
     - nop
+    - no, mejor cancela
+    - prefiero no seguir con la reserva
+    - no confirmes la reserva
+    - no gracias, cancela
+    - mejor no, cancela
+    - no, cancela por favor
+    - nope, cancela
+    - mejor cancélala
+    - prefiero que la canceles
+
+
 
 - intent: contacto_humano
   examples: |
@@ -523,6 +609,12 @@ nlu:
     - podrías mandarla a mi email cuando termines?
     - la quiero en mi buzón de correo electrónico
     - por favor envíamela por mail a [user@test.cl](email)
+    - envia la rutina por correo
+    - mandala por correo por favor
+    - enviamela por correo cuando este lista
+    - puedes enviarla al correo?
+    - enviamela a mi correo cuando la termines
+
 
 - intent: mostrar_rutina_pantalla
   examples: |

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { API } from "../services/apijs";
 import { formatearPrecio } from "../utils/formatPrice";
 import "../styles/pago/style_pago.css";
+import { useCart } from "../contexts/CartContext";
 
 function luhnCheck(cardNumber) {
   let sum = 0;
@@ -144,66 +145,57 @@ const steps = [
   { label: "Confirmacion", status: "pending" }
 ];
 
-const emptySummary = { items: [], total: 0 };
-
 export default function PagoPage() {
   const [form, setForm] = useState({ card_num: "", exp: "", cvv: "", name: "" });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [summary, setSummary] = useState(emptySummary);
-  const [summaryLoading, setSummaryLoading] = useState(true);
-  const [summaryError, setSummaryError] = useState("");
   const [focusedField, setFocusedField] = useState("card_num");
   const navigate = useNavigate();
+  const { items: cartItems, total: cartTotal, refresh: refreshCart, status: cartStatus, error: cartError } = useCart();
+  const [summaryError, setSummaryError] = useState("");
 
   useEffect(() => {
     let cancelled = false;
-    const loadSummary = async () => {
-      setSummaryLoading(true);
-      try {
-        const data = await API.carrito.estado();
-        if (cancelled) {
-          return;
-        }
-        const items = Object.values(data?.items || {});
-        setSummary({ items, total: Number(data?.total) || 0 });
-        setSummaryError("");
-      } catch (err) {
+    setSummaryError("");
+    refreshCart()
+      .then(() => {
         if (!cancelled) {
-          setSummary(emptySummary);
+          setSummaryError("");
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
           setSummaryError(err?.message || "No se pudo cargar el resumen.");
         }
-      } finally {
-        if (!cancelled) {
-          setSummaryLoading(false);
-        }
-      }
-    };
-
-    loadSummary();
+      });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [refreshCart]);
+
+  const summaryItems = useMemo(() => (Array.isArray(cartItems) ? cartItems : []), [cartItems]);
+  const isSummaryLoading = cartStatus === "loading";
+  const combinedSummaryError = summaryError || cartError?.message || "";
 
   const totalItems = useMemo(
-    () => summary.items.reduce((acc, item) => acc + (Number(item.cantidad) || 0), 0),
-    [summary.items]
+    () => summaryItems.reduce((acc, item) => acc + (Number(item.cantidad) || 0), 0),
+    [summaryItems]
   );
 
   const subtotal = useMemo(
     () =>
-      summary.items.reduce(
+      summaryItems.reduce(
         (acc, item) => acc + (Number(item.acumulado) || (Number(item.precio_unitario) || 0) * (Number(item.cantidad) || 0)),
         0
       ),
-    [summary.items]
+    [summaryItems]
   );
 
   const totalToCharge = useMemo(() => {
-    const rawTotal = Number(summary.total) || subtotal;
-    return rawTotal < 0 ? 0 : rawTotal;
-  }, [summary.total, subtotal]);
+    const baseTotal = Number(cartTotal) || 0;
+    const candidate = Math.max(subtotal, baseTotal);
+    return candidate < 0 ? 0 : candidate;
+  }, [cartTotal, subtotal]);
 
   const cardBrand = useMemo(() => detectCardBrand(form.card_num), [form.card_num]);
   const displayNumber = useMemo(() => maskCardDisplay(form.card_num), [form.card_num]);
@@ -291,6 +283,7 @@ export default function PagoPage() {
         card_num: form.card_num.replace(/\s/g, ""),
         name: form.name.trim()
       });
+      await refreshCart().catch(() => {});
       navigate("/boleta");
     } catch (err) {
       setErrors({ general: err.message || "No se pudo procesar el pago. Intentalo nuevamente." });
@@ -299,7 +292,7 @@ export default function PagoPage() {
     }
   };
 
-  const showEmptySummary = !summaryLoading && !summaryError && summary.items.length === 0;
+  const showEmptySummary = !isSummaryLoading && !combinedSummaryError && summaryItems.length === 0;
 
   return (
     <div className="payment-page">
@@ -469,8 +462,8 @@ export default function PagoPage() {
                   <p>{totalItems > 0 ? `${totalItems} articulo${totalItems > 1 ? "s" : ""}` : "Sin articulos en el carrito"}</p>
                 </div>
 
-                {summaryLoading && <div className="payment-summary-state">Cargando resumen...</div>}
-                {summaryError && <div className="payment-summary-state payment-summary-state--error">{summaryError}</div>}
+                {isSummaryLoading && <div className="payment-summary-state">Cargando resumen...</div>}
+                {combinedSummaryError && <div className="payment-summary-state payment-summary-state--error">{combinedSummaryError}</div>}
                 {showEmptySummary && (
                   <div className="payment-summary-state">
                     <p>No hay productos asociados al pago.</p>
@@ -480,10 +473,10 @@ export default function PagoPage() {
                   </div>
                 )}
 
-                {!summaryLoading && !summaryError && summary.items.length > 0 && (
+                {!isSummaryLoading && !combinedSummaryError && summaryItems.length > 0 && (
                   <>
                     <ul className="payment-summary-items">
-                      {summary.items.slice(0, 3).map((item) => (
+                      {summaryItems.slice(0, 3).map((item) => (
                         <li key={item.producto_id || item.id} className="payment-summary-item">
                           <div>
                             <span className="payment-summary-name">{item.nombre || "Producto"}</span>
@@ -495,9 +488,9 @@ export default function PagoPage() {
                         </li>
                       ))}
                     </ul>
-                    {summary.items.length > 3 && (
+                    {summaryItems.length > 3 && (
                       <div className="payment-summary-more">
-                        + {summary.items.length - 3} articulo{summary.items.length - 3 > 1 ? "s" : ""} mas
+                        + {summaryItems.length - 3} articulo{summaryItems.length - 3 > 1 ? "s" : ""} mas
                       </div>
                     )}
 
@@ -533,3 +526,5 @@ export default function PagoPage() {
     </div>
   );
 }
+
+

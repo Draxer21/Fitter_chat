@@ -1,8 +1,8 @@
-﻿import { NavLink, useNavigate } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useRef, useState } from 'react';
 import Logo from '../components/Logo';
-import { API } from '../services/apijs';
 import { useLocale } from '../contexts/LocaleContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const closeBootstrapModal = (ref) => {
   const Modal = window.bootstrap && window.bootstrap.Modal;
@@ -18,28 +18,13 @@ const closeBootstrapModal = (ref) => {
 
 export default function Navbar() {
   const { t, locale, setLocale } = useLocale();
-  const [me, setMe] = useState({ auth: false, is_admin: false, user: '' });
+  const { user, isAdmin, isAuthenticated, logout: logoutUser } = useAuth();
   const [supportEmail, setSupportEmail] = useState('');
   const [supportDesc, setSupportDesc] = useState('');
   const navigate = useNavigate();
   const supportModalRef = useRef(null);
   const logoutModalRef = useRef(null);
   const collapseRef = useRef(null);
-
-  useEffect(() => {
-    let mounted = true;
-    API.auth
-      .me()
-      .then((r) => {
-        if (mounted && r) {
-          setMe(r);
-        }
-      })
-      .catch(() => {});
-    return () => {
-      mounted = false;
-    };
-  }, []);
 
   const handleSupportSubmit = (event) => {
     event.preventDefault();
@@ -50,12 +35,7 @@ export default function Navbar() {
   };
 
   const handleLogout = async () => {
-    try {
-      await API.auth.logout();
-    } catch (e) {
-      // ignore network errors, proceed with client side logout
-    }
-    setMe({ auth: false, is_admin: false, user: '' });
+    await logoutUser();
     navigate('/');
   };
 
@@ -85,7 +65,7 @@ export default function Navbar() {
     setLocale(locale === 'es' ? 'en' : 'es');
   };
 
-  const currentUserLabel = me?.user?.username || me?.user?.full_name || me?.user?.email || 'Usuario';
+  const currentUserLabel = user?.username || user?.full_name || user?.email || 'Usuario';
 
   return (
     <>
@@ -132,7 +112,7 @@ export default function Navbar() {
               </div>
             </li>
 
-            {me?.is_admin && (
+            {isAdmin && (
               <>
                 <li className='nav-item'>
                   <NavLink className='nav-link' to='/admin/productos'>{t('nav.admin.inventory')}</NavLink>
@@ -149,7 +129,7 @@ export default function Navbar() {
               </a>
             </li>
 
-            {me?.auth && (
+            {isAuthenticated && (
               <li className='nav-item dropdown'>
                 <a className='nav-link dropdown-toggle' href='#!' id='userMenuLink' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
                   {t('nav.greeting')}, {currentUserLabel}
@@ -171,7 +151,7 @@ export default function Navbar() {
                 {locale === 'es' ? 'EN' : 'ES'}
               </button>
             </li>
-            {!me?.auth && (
+            {!isAuthenticated && (
               <li className='nav-item me-2'>
                 <NavLink className='btn btn-warning rounded-pill' to='/login'>{t('nav.login.cta')}</NavLink>
               </li>

@@ -23,10 +23,6 @@ pipeline:
     analyzer: char_wb
     min_ngram: 3
     max_ngram: 6
-  - name: RegexEntityExtractor
-    case_sensitive: false
-    use_lookup_tables: true
-    use_regexes: true
   - name: DIETClassifier
     epochs: 150
     constrain_similarities: true
