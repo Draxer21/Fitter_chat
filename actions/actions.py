@@ -24,6 +24,9 @@ BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL", "http://localhost:5000").strip(
 CONTEXT_TIMEOUT = float(os.getenv("CHAT_CONTEXT_TIMEOUT", "4"))
 CONTEXT_API_KEY = os.getenv("CHAT_CONTEXT_API_KEY", "").strip() or os.getenv("BACKEND_CONTEXT_KEY", "").strip()
 REQUIRE_AUTH_FOR_ROUTINE = os.getenv("CHAT_REQUIRE_AUTH", "1").lower() not in {"0", "false", "no"}
+NOTIFICATIONS_TIMEOUT = float(os.getenv("CHAT_NOTIFY_TIMEOUT", "6"))
+EMAIL_ROUTINE_ENABLED = os.getenv("CHAT_EMAIL_ROUTINE", "1").lower() not in {"0", "false", "no"}
+ROUTINE_EMAIL_SUBJECT = (os.getenv("CHAT_ROUTINE_EMAIL_SUBJECT", "Tu rutina diaria Fitter") or "Tu rutina diaria Fitter").strip()
 
 
 def send_context_update(sender_id: str, payload: Dict[str, Any]) -> None:
@@ -71,6 +74,72 @@ def ensure_authenticated_context(tracker: Tracker) -> Optional[Dict[str, Any]]:
     if not ctx or not ctx.get("user_id"):
         return None
     return ctx
+
+
+def maybe_send_routine_email(
+    ctx: Optional[Dict[str, Any]],
+    header_lines: List[str],
+    exercises: List[Dict[str, Any]],
+) -> Optional[Dict[str, Any]]:
+    if not EMAIL_ROUTINE_ENABLED:
+        return None
+    if not ctx:
+        return None
+    user_id = ctx.get("user_id")
+    if not user_id:
+        return None
+    if not BACKEND_BASE_URL:
+        return None
+
+    def _format_exercise(entry: Dict[str, Any]) -> str:
+        nombre = entry.get("nombre") or entry.get("name") or "Ejercicio"
+        series = entry.get("series") or "-"
+        reps = entry.get("repeticiones") or entry.get("reps") or "-"
+        rpe = entry.get("rpe") or "-"
+        video = entry.get("video") or entry.get("link")
+        base = f"{nombre} | {series} series x {reps} reps | RPE {rpe}"
+        if video:
+            return f"{base} | Video: {video}"
+        return base
+
+    body_lines: List[str] = []
+    for line in header_lines:
+        body_lines.append(line)
+    body_lines.append("")
+    body_lines.append("Detalle de ejercicios:")
+    for entry in exercises:
+        body_lines.append(f"- {_format_exercise(entry)}")
+    body_lines.append("")
+    body_lines.append("Recuerda calentar antes de iniciar y ajustar la intensidad según tu sensación.")
+
+    payload = {
+        "user_id": int(user_id),
+        "body": "\n".join(body_lines).strip(),
+        "subject": ROUTINE_EMAIL_SUBJECT,
+    }
+    headers: Dict[str, str] = {"Content-Type": "application/json"}
+    if CONTEXT_API_KEY:
+        headers["X-Context-Key"] = CONTEXT_API_KEY
+    try:
+        resp = requests.post(
+            f"{BACKEND_BASE_URL.rstrip('/')}/notifications/daily-routine",
+            json=payload,
+            headers=headers,
+            timeout=NOTIFICATIONS_TIMEOUT,
+        )
+    except requests.RequestException as exc:
+        logger.warning("No se pudo enviar rutina por correo para %s: %s", user_id, exc)
+        return {"status": "network", "error": str(exc)}
+
+    if resp.status_code in {401, 403}:
+        logger.info("Envio de rutina por correo rechazado por auth (user_id=%s)", user_id)
+        return {"status": "unauthorized"}
+    if not resp.ok:
+        logger.warning("Fallo al enviar rutina por correo (status=%s, body=%s)", resp.status_code, resp.text[:200])
+        return {"status": "error", "error": resp.text}
+
+    logger.info("Rutina enviada por correo a user_id=%s", user_id)
+    return {"status": "ok"}
 
 
 def parse_health_flags(text: Optional[str]) -> Dict[str, bool]:
@@ -734,10 +803,11 @@ class ActionGenerarRutina(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
+        ctx: Optional[Dict[str, Any]] = None
         if REQUIRE_AUTH_FOR_ROUTINE:
             ctx = ensure_authenticated_context(tracker)
             if ctx is None:
-                dispatcher.utter_message(text="Necesitas iniciar sesi?n en Fitter antes de generar tu rutina. Inicia sesi?n y vuelve a intentarlo.")
+                dispatcher.utter_message(text="Necesitas iniciar sesión en Fitter antes de generar tu rutina. Inicia sesión y vuelve a intentarlo.")
                 return []
 
         musculo = (_slot(tracker, "musculo") or "brazos").lower()
@@ -832,6 +902,16 @@ class ActionGenerarRutina(Action):
         }
 
         dispatcher.utter_message(json_message=routine_summary)
+
+        email_status = maybe_send_routine_email(ctx, header_lines, structured_ejercicios)
+        if email_status:
+            status = email_status.get("status")
+            if status == "ok":
+                dispatcher.utter_message(text="También te envié esta rutina a tu correo registrado.")
+            elif status == "unauthorized":
+                dispatcher.utter_message(text="Tu sesión web expiró, por lo que no pude enviarte la rutina por correo. Inicia sesión nuevamente si deseas recibirla por email.")
+            else:
+                dispatcher.utter_message(text="No pude enviar la rutina por correo esta vez, pero aquí tienes todo el detalle para que lo sigas desde el chat.")
 
         context_payload: Dict[str, Any] = {}
         if condiciones and condiciones.lower() not in {"", "ninguna", "ninguno", "no"}:

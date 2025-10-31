@@ -13,6 +13,9 @@ export default function LoginPage() {
   const { user, isAuthenticated, login: loginUser, logout: logoutUser, initialized, authenticating } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [totp, setTotp] = useState('');
+  const [backupCode, setBackupCode] = useState('');
+  const [needsMfa, setNeedsMfa] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -39,13 +42,24 @@ export default function LoginPage() {
     }
     try {
       setLoading(true);
-      await loginUser(normalizedUsername, normalizedPassword);
+      const options = {};
+      if (totp) options.totp = totp;
+      if (backupCode) options.backupCode = backupCode;
+      await loginUser(normalizedUsername, normalizedPassword, options);
       setUsername('');
       setPassword('');
+      setTotp('');
+      setBackupCode('');
+      setNeedsMfa(false);
       const next = params.get('next');
       navigate(next || '/admin/productos', { replace: true });
     } catch (error) {
-      setMessage(error?.message || t('login.credentials.invalid'));
+      if (error?.payload?.mfa_required) {
+        setNeedsMfa(true);
+        setMessage('Se requiere un código TOTP o uno de tus códigos de respaldo para completar el ingreso.');
+      } else {
+        setMessage(error?.message || t('login.credentials.invalid'));
+      }
     } finally {
       setLoading(false);
     }
@@ -97,6 +111,33 @@ export default function LoginPage() {
                   required
                 />
               </div>
+              {(needsMfa || totp || backupCode) && (
+                <>
+                  <div className='form-group mb-3'>
+                    <label htmlFor='loginTotp'>Código TOTP</label>
+                    <input
+                      id='loginTotp'
+                      className='form-control'
+                      value={totp}
+                      onChange={(event) => setTotp(event.target.value)}
+                      placeholder='Ingresa el código de tu app autenticadora'
+                      autoComplete='one-time-code'
+                    />
+                  </div>
+                  <div className='form-group mb-3'>
+                    <label htmlFor='loginBackup'>Código de respaldo</label>
+                    <input
+                      id='loginBackup'
+                      className='form-control'
+                      value={backupCode}
+                      onChange={(event) => setBackupCode(event.target.value)}
+                      placeholder='Úsalo si no tienes acceso al TOTP'
+                      autoComplete='off'
+                    />
+                    <small className='form-text text-muted'>Puedes dejarlo vacío si usarás el código TOTP.</small>
+                  </div>
+                </>
+              )}
               <div className='text-center mb-2'>
                 <span>{t('login.noAccount')} </span>
                 <Link to='/registro'>{t('login.gotoRegister')}</Link>

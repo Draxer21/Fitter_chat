@@ -16,7 +16,12 @@ const j = async (resp) => {
     const message = body && typeof body === 'object'
       ? body.error || (Array.isArray(body.errores) ? body.errores.join('\n') : body.message)
       : null;
-    throw new Error(message || `HTTP ${resp.status}`);
+    const error = new Error(message || `HTTP ${resp.status}`);
+    error.status = resp.status;
+    if (body && typeof body === 'object') {
+      error.payload = body;
+    }
+    throw error;
   }
   return body;
 };
@@ -51,14 +56,41 @@ export const API = {
   },
   auth: {
     me:    () => fetch(`${BASE}/auth/me`, { credentials:"include" }).then(j),
-    login: (u,p)=> fetch(`${BASE}/auth/login`, {
+    login: (u,p,opts={})=> fetch(`${BASE}/auth/login`, {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
       credentials:"include",
-      body: JSON.stringify({ username:u, user:u, password:p, pwd:p })
+      body: JSON.stringify({
+        username:u,
+        user:u,
+        password:p,
+        pwd:p,
+        ...(opts && opts.totp ? { totp: opts.totp, code: opts.totp } : {}),
+        ...(opts && opts.token ? { token: opts.token } : {}),
+        ...(opts && opts.backupCode ? { backup_code: opts.backupCode, recovery_code: opts.backupCode } : {})
+      })
     }).then(j),
     logout:() => fetch(`${BASE}/auth/logout`, { method:"POST", credentials:"include" }).then(j),
     register: (payload) => fetch(`${BASE}/auth/register`, { method:"POST", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify(payload) }).then(j),
+    mfa: {
+      status: () => fetch(`${BASE}/auth/mfa/status`, { credentials:"include" }).then(j),
+      setup:  () => fetch(`${BASE}/auth/mfa/setup`, { method:"POST", credentials:"include" }).then(j),
+      confirm: ({ code }) => fetch(`${BASE}/auth/mfa/confirm`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        credentials:"include",
+        body: JSON.stringify({ code })
+      }).then(j),
+      disable: ({ code, backupCode } = {}) => fetch(`${BASE}/auth/mfa/disable`, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        credentials:"include",
+        body: JSON.stringify({
+          ...(code ? { code, totp: code } : {}),
+          ...(backupCode ? { backup_code: backupCode, recovery_code: backupCode } : {})
+        })
+      }).then(j),
+    },
   },
   chat: {
     send:  (sender,message)=> fetch(`${BASE}/chat/send`, { method:"POST", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify({ sender, message }) }).then(j),

@@ -157,6 +157,12 @@ def create_app() -> Flask:
     except Exception as e:
         app.logger.warning(f"No se pudo registrar blueprint auth: {e}")
 
+    try:
+        from .notifications.routes import bp as notifications_bp
+        app.register_blueprint(notifications_bp, url_prefix="/notifications")
+    except Exception as e:
+        app.logger.warning(f"No se pudo registrar blueprint notifications: {e}")
+
     # ---------------- Cliente HTTP con retry/backoff ----------------
     session = requests.Session()
     try:
