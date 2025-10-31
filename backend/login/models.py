@@ -1,5 +1,5 @@
 ﻿from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 import secrets
 
 import pyotp
@@ -17,6 +17,13 @@ class User(db.Model):
     full_name = db.Column(db.String(120), nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    weight_kg = db.Column(db.Float, nullable=True)
+    height_cm = db.Column(db.Float, nullable=True)
+    body_fat_percent = db.Column(db.Float, nullable=True)
+    fitness_goal = db.Column(db.String(255), nullable=True)
+    dietary_preferences = db.Column(db.String(255), nullable=True)
+    health_conditions = db.Column(db.JSON, nullable=True)
+    additional_notes = db.Column(db.Text, nullable=True)
     totp_secret = db.Column(db.String(64), nullable=True)
     totp_enabled = db.Column(db.Boolean, nullable=False, default=False)
     totp_enabled_at = db.Column(db.DateTime, nullable=True)
@@ -85,13 +92,20 @@ class User(db.Model):
         self.totp_enabled_at = None
         self.totp_backup_codes = None
 
-    def to_dict(self) -> Dict[str, str]:
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "id": self.id,
             "email": self.email,
             "username": self.username,
             "full_name": self.full_name,
             "is_admin": self.is_admin,
+            "weight_kg": self.weight_kg,
+            "height_cm": self.height_cm,
+            "body_fat_percent": self.body_fat_percent,
+            "fitness_goal": self.fitness_goal,
+            "dietary_preferences": self.dietary_preferences,
+            "health_conditions": self.health_conditions or [],
+            "additional_notes": self.additional_notes,
             "totp_enabled": bool(self.totp_enabled),
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
