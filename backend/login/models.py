@@ -1,6 +1,8 @@
 ﻿from datetime import datetime
-from typing import Dict
+from typing import Dict, List, Optional
+import secrets
 
+import pyotp
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..extensions import db
@@ -15,6 +17,10 @@ class User(db.Model):
     full_name = db.Column(db.String(120), nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    totp_secret = db.Column(db.String(64), nullable=True)
+    totp_enabled = db.Column(db.Boolean, nullable=False, default=False)
+    totp_enabled_at = db.Column(db.DateTime, nullable=True)
+    totp_backup_codes = db.Column(db.JSON, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -28,6 +34,57 @@ class User(db.Model):
             return False
         return check_password_hash(self.password_hash, raw_password)
 
+    def has_totp_enabled(self) -> bool:
+        return bool(self.totp_enabled and self.totp_secret)
+
+    def reset_totp_secret(self) -> str:
+        secret = pyotp.random_base32()
+        self.totp_secret = secret
+        self.totp_enabled = False
+        self.totp_enabled_at = None
+        self.totp_backup_codes = None
+        return secret
+
+    def provisioning_uri(self, issuer: str = "Fitter") -> Optional[str]:
+        if not self.totp_secret:
+            return None
+        label = self.email or self.username
+        totp = pyotp.TOTP(self.totp_secret)
+        return totp.provisioning_uri(name=label, issuer_name=issuer)
+
+    def verify_totp_token(self, code: str, valid_window: int = 1) -> bool:
+        if not self.totp_secret or not code:
+            return False
+        try:
+            totp = pyotp.TOTP(self.totp_secret)
+            return bool(totp.verify(code.strip(), valid_window=valid_window))
+        except Exception:
+            return False
+
+    def generate_backup_codes(self, count: int = 6) -> List[str]:
+        count = max(1, min(count, 10))
+        codes = [secrets.token_hex(4) for _ in range(count)]
+        self.totp_backup_codes = [generate_password_hash(code) for code in codes]
+        return codes
+
+    def consume_backup_code(self, code: str) -> bool:
+        if not code or not self.totp_backup_codes:
+            return False
+        normalized = code.strip()
+        remaining = list(self.totp_backup_codes or [])
+        for stored in list(remaining):
+            if check_password_hash(stored, normalized):
+                remaining.remove(stored)
+                self.totp_backup_codes = remaining
+                return True
+        return False
+
+    def disable_totp(self) -> None:
+        self.totp_secret = None
+        self.totp_enabled = False
+        self.totp_enabled_at = None
+        self.totp_backup_codes = None
+
     def to_dict(self) -> Dict[str, str]:
         return {
             "id": self.id,
@@ -35,6 +92,7 @@ class User(db.Model):
             "username": self.username,
             "full_name": self.full_name,
             "is_admin": self.is_admin,
+            "totp_enabled": bool(self.totp_enabled),
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }

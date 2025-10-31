@@ -6,6 +6,7 @@ import os
 import random
 import re
 import logging
+from urllib.parse import quote
 
 import requests
 
@@ -21,6 +22,8 @@ logger = logging.getLogger(__name__)
 # =========================================================
 BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL", "http://localhost:5000").strip().rstrip("/")
 CONTEXT_TIMEOUT = float(os.getenv("CHAT_CONTEXT_TIMEOUT", "4"))
+CONTEXT_API_KEY = os.getenv("CHAT_CONTEXT_API_KEY", "").strip() or os.getenv("BACKEND_CONTEXT_KEY", "").strip()
+REQUIRE_AUTH_FOR_ROUTINE = os.getenv("CHAT_REQUIRE_AUTH", "1").lower() not in {"0", "false", "no"}
 
 
 def send_context_update(sender_id: str, payload: Dict[str, Any]) -> None:
@@ -35,6 +38,39 @@ def send_context_update(sender_id: str, payload: Dict[str, Any]) -> None:
         requests.post(url, json=payload, timeout=CONTEXT_TIMEOUT)
     except Exception as exc:
         logger.warning("No se pudo actualizar contexto para %s: %s", sender_id, exc)
+
+
+def fetch_chat_context(sender_id: str) -> Optional[Dict[str, Any]]:
+    if not sender_id or not BACKEND_BASE_URL:
+        return None
+    safe_sender = quote(sender_id[:80])
+    url = f"{BACKEND_BASE_URL.rstrip('/')}/chat/context/{safe_sender}"
+    headers: Dict[str, str] = {}
+    if CONTEXT_API_KEY:
+        headers["X-Context-Key"] = CONTEXT_API_KEY
+    try:
+        resp = requests.get(url, headers=headers, timeout=CONTEXT_TIMEOUT)
+    except requests.RequestException as exc:
+        logger.warning("No se pudo obtener contexto para %s: %s", sender_id, exc)
+        return None
+    if resp.status_code != 200:
+        return None
+    try:
+        payload = resp.json()
+    except Exception:
+        logger.warning("Respuesta invalida del backend al obtener contexto para %s", sender_id)
+        return None
+    return payload.get("context")
+
+
+def ensure_authenticated_context(tracker: Tracker) -> Optional[Dict[str, Any]]:
+    sender = (tracker.sender_id or "").strip()
+    if not sender:
+        return None
+    ctx = fetch_chat_context(sender)
+    if not ctx or not ctx.get("user_id"):
+        return None
+    return ctx
 
 
 def parse_health_flags(text: Optional[str]) -> Dict[str, bool]:
@@ -698,6 +734,12 @@ class ActionGenerarRutina(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
+        if REQUIRE_AUTH_FOR_ROUTINE:
+            ctx = ensure_authenticated_context(tracker)
+            if ctx is None:
+                dispatcher.utter_message(text="Necesitas iniciar sesi?n en Fitter antes de generar tu rutina. Inicia sesi?n y vuelve a intentarlo.")
+                return []
+
         musculo = (_slot(tracker, "musculo") or "brazos").lower()
         nivel = (_slot(tracker, "nivel") or "intermedio").lower()
         objetivo = (_slot(tracker, "objetivo") or "fuerza").lower()
@@ -1103,6 +1145,8 @@ class ActionSuscripcionCambioPlan(Action):
 
         dispatcher.utter_message(text="¿A qué plan te gustaría cambiarte? (Mensual, Trimestral, Anual)")
         return []
+
+
 
 
 

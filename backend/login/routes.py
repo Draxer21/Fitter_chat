@@ -1,4 +1,7 @@
-# backend/login/routes.py
+﻿# backend/login/routes.py
+from datetime import datetime
+from typing import Optional
+
 from flask import Blueprint, request, session, jsonify
 from sqlalchemy.exc import IntegrityError
 
@@ -11,8 +14,19 @@ bp = Blueprint("login", __name__)
 def _normalize_email(value: str) -> str:
     return (value or "").strip().lower()
 
+
 def _normalize_username(value: str) -> str:
     return (value or "").strip().lower()
+
+
+def _current_user() -> Optional[User]:
+    uid = session.get("uid")
+    if not uid:
+        return None
+    user = User.query.get(uid)
+    if user is None:
+        session.clear()
+    return user
 
 
 @bp.post("/register")
@@ -63,8 +77,26 @@ def do_login():
     if not user or not user.check_password(password):
         return jsonify({"error": "Credenciales invalidas"}), 401
 
+    backup_consumed = False
+    if user.has_totp_enabled():
+        totp_code = (data.get("totp") or data.get("otp") or data.get("code") or data.get("token") or "").strip()
+        backup_code = (data.get("backup_code") or data.get("recovery_code") or "").strip()
+        verified = False
+
+        if totp_code:
+            verified = user.verify_totp_token(totp_code)
+        if not verified and backup_code:
+            verified = user.consume_backup_code(backup_code)
+            backup_consumed = verified
+
+        if not verified:
+            db.session.rollback()
+            return jsonify({"error": "Se requiere codigo MFA", "mfa_required": True}), 401
+
     session["uid"] = user.id
     session["is_admin"] = user.is_admin
+    if backup_consumed:
+        db.session.commit()
     return jsonify({"ok": True, "user": user.to_dict()}), 200
 
 
@@ -76,11 +108,87 @@ def do_logout():
 
 @bp.get('/me')
 def me():
-    uid = session.get('uid')
-    if not uid:
-        return jsonify({'auth': False}), 200
-    user = User.query.get(uid)
+    user = _current_user()
     if not user:
-        session.clear()
         return jsonify({'auth': False}), 200
     return jsonify({'auth': True, 'user': user.to_dict(), 'is_admin': bool(user.is_admin)}), 200
+
+
+@bp.get("/mfa/status")
+def mfa_status():
+    user = _current_user()
+    if not user:
+        return jsonify({"auth": False}), 401
+    return jsonify({
+        "auth": True,
+        "enabled": user.has_totp_enabled(),
+        "backup_codes_left": len(user.totp_backup_codes or []),
+        "enabled_at": user.totp_enabled_at.isoformat() if user.totp_enabled_at else None,
+    }), 200
+
+
+@bp.post("/mfa/setup")
+def mfa_setup():
+    user = _current_user()
+    if not user:
+        return jsonify({"error": "No autenticado"}), 401
+
+    secret = user.reset_totp_secret()
+    uri = user.provisioning_uri()
+    db.session.commit()
+    return jsonify({"secret": secret, "otpauth_url": uri, "enabled": False}), 200
+
+
+@bp.post("/mfa/confirm")
+def mfa_confirm():
+    user = _current_user()
+    if not user:
+        return jsonify({"error": "No autenticado"}), 401
+    if not user.totp_secret:
+        return jsonify({"error": "No hay configuracion pendiente"}), 400
+
+    data = request.get_json(force=True, silent=True) or {}
+    code = (data.get("code") or data.get("totp") or data.get("token") or data.get("otp") or "").strip()
+    if not code:
+        return jsonify({"error": "Codigo requerido"}), 400
+
+    if not user.verify_totp_token(code):
+        db.session.rollback()
+        return jsonify({"error": "Codigo MFA invalido"}), 400
+
+    backup_codes = user.generate_backup_codes()
+    user.totp_enabled = True
+    user.totp_enabled_at = datetime.utcnow()
+    db.session.commit()
+    return jsonify({
+        "enabled": True,
+        "backup_codes": backup_codes,
+        "recovery_codes": backup_codes,
+    }), 200
+
+
+@bp.post("/mfa/disable")
+def mfa_disable():
+    user = _current_user()
+    if not user:
+        return jsonify({"error": "No autenticado"}), 401
+    if not user.has_totp_enabled():
+        return jsonify({"disabled": False, "enabled": False}), 200
+
+    data = request.get_json(force=True, silent=True) or {}
+    code = (data.get("code") or data.get("totp") or data.get("token") or data.get("otp") or "").strip()
+    backup_code = (data.get("backup_code") or data.get("recovery_code") or "").strip()
+
+    authorized = False
+    if code and user.verify_totp_token(code):
+        authorized = True
+    elif backup_code and user.consume_backup_code(backup_code):
+        authorized = True
+
+    if not authorized:
+        db.session.rollback()
+        return jsonify({"error": "Codigo MFA invalido"}), 401
+
+    user.disable_totp()
+    db.session.commit()
+    return jsonify({"disabled": True, "enabled": False}), 200
