@@ -76,6 +76,45 @@ def ensure_authenticated_context(tracker: Tracker) -> Optional[Dict[str, Any]]:
     return ctx
 
 
+def fetch_user_profile(ctx: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    if not ctx or not ctx.get("user_id") or not BACKEND_BASE_URL:
+        return None
+    user_id = ctx.get("user_id")
+    headers: Dict[str, str] = {"Accept": "application/json"}
+    if CONTEXT_API_KEY:
+        headers["X-Context-Key"] = CONTEXT_API_KEY
+    try:
+        resp = requests.get(
+            f"{BACKEND_BASE_URL.rstrip('/')}" + "/profile/me",
+            params={"user_id": user_id},
+            headers=headers,
+            timeout=CONTEXT_TIMEOUT,
+        )
+    except requests.RequestException as exc:
+        logger.warning("No se pudo obtener perfil para user_id=%s: %s", user_id, exc)
+        return None
+    if resp.status_code != 200:
+        logger.debug("Perfil no disponible para user_id=%s (status=%s)", user_id, resp.status_code)
+        return None
+    try:
+        payload = resp.json()
+    except Exception:
+        logger.warning("Respuesta invalida del backend al obtener perfil (user_id=%s)", user_id)
+        return None
+    profile = payload.get("profile") if isinstance(payload, dict) else None
+    if profile and profile.get("weight_kg") is not None:
+        try:
+            profile["weight_kg"] = float(profile["weight_kg"])
+        except (TypeError, ValueError):
+            pass
+    if profile and profile.get("height_cm") is not None:
+        try:
+            profile["height_cm"] = float(profile["height_cm"])
+        except (TypeError, ValueError):
+            pass
+    return profile
+
+
 def maybe_send_routine_email(
     ctx: Optional[Dict[str, Any]],
     header_lines: List[str],
@@ -809,14 +848,23 @@ class ActionGenerarRutina(Action):
             if ctx is None:
                 dispatcher.utter_message(text="Necesitas iniciar sesión en Fitter antes de generar tu rutina. Inicia sesión y vuelve a intentarlo.")
                 return []
+        if ctx is None:
+            ctx = ensure_authenticated_context(tracker)
 
-        musculo = (_slot(tracker, "musculo") or "brazos").lower()
+        profile_data = fetch_user_profile(ctx)
+
+        profile_goal = None
+        if profile_data and profile_data.get("primary_goal"):
+            profile_goal = str(profile_data["primary_goal"]).replace("_", " ").strip().lower()
+
+        raw_musculo = _slot(tracker, "musculo")
+        musculo = (raw_musculo or "brazos").lower()
         nivel = (_slot(tracker, "nivel") or "intermedio").lower()
-        objetivo = (_slot(tracker, "objetivo") or "fuerza").lower()
+        objetivo = (_slot(tracker, "objetivo") or profile_goal or "fuerza").lower()
         equip = (_slot(tracker, "equipamiento") or "mancuernas").lower()
 
-        condiciones = _slot(tracker, "condiciones_salud") or "ninguna"
-        alergias = _slot(tracker, "alergias") or "ninguna"
+        condiciones = _slot(tracker, "condiciones_salud") or (profile_data.get("medical_conditions") if profile_data else None) or "ninguna"
+        alergias = _slot(tracker, "alergias") or (profile_data.get("allergies") if profile_data else None) or "ninguna"
         health_flags = parse_health_flags(condiciones)
         health_notes = build_health_notes(health_flags)
         allergy_list = parse_allergy_list(alergias)
@@ -868,6 +916,22 @@ class ActionGenerarRutina(Action):
             f"Sesion aproximada {tiempo} min | {ejercicios_num} ejercicios | Equipo: {equip}",
             f"Progresion sugerida: +2.5-5% carga o +1 rep/serie manteniendo {rir_text}."
         ]
+        if profile_data:
+            profile_bits: List[str] = []
+            weight = profile_data.get("weight_kg")
+            height = profile_data.get("height_cm")
+            goal = profile_data.get("primary_goal")
+            activity = profile_data.get("activity_level")
+            if weight:
+                profile_bits.append(f"Peso: {weight} kg")
+            if height:
+                profile_bits.append(f"Altura: {height} cm")
+            if goal:
+                profile_bits.append(f"Objetivo declarado: {str(goal).replace('_', ' ')}")
+            if activity:
+                profile_bits.append(f"Actividad: {activity}")
+            if profile_bits:
+                header_lines.append("Datos perfil: " + " | ".join(profile_bits))
         if health_notes or allergy_list:
             extra_bits: List[str] = []
             if health_notes:
@@ -933,10 +997,17 @@ class ActionGenerarDieta(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
-        objetivo = (_slot(tracker, "objetivo") or "equilibrada").lower()
+        ctx = ensure_authenticated_context(tracker)
+        profile_data = fetch_user_profile(ctx)
+
+        profile_goal = None
+        if profile_data and profile_data.get("primary_goal"):
+            profile_goal = str(profile_data["primary_goal"]).replace("_", " ").strip().lower()
+
+        objetivo = (_slot(tracker, "objetivo") or profile_goal or "equilibrada").lower()
         nivel = (_slot(tracker, "nivel") or "intermedio").lower()
-        alergias = _slot(tracker, "alergias") or "ninguna"
-        condiciones = _slot(tracker, "condiciones_salud") or "ninguna"
+        alergias = _slot(tracker, "alergias") or (profile_data.get("allergies") if profile_data else None) or "ninguna"
+        condiciones = _slot(tracker, "condiciones_salud") or (profile_data.get("medical_conditions") if profile_data else None) or "ninguna"
 
         plan = DIET_BASES.get(objetivo) or DIET_BASES.get("equilibrada")
         plan_label = objetivo if objetivo in DIET_BASES else "equilibrada"
@@ -986,6 +1057,16 @@ class ActionGenerarDieta(Action):
             lines.append("Se han considerado tus alergias registradas.")
         if not allergy_list:
             lines.append("Si tienes alergias alimentarias, avisa para personalizar mas el plan.")
+        if profile_data:
+            perfil_bits: List[str] = []
+            if profile_data.get("weight_kg"):
+                perfil_bits.append(f"Peso: {profile_data['weight_kg']} kg")
+            if profile_data.get("activity_level"):
+                perfil_bits.append(f"Actividad: {profile_data['activity_level']}")
+            if profile_data.get("notes"):
+                perfil_bits.append("Notas personales consideradas.")
+            if perfil_bits:
+                lines.append("Datos del perfil: " + " | ".join(perfil_bits))
 
         lines.append("Menu diario ejemplo:")
         for meal in filtered_meals:

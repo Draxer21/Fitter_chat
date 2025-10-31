@@ -97,6 +97,9 @@ export default function Navbar() {
                 {t('nav.products')}
               </a>
               <div className='dropdown-menu' aria-labelledby='navbarDropdownMenuLink'>
+                <NavLink className='dropdown-item' to='/catalogo' onClick={closeNavbarCollapse}>
+                  Catálogo completo
+                </NavLink>
                 <button type='button' className='dropdown-item' onClick={() => handleCategoryNavigate('Membership')}>
                   {t('nav.products.memberships')}
                 </button>
@@ -135,6 +138,17 @@ export default function Navbar() {
                   {t('nav.greeting')}, {currentUserLabel}
                 </a>
                 <ul className='dropdown-menu dropdown-menu-end' aria-labelledby='userMenuLink'>
+                  <li>
+                    <NavLink className='dropdown-item' to='/cuenta/perfil' onClick={closeNavbarCollapse}>
+                      Mi información
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink className='dropdown-item' to='/cuenta/seguridad' onClick={closeNavbarCollapse}>
+                      Seguridad (MFA)
+                    </NavLink>
+                  </li>
+                  <li><hr className='dropdown-divider' /></li>
                   <li>
                     <button className='dropdown-item' type='button' data-bs-toggle='modal' data-bs-target='#logoutModal'>
                       {t('nav.logout')}

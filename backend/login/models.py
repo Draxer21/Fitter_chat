@@ -30,6 +30,7 @@ class User(db.Model):
     totp_backup_codes = db.Column(db.JSON, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    profile = db.relationship("UserProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
     def set_password(self, raw_password: str) -> None:
         if not raw_password or not raw_password.strip():
@@ -92,6 +93,15 @@ class User(db.Model):
         self.totp_enabled_at = None
         self.totp_backup_codes = None
 
+    def ensure_profile(self):
+        if self.profile:
+            return self.profile
+        from ..profile.models import UserProfile  # import local para evitar ciclos
+
+        self.profile = UserProfile(user_id=self.id)
+        db.session.add(self.profile)
+        return self.profile
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "id": self.id,
@@ -107,6 +117,7 @@ class User(db.Model):
             "health_conditions": self.health_conditions or [],
             "additional_notes": self.additional_notes,
             "totp_enabled": bool(self.totp_enabled),
+            "profile": self.profile.to_dict() if self.profile else None,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }

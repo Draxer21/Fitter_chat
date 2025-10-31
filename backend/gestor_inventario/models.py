@@ -37,6 +37,12 @@ class Producto(db.Model):
 
     # NUEVO: nombre del archivo de imagen (en /static/uploads)
     imagen_filename = db.Column(db.String(255))  # null si no hay imagen
+    gallery = db.Column(db.JSON, nullable=True)
+    specifications = db.Column(db.JSON, nullable=True)
+    highlights = db.Column(db.JSON, nullable=True)
+    brand = db.Column(db.String(120), nullable=True)
+    rating = db.Column(db.Float, nullable=True)
+    rating_count = db.Column(db.Integer, nullable=True)
 
     # relación M2M
     categorias = db.relationship("Categoria", secondary=producto_categoria, backref="productos", lazy="joined")
@@ -70,6 +76,12 @@ class Producto(db.Model):
             "categoria": self.categoria,  # legado / principal (opcional)
             "stock": self.stock,
             "imagen_url": self.imagen_url(),
+            "gallery": list(self.gallery or []),
+            "specifications": self.specifications or [],
+            "highlights": self.highlights or [],
+            "brand": self.brand,
+            "rating": float(self.rating) if self.rating is not None else None,
+            "rating_count": self.rating_count,
             "categorias": [c.nombre for c in self.categorias],
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,

@@ -1,4 +1,4 @@
-// src/services/apijs.js
+﻿// src/services/apijs.js
 const BASE = process.env.NODE_ENV === "development" ? "" : ""; // con proxy activo basta cadena vacía
 const parseBody = async (resp) => {
   const raw = await resp.text();
@@ -92,7 +92,18 @@ export const API = {
       }).then(j),
     },
   },
+  profile: {
+    me: () => fetch(`${BASE}/profile/me`, { credentials:"include" }).then(j),
+    update: (payload) => fetch(`${BASE}/profile/me`, {
+      method:"PUT",
+      headers:{ "Content-Type":"application/json" },
+      credentials:"include",
+      body: JSON.stringify(payload)
+    }).then(j),
+  },
   chat: {
     send:  (sender,message)=> fetch(`${BASE}/chat/send`, { method:"POST", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify({ sender, message }) }).then(j),
   }
 };
+
+

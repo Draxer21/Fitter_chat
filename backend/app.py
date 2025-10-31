@@ -131,6 +131,10 @@ def create_app() -> Flask:
             from .login import models as login_models  # noqa: F401
         except Exception as e:
             app.logger.warning(f"No se pudieron cargar modelos de login: {e}")
+        try:
+            from .profile import models as profile_models  # noqa: F401
+        except Exception as e:
+            app.logger.warning(f"No se pudieron cargar modelos de profile: {e}")
 
     # ---------------- Blueprints ----------------
     try:
@@ -162,6 +166,12 @@ def create_app() -> Flask:
         app.register_blueprint(notifications_bp, url_prefix="/notifications")
     except Exception as e:
         app.logger.warning(f"No se pudo registrar blueprint notifications: {e}")
+
+    try:
+        from .profile.routes import bp as profile_bp
+        app.register_blueprint(profile_bp, url_prefix="/profile")
+    except Exception as e:
+        app.logger.warning(f"No se pudo registrar blueprint profile: {e}")
 
     # ---------------- Cliente HTTP con retry/backoff ----------------
     session = requests.Session()
