@@ -30,3 +30,4 @@ Flask-SQLAlchemy
 Flask-Migrate
 sqlalchemy>=1.4,<2.0
 pyotp==2.9.0
+reportlab==4.0.9

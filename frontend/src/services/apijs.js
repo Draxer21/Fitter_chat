@@ -1,5 +1,5 @@
-﻿// src/services/apijs.js
-const BASE = process.env.NODE_ENV === "development" ? "" : ""; // con proxy activo basta cadena vacía
+// src/services/apijs.js
+const BASE = process.env.NODE_ENV === "development" ? "" : ""; // con proxy activo basta cadena vacia
 const parseBody = async (resp) => {
   const raw = await resp.text();
   if (!raw) return null;
@@ -52,7 +52,10 @@ export const API = {
     clear:   () => fetch(`${BASE}/carrito/limpiar`,       { method:"POST", credentials:"include" }).then(j),
     validar: () => fetch(`${BASE}/carrito/validar`,       { method:"POST", credentials:"include" }).then(j),
     pagar:   (paymentData) => fetch(`${BASE}/carrito/pagar`, { method:"POST", headers: { "Content-Type": "application/json" }, credentials:"include", body: JSON.stringify(paymentData) }).then(j),
-    boleta:  () => fetch(`${BASE}/carrito/boleta_json`,   { credentials:"include" }).then(j),
+    boleta:  (orderId) => {
+      const url = orderId ? `${BASE}/carrito/boleta_json?order=${orderId}` : `${BASE}/carrito/boleta_json`;
+      return fetch(url, { credentials:"include" }).then(j);
+    },
   },
   auth: {
     me:    () => fetch(`${BASE}/auth/me`, { credentials:"include" }).then(j),
@@ -101,9 +104,16 @@ export const API = {
       body: JSON.stringify(payload)
     }).then(j),
   },
+  orders: {
+    get: (id) => fetch(`${BASE}/orders/${id}`, { credentials:"include" }).then(j),
+    summary: (params="") => fetch(`${BASE}/admin/orders/summary${params ? `?${params}` : ""}`, { credentials:"include" }).then(j),
+    list: (params="") => fetch(`${BASE}/admin/orders${params ? `?${params}` : ""}`, { credentials:"include" }).then(j),
+    receiptPdf: (id) => fetch(`${BASE}/orders/${id}/receipt.pdf`, { credentials:"include" }),
+  },
   chat: {
     send:  (sender,message)=> fetch(`${BASE}/chat/send`, { method:"POST", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify({ sender, message }) }).then(j),
   }
 };
+
 
 

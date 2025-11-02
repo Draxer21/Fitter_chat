@@ -57,6 +57,8 @@ def register():
 
     session["uid"] = user.id
     session["is_admin"] = user.is_admin
+    session["email"] = user.email
+    session["full_name"] = user.full_name
     return jsonify({"ok": True, "user": user.to_dict()}), 201
 
 
@@ -95,6 +97,8 @@ def do_login():
 
     session["uid"] = user.id
     session["is_admin"] = user.is_admin
+    session["email"] = user.email
+    session["full_name"] = user.full_name
     if backup_consumed:
         db.session.commit()
     return jsonify({"ok": True, "user": user.to_dict()}), 200

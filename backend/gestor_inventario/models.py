@@ -45,7 +45,7 @@ class Producto(db.Model):
     rating_count = db.Column(db.Integer, nullable=True)
 
     # relación M2M
-    categorias = db.relationship("Categoria", secondary=producto_categoria, backref="productos", lazy="joined")
+    categorias = db.relationship("Categoria", secondary=producto_categoria, backref="productos", lazy="selectin")
 
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, index=True)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../services/apijs";
 import { formatearPrecio } from "../utils/formatPrice";
@@ -278,15 +278,21 @@ export default function PagoPage() {
     }
     setLoading(true);
     try {
-      await API.carrito.pagar({
+      const result = await API.carrito.pagar({
         ...form,
         card_num: form.card_num.replace(/\s/g, ""),
         name: form.name.trim()
       });
       await refreshCart().catch(() => {});
-      navigate("/boleta");
+      const orderId = result?.order_id;
+      if (orderId) {
+        navigate(`/boleta?order=${orderId}`);
+      } else {
+        navigate("/boleta");
+      }
     } catch (err) {
-      setErrors({ general: err.message || "No se pudo procesar el pago. Intentalo nuevamente." });
+      const message = err?.payload?.error || err.message || "No se pudo procesar el pago. Inténtalo nuevamente.";
+      setErrors({ general: message });
     } finally {
       setLoading(false);
     }
@@ -526,5 +532,7 @@ export default function PagoPage() {
     </div>
   );
 }
+
+
 
 

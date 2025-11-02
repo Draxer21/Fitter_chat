@@ -57,7 +57,7 @@ export default function Navbar() {
 
   const handleCategoryNavigate = (category) => {
     const query = category ? `?categoria=${encodeURIComponent(category)}` : '';
-    navigate(`/${query}#offers`);
+    navigate(`/catalogo${query}`);
     closeNavbarCollapse();
   };
 
@@ -122,6 +122,9 @@ export default function Navbar() {
                 </li>
                 <li className='nav-item'>
                   <NavLink className='nav-link' to='/admin/productos/nuevo'>{t('nav.admin.addProduct')}</NavLink>
+                </li>
+                <li className='nav-item'>
+                  <NavLink className='nav-link' to='/admin/ventas'>Panel de ventas</NavLink>
                 </li>
               </>
             )}

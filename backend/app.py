@@ -1,4 +1,4 @@
-# backend/app.py
+﻿# backend/app.py
 import os
 import json
 import logging
@@ -43,7 +43,7 @@ def create_app() -> Flask:
     app.config["RASA_TIMEOUT_PARSE"] = float(os.getenv("RASA_TIMEOUT_PARSE", "10"))
     app.config["CHAT_CONTEXT_API_KEY"] = os.getenv("CHAT_CONTEXT_API_KEY", "")
 
-    # Seguridad / tamaño de payload
+    # Seguridad / tamaÃ±o de payload
     app.config["MAX_CONTENT_LENGTH"] = int(os.getenv("MAX_CONTENT_LENGTH", "1048576"))  # 1MB
     app.json.ensure_ascii = False
     app.json.sort_keys = False
@@ -166,6 +166,11 @@ def create_app() -> Flask:
         app.register_blueprint(notifications_bp, url_prefix="/notifications")
     except Exception as e:
         app.logger.warning(f"No se pudo registrar blueprint notifications: {e}")
+    try:
+        from .orders.routes import bp as orders_bp
+        app.register_blueprint(orders_bp)
+    except Exception as e:
+        app.logger.warning(f"No se pudo registrar blueprint orders: {e}")
 
     try:
         from .profile.routes import bp as profile_bp
@@ -188,7 +193,7 @@ def create_app() -> Flask:
         session.mount("http://", adapter)
         session.mount("https://", adapter)
     except Exception:
-        # Si no están disponibles, usamos session por defecto
+        # Si no estÃ¡n disponibles, usamos session por defecto
         pass
 
     # ---------------- Utiles internos ----------------
@@ -379,7 +384,7 @@ def create_app() -> Flask:
         try:
             data: Dict[str, Any] = request.get_json(force=True, silent=False)
         except Exception:
-            return _error("JSON inválido", 400)
+            return _error("JSON invÃ¡lido", 400)
 
         text = str(data.get("text", "")).strip()
         if not text:
@@ -399,11 +404,11 @@ def create_app() -> Flask:
             app.logger.exception("Fallo al contactar Rasa en /nlu/parse")
             return _error(f"No se pudo contactar a Rasa NLU: {e}", 502)
         except json.JSONDecodeError:
-            return _error("Respuesta de Rasa NLU no es JSON válido.", 502)
+            return _error("Respuesta de Rasa NLU no es JSON vÃ¡lido.", 502)
 
         return jsonify(payload), 200
 
-    # ---------------- Seguridad básica en headers ----------------
+    # ---------------- Seguridad bÃ¡sica en headers ----------------
     @app.after_request
     def add_security_headers(resp):
         resp.headers.setdefault("X-Content-Type-Options", "nosniff")
@@ -421,7 +426,7 @@ def create_app() -> Flask:
             try:
                 return render_template("index.html")
             except Exception:
-                return _error("index.html no encontrado en templates/ (SPA_FALLBACK está activo).", 404)
+                return _error("index.html no encontrado en templates/ (SPA_FALLBACK estÃ¡ activo).", 404)
 
     return app
 
@@ -433,3 +438,5 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT", "5000")),
         debug=os.getenv("FLASK_DEBUG", "1") == "1"
     )
+
+
