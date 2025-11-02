@@ -1,12 +1,13 @@
 ﻿# backend/login/routes.py
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
-from flask import Blueprint, request, session, jsonify
+from flask import Blueprint, request, session, jsonify, current_app
 from sqlalchemy.exc import IntegrityError
 
 from ..extensions import db
 from .models import User
+from ..security.profile_crypto import ProfileCipherError
 
 bp = Blueprint("login", __name__)
 
@@ -192,3 +193,145 @@ def mfa_disable():
     user.disable_totp()
     db.session.commit()
     return jsonify({"disabled": True, "enabled": False}), 200
+
+
+def _sanitize_optional_string(value: Optional[object], *, max_length: Optional[int] = None) -> Optional[str]:
+    if value is None:
+        return None
+    normalized = str(value).strip()
+    if not normalized:
+        return None
+    if max_length is not None and len(normalized) > max_length:
+        return normalized[:max_length]
+    return normalized
+
+
+def _parse_optional_float(
+    value: Optional[object],
+    *,
+    field: str,
+    minimum: Optional[float] = None,
+    maximum: Optional[float] = None,
+):
+    if value is None or value == "":
+        return None, None
+    try:
+        parsed = float(value)
+    except (TypeError, ValueError):
+        return None, f"{field} debe ser un numero"
+    if minimum is not None and parsed < minimum:
+        return None, f"{field} debe ser mayor o igual a {minimum}"
+    if maximum is not None and parsed > maximum:
+        return None, f"{field} debe ser menor o igual a {maximum}"
+    return parsed, None
+
+
+def _parse_health_conditions(value: Optional[object]):
+    if value is None:
+        return None, None
+    items: List[str]
+    if isinstance(value, str):
+        parts = [part.strip() for part in value.split(",")]
+        items = [part for part in parts if part]
+    elif isinstance(value, list):
+        cleaned: List[str] = []
+        for item in value:
+            item_str = str(item).strip()
+            if item_str:
+                cleaned.append(item_str)
+        items = cleaned
+    else:
+        return None, "health_conditions debe ser una lista o una cadena"
+    if not items:
+        return [], None
+    return items, None
+
+
+@bp.get("/profile")
+def profile_detail():
+    user = _current_user()
+    if not user:
+        return jsonify({"error": "No autenticado"}), 401
+    return jsonify({"profile": user.to_dict()}), 200
+
+
+@bp.put("/profile")
+def profile_update():
+    user = _current_user()
+    if not user:
+        return jsonify({"error": "No autenticado"}), 401
+
+    data = request.get_json(force=True, silent=True) or {}
+    errors: List[str] = []
+    profile_data = user.get_profile_data()
+
+    if "full_name" in data:
+        new_name = _sanitize_optional_string(data.get("full_name"), max_length=120)
+        if not new_name:
+            errors.append("full_name no puede estar vacio")
+        else:
+            user.full_name = new_name
+
+    weight, error = _parse_optional_float(data.get("weight_kg"), field="weight_kg", minimum=0.0)
+    if error:
+        errors.append(error)
+    elif weight is not None:
+        profile_data["weight_kg"] = weight
+    elif "weight_kg" in data:
+        profile_data["weight_kg"] = None
+
+    height, error = _parse_optional_float(data.get("height_cm"), field="height_cm", minimum=0.0)
+    if error:
+        errors.append(error)
+    elif height is not None:
+        profile_data["height_cm"] = height
+    elif "height_cm" in data:
+        profile_data["height_cm"] = None
+
+    body_fat, error = _parse_optional_float(
+        data.get("body_fat_percent"), field="body_fat_percent", minimum=0.0, maximum=100.0
+    )
+    if error:
+        errors.append(error)
+    elif body_fat is not None:
+        profile_data["body_fat_percent"] = body_fat
+    elif "body_fat_percent" in data:
+        profile_data["body_fat_percent"] = None
+
+    if "fitness_goal" in data:
+        profile_data["fitness_goal"] = _sanitize_optional_string(data.get("fitness_goal"), max_length=255)
+
+    if "dietary_preferences" in data:
+        profile_data["dietary_preferences"] = _sanitize_optional_string(
+            data.get("dietary_preferences"), max_length=255
+        )
+
+    if "additional_notes" in data:
+        profile_data["additional_notes"] = _sanitize_optional_string(
+            data.get("additional_notes"), max_length=2000
+        )
+
+    if "health_conditions" in data:
+        conditions, error = _parse_health_conditions(data.get("health_conditions"))
+        if error:
+            errors.append(error)
+        else:
+            profile_data["health_conditions"] = conditions
+
+    if errors:
+        db.session.rollback()
+        return jsonify({"error": "; ".join(errors)}), 400
+
+    profile_data["last_updated_at"] = datetime.utcnow().isoformat()
+
+    record = user.ensure_profile_record()
+    try:
+        record.set_payload(profile_data)
+        db.session.add(record)
+        db.session.commit()
+    except ProfileCipherError as exc:
+        db.session.rollback()
+        current_app.logger.exception("No se pudo cifrar el perfil del usuario %s", user.id)
+        return jsonify({"error": "No se pudo guardar el perfil de manera segura"}), 500
+
+    return jsonify({"ok": True, "profile": user.to_dict()}), 200

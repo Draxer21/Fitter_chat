@@ -1,11 +1,18 @@
-﻿from datetime import datetime
-from typing import Dict, List, Optional
+from datetime import datetime
+from typing import Any, Dict, List, Optional
 import secrets
 
 import pyotp
+from flask import current_app
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..extensions import db
+from ..security.profile_crypto import (
+    ProfileCipherError,
+    decrypt_profile_payload,
+    encrypt_profile_payload,
+    profile_payload_checksum,
+)
 
 
 class User(db.Model):
@@ -23,6 +30,13 @@ class User(db.Model):
     totp_backup_codes = db.Column(db.JSON, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    profile_record = db.relationship(
+        "UserProfile",
+        uselist=False,
+        back_populates="user",
+        cascade="all, delete-orphan",
+    )
 
     def set_password(self, raw_password: str) -> None:
         if not raw_password or not raw_password.strip():
@@ -85,8 +99,39 @@ class User(db.Model):
         self.totp_enabled_at = None
         self.totp_backup_codes = None
 
-    def to_dict(self) -> Dict[str, str]:
+    def get_profile_defaults(self) -> Dict[str, Any]:
         return {
+            "weight_kg": None,
+            "height_cm": None,
+            "body_fat_percent": None,
+            "fitness_goal": None,
+            "dietary_preferences": None,
+            "health_conditions": [],
+            "additional_notes": None,
+            "last_updated_at": None,
+        }
+
+    def get_profile_data(self) -> Dict[str, Any]:
+        defaults = self.get_profile_defaults()
+        if not self.profile_record:
+            return defaults
+        try:
+            payload = self.profile_record.get_payload()
+        except ProfileCipherError:
+            current_app.logger.exception("No se pudo desencriptar el perfil del usuario %s", self.id)
+            return defaults
+        merged = {**defaults, **payload}
+        if not isinstance(merged.get("health_conditions"), list):
+            merged["health_conditions"] = []
+        return merged
+
+    def ensure_profile_record(self) -> "UserProfile":
+        if not self.profile_record:
+            self.profile_record = UserProfile(user=self)
+        return self.profile_record
+
+    def to_dict(self, *, include_profile: bool = True) -> Dict[str, Any]:
+        data = {
             "id": self.id,
             "email": self.email,
             "username": self.username,
@@ -96,6 +141,10 @@ class User(db.Model):
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }
+        if include_profile:
+            profile = self.get_profile_data()
+            data.update(profile)
+        return data
 
     @classmethod
     def create(
@@ -116,3 +165,35 @@ class User(db.Model):
         user.set_password(password)
         db.session.add(user)
         return user
+
+
+class UserProfile(db.Model):
+    __tablename__ = "user_profile"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, unique=True)
+    encrypted_payload = db.Column(db.LargeBinary, nullable=False)
+    payload_checksum = db.Column(db.String(64), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    user = db.relationship("User", back_populates="profile_record")
+
+    def set_payload(self, data: Dict[str, Any]) -> None:
+        encrypted = encrypt_profile_payload(data)
+        self.encrypted_payload = encrypted
+        self.payload_checksum = profile_payload_checksum(encrypted)
+
+    def get_payload(self) -> Dict[str, Any]:
+        if not self.encrypted_payload:
+            return {}
+        payload = decrypt_profile_payload(self.encrypted_payload)
+        if not isinstance(payload, dict):
+            raise ProfileCipherError("El perfil desencriptado no es un objeto valido")
+        return payload
+
+    def verify_integrity(self) -> bool:
+        if not self.encrypted_payload:
+            return False
+        expected = profile_payload_checksum(self.encrypted_payload)
+        return secrets.compare_digest(expected, self.payload_checksum)
