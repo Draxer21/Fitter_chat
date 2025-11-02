@@ -21,7 +21,7 @@ class Order(db.Model):
     currency = db.Column(db.String(8), nullable=False, default="CLP")
     payment_method = db.Column(db.String(64), nullable=True)
     payment_reference = db.Column(db.String(255), nullable=True)
-    metadata = db.Column(JSONB().with_variant(db.JSON, "sqlite"), nullable=True)
+    order_metadata = db.Column("metadata", JSONB().with_variant(db.JSON, "sqlite"), nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, index=True)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -38,7 +38,7 @@ class Order(db.Model):
             "currency": self.currency,
             "payment_method": self.payment_method,
             "payment_reference": self.payment_reference,
-            "metadata": self.metadata or {},
+            "metadata": self.order_metadata or {},
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
             "items": [item.to_dict() for item in self.items],
@@ -70,7 +70,7 @@ class Order(db.Model):
             total_amount=total_amount,
             payment_method=payment_method,
             payment_reference=payment_reference,
-            metadata=metadata_payload,
+            order_metadata=metadata_payload,
         )
         db.session.add(order)
         db.session.flush()

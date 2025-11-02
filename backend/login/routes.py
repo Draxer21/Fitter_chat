@@ -2,13 +2,11 @@
 from datetime import datetime
 from typing import List, Optional
 
-from flask import Blueprint, request, session, jsonify, current_app
+from flask import Blueprint, request, session, jsonify
 from sqlalchemy.exc import IntegrityError
 
 from ..extensions import db
 from .models import User
-from ..security.profile_crypto import ProfileCipherError
-
 bp = Blueprint("login", __name__)
 
 
@@ -267,8 +265,6 @@ def profile_update():
 
     data = request.get_json(force=True, silent=True) or {}
     errors: List[str] = []
-    profile_data = user.get_profile_data()
-
     if "full_name" in data:
         new_name = _sanitize_optional_string(data.get("full_name"), max_length=120)
         if not new_name:
@@ -280,20 +276,16 @@ def profile_update():
     if error:
         errors.append(error)
     elif weight is not None:
-        profile_data["weight_kg"] = weight
         user.weight_kg = weight
-    elif "weight_kg" in data:
-        profile_data["weight_kg"] = None
+    elif data.get("weight_kg") in ("", None):
         user.weight_kg = None
 
     height, error = _parse_optional_float(data.get("height_cm"), field="height_cm", minimum=0.0)
     if error:
         errors.append(error)
     elif height is not None:
-        profile_data["height_cm"] = height
         user.height_cm = height
-    elif "height_cm" in data:
-        profile_data["height_cm"] = None
+    elif data.get("height_cm") in ("", None):
         user.height_cm = None
 
     body_fat, error = _parse_optional_float(
@@ -302,49 +294,29 @@ def profile_update():
     if error:
         errors.append(error)
     elif body_fat is not None:
-        profile_data["body_fat_percent"] = body_fat
         user.body_fat_percent = body_fat
-    elif "body_fat_percent" in data:
-        profile_data["body_fat_percent"] = None
+    elif data.get("body_fat_percent") in ("", None):
         user.body_fat_percent = None
 
     if "fitness_goal" in data:
-        value = _sanitize_optional_string(data.get("fitness_goal"), max_length=255)
-        profile_data["fitness_goal"] = value
-        user.fitness_goal = value
+        user.fitness_goal = _sanitize_optional_string(data.get("fitness_goal"), max_length=255)
 
     if "dietary_preferences" in data:
-        value = _sanitize_optional_string(data.get("dietary_preferences"), max_length=255)
-        profile_data["dietary_preferences"] = value
-        user.dietary_preferences = value
+        user.dietary_preferences = _sanitize_optional_string(data.get("dietary_preferences"), max_length=255)
 
     if "additional_notes" in data:
-        value = _sanitize_optional_string(data.get("additional_notes"), max_length=2000)
-        profile_data["additional_notes"] = value
-        user.additional_notes = value
+        user.additional_notes = _sanitize_optional_string(data.get("additional_notes"), max_length=2000)
 
     if "health_conditions" in data:
         conditions, error = _parse_health_conditions(data.get("health_conditions"))
         if error:
             errors.append(error)
         else:
-            profile_data["health_conditions"] = conditions
             user.health_conditions = conditions
 
     if errors:
         db.session.rollback()
         return jsonify({"error": "; ".join(errors)}), 400
 
-    profile_data["last_updated_at"] = datetime.utcnow().isoformat()
-
-    record = user.ensure_profile_record()
-    try:
-        record.set_payload(profile_data)
-        db.session.add(record)
-        db.session.commit()
-    except ProfileCipherError as exc:
-        db.session.rollback()
-        current_app.logger.exception("No se pudo cifrar el perfil del usuario %s", user.id)
-        return jsonify({"error": "No se pudo guardar el perfil de manera segura"}), 500
-
+    db.session.commit()
     return jsonify({"ok": True, "profile": user.to_dict()}), 200
