@@ -21,6 +21,10 @@ const TablaProductos = lazy(() => import("./pages/TablaProductos"));
 const ProductoDetalle = lazy(() => import("./pages/ProductoDetalle"));
 const ProductoForm = lazy(() => import("./pages/ProductoForm"));
 const RegistroPage = lazy(() => import("./pages/RegistroPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const AccountSecurityPage = lazy(() => import("./pages/AccountSecurityPage"));
+const CatalogPage = lazy(() => import("./pages/CatalogPage"));
+const AdminSalesPage = lazy(() => import("./pages/AdminSalesPage"));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -58,7 +62,7 @@ export default function App() {
 
             <main className="app-content-safe-area">
               <Suspense fallback={<div style={{ padding: 16 }}>Cargando.</div>}>
-                <Routes>
+                                <Routes>
                   <Route element={<LegacyStylesLayout />}>
                     <Route path="/" element={<HomePage />} />
                     <Route path="/tienda" element={<HomePage />} />
@@ -67,13 +71,17 @@ export default function App() {
                     <Route path="/login" element={<LoginPage />} />
                   </Route>
 
+                  <Route path="/catalogo" element={<CatalogPage />} />
                   <Route path="/carrito" element={<CarritoPage />} />
                   <Route path="/pago" element={<PagoPage />} />
                   <Route path="/boleta" element={<BoletaPage />} />
                   <Route path="/admin/productos" element={<TablaProductos />} />
                   <Route path="/admin/productos/nuevo" element={<ProductoForm />} />
                   <Route path="/admin/productos/:id/editar" element={<ProductoForm />} />
+                  <Route path="/admin/ventas" element={<AdminSalesPage />} />
                   <Route path="/rutina/:id" element={<RutinaPage />} />
+                  <Route path="/cuenta/perfil" element={<ProfilePage />} />
+                  <Route path="/cuenta/seguridad" element={<AccountSecurityPage />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>

@@ -24,12 +24,20 @@ class User(db.Model):
     full_name = db.Column(db.String(120), nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    weight_kg = db.Column(db.Float, nullable=True)
+    height_cm = db.Column(db.Float, nullable=True)
+    body_fat_percent = db.Column(db.Float, nullable=True)
+    fitness_goal = db.Column(db.String(255), nullable=True)
+    dietary_preferences = db.Column(db.String(255), nullable=True)
+    health_conditions = db.Column(db.JSON, nullable=True)
+    additional_notes = db.Column(db.Text, nullable=True)
     totp_secret = db.Column(db.String(64), nullable=True)
     totp_enabled = db.Column(db.Boolean, nullable=False, default=False)
     totp_enabled_at = db.Column(db.DateTime, nullable=True)
     totp_backup_codes = db.Column(db.JSON, nullable=True)
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    profile = db.relationship("UserProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
 
     profile_record = db.relationship(
         "UserProfile",
@@ -99,6 +107,15 @@ class User(db.Model):
         self.totp_enabled_at = None
         self.totp_backup_codes = None
 
+    def ensure_profile(self):
+        if self.profile:
+            return self.profile
+        from ..profile.models import UserProfile  # import local para evitar ciclos
+
+        self.profile = UserProfile(user_id=self.id)
+        db.session.add(self.profile)
+        return self.profile
+
     def get_profile_defaults(self) -> Dict[str, Any]:
         return {
             "weight_kg": None,
@@ -137,7 +154,15 @@ class User(db.Model):
             "username": self.username,
             "full_name": self.full_name,
             "is_admin": self.is_admin,
+            "weight_kg": self.weight_kg,
+            "height_cm": self.height_cm,
+            "body_fat_percent": self.body_fat_percent,
+            "fitness_goal": self.fitness_goal,
+            "dietary_preferences": self.dietary_preferences,
+            "health_conditions": self.health_conditions or [],
+            "additional_notes": self.additional_notes,
             "totp_enabled": bool(self.totp_enabled),
+            "profile": self.profile.to_dict() if self.profile else None,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }

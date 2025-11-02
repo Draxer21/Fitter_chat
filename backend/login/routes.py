@@ -58,6 +58,8 @@ def register():
 
     session["uid"] = user.id
     session["is_admin"] = user.is_admin
+    session["email"] = user.email
+    session["full_name"] = user.full_name
     return jsonify({"ok": True, "user": user.to_dict()}), 201
 
 
@@ -96,6 +98,8 @@ def do_login():
 
     session["uid"] = user.id
     session["is_admin"] = user.is_admin
+    session["email"] = user.email
+    session["full_name"] = user.full_name
     if backup_consumed:
         db.session.commit()
     return jsonify({"ok": True, "user": user.to_dict()}), 200
@@ -277,16 +281,20 @@ def profile_update():
         errors.append(error)
     elif weight is not None:
         profile_data["weight_kg"] = weight
+        user.weight_kg = weight
     elif "weight_kg" in data:
         profile_data["weight_kg"] = None
+        user.weight_kg = None
 
     height, error = _parse_optional_float(data.get("height_cm"), field="height_cm", minimum=0.0)
     if error:
         errors.append(error)
     elif height is not None:
         profile_data["height_cm"] = height
+        user.height_cm = height
     elif "height_cm" in data:
         profile_data["height_cm"] = None
+        user.height_cm = None
 
     body_fat, error = _parse_optional_float(
         data.get("body_fat_percent"), field="body_fat_percent", minimum=0.0, maximum=100.0
@@ -295,21 +303,25 @@ def profile_update():
         errors.append(error)
     elif body_fat is not None:
         profile_data["body_fat_percent"] = body_fat
+        user.body_fat_percent = body_fat
     elif "body_fat_percent" in data:
         profile_data["body_fat_percent"] = None
+        user.body_fat_percent = None
 
     if "fitness_goal" in data:
-        profile_data["fitness_goal"] = _sanitize_optional_string(data.get("fitness_goal"), max_length=255)
+        value = _sanitize_optional_string(data.get("fitness_goal"), max_length=255)
+        profile_data["fitness_goal"] = value
+        user.fitness_goal = value
 
     if "dietary_preferences" in data:
-        profile_data["dietary_preferences"] = _sanitize_optional_string(
-            data.get("dietary_preferences"), max_length=255
-        )
+        value = _sanitize_optional_string(data.get("dietary_preferences"), max_length=255)
+        profile_data["dietary_preferences"] = value
+        user.dietary_preferences = value
 
     if "additional_notes" in data:
-        profile_data["additional_notes"] = _sanitize_optional_string(
-            data.get("additional_notes"), max_length=2000
-        )
+        value = _sanitize_optional_string(data.get("additional_notes"), max_length=2000)
+        profile_data["additional_notes"] = value
+        user.additional_notes = value
 
     if "health_conditions" in data:
         conditions, error = _parse_health_conditions(data.get("health_conditions"))
@@ -317,6 +329,7 @@ def profile_update():
             errors.append(error)
         else:
             profile_data["health_conditions"] = conditions
+            user.health_conditions = conditions
 
     if errors:
         db.session.rollback()
