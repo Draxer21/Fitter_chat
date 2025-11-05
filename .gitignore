@@ -21,9 +21,23 @@ __pycache__/
 # Archivos de Rasa
 # ==========================
 .rasa/
-models/          # modelos entrenados (.tar.gz)
-results/         # resultados de test de rasa
-logs/            # logs generados en entrenamiento/ejecución
+
+Chatbot/results/         
+# resultados de test de rasa
+
+Chatbot/logs/            
+# logs generados en entrenamiento/ejecución
+
+Chatbot/data/tools/
+# herramientas externas
+Chatbot/data/generated/
+# datos generados automáticamente para el entrenamiento
+Chatbot/data/specs/
+# intents y entidades específicas
+
+Chatbot/data/train.log
+# log de entrenamiento
+
 
 # ==========================
 # Node / React (frontend)

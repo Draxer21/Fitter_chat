@@ -2,61 +2,32 @@ version: "3.1"
 
 intents:
   - saludar
-  - despedir
   - ayuda
-  - agradecimiento
-  - info_servicios
-  - horarios
-  - precios_planes
-  - privacidad
-  - ubicacion
-  - consejo_nutricion
-  - dolor_lesion
-  - sugerir_rutina
-  - resumen_rutina
-  - crear_reserva
-  - consultar_reserva
-  - cancelar_reserva
-  - suscripcion_cambio_plan
-  - suscripcion_alta
-  - suscripcion_baja
-  - contacto_humano
-  - fuera_de_alcance
-  - afirmar
-  - negar
   - informar
-  - progreso_registrar
-  - mostrar_rutina_pantalla
-  - enviar_rutina_correo
-  # RUTINA
   - solicitar_rutina
   - solicitar_dieta
-  - cambiar_nivel_rutina
   - cambiar_objetivo_rutina
   - cambiar_musculo_rutina
-  - otra_rutina
-  - formato_entrega_rutina
+  - cambiar_nivel_rutina
+  - dolor_lesion
+  - consultar_reserva
+  - enviar_rutina_correo
+  - mostrar_rutina_pantalla
+  - suscripcion_alta
+  - suscripcion_baja
 
 entities:
   - objetivo
   - musculo
   - nivel
-  - clase
-  - fecha
-  - hora
-  - dolor_zona
-  - contacto
-  - codigo_reserva
-  - alergia
-  - condicion_salud
-  # RUTINA
   - equipamiento
   - ejercicios_num
   - tiempo_disponible
+  - condiciones_salud
+  - alergias
   - formato
-  - email
-  - telefono
-  - plan
+  - contacto
+  - codigo_reserva
 
 slots:
   objetivo:
@@ -77,35 +48,45 @@ slots:
       - type: from_entity
         entity: nivel
 
-  clase:
+  equipamiento:
     type: text
     mappings:
       - type: from_entity
-        entity: clase
+        entity: equipamiento
 
-  fecha:
+  ejercicios_num:
     type: text
     mappings:
       - type: from_entity
-        entity: fecha
+        entity: ejercicios_num
+      - type: from_text
 
-  hora:
+  tiempo_disponible:
     type: text
     mappings:
       - type: from_entity
-        entity: hora
+        entity: tiempo_disponible
+      - type: from_text
 
-  dolor_zona:
+  condiciones_salud:
     type: text
     mappings:
       - type: from_entity
-        entity: dolor_zona
+        entity: condiciones_salud
+      - type: from_text
 
-  codigo_reserva:
+  alergias:
     type: text
     mappings:
       - type: from_entity
-        entity: codigo_reserva
+        entity: alergias
+      - type: from_text
+
+  formato:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: formato
       - type: from_text
 
   contacto:
@@ -119,261 +100,48 @@ slots:
         entity: telefono
       - type: from_text
 
-  condiciones_salud:
+  codigo_reserva:
     type: text
-    influence_conversation: true
     mappings:
       - type: from_entity
-        entity: condicion_salud
+        entity: codigo_reserva
       - type: from_text
-        conditions:
-          - active_loop: rutina_form
-            requested_slot: condiciones_salud
-
-  alergias:
-    type: text
-    influence_conversation: true
-    mappings:
-      - type: from_entity
-        entity: alergia
-      - type: from_text
-        conditions:
-          - active_loop: rutina_form
-            requested_slot: alergias
-
-  # RUTINA
-  equipamiento:
-    type: text
-    influence_conversation: true
-    mappings:
-      - type: from_entity
-        entity: equipamiento
-
-  ejercicios_num:
-    type: text  # cambiado de float a text para evitar problemas con sinónimos
-    influence_conversation: true
-    mappings:
-      - type: from_entity
-        entity: ejercicios_num
-      - type: from_text
-
-  tiempo_disponible:
-    type: text  # cambiado de float a text para evitar problemas con sinónimos
-    influence_conversation: true
-    mappings:
-      - type: from_entity
-        entity: tiempo_disponible
-      - type: from_text
-
-  formato:
-    type: text
-    influence_conversation: false
-    mappings:
-      - type: from_entity
-        entity: formato
-      - type: from_text
-
-  email:
-    type: text
-    influence_conversation: false
-    mappings:
-      - type: from_entity
-        entity: email
-      - type: from_text
-
-  telefono:
-    type: text
-    influence_conversation: false
-    mappings:
-      - type: from_entity
-        entity: telefono
-      - type: from_text
-
-  plan:
-    type: text
-    influence_conversation: false
-    mappings:
-      - type: from_entity
-        entity: plan
-      - type: from_text
-
-  ultima_rutina:
-    type: any
-    influence_conversation: false
-    mappings:
-      - type: custom
-
-  ultima_dieta:
-    type: any
-    influence_conversation: false
-    mappings:
-      - type: custom
-
-  # SLOT CLAVE PARA DECISIÓN POST-GENERACIÓN
-  formato_entrega:
-    type: text
-    influence_conversation: true
-    mappings:
-      - type: from_entity
-        entity: formato
-      - type: from_intent
-        intent: mostrar_rutina_pantalla
-        value: "pantalla"
-      - type: from_intent
-        intent: enviar_rutina_correo
-        value: "correo"
-
-  # Opcional si muestras el estado textual de la consulta
-  estado_reserva:
-    type: text
-    influence_conversation: false
-    mappings:
-      - type: from_text
-
-forms:
-  rutina_form:
-    required_slots:
-      - musculo
-      - nivel
-      - objetivo
-      - equipamiento
-      - ejercicios_num
-      - tiempo_disponible
-      - condiciones_salud
-      - alergias
-      - formato
-
-  reserva_form:
-    required_slots:
-      - clase
-      - fecha
-      - hora
 
 responses:
-  # BÁSICOS
   utter_saludar:
-    - text: "¡Hola! Soy FITTER. ¿En qué puedo ayudarte?"
-
-  utter_despedir:
-    - text: "¡Hasta luego! Recuerda mantenerte hidratado."
-
-  utter_agradecimiento:
-    - text: "¡Con gusto! ¿Hay algo más en lo que pueda ayudarte?"
+    - text: "Hola, soy Fitter. Â?En que puedo ayudarte?"
 
   utter_info_servicios:
-    - text: "Puedo sugerirte rutinas, reservar clases, informar precios, horarios y mucho más."
-
-  utter_horarios:
-    - text: "Lunes a viernes: 06:00–22:00 · Sábado: 08:00–20:00."
-
-  utter_precios_planes:
-    - text: "Contamos con planes Mensual, Trimestral y Anual. ¿Deseas que te comparta el detalle por WhatsApp o correo?"
-
-  utter_privacidad:
-    - text: "Tus datos son gestionados conforme a nuestra política de privacidad."
-
-  utter_ubicacion:
-    - text: "Estamos ubicados en Av. Principal 123, piso 2."
-
-  utter_consejo_nutricion:
-    - text: "Para un mejor rendimiento, prioriza alimentos reales y una adecuada ingesta de proteínas. ¿Quieres que te entregue una pauta personalizada?"
+    - text: "Puedo generar rutinas, sugerir dietas, enviar planes por correo y consultar reservas."
 
   utter_dolor_lesion:
-    - text: "Si sientes un dolor agudo o inusual, detén el ejercicio y consulta a un profesional."
-
-  # PROMPTS DEL FORM RUTINA
-  utter_ask_musculo:
-    - text: "¿Qué grupo muscular deseas trabajar? (pecho, espalda, piernas, hombros, brazos, core, fullbody, cardio)"
-
-  utter_ask_nivel:
-    - text: "¿Cuál es tu nivel de entrenamiento? (principiante, intermedio, avanzado)"
-
-  utter_ask_objetivo:
-    - text: "¿Cuál es tu objetivo? (hipertrofia, fuerza, pérdida de grasa, resistencia)"
-
-  utter_ask_equipamiento:
-    - text: "¿Con qué equipamiento cuentas? (barra, mancuernas, poleas, máquinas, peso corporal)"
-
-  utter_ask_ejercicios_num:
-    - text: "¿Cuántos ejercicios deseas por sesión? (recomendado: 6–8)"
-
-  utter_ask_tiempo_disponible:
-    - text: "¿Cuánto tiempo tienes disponible por sesión en minutos? (30 / 45 / 60)"
-
-  utter_ask_condiciones_salud:
-    - text: "Tienes alguna condicion medica que debamos considerar? (hipertension, asma, lesiones). Si no aplica responde \"ninguna\"."
-
-  utter_ask_alergias:
-    - text: "Presentas alergias o intolerancias alimentarias? Dime cuales o responde \"ninguna\"."
-
-  utter_ask_formato:
-    - text: "¿Cómo prefieres recibir la rutina? (pantalla / correo / WhatsApp)"
-
-  # RESÚMENES / ENTREGA DE RUTINA
-  utter_resumen_rutina:
-    - text: |
-        Resumen ▶ {musculo} · {nivel} · Objetivo: {objetivo}
-        Ejercicios: {ejercicios_num} · Tiempo: {tiempo_disponible} min · Equipo: {equipamiento}
-        Generando plan con técnica y video…
+    - text: "Si notas dolor o una lesion recurrente, baja la intensidad y consulta con un profesional."
 
   utter_pedir_contacto:
-    - text: "¿Cuál es tu correo electrónico o número de teléfono para enviarte la rutina?"
+    - text: "Necesito un correo o telefono para enviarte la rutina. Â?Me lo compartes?"
 
   utter_envio_rutina_correo:
-    - text: "Perfecto, enviaré la rutina a {contacto} (modo demostración)."
-
-  # BINARIOS / ESTADO
-  utter_affirm:
-    - text: "Perfecto."
-
-  utter_deny:
-    - text: "Entendido, no se realizará."
-
-  utter_progreso_registrado:
-    - text: "Tu progreso ha sido registrado exitosamente."
-
-  utter_fuera_de_alcance:
-    - text: "Lo siento, por ahora no puedo ayudarte con esa solicitud. ¿Deseas reformularla?"
-
-  utter_contacto_humano:
-    - text: "De acuerdo, derivaré tu caso a un agente humano. Por favor, déjame un medio de contacto."
-
-  # PLANES
-  utter_suscripcion_alta:
-    - text: "Para activar tu suscripción, confirma el plan y el método de pago."
-
-  utter_suscripcion_baja:
-    - text: "Puedo gestionar tu baja o pausar tu suscripción. ¿Cómo deseas proceder?"
-
-  utter_suscripcion_cambio_plan:
-    - text: "¿A qué plan deseas cambiarte? (Mensual, Trimestral, Anual)"
-
-  # RESERVAS
-  utter_confirmar_reserva:
-    - text: "Por favor confirma: {clase} el {fecha} a las {hora}. ¿Procedo a crear la reserva?"
-
-  utter_reserva_confirmada:
-    - text: "Reserva confirmada ✅ {clase} el {fecha} a las {hora}. Código: {codigo_reserva}"
-
-  utter_reserva_cancelada:
-    - text: "Entendido. No crearé o cancelaré la reserva según tu solicitud."
+    - text: "Perfecto, en unos minutos te envio la rutina a {contacto}."
 
   utter_ask_codigo_reserva:
-    - text: "Indícame tu código de reserva para continuar."
+    - text: "Indica el codigo de tu reserva para revisar el estado."
 
   utter_reserva_estado:
-    - text: "Estado de tu reserva {codigo_reserva}: {estado_reserva}"
+    - text: "Estado de la reserva {codigo_reserva}: actualizado y confirmado."
+
+  utter_suscripcion_alta:
+    - text: "Activemos tu suscripcion. Dime el plan que prefieres y el metodo de pago."
+
+  utter_suscripcion_baja:
+    - text: "Puedo cancelar o pausar tu suscripcion. Confirma como deseas proceder."
+
+  utter_fuera_de_alcance:
+    - text: "Lo siento, aun no puedo ayudarte con eso. Puedes reformular tu consulta?"
 
 actions:
-  - action_consejo_nutricion
-  - action_sugerir_rutina
-  - action_resumen_rutina
-  - action_crear_reserva
-  - action_cancelar_reserva
-  - action_consultar_reserva
-  - action_suscripcion_cambio_plan
   - action_generar_rutina
   - action_generar_dieta
+  - action_consultar_reserva
 
 session_config:
   session_expiration_time: 60

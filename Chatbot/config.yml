@@ -18,22 +18,28 @@ pipeline:
   - name: LexicalSyntacticFeaturizer
   - name: CountVectorsFeaturizer
     min_ngram: 1
-    max_ngram: 2
+    max_ngram: 1
   - name: CountVectorsFeaturizer
     analyzer: char_wb
-    min_ngram: 3
-    max_ngram: 6
+    min_ngram: 1
+    max_ngram: 4
   - name: DIETClassifier
-    epochs: 150
-    constrain_similarities: true
-    evaluate_on_number_of_examples: 150
-    evaluate_every_number_of_epochs: 5
-    early_stopping_patience: 8
+    epochs: 80
+    transformer_size: 128
+    number_of_transformer_layers: 1
+    embedding_dimension: 128
     batch_strategy: "sequence"
+    batch_size: 64
     learning_rate: 0.002
+    constrain_similarities: true
+    evaluate_on_number_of_examples: 200
+    evaluate_every_number_of_epochs: 10
+    early_stopping_patience: 10
   - name: EntitySynonymMapper
   - name: ResponseSelector
-    epochs: 75
+    epochs: 50
+    embedding_dimension: 64
+    batch_size: 64
     constrain_similarities: true
   - name: FallbackClassifier
     threshold: 0.35
