@@ -17,12 +17,58 @@ stories:
     - action: action_consultar_reserva
     - action: utter_reserva_estado
 
-- story: rutina directa
+- story: rutina con perfil completo
   steps:
     - intent: solicitar_rutina
+    - action: action_fetch_profile
+    - slot_was_set:
+        - perfil_completo: true
     - action: action_generar_rutina
 
-- story: dieta directa
+- story: rutina con actualizacion guiada
+  steps:
+    - intent: solicitar_rutina
+    - action: action_fetch_profile
+    - slot_was_set:
+        - perfil_completo: false
+    - intent: actualizar_perfil_bot
+    - action: profile_form
+    - active_loop: profile_form
+    - slot_was_set:
+        - requested_slot: null
+    - action: action_submit_profile_form
+    - action: action_generar_rutina
+
+- story: dieta con perfil completo
   steps:
     - intent: solicitar_dieta
+    - action: action_fetch_profile
+    - slot_was_set:
+        - perfil_completo: true
     - action: action_generar_dieta
+
+- story: dieta con actualizacion guiada
+  steps:
+    - intent: solicitar_dieta
+    - action: action_fetch_profile
+    - slot_was_set:
+        - perfil_completo: false
+    - intent: actualizar_perfil_bot
+    - action: profile_form
+    - active_loop: profile_form
+    - slot_was_set:
+        - requested_slot: null
+    - action: action_submit_profile_form
+    - action: action_generar_dieta
+
+- story: consultar perfil resumen
+  steps:
+    - intent: consultar_perfil
+    - action: action_fetch_profile
+
+- story: flujo soporte mfa
+  steps:
+    - intent: soporte_general
+    - action: utter_soporte_opciones
+    - intent: soporte_mfa
+    - action: utter_soporte_mfa

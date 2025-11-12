@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import "../styles/account-security.css";
 
 const formatDateTime = (isoString) => {
   if (!isoString) return "—";
@@ -30,6 +31,8 @@ export default function AccountSecurityPage() {
   const [infoMessage, setInfoMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [recoveryCodes, setRecoveryCodes] = useState([]);
+  const isMfaEnabled = Boolean(mfa?.enabled);
+  const backupRemaining = mfa?.backupCodesLeft ?? 0;
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -100,15 +103,17 @@ export default function AccountSecurityPage() {
 
   if (!isAuthenticated) {
     return (
-      <main className="container py-5">
-        <div className="row justify-content-center">
-          <div className="col-lg-6">
-            <div className="alert alert-warning">
-              Necesitas iniciar sesión para gestionar la autenticación de dos factores.
-              <div className="mt-3">
-                <Link className="btn btn-dark" to="/login">
-                  Ir al inicio de sesión
-                </Link>
+      <main className="account-security-page py-5">
+        <div className="container account-security-shell">
+          <div className="row justify-content-center">
+            <div className="col-lg-6">
+              <div className="alert alert-warning shadow-lg border-0 rounded-4">
+                Necesitas iniciar sesión para gestionar la autenticación de dos factores.
+                <div className="mt-3">
+                  <Link className="btn btn-dark" to="/login">
+                    Ir al inicio de sesión
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -118,42 +123,65 @@ export default function AccountSecurityPage() {
   }
 
   return (
-    <main className="container py-5">
-      <div className="row justify-content-center">
-        <div className="col-xl-8 col-lg-9">
-          <h1 className="mb-4">Seguridad de la cuenta</h1>
-          <p className="text-muted">
-            Activa la autenticación de dos factores (MFA) para proteger tu cuenta con un código adicional generado por una app (Authy, Google Authenticator, 1Password, etc.).
-          </p>
+    <main className="account-security-page py-5">
+      <div className="container account-security-shell">
+        <div className="row justify-content-center">
+          <div className="col-xl-8 col-lg-9">
+            <section className="security-hero mb-4">
+              <span className="security-hero__badge">MFA</span>
+              <div>
+                <h1 className="mb-3">Seguridad de la cuenta</h1>
+                <p className="security-hero__lead mb-0">
+                  Activa la autenticación de dos factores (MFA) para proteger tu cuenta con un código adicional generado por una app (Authy, Google Authenticator, 1Password, etc.).
+                </p>
+              </div>
+              <div className="security-hero__status">
+                <span className={`status-pill ${isMfaEnabled ? "status-pill--on" : "status-pill--off"}`}>
+                  {isMfaEnabled ? "Protección activa" : "Protección pendiente"}
+                </span>
+                <p className="status-note mb-0">
+                  {isMfaEnabled ? `Códigos de respaldo disponibles: ${backupRemaining}` : "Añade una capa extra de seguridad con MFA."}
+                </p>
+              </div>
+            </section>
 
           {infoMessage && <div className="alert alert-success">{infoMessage}</div>}
           {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
           {mfa?.error && !errorMessage && <div className="alert alert-danger">{mfa.error.message || "Error consultando MFA."}</div>}
 
-          <section className="card shadow-sm mb-4">
+          <section className="card shadow-sm mb-4 security-card">
             <div className="card-body">
-              <div className="d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <div className="security-state">
                 <div>
-                  <h5 className="card-title mb-1">Estado actual</h5>
-                  <span className={`badge ${mfa?.enabled ? "bg-success" : "bg-secondary"}`}>
-                    {mfa?.enabled ? "Activado" : "Desactivado"}
-                  </span>
-                  <div className="text-muted small mt-2">
-                    Última activación: {formatDateTime(mfa?.enabledAt)}
-                  </div>
-                  <div className="text-muted small">
-                    Códigos de respaldo restantes: {mfa?.backupCodesLeft ?? 0}
+                  <p className="overline mb-1">Estado actual</p>
+                  <div className="d-flex flex-column flex-sm-row align-items-sm-center gap-2">
+                    <span className={`status-pill ${isMfaEnabled ? "status-pill--on" : "status-pill--off"}`}>
+                      {isMfaEnabled ? "Activado" : "Desactivado"}
+                    </span>
+                    <span className="security-state__hint">
+                      {isMfaEnabled ? "Tus inicios de sesión tienen doble verificación." : "Activa MFA para blindar tu cuenta."}
+                    </span>
                   </div>
                 </div>
                 <button type="button" className="btn btn-outline-secondary btn-sm" onClick={handleRefresh} disabled={mfa?.loading}>
                   {mfa?.loading ? "Actualizando..." : "Actualizar estado"}
                 </button>
               </div>
+              <div className="security-state__meta">
+                <div>
+                  <p className="meta-label">Última activación</p>
+                  <p className="meta-value">{formatDateTime(mfa?.enabledAt)}</p>
+                </div>
+                <div>
+                  <p className="meta-label">Códigos de respaldo</p>
+                  <p className="meta-value">{backupRemaining}</p>
+                </div>
+              </div>
             </div>
           </section>
 
-          {!mfa?.enabled && (
-            <section className="card shadow-sm mb-4">
+          {!isMfaEnabled && (
+            <section className="card shadow-sm mb-4 security-card">
               <div className="card-body">
                 <h5 className="card-title">Activar MFA</h5>
                 <p className="text-muted">
@@ -169,7 +197,7 @@ export default function AccountSecurityPage() {
                 </button>
 
                 {setupInProgress && (
-                  <div className="border rounded p-3 mb-3 bg-light">
+                  <div className="qr-setup-panel mb-3">
                     <h6>Clave secreta</h6>
                     <code style={{ wordBreak: "break-all" }}>{mfa?.secret || "—"}</code>
                     {mfa?.otpauthUrl && (
@@ -213,8 +241,8 @@ export default function AccountSecurityPage() {
             </section>
           )}
 
-          {mfa?.enabled && (
-            <section className="card shadow-sm mb-4">
+          {isMfaEnabled && (
+            <section className="card shadow-sm mb-4 security-card">
               <div className="card-body">
                 <h5 className="card-title">Desactivar MFA</h5>
                 <p className="text-muted">
@@ -254,13 +282,13 @@ export default function AccountSecurityPage() {
           )}
 
           {Array.isArray(recoveryCodes) && recoveryCodes.length > 0 && (
-            <section className="card shadow-sm">
+            <section className="card shadow-sm security-card">
               <div className="card-body">
                 <h5 className="card-title">Códigos de respaldo</h5>
                 <p className="text-muted">
                   Guarda estos códigos en un lugar seguro. Cada uno puede utilizarse una sola vez cuando no tengas acceso a tu app autenticadora.
                 </p>
-                <ol className="ps-3">
+                <ol className="recovery-code-list">
                   {recoveryCodes.map((code) => (
                     <li key={code}>
                       <code>{code}</code>
@@ -272,7 +300,7 @@ export default function AccountSecurityPage() {
           )}
         </div>
       </div>
-    </main>
+    </div>
+  </main>
   );
 }
-

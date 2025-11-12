@@ -1,0 +1,230 @@
+.account-security-page {
+  background: radial-gradient(circle at 10% 20%, rgba(255, 255, 255, 0.35), transparent 55%),
+    radial-gradient(circle at 80% 0, rgba(59, 130, 246, 0.25), transparent 45%),
+    linear-gradient(135deg, #0f172a 0%, #1f2937 30%, #f6f7fb 85%, #ffffff 100%);
+  min-height: 100vh;
+}
+
+.account-security-shell {
+  position: relative;
+  z-index: 1;
+}
+
+.security-hero {
+  background: linear-gradient(120deg, rgba(15, 23, 42, 0.95), rgba(37, 99, 235, 0.9));
+  border-radius: 1.5rem;
+  padding: 2.5rem;
+  box-shadow: 0 35px 80px rgba(15, 23, 42, 0.45);
+  color: #f8fafc;
+}
+
+.security-hero__badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(248, 250, 252, 0.4);
+  margin-bottom: 1rem;
+}
+
+.security-hero h1 {
+  font-weight: 700;
+  color: inherit;
+}
+
+.security-hero__lead {
+  max-width: 48ch;
+  color: rgba(248, 250, 252, 0.85);
+  font-size: 1.05rem;
+}
+
+.security-hero__status {
+  margin-top: 1.5rem;
+}
+
+.status-pill {
+  --pill-color: #0f172a;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--pill-color);
+  background: rgba(15, 23, 66, 0.07);
+}
+
+.status-pill::before {
+  content: "";
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: var(--pill-color);
+  box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.06);
+}
+
+.status-pill--on {
+  --pill-color: #15803d;
+  background: rgba(34, 197, 94, 0.18);
+}
+
+.status-pill--off {
+  --pill-color: #be123c;
+  background: rgba(248, 113, 113, 0.18);
+}
+
+.security-hero .status-pill {
+  background: rgba(255, 255, 255, 0.2);
+  color: #f8fafc;
+}
+
+.security-hero .status-pill::before {
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.25);
+  background: currentColor;
+}
+
+.status-note {
+  color: rgba(248, 250, 252, 0.85);
+  font-size: 0.95rem;
+  margin-top: 0.4rem;
+}
+
+.security-card {
+  border: none;
+  border-radius: 1.25rem;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 25px 50px rgba(15, 23, 42, 0.12);
+}
+
+.security-card .card-body {
+  padding: 2rem;
+}
+
+.overline {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+.security-state {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.security-state__hint {
+  color: #475467;
+  font-size: 0.9rem;
+}
+
+.security-state__meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.meta-label {
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  color: #9da6bb;
+  margin-bottom: 0.2rem;
+}
+
+.meta-value {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 1.05rem;
+}
+
+.qr-setup-panel {
+  border: 1px dashed #c7d7ff;
+  background: #f8fbff;
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+
+.qr-setup-panel code {
+  display: inline-block;
+  background: #0f172a;
+  color: #f8fafc;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  margin-top: 0.4rem;
+}
+
+.qr-setup-panel img {
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  padding: 0.5rem;
+  background: #fff;
+}
+
+.recovery-code-list {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+  padding-left: 0;
+  margin: 0;
+}
+
+.recovery-code-list li {
+  background: #0f172a;
+  border-radius: 0.9rem;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+.recovery-code-list code {
+  background: transparent;
+  color: inherit;
+  font-size: 0.95rem;
+}
+
+.account-security-page .form-label {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.account-security-page .form-control {
+  border-radius: 0.85rem;
+  border-color: #d0d7ec;
+  padding: 0.85rem 1rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.account-security-page .form-control:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.15);
+}
+
+.account-security-page .btn {
+  border-radius: 999px;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.account-security-page .btn-outline-danger {
+  border-width: 2px;
+}
+
+@media (max-width: 576px) {
+  .security-hero {
+    padding: 1.75rem;
+  }
+
+  .security-card .card-body {
+    padding: 1.5rem;
+  }
+}
