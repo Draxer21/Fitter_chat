@@ -1,0 +1,15 @@
+rasa run --enable-api --cors "*" --debug
+
+dentro de la pagina de chatbot
+
+rasa run actions 
+
+para lanzar las acciones del rasa
+
+python -m backend.app 
+
+para lanzar el flask que maneja el backend
+
+npm start
+
+para lanzar el react 

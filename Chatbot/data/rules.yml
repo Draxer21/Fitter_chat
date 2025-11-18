@@ -19,12 +19,65 @@ rules:
   - rule: atender solicitud de rutina
     steps:
       - intent: solicitar_rutina
-      - action: action_generar_rutina
+      - action: action_fetch_profile
+      - slot_was_set:
+          - perfil_completo: null
 
   - rule: atender solicitud de dieta
     steps:
       - intent: solicitar_dieta
-      - action: action_generar_dieta
+      - action: action_fetch_profile
+      - slot_was_set:
+          - perfil_completo: null
+
+  - rule: consultar perfil
+    steps:
+      - intent: consultar_perfil
+      - action: action_fetch_profile
+      - slot_was_set:
+          - perfil_completo: null
+
+  - rule: actualizar perfil
+    steps:
+      - intent: actualizar_perfil
+      - action: action_fetch_profile
+      - slot_was_set:
+          - perfil_completo: null
+
+  - rule: iniciar captura de perfil con el bot
+    steps:
+      - intent: actualizar_perfil_bot
+      - action: profile_form
+      - active_loop: profile_form
+
+  - rule: cancelar profile_form
+    condition:
+      - active_loop: profile_form
+    steps:
+      - intent: detener_formulario
+      - action: utter_form_cancelado
+      - action: action_deactivate_loop
+      - active_loop: null
+
+  - rule: completar profile_form
+    condition:
+      - active_loop: profile_form
+    steps:
+      - action: profile_form
+      - active_loop: null
+      - action: action_submit_profile_form
+      - action: utter_perfil_actualizado
+      - action: action_listen
+
+  - rule: soporte general
+    steps:
+      - intent: soporte_general
+      - action: utter_soporte_opciones
+
+  - rule: soporte mfa
+    steps:
+      - intent: soporte_mfa
+      - action: utter_soporte_mfa
 
   - rule: actualizar objetivo de rutina
     steps:
@@ -79,7 +132,17 @@ rules:
       - intent: suscripcion_baja
       - action: utter_suscripcion_baja
 
+  - rule: abrir pagina de perfil
+    steps:
+      - intent: navegar_perfil_web
+      - action: utter_link_perfil
+
   - rule: informacion adicional generica
     steps:
       - intent: informar
       - action: action_listen
+
+  - rule: manejar fallback
+    steps:
+      - intent: nlu_fallback
+      - action: utter_fuera_de_alcance

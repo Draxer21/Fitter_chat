@@ -2,13 +2,21 @@
 import os
 import json
 import logging
-from typing import Any, Dict, Optional
-from flask import Flask, request, jsonify, render_template, session
+from typing import Any, Dict
+from flask import Flask, request, jsonify, render_template, session as flask_session
 from logging.handlers import RotatingFileHandler
 import requests
 
-from .extensions import db, migrate, cors  # unica instancia compartida
-from .chat.models import ChatUserContext
+from .config import (
+    build_cors_config,
+    build_json_config,
+    build_rate_limit_config,
+    load_app_config,
+)
+from .bootstrap import init_extensions, load_models
+from .blueprints import register_blueprints
+from .extensions import db, cors  # unica instancia compartida
+from .chat.service import ChatService, ChatServiceError, ServiceResponse
 
 # (opcional) rate limit si lo tienes instalado
 Limiter = None
@@ -26,71 +34,27 @@ def create_app() -> Flask:
     app = Flask(__name__, static_folder="static", template_folder="templates")
 
     # ---------------- Config ----------------
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "change-me")
+    app.config.from_object(load_app_config())
 
-    # Base de datos
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-        "SQLALCHEMY_DATABASE_URI",
-        "postgresql+psycopg2://rasa_user:rasa123@127.0.0.1:5432/rasa_db"
-    )
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    json_config = build_json_config()
+    app.json.ensure_ascii = json_config.ensure_ascii
+    app.json.sort_keys = json_config.sort_keys
 
-    # Rasa
-    app.config["RASA_BASE_URL"] = os.getenv("RASA_BASE_URL", "http://localhost:5005").rstrip("/")
-    app.config["RASA_REST_WEBHOOK"] = os.getenv("RASA_REST_WEBHOOK", "/webhooks/rest/webhook")
-    app.config["RASA_PARSE_ENDPOINT"] = os.getenv("RASA_PARSE_ENDPOINT", "/model/parse")
-    app.config["RASA_TIMEOUT_SEND"] = float(os.getenv("RASA_TIMEOUT_SEND", "15"))
-    app.config["RASA_TIMEOUT_PARSE"] = float(os.getenv("RASA_TIMEOUT_PARSE", "10"))
-    app.config["CHAT_CONTEXT_API_KEY"] = os.getenv("CHAT_CONTEXT_API_KEY", "")
+    cors_config = build_cors_config()
+    if cors_config.warning:
+        app.logger.warning(cors_config.warning)
+    cors.init_app(app, **cors_config.to_kwargs())
 
-    # Seguridad / tamaÃ±o de payload
-    app.config["MAX_CONTENT_LENGTH"] = int(os.getenv("MAX_CONTENT_LENGTH", "1048576"))  # 1MB
-    app.json.ensure_ascii = False
-    app.json.sort_keys = False
-
-    # CORS (unica inicializacion)
-    raw_cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:3000")
-    cors_supports_credentials = os.getenv("CORS_SUPPORTS_CREDENTIALS", "true").lower() not in {"0", "false", "no"}
-    if not raw_cors_origins.strip():
-        parsed_cors_origins = ["http://localhost:3000"]
-    elif raw_cors_origins.strip() == "*":
-        parsed_cors_origins = ["*"]
-    else:
-        parsed_cors_origins = [origin.strip() for origin in raw_cors_origins.split(",") if origin.strip()]
-    if not parsed_cors_origins:
-        parsed_cors_origins = ["http://localhost:3000"]
-    wildcard_cors = parsed_cors_origins == ["*"]
-    if wildcard_cors and cors_supports_credentials:
-        app.logger.warning(
-            "CORS con supports_credentials=True y origins='*' no es valido en navegadores. "
-            "Define CORS_ORIGINS con una lista de origenes explicitos en produccion. "
-            "Se deshabilita supports_credentials para continuar."
-        )
-        cors_supports_credentials = False
-    cors.init_app(
-        app,
-        supports_credentials=cors_supports_credentials,
-        resources={r"/*": {"origins": "*" if wildcard_cors else parsed_cors_origins}}
-    )
-
-    # Rate limiting (compat v2/v3)
+    rate_limit_config = build_rate_limit_config()
     if Limiter and get_remote_address:
-        limiter_defaults = [os.getenv("RATE_LIMIT_DEFAULT", "60/minute")]
-        limiter_storage_uri = os.getenv("RATELIMIT_STORAGE_URI")
-        limiter_kwargs = {
-            "default_limits": limiter_defaults,
-            "storage_uri": limiter_storage_uri or "memory://",
-        }
-        strategy = os.getenv("RATELIMIT_STRATEGY")
-        if strategy:
-            limiter_kwargs["strategy"] = strategy
+        limiter_kwargs = rate_limit_config.to_kwargs()
         try:
             # v3 style
             limiter = Limiter(get_remote_address, app=app, **limiter_kwargs)
         except TypeError:
             # v2 style
             limiter = Limiter(key_func=get_remote_address, app=app, **limiter_kwargs)
-        if not limiter_storage_uri:
+        if rate_limit_config.uses_memory_storage:
             app.logger.warning("RATELIMIT_STORAGE_URI no esta definido. Se usa memoria en proceso.")
         app.limiter = limiter  # por si luego quieres usar decorators
 
@@ -117,69 +81,14 @@ def create_app() -> Flask:
         app.logger.warning(f"No se pudo inicializar logging a archivo: {e}")
 
     # ---------------- Init extensiones ----------------
-    db.init_app(app)
-    migrations_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "migrations"))
-    migrate.init_app(app, db, directory=migrations_dir)
-
-    # Carga modelos para que Alembic detecte metadata
-    with app.app_context():
-        try:
-            from .gestor_inventario import models  # noqa: F401
-        except Exception as e:
-            app.logger.warning(f"No se pudieron cargar modelos de gestor_inventario: {e}")
-        try:
-            from .login import models as login_models  # noqa: F401
-        except Exception as e:
-            app.logger.warning(f"No se pudieron cargar modelos de login: {e}")
-        try:
-            from .profile import models as profile_models  # noqa: F401
-        except Exception as e:
-            app.logger.warning(f"No se pudieron cargar modelos de profile: {e}")
+    init_extensions(app)
+    load_models(app)
 
     # ---------------- Blueprints ----------------
-    try:
-        from .gestor_inventario.routes import bp as inventario_bp
-        app.register_blueprint(inventario_bp, url_prefix="/inventario")
-    except Exception as e:
-        app.logger.warning(f"No se pudo registrar blueprint inventario: {e}")
-
-    try:
-        from .carritoapp.routes import bp as carrito_bp
-        app.register_blueprint(carrito_bp, url_prefix="/carrito")
-    except Exception as e:
-        app.logger.warning(f"No se pudo registrar blueprint carrito: {e}")
-
-    try:
-        from .producto.routes import bp as producto_bp
-        app.register_blueprint(producto_bp, url_prefix="/producto")
-    except Exception as e:
-        app.logger.warning(f"No se pudo registrar blueprint producto: {e}")
-
-    try:
-        from .login.routes import bp as auth_bp
-        app.register_blueprint(auth_bp, url_prefix="/auth")
-    except Exception as e:
-        app.logger.warning(f"No se pudo registrar blueprint auth: {e}")
-
-    try:
-        from .notifications.routes import bp as notifications_bp
-        app.register_blueprint(notifications_bp, url_prefix="/notifications")
-    except Exception as e:
-        app.logger.warning(f"No se pudo registrar blueprint notifications: {e}")
-    try:
-        from .orders.routes import bp as orders_bp
-        app.register_blueprint(orders_bp)
-    except Exception as e:
-        app.logger.warning(f"No se pudo registrar blueprint orders: {e}")
-
-    try:
-        from .profile.routes import bp as profile_bp
-        app.register_blueprint(profile_bp, url_prefix="/profile")
-    except Exception as e:
-        app.logger.warning(f"No se pudo registrar blueprint profile: {e}")
+    register_blueprints(app)
 
     # ---------------- Cliente HTTP con retry/backoff ----------------
-    session = requests.Session()
+    http_session = requests.Session()
     try:
         from urllib3.util.retry import Retry  # type: ignore
         from requests.adapters import HTTPAdapter
@@ -190,57 +99,17 @@ def create_app() -> Flask:
             allowed_methods=frozenset(["GET", "POST", "PUT", "DELETE", "PATCH"])
         )
         adapter = HTTPAdapter(max_retries=retries)
-        session.mount("http://", adapter)
-        session.mount("https://", adapter)
+        http_session.mount("http://", adapter)
+        http_session.mount("https://", adapter)
     except Exception:
         # Si no estÃ¡n disponibles, usamos session por defecto
         pass
 
+    chat_service = ChatService(app, db, http_session)
+
     # ---------------- Utiles internos ----------------
-    def _rasa_url(path: str) -> str:
-        path = path if path.startswith("/") else "/" + path
-        return f"{app.config['RASA_BASE_URL']}{path}"
-
-    def _error(msg: str, code: int = 400):
+    def _json_error(msg: str, code: int = 400):
         return jsonify({"error": msg}), code
-
-    def _context_api_key_valid() -> bool:
-        expected = (app.config.get("CHAT_CONTEXT_API_KEY") or "").strip()
-        if not expected:
-            return False
-        provided = (
-            request.headers.get("X-Context-Key")
-            or request.headers.get("X-Api-Key")
-            or request.headers.get("Authorization")
-            or ""
-        ).strip()
-        if provided.lower().startswith("bearer "):
-            provided = provided.split(" ", 1)[1].strip()
-        return provided == expected
-
-    def _session_uid() -> Optional[int]:
-        try:
-            uid = session.get("uid")
-        except Exception:
-            return None
-        try:
-            return int(uid) if uid is not None else None
-        except (TypeError, ValueError):
-            return None
-
-    def _ensure_context_access(ctx: Optional[ChatUserContext]) -> bool:
-        if _context_api_key_valid():
-            return True
-        uid = _session_uid()
-        if uid is None:
-            return False
-        if ctx is None:
-            return True
-        if ctx.user_id and ctx.user_id != uid:
-            return False
-        if not ctx.user_id:
-            ctx.user_id = uid
-        return True
 
     # ---------------- Endpoints propios ----------------
     @app.get("/health")
@@ -253,82 +122,21 @@ def create_app() -> Flask:
             data: Dict[str, Any] = request.get_json(force=True, silent=False)
         except Exception:
             db.session.rollback()
-            return _error("JSON invalido", 400)
-
-        sender = str(data.get("sender", "web-user")).strip() or "web-user"
-        sender = sender[:80]
-        message = str(data.get("message", "")).strip()
-        if not message:
-            db.session.rollback()
-            return _error("El campo 'message' es obligatorio.", 400)
-        if len(message) > int(os.getenv("MAX_MESSAGE_LEN", "5000")):
-            db.session.rollback()
-            return _error("El mensaje es demasiado largo.", 413)
-
-        ctx = ChatUserContext.get_or_create(sender, _session_uid())
-        if not _ensure_context_access(ctx):
-            db.session.rollback()
-            return _error("No autorizado para este contexto.", 401)
-
-        rasa_payload: Dict[str, Any] = {"sender": sender, "message": message}
-        metadata = ctx.to_metadata()
-        if metadata:
-            rasa_payload["metadata"] = {"persisted_context": metadata}
+            return _json_error("JSON invalido", 400)
 
         try:
-            resp = session.post(
-                _rasa_url(app.config["RASA_REST_WEBHOOK"]),
-                json=rasa_payload,
-                timeout=app.config["RASA_TIMEOUT_SEND"],
-            )
-            resp.raise_for_status()
-            payload = resp.json()
-            if not isinstance(payload, (list, tuple)):
-                payload = [payload]
-        except requests.exceptions.RequestException as e:
-            app.logger.exception("Fallo al contactar Rasa en /chat/send")
-            db.session.rollback()
-            return _error(f"No se pudo contactar a Rasa: {e}", 502)
-        except json.JSONDecodeError:
-            db.session.rollback()
-            return _error("Respuesta de Rasa no es JSON valido.", 502)
-
-        updated_context = False
-        for item in payload:
-            if not isinstance(item, dict):
-                continue
-            custom_payload = item.get("custom")
-            if not custom_payload and isinstance(item.get("json_message"), dict):
-                custom_payload = item["json_message"]
-            if not isinstance(custom_payload, dict):
-                continue
-            msg_type = str(custom_payload.get("type") or "").strip().lower()
-            if msg_type == "routine_detail":
-                ctx.set_last_routine(custom_payload)
-                updated_context = True
-            elif msg_type == "diet_plan":
-                ctx.set_last_diet(custom_payload)
-                updated_context = True
-
-        if not updated_context:
-            ctx.touch()
-
-        db.session.commit()
-        return jsonify(payload), 200
+            result = chat_service.send_message(data, request.headers, flask_session)
+        except ChatServiceError as exc:
+            return _json_error(exc.message, exc.status_code)
+        return jsonify(result.payload), result.status_code
 
     @app.get("/chat/context/<sender>")
     def chat_context_get(sender: str):
-        sender = (sender or "").strip()[:80]
-        ctx = ChatUserContext.query.filter_by(sender_id=sender).one_or_none()
-        if not ctx:
-            if _context_api_key_valid() or _session_uid() is not None:
-                return jsonify({"found": False}), 404
-            return _error("Contexto no encontrado.", 404)
-        if not _ensure_context_access(ctx):
-            db.session.rollback()
-            return _error("No autorizado para este contexto.", 401)
-        db.session.commit()
-        return jsonify({"context": ctx.to_dict()}), 200
+        try:
+            result = chat_service.get_context(sender, request.headers, flask_session)
+        except ChatServiceError as exc:
+            return _json_error(exc.message, exc.status_code)
+        return jsonify(result.payload), result.status_code
 
     @app.post("/chat/context/<sender>")
     def chat_context_update(sender: str):
@@ -336,65 +144,31 @@ def create_app() -> Flask:
             data: Dict[str, Any] = request.get_json(force=True, silent=False)
         except Exception:
             db.session.rollback()
-            return _error("JSON invalido", 400)
+            return _json_error("JSON invalido", 400)
 
-        sender = (sender or "").strip()[:80]
-        ctx = ChatUserContext.get_or_create(sender, _session_uid())
-        if not _ensure_context_access(ctx):
-            db.session.rollback()
-            return _error("No autorizado para este contexto.", 401)
-
-        updated = False
-        if "allergies" in data:
-            raw = data.get("allergies")
-            ctx.set_allergies(raw if isinstance(raw, str) else (str(raw) if raw is not None else None))
-            updated = True
-        if "medical_conditions" in data:
-            raw = data.get("medical_conditions")
-            ctx.set_medical_conditions(raw if isinstance(raw, str) else (str(raw) if raw is not None else None))
-            updated = True
-        if "notes" in data:
-            note = data.get("notes")
-            if isinstance(note, str):
-                ctx.notes = note.strip() or None
-            elif note is None:
-                ctx.notes = None
-            else:
-                ctx.notes = str(note).strip() or None
-            updated = True
-        if isinstance(data.get("last_routine"), dict):
-            ctx.set_last_routine(data["last_routine"])
-            updated = True
-        if isinstance(data.get("last_diet"), dict):
-            ctx.set_last_diet(data["last_diet"])
-            updated = True
-        history_entry = data.get("history_entry")
-        if isinstance(history_entry, dict):
-            ctx.append_history(history_entry)
-            updated = True
-
-        if not updated:
-            ctx.touch()
-
-        db.session.commit()
-        return jsonify({"ok": True, "context": ctx.to_dict()}), 200
+        try:
+            result = chat_service.update_context(sender, data, request.headers, flask_session)
+        except ChatServiceError as exc:
+            return _json_error(exc.message, exc.status_code)
+        return jsonify(result.payload), result.status_code
 
     @app.post("/nlu/parse")
     def nlu_parse():
         try:
             data: Dict[str, Any] = request.get_json(force=True, silent=False)
         except Exception:
-            return _error("JSON invÃ¡lido", 400)
+            return _json_error("JSON invÃ¡lido", 400)
 
         text = str(data.get("text", "")).strip()
         if not text:
-            return _error("El campo 'text' es obligatorio.", 400)
-        if len(text) > int(os.getenv("MAX_MESSAGE_LEN", "5000")):
-            return _error("El texto es demasiado largo.", 413)
+            return _json_error("El campo 'text' es obligatorio.", 400)
+        max_message_len = int(app.config.get("MAX_MESSAGE_LEN", 5000))
+        if len(text) > max_message_len:
+            return _json_error("El texto es demasiado largo.", 413)
 
         try:
-            resp = session.post(
-                _rasa_url(app.config["RASA_PARSE_ENDPOINT"]),
+            resp = http_session.post(
+                chat_service.rasa_url(app.config["RASA_PARSE_ENDPOINT"]),
                 json={"text": text},
                 timeout=app.config["RASA_TIMEOUT_PARSE"],
             )
@@ -402,9 +176,9 @@ def create_app() -> Flask:
             payload = resp.json()
         except requests.exceptions.RequestException as e:
             app.logger.exception("Fallo al contactar Rasa en /nlu/parse")
-            return _error(f"No se pudo contactar a Rasa NLU: {e}", 502)
+            return _json_error(f"No se pudo contactar a Rasa NLU: {e}", 502)
         except json.JSONDecodeError:
-            return _error("Respuesta de Rasa NLU no es JSON vÃ¡lido.", 502)
+            return _json_error("Respuesta de Rasa NLU no es JSON vÃ¡lido.", 502)
 
         return jsonify(payload), 200
 
@@ -426,7 +200,7 @@ def create_app() -> Flask:
             try:
                 return render_template("index.html")
             except Exception:
-                return _error("index.html no encontrado en templates/ (SPA_FALLBACK estÃ¡ activo).", 404)
+                return _json_error("index.html no encontrado en templates/ (SPA_FALLBACK estÃ¡ activo).", 404)
 
     return app
 

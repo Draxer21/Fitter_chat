@@ -23,6 +23,7 @@ stories:
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: true
+    - action: utter_perfil_resumen
     - action: action_generar_rutina
 
 - story: rutina con actualizacion guiada
@@ -31,12 +32,19 @@ stories:
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: false
+    - action: utter_perfil_incompleto
     - intent: actualizar_perfil_bot
     - action: profile_form
     - active_loop: profile_form
     - slot_was_set:
         - requested_slot: null
+    - active_loop: null
     - action: action_submit_profile_form
+    - action: utter_perfil_actualizado
+    - intent: solicitar_rutina
+    - action: action_fetch_profile
+    - slot_was_set:
+        - perfil_completo: true
     - action: action_generar_rutina
 
 - story: dieta con perfil completo
@@ -45,6 +53,7 @@ stories:
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: true
+    - action: utter_perfil_resumen
     - action: action_generar_dieta
 
 - story: dieta con actualizacion guiada
@@ -53,12 +62,19 @@ stories:
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: false
+    - action: utter_perfil_incompleto
     - intent: actualizar_perfil_bot
     - action: profile_form
     - active_loop: profile_form
     - slot_was_set:
         - requested_slot: null
+    - active_loop: null
     - action: action_submit_profile_form
+    - action: utter_perfil_actualizado
+    - intent: solicitar_dieta
+    - action: action_fetch_profile
+    - slot_was_set:
+        - perfil_completo: true
     - action: action_generar_dieta
 
 - story: consultar perfil resumen
@@ -72,3 +88,50 @@ stories:
     - action: utter_soporte_opciones
     - intent: soporte_mfa
     - action: utter_soporte_mfa
+
+- story: flujo completo profile_form
+  steps:
+    - intent: actualizar_perfil_bot
+    - action: profile_form
+    - active_loop: profile_form
+    - slot_was_set:
+        - requested_slot: peso
+    - action: utter_ask_peso
+    - intent: informar
+    - action: profile_form
+    - slot_was_set:
+        - peso: 75
+    - slot_was_set:
+        - requested_slot: altura
+    - action: utter_ask_altura
+    - intent: informar
+    - action: profile_form
+    - slot_was_set:
+        - altura: 180
+    - slot_was_set:
+        - requested_slot: objetivo_fitness
+    - action: utter_ask_objetivo_fitness
+    - intent: informar
+    - action: profile_form
+    - slot_was_set:
+        - objetivo_fitness: ganar masa
+    - slot_was_set:
+        - requested_slot: padecimientos
+    - action: utter_ask_padecimientos
+    - intent: informar
+    - action: profile_form
+    - slot_was_set:
+        - padecimientos: ninguno
+    - slot_was_set:
+        - requested_slot: preferencia_dieta
+    - action: utter_ask_preferencia_dieta
+    - intent: informar
+    - action: profile_form
+    - slot_was_set:
+        - preferencia_dieta: sin lactosa
+    - slot_was_set:
+        - requested_slot: null
+    - active_loop: null
+    - action: action_submit_profile_form
+    - action: utter_perfil_actualizado
+    - action: action_listen

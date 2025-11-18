@@ -13,7 +13,7 @@ import requests
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormValidationAction  # <- Validador de formularios
-from rasa_sdk.events import SlotSet
+from rasa_sdk.events import SlotSet, FollowupAction
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +27,7 @@ REQUIRE_AUTH_FOR_ROUTINE = os.getenv("CHAT_REQUIRE_AUTH", "1").lower() not in {"
 NOTIFICATIONS_TIMEOUT = float(os.getenv("CHAT_NOTIFY_TIMEOUT", "6"))
 EMAIL_ROUTINE_ENABLED = os.getenv("CHAT_EMAIL_ROUTINE", "1").lower() not in {"0", "false", "no"}
 ROUTINE_EMAIL_SUBJECT = (os.getenv("CHAT_ROUTINE_EMAIL_SUBJECT", "Tu rutina diaria Fitter") or "Tu rutina diaria Fitter").strip()
+PROFILE_UPDATE_PATH = "/profile/update"
 
 
 def send_context_update(sender_id: str, payload: Dict[str, Any]) -> None:
@@ -113,6 +114,355 @@ def fetch_user_profile(ctx: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]
         except (TypeError, ValueError):
             pass
     return profile
+
+
+def profile_is_complete(profile: Optional[Dict[str, Any]]) -> bool:
+    if not profile:
+        return False
+    weight = profile.get("weight_kg")
+    height = profile.get("height_cm")
+    goal = profile.get("primary_goal")
+    return weight not in {None, "", 0} and height not in {None, "", 0} and bool(goal)
+
+
+def _to_float(value: Any) -> Optional[float]:
+    if value in (None, "", 0):
+        return None
+    text = str(value).strip().replace(",", ".")
+    try:
+        return float(text)
+    except (TypeError, ValueError):
+        return None
+
+
+def _normalize_list_or_text(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    if isinstance(value, list):
+        cleaned = [str(item).strip() for item in value if str(item).strip()]
+        return ", ".join(cleaned) if cleaned else None
+    text = str(value).strip()
+    return text or None
+
+
+def build_profile_summary(profile: Optional[Dict[str, Any]]) -> str:
+    if not profile:
+        return "No encontre datos registrados en tu perfil."
+    bits: List[str] = []
+    weight = _to_float(profile.get("weight_kg"))
+    height = _to_float(profile.get("height_cm"))
+    goal = profile.get("primary_goal")
+    diet_pref = profile.get("diet_preference")
+    medical = _normalize_list_or_text(profile.get("medical_conditions"))
+    if weight:
+        if weight.is_integer():
+            bits.append(f"Peso: {int(weight)} kg")
+        else:
+            bits.append(f"Peso: {weight:.1f} kg")
+    if height:
+        if height.is_integer():
+            bits.append(f"Altura: {int(height)} cm")
+        else:
+            bits.append(f"Altura: {height:.1f} cm")
+    if goal:
+        bits.append(f"Objetivo: {str(goal).replace('_', ' ')}")
+    if diet_pref:
+        bits.append(f"Dieta: {diet_pref}")
+    if medical:
+        bits.append(f"Padecimientos: {medical}")
+    if not bits:
+        return "No hay datos cargados en tu perfil todavía."
+    return "Datos actuales de tu perfil: " + " | ".join(bits)
+
+
+class ValidateProfileForm(FormValidationAction):
+    def name(self) -> Text:
+        return "validate_profile_form"
+
+    def _validate_range(
+        self,
+        dispatcher: CollectingDispatcher,
+        slot_name: Text,
+        value: Any,
+        min_v: float,
+        max_v: float,
+        units: Text,
+    ) -> Dict[Text, Any]:
+        number = _to_float(value)
+        if number is None:
+            dispatcher.utter_message(text=f"Necesito un valor numerico para {slot_name}.")
+            return {slot_name: None}
+        if not (min_v <= number <= max_v):
+            dispatcher.utter_message(
+                text=f"El valor de {slot_name} debe estar entre {min_v:g} y {max_v:g} {units}."
+            )
+            return {slot_name: None}
+        rounded = round(number, 1)
+        return {slot_name: rounded}
+
+    def validate_peso(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        return self._validate_range(dispatcher, "peso", value, 35, 260, "kg")
+
+    def validate_altura(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        return self._validate_range(dispatcher, "altura", value, 120, 230, "cm")
+
+    def _normalize_optional(self, value: Any, default: Text = "") -> Text:
+        text = (str(value or "")).strip()
+        return text or default
+
+    def validate_objetivo_fitness(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        raw = (str(value or "")).strip().lower()
+        if not raw:
+            dispatcher.utter_message(text="Necesito saber tu objetivo principal para ajustar las recomendaciones.")
+            return {"objetivo_fitness": None}
+        aliases = {
+            "bajar grasa": {"bajar grasa", "definicion", "perder peso", "definir"},
+            "ganar masa": {"ganar masa", "hipertrofia", "aumentar masa", "volumen"},
+            "rendimiento": {"rendimiento", "resistencia", "deporte"},
+            "salud general": {"salud general", "mantenerme", "bienestar", "salud"},
+        }
+        for canonical, synonym_set in aliases.items():
+            if raw in synonym_set:
+                return {"objetivo_fitness": canonical}
+        return {"objetivo_fitness": raw}
+
+    def validate_padecimientos(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        text = (str(value or "")).strip()
+        if not text:
+            dispatcher.utter_message(text="Indica si tienes algun padecimiento. Si no, escribe 'ninguno'.")
+            return {"padecimientos": None}
+        lowered = text.lower()
+        if lowered in {"ninguno", "ninguna", "sin problemas", "no"}:
+            return {"padecimientos": "ninguno"}
+        return {"padecimientos": text}
+
+    def validate_preferencia_dieta(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        text = (str(value or "")).strip()
+        if not text:
+            return {"preferencia_dieta": "ninguna"}
+        lowered = text.lower()
+        aliases = {
+            "vegetariana": {"vegetariana", "vegetarian"},
+            "vegana": {"vegana", "vegan"},
+            "sin lactosa": {"sin lactosa", "lactosa", "intolerancia a la lactosa"},
+            "sin gluten": {"sin gluten", "celiaco", "celiaca"},
+            "ninguna": {"ninguna", "ninguno", "sin restriccion", "normal"},
+        }
+        for canonical, synonym_set in aliases.items():
+            if lowered in synonym_set:
+                return {"preferencia_dieta": canonical}
+        return {"preferencia_dieta": text}
+
+
+class ActionFetchProfile(Action):
+    def name(self) -> Text:
+        return "action_fetch_profile"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        latest_intent = tracker.latest_message.get("intent", {}).get("name") or ""
+        target_map = {
+            "solicitar_rutina": "action_generar_rutina",
+            "solicitar_dieta": "action_generar_dieta",
+        }
+        target_action = target_map.get(latest_intent)
+        events: List[Dict[Text, Any]] = []
+        if target_action:
+            events.append(SlotSet("servicio_pendiente", target_action))
+
+        ctx = ensure_authenticated_context(tracker)
+        if not ctx:
+            dispatcher.utter_message(
+                text="No pude validar tu sesion. Inicia sesion en la web y vuelve a intentarlo."
+            )
+            events.append(SlotSet("perfil_completo", False))
+            return events
+
+        profile = fetch_user_profile(ctx)
+        complete = profile_is_complete(profile)
+
+        if profile:
+            weight = _to_float(profile.get("weight_kg"))
+            height = _to_float(profile.get("height_cm"))
+            medical = _normalize_list_or_text(profile.get("medical_conditions"))
+            diet_pref = _normalize_list_or_text(profile.get("diet_preference"))
+            goal = str(profile.get("primary_goal") or "").replace("_", " ").strip()
+            if weight is not None:
+                events.append(SlotSet("peso", weight))
+            if height is not None:
+                events.append(SlotSet("altura", height))
+            if goal:
+                events.append(SlotSet("objetivo_fitness", goal))
+            if medical:
+                events.append(SlotSet("padecimientos", medical))
+            if diet_pref:
+                events.append(SlotSet("preferencia_dieta", diet_pref))
+        else:
+            profile = {}
+
+        summary = build_profile_summary(profile if profile else None)
+        events.append(SlotSet("resumen_perfil", summary))
+        dispatcher.utter_message(response="utter_perfil_resumen", resumen_perfil=summary)
+
+        events.append(SlotSet("perfil_completo", complete))
+        if not complete:
+            dispatcher.utter_message(response="utter_perfil_incompleto")
+            return events
+
+        if target_action:
+            return events + [FollowupAction(target_action)]
+        return events
+
+
+class ActionSubmitProfileForm(Action):
+    def name(self) -> Text:
+        return "action_submit_profile_form"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        ctx = ensure_authenticated_context(tracker)
+        if not ctx:
+            dispatcher.utter_message(
+                text="Tu sesion web no esta activa. Inicia sesion y vuelve a actualizar el perfil."
+            )
+            return [SlotSet("perfil_completo", False)]
+
+        weight = tracker.get_slot("peso")
+        height = tracker.get_slot("altura")
+        goal = tracker.get_slot("objetivo_fitness")
+        medical = tracker.get_slot("padecimientos")
+        diet_pref = tracker.get_slot("preferencia_dieta")
+
+        payload = {
+            "user_id": ctx.get("user_id"),
+            "weight_kg": float(weight) if weight is not None else None,
+            "height_cm": float(height) if height is not None else None,
+            "primary_goal": (goal or "").strip() or None,
+            "medical_conditions": None if (medical or "").lower() in {"", "ninguno"} else medical,
+            "diet_preference": (diet_pref or "").strip() or None,
+        }
+
+        headers: Dict[str, str] = {"Content-Type": "application/json"}
+        if CONTEXT_API_KEY:
+            headers["X-Context-Key"] = CONTEXT_API_KEY
+
+        if not BACKEND_BASE_URL:
+            dispatcher.utter_message(text="No encontre la configuracion del backend para guardar el perfil.")
+            return []
+
+        try:
+            resp = requests.post(
+                f"{BACKEND_BASE_URL.rstrip('/')}{PROFILE_UPDATE_PATH}",
+                json=payload,
+                headers=headers,
+                timeout=CONTEXT_TIMEOUT,
+            )
+        except requests.RequestException as exc:
+            logger.warning("No se pudo actualizar el perfil: %s", exc)
+            dispatcher.utter_message(
+                text="No pude actualizar tu perfil por un problema de red. Intentalo de nuevo en unos minutos."
+            )
+            return []
+
+        if resp.status_code in {401, 403}:
+            dispatcher.utter_message(text="Parece que tu sesion expiro. Inicia sesion otra vez para continuar.")
+            return [SlotSet("perfil_completo", False)]
+
+        if not resp.ok:
+            logger.warning("Fallo al actualizar perfil (status=%s, body=%s)", resp.status_code, resp.text[:200])
+            dispatcher.utter_message(
+                text="El backend rechazo la actualizacion de perfil. Revisa los datos o intentalo mas tarde."
+            )
+            return []
+
+        dispatcher.utter_message(response="utter_perfil_actualizado")
+        refreshed_profile: Optional[Dict[str, Any]] = None
+        if resp.content:
+            try:
+                refreshed_profile = resp.json().get("profile")
+            except Exception:
+                logger.debug("No se pudo parsear la respuesta de perfil actualizada.")
+        events: List[Dict[Text, Any]] = []
+        if refreshed_profile:
+            summary = build_profile_summary(refreshed_profile)
+            events.append(SlotSet("resumen_perfil", summary))
+            events.append(SlotSet("perfil_completo", profile_is_complete(refreshed_profile)))
+            refreshed_weight = _to_float(refreshed_profile.get("weight_kg"))
+            refreshed_height = _to_float(refreshed_profile.get("height_cm"))
+            refreshed_goal = refreshed_profile.get("primary_goal")
+            refreshed_medical = _normalize_list_or_text(refreshed_profile.get("medical_conditions"))
+            refreshed_diet = _normalize_list_or_text(refreshed_profile.get("diet_preference"))
+            if refreshed_weight is not None:
+                events.append(SlotSet("peso", refreshed_weight))
+            if refreshed_height is not None:
+                events.append(SlotSet("altura", refreshed_height))
+            if refreshed_goal:
+                events.append(SlotSet("objetivo_fitness", str(refreshed_goal).replace("_", " ").strip()))
+            if refreshed_medical:
+                events.append(SlotSet("padecimientos", refreshed_medical))
+            if refreshed_diet:
+                events.append(SlotSet("preferencia_dieta", refreshed_diet))
+        else:
+            summary = build_profile_summary(payload)
+            events.append(SlotSet("resumen_perfil", summary))
+            events.append(SlotSet("perfil_completo", True))
+            if payload["weight_kg"] is not None:
+                events.append(SlotSet("peso", payload["weight_kg"]))
+            if payload["height_cm"] is not None:
+                events.append(SlotSet("altura", payload["height_cm"]))
+            if payload["primary_goal"]:
+                events.append(SlotSet("objetivo_fitness", payload["primary_goal"]))
+            if payload["medical_conditions"]:
+                events.append(SlotSet("padecimientos", payload["medical_conditions"]))
+            if payload["diet_preference"]:
+                events.append(SlotSet("preferencia_dieta", payload["diet_preference"]))
+
+        target_action = tracker.get_slot("servicio_pendiente")
+        followups: List[Any] = []
+        if target_action in {"action_generar_rutina", "action_generar_dieta"}:
+            followups.append(FollowupAction(str(target_action)))
+
+        events.append(SlotSet("servicio_pendiente", None))
+
+        return events + followups
 
 
 def maybe_send_routine_email(

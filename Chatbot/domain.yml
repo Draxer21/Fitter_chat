@@ -15,6 +15,14 @@ intents:
   - mostrar_rutina_pantalla
   - suscripcion_alta
   - suscripcion_baja
+  - consultar_perfil
+  - actualizar_perfil
+  - actualizar_perfil_bot
+  - navegar_perfil_web
+  - soporte_general
+  - soporte_mfa
+  - detener_formulario
+  - nlu_fallback
 
 entities:
   - objetivo
@@ -107,18 +115,75 @@ slots:
         entity: codigo_reserva
       - type: from_text
 
+  peso:
+    type: float
+    influence_conversation: true
+    mappings:
+      - type: from_text
+
+  altura:
+    type: float
+    influence_conversation: true
+    mappings:
+      - type: from_text
+
+  objetivo_fitness:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+
+  padecimientos:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+
+  preferencia_dieta:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+
+  resumen_perfil:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_text
+
+  perfil_completo:
+    type: bool
+    influence_conversation: true
+    mappings:
+      - type: from_text
+
+  servicio_pendiente:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+
 responses:
   utter_saludar:
-    - text: "Hola, soy Fitter. Â?En que puedo ayudarte?"
+    - text: "Hola, soy Fitter. En que puedo ayudarte hoy?"
+      buttons:
+        - title: "Ver mi perfil"
+          payload: "/consultar_perfil"
+        - title: "Generar rutina"
+          payload: "/solicitar_rutina"
+        - title: "Sugerir dieta"
+          payload: "/solicitar_dieta"
+        - title: "Soporte"
+          payload: "/soporte_general"
 
   utter_info_servicios:
-    - text: "Puedo generar rutinas, sugerir dietas, enviar planes por correo y consultar reservas."
+    - text: "Puedo generar rutinas, sugerir dietas, enviar planes por correo, consultar reservas y ayudarte a actualizar tu perfil."
 
   utter_dolor_lesion:
     - text: "Si notas dolor o una lesion recurrente, baja la intensidad y consulta con un profesional."
 
   utter_pedir_contacto:
-    - text: "Necesito un correo o telefono para enviarte la rutina. Â?Me lo compartes?"
+    - text: "Necesito un correo o telefono para enviarte la rutina. Me lo compartes?"
 
   utter_envio_rutina_correo:
     - text: "Perfecto, en unos minutos te envio la rutina a {contacto}."
@@ -138,7 +203,66 @@ responses:
   utter_fuera_de_alcance:
     - text: "Lo siento, aun no puedo ayudarte con eso. Puedes reformular tu consulta?"
 
+  utter_perfil_resumen:
+    - text: "{resumen_perfil}"
+
+  utter_perfil_incompleto:
+    - text: "Para continuar necesito datos basicos de tu perfil. Prefieres actualizarlos aqui o desde la pagina?"
+      buttons:
+        - title: "Actualizar con el bot"
+          payload: "/actualizar_perfil_bot"
+        - title: "Abrir pagina de perfil"
+          payload: "/navegar_perfil_web"
+
+  utter_link_perfil:
+    - text: "Puedes actualizar tu informacion desde la pagina de perfil en https://app.fitter/perfil. Cuando hayas terminado, vuelve y dime si necesitas algo mas."
+
+  utter_perfil_actualizado:
+    - text: "Perfecto, ya tengo tus datos al dia. Puedo continuar con lo que estabamos revisando."
+
+  utter_soporte_opciones:
+    - text: "Selecciona el tipo de ayuda que necesitas."
+      buttons:
+        - title: "Problemas con MFA"
+          payload: "/soporte_mfa"
+        - title: "Actualizar perfil"
+          payload: "/actualizar_perfil"
+        - title: "Hablar con un asesor"
+          payload: "/informar{\"contacto\": \"asesor\"}"
+
+  utter_soporte_mfa:
+    - text: "Si no puedes iniciar sesion con MFA, verifica la hora del dispositivo, regenera el codigo desde la app y, si es necesario, usa un codigo de respaldo o solicita uno nuevo desde tu perfil."
+
+  utter_ask_peso:
+    - text: "Cual es tu peso actual en kilogramos? Puedes aproximarlo a numeros enteros."
+
+  utter_ask_altura:
+    - text: "Cual es tu altura en centimetros?"
+
+  utter_ask_objetivo_fitness:
+    - text: "Cual es tu objetivo principal ahora mismo? (ejemplo: bajar grasa, ganar masa, rendimiento)"
+
+  utter_ask_padecimientos:
+    - text: "Tienes alguna condicion o padecimiento que deba considerar? Si no, dime \"ninguno\"."
+
+  utter_ask_preferencia_dieta:
+    - text: "Tienes alguna preferencia o restriccion alimentaria? (ejemplo: sin lactosa, vegetariana, ninguna)"
+
+  utter_form_cancelado:
+    - text: "De acuerdo, no actualizare tu perfil por ahora. Si cambias de idea avisame."
+
+forms:
+  profile_form:
+    required_slots:
+      - peso
+      - altura
+      - objetivo_fitness
+      - padecimientos
+      - preferencia_dieta
+
 actions:
+  - action_fetch_profile
+  - action_submit_profile_form
   - action_generar_rutina
   - action_generar_dieta
   - action_consultar_reserva

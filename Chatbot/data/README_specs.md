@@ -36,6 +36,8 @@ python tools/generate_nlu.py \
     --per-intent 2000
 ```
 
+Si prefieres ejecutar todo desde la raíz del repositorio, utiliza el wrapper `python scripts/generate_nlu_dataset.py --update-nlu`, que aplica los mismos parámetros y además copia el archivo generado sobre `data/nlu.yml` cuando se indica `--update-nlu`.
+
 El archivo resultante usa formato Rasa 3.x (`version` + bloque `nlu`). Puedes:
 
 - Reemplazar `data/nlu.yml` por el archivo generado.
