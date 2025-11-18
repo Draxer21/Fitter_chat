@@ -1,5 +1,11 @@
 // src/services/apijs.js
-const BASE = process.env.NODE_ENV === "development" ? "" : ""; // con proxy activo basta cadena vacia
+const rawBase = process.env.REACT_APP_API_BASE_URL || "";
+const BASE =
+  rawBase && rawBase !== "/"
+    ? rawBase.replace(/\/+$/, "")
+    : process.env.NODE_ENV === "development"
+      ? ""
+      : "";
 const parseBody = async (resp) => {
   const raw = await resp.text();
   if (!raw) return null;

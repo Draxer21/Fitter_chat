@@ -14,7 +14,7 @@ export default function TablaProductos() {
   const [items, setItems] = useState([]);
   const [err, setErr] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const navigate = useNavigate();
+  const nav = useNavigate();
   const { isAdmin, initialized, refresh } = useAuth();
 
   const load = useCallback(async () => {
@@ -33,11 +33,11 @@ export default function TablaProductos() {
       return;
     }
     if (!isAdmin) {
-      navigate("/login");
+      nav("/login");
       return;
     }
     load();
-  }, [initialized, isAdmin, load, navigate, refresh]);
+  }, [initialized, isAdmin, load, nav, refresh]);
 
   const del = useCallback(
     async (id) => {

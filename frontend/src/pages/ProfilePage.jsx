@@ -1,6 +1,8 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useLocale } from "../contexts/LocaleContext";
+import "../styles/profile.css";
 
 const initialFormState = {
   weight_kg: "",
@@ -15,25 +17,25 @@ const initialFormState = {
 };
 
 const sexOptions = [
-  { value: "", label: "Seleccionar" },
-  { value: "female", label: "Femenino" },
-  { value: "male", label: "Masculino" },
-  { value: "other", label: "Otro" },
+  { value: "", labelKey: "profile.sex.select" },
+  { value: "female", labelKey: "profile.sex.female" },
+  { value: "male", labelKey: "profile.sex.male" },
+  { value: "other", labelKey: "profile.sex.other" },
 ];
 
 const activityOptions = [
-  "sedentario",
-  "ligero",
-  "moderado",
-  "intenso",
-  "atleta",
+  { value: "sedentario", labelKey: "profile.activity.sedentario" },
+  { value: "ligero", labelKey: "profile.activity.ligero" },
+  { value: "moderado", labelKey: "profile.activity.moderado" },
+  { value: "intenso", labelKey: "profile.activity.intenso" },
+  { value: "atleta", labelKey: "profile.activity.atleta" },
 ];
 
 const goalOptions = [
-  "perder_grasa",
-  "mantener",
-  "ganar_masa",
-  "rendimiento",
+  { value: "perder_grasa", labelKey: "profile.goal.perder_grasa" },
+  { value: "mantener", labelKey: "profile.goal.mantener" },
+  { value: "ganar_masa", labelKey: "profile.goal.ganar_masa" },
+  { value: "rendimiento", labelKey: "profile.goal.rendimiento" },
 ];
 
 function normalizeProfile(profile) {
@@ -52,6 +54,7 @@ function normalizeProfile(profile) {
 }
 
 export default function ProfilePage() {
+  const { t } = useLocale();
   const { isAuthenticated, profile: profileData, profileState, loadProfile, updateProfile } = useAuth();
   const [form, setForm] = useState(() => normalizeProfile(profileData));
   const [status, setStatus] = useState("idle");
@@ -99,9 +102,9 @@ export default function ProfilePage() {
         payload[key] = value === "" ? null : value;
       });
       await updateProfile(payload);
-      setMessage("Perfil actualizado correctamente.");
+      setMessage(t("profile.alerts.success"));
     } catch (err) {
-      setError(err?.message || "No pudimos guardar tus datos.");
+      setError(err?.message || t("profile.alerts.error"));
     } finally {
       setStatus("idle");
     }
@@ -109,14 +112,14 @@ export default function ProfilePage() {
 
   if (!isAuthenticated) {
     return (
-      <main className="container py-5">
+      <main className="profile-page container py-5">
         <div className="row justify-content-center">
           <div className="col-lg-6">
             <div className="alert alert-warning">
-              Necesitas iniciar sesión para editar tu perfil.
+              {t("profile.messages.authRequired")}
               <div className="mt-3">
                 <Link className="btn btn-dark" to="/login">
-                  Ir al inicio de sesión
+                  {t("profile.messages.authButton")}
                 </Link>
               </div>
             </div>
@@ -127,25 +130,36 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="container py-5">
+    <main className="profile-page container py-5">
       <div className="row justify-content-center">
-        <div className="col-xl-8 col-lg-9">
-          <h1 className="mb-4">Mi información</h1>
-          <p className="text-muted">
-            Comparte tus datos básicos para personalizar mejor tus rutinas, recomendaciones y planes de alimentación.
-          </p>
+        <div className="col-xl-9 col-lg-10">
+          <header className="profile-header text-center mb-4">
+            <p className="profile-eyebrow">{t("profile.highlight.eyebrow")}</p>
+            <h1 className="profile-title">{t("profile.title")}</h1>
+            <p className="profile-subtitle">{t("profile.subtitle")}</p>
+          </header>
+
+          <div className="profile-highlight shadow-sm mb-4">
+            <div>
+              <h2 className="profile-highlight-title">{t("profile.highlight.title")}</h2>
+              <p className="mb-0">{t("profile.highlight.subtitle")}</p>
+            </div>
+            <div className="profile-highlight-icon" aria-hidden="true">
+              <span className="bi bi-activity" />
+            </div>
+          </div>
 
           {message && <div className="alert alert-success">{message}</div>}
           {error && <div className="alert alert-danger">{error}</div>}
           {profileState.error && !error && (
-            <div className="alert alert-danger">{profileState.error.message || "Error al cargar el perfil."}</div>
+            <div className="alert alert-danger">{profileState.error.message || t("profile.alerts.loadError")}</div>
           )}
 
-          <form className="card shadow-sm" onSubmit={handleSubmit}>
+          <form className="profile-form card shadow-sm border-0" onSubmit={handleSubmit}>
             <div className="card-body">
               <div className="row g-3">
                 <div className="col-md-4">
-                  <label htmlFor="weight_kg" className="form-label">Peso (kg)</label>
+                  <label htmlFor="weight_kg" className="form-label">{t("profile.fields.weight")}</label>
                   <input
                     id="weight_kg"
                     name="weight_kg"
@@ -158,7 +172,7 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div className="col-md-4">
-                  <label htmlFor="height_cm" className="form-label">Altura (cm)</label>
+                  <label htmlFor="height_cm" className="form-label">{t("profile.fields.height")}</label>
                   <input
                     id="height_cm"
                     name="height_cm"
@@ -171,7 +185,7 @@ export default function ProfilePage() {
                   />
                 </div>
                 <div className="col-md-4">
-                  <label htmlFor="age_years" className="form-label">Edad</label>
+                  <label htmlFor="age_years" className="form-label">{t("profile.fields.age")}</label>
                   <input
                     id="age_years"
                     name="age_years"
@@ -187,33 +201,33 @@ export default function ProfilePage() {
 
               <div className="row g-3 mt-1">
                 <div className="col-md-4">
-                  <label htmlFor="sex" className="form-label">Sexo</label>
+                  <label htmlFor="sex" className="form-label">{t("profile.fields.sex")}</label>
                   <select id="sex" name="sex" className="form-select" value={form.sex} onChange={handleChange}>
                     {sexOptions.map((option) => (
                       <option key={option.value} value={option.value}>
-                        {option.label}
+                        {t(option.labelKey)}
                       </option>
                     ))}
                   </select>
                 </div>
                 <div className="col-md-4">
-                  <label htmlFor="activity_level" className="form-label">Nivel de actividad</label>
+                  <label htmlFor="activity_level" className="form-label">{t("profile.fields.activity")}</label>
                   <select id="activity_level" name="activity_level" className="form-select" value={form.activity_level} onChange={handleChange}>
-                    <option value="">Seleccionar</option>
-                    {activityOptions.map((value) => (
-                      <option key={value} value={value}>
-                        {value}
+                    <option value="">{t("profile.activity.select")}</option>
+                    {activityOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {t(option.labelKey)}
                       </option>
                     ))}
                   </select>
                 </div>
                 <div className="col-md-4">
-                  <label htmlFor="primary_goal" className="form-label">Objetivo principal</label>
+                  <label htmlFor="primary_goal" className="form-label">{t("profile.fields.goal")}</label>
                   <select id="primary_goal" name="primary_goal" className="form-select" value={form.primary_goal} onChange={handleChange}>
-                    <option value="">Seleccionar</option>
-                    {goalOptions.map((value) => (
-                      <option key={value} value={value}>
-                        {value.replace("_", " ")}
+                    <option value="">{t("profile.goal.select")}</option>
+                    {goalOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {t(option.labelKey)}
                       </option>
                     ))}
                   </select>
@@ -221,7 +235,7 @@ export default function ProfilePage() {
               </div>
 
               <div className="mt-3">
-                <label htmlFor="allergies" className="form-label">Alergias</label>
+                <label htmlFor="allergies" className="form-label">{t("profile.fields.allergies")}</label>
                 <textarea
                   id="allergies"
                   name="allergies"
@@ -229,12 +243,12 @@ export default function ProfilePage() {
                   className="form-control"
                   value={form.allergies}
                   onChange={handleChange}
-                  placeholder="Ej. lactosa, frutos secos"
+                  placeholder={t("profile.placeholders.allergies")}
                 />
               </div>
 
               <div className="mt-3">
-                <label htmlFor="medical_conditions" className="form-label">Padecimientos</label>
+                <label htmlFor="medical_conditions" className="form-label">{t("profile.fields.medical")}</label>
                 <textarea
                   id="medical_conditions"
                   name="medical_conditions"
@@ -242,12 +256,12 @@ export default function ProfilePage() {
                   className="form-control"
                   value={form.medical_conditions}
                   onChange={handleChange}
-                  placeholder="Indica enfermedades, lesiones o condiciones médicas relevantes"
+                  placeholder={t("profile.placeholders.medical")}
                 />
               </div>
 
               <div className="mt-3">
-                <label htmlFor="notes" className="form-label">Notas adicionales</label>
+                <label htmlFor="notes" className="form-label">{t("profile.fields.notes")}</label>
                 <textarea
                   id="notes"
                   name="notes"
@@ -255,13 +269,19 @@ export default function ProfilePage() {
                   className="form-control"
                   value={form.notes}
                   onChange={handleChange}
-                  placeholder="Objetivos específicos, limitaciones u otros comentarios"
+                  placeholder={t("profile.placeholders.notes")}
                 />
               </div>
 
               {bmi && (
-                <div className="alert alert-info mt-3 mb-0">
-                  Tu IMC estimado es <strong>{bmi}</strong>. Lo usamos solo como referencia rápida.
+                <div className="profile-bmi card border-0 shadow-sm mt-3">
+                  <div className="card-body d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                    <div>
+                      <p className="mb-1 text-muted text-uppercase small">{t("profile.stats.bmiLabel")}</p>
+                      <p className="display-6 fw-bold mb-0">{bmi}</p>
+                    </div>
+                    <p className="mb-0 text-muted">{t("profile.stats.bmiNote")}</p>
+                  </div>
                 </div>
               )}
             </div>
@@ -269,11 +289,11 @@ export default function ProfilePage() {
             <div className="card-footer d-flex justify-content-between align-items-center">
               <div>
                 <small className="text-muted">
-                  Los cambios impactarán en tus recomendaciones de rutina y dieta.
+                  {t("profile.helper.notice")}
                 </small>
               </div>
               <button type="submit" className="btn btn-dark" disabled={status === "saving" || profileState.loading}>
-                {status === "saving" || profileState.loading ? "Guardando..." : "Guardar"}
+                {status === "saving" || profileState.loading ? t("profile.actions.saving") : t("profile.actions.save")}
               </button>
             </div>
           </form>

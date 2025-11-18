@@ -74,3 +74,13 @@ El sistema se integra con un **backend en Flask/Django** y una interfaz web bás
    Puedes omitir componentes con flags como `--skip-frontend` o `--skip-chatbot`. Usa `./scripts/start_project.sh --help` o `scripts\start_project.bat --help` para ver todas las opciones y variables disponibles.
 
 Cuando termines la sesión, presiona `Ctrl+C` en la terminal para cerrar todos los servicios de forma ordenada.
+
+## 🧪 Generar 2 000 ejemplos por intent
+
+Usa el envoltorio `scripts/generate_nlu_dataset.py` para recrear el dataset NLU a partir de los nuevos YAML en `Chatbot/data/specs`.
+
+```bash
+python scripts/generate_nlu_dataset.py --update-nlu
+```
+
+El comando anterior genera hasta 2 000 ejemplos por intent con `Chatbot/tools/generate_nlu.py`, deja un respaldo en `Chatbot/data/generated/nlu_generated.yml` y reemplaza `Chatbot/data/nlu.yml` cuando se pasa `--update-nlu`. Ajusta `--per-intent`, `--seed` o `--spec-dir` según lo necesites.

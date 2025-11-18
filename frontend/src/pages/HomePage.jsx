@@ -31,8 +31,20 @@ export default function HomePage() {
     const q = categoria ? `?categoria=${encodeURIComponent(categoria)}` : "";
     API.productos
       .list(q)
-      .then(setItems)
-      .catch((e) => setErr(e.message))
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setItems(data);
+        } else if (Array.isArray(data?.items)) {
+          setItems(data.items);
+        } else {
+          setItems([]);
+        }
+        setErr("");
+      })
+      .catch((e) => {
+        setErr(e?.message || "No se pudieron cargar los productos.");
+        setItems([]);
+      })
       .finally(() => setLoading(false));
   }, [categoria]);
 
