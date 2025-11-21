@@ -15,7 +15,7 @@ body {
 
 /* NAVBAR */
 .custom-navbar{
-    background-color: #1a1a1a; 
+    background-color: var(--surface) !important; 
 }
 
 .nav-link{
@@ -37,7 +37,7 @@ body {
 /* FOOTER */
 
 .footer{
-    background-color: #1a1a1a; 
+    background-color: var(--surface) !important; 
     padding: 50px 0; /* primero es vertical y el segundo es horizontal */
     
 }
@@ -194,6 +194,7 @@ body {
 
 .quantity-btn:hover {
     background: #0056b3;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 30%, transparent);
 }
 
 .quantity-display {
@@ -215,6 +216,7 @@ body {
 
 .remove-btn:hover {
     background: #c82333;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 30%, transparent);
 }
 
 .cart-summary {
@@ -258,6 +260,7 @@ body {
 .clear-btn:hover {
     background: #c82333;
     transform: translateY(-2px);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 30%, transparent);
 }
 
 .checkout-btn {
@@ -268,6 +271,7 @@ body {
 .checkout-btn:hover {
     background: #218838;
     transform: translateY(-2px);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 30%, transparent);
 }
 
 .empty-cart {

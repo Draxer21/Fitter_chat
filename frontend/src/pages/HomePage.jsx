@@ -127,10 +127,10 @@ export default function HomePage() {
             {t("home.offers.title")}
             {categoria ? ` ${t("home.offers.in")} ${categoria}` : ""}
           </h2>
-          {loading && <p className="offers-status">{t("home.offers.loading")}</p>}
-          {err && <p className="offers-status text-danger">{t("home.offers.errorPrefix")} {err}</p>}
+          {loading && <p className="offers-status" role="status" aria-live="polite">{t("home.offers.loading")}</p>}
+          {err && <p className="offers-status text-danger" role="alert" aria-live="assertive">{t("home.offers.errorPrefix")} {err}</p>}
           {!loading && items.length === 0 && !err && (
-            <p className="offers-status">{t("home.offers.empty")}</p>
+            <p className="offers-status" role="status" aria-live="polite">{t("home.offers.empty")}</p>
           )}
         </div>
 
@@ -146,6 +146,7 @@ export default function HomePage() {
               type="button"
               className="productos-scroll-btn productos-scroll-btn--left"
               onClick={() => scrollProducts(-1)}
+              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && scrollProducts(-1)}
               aria-label="Ver productos anteriores"
             >
               {"<"}
@@ -186,6 +187,7 @@ export default function HomePage() {
               type="button"
               className="productos-scroll-btn productos-scroll-btn--right"
               onClick={() => scrollProducts(1)}
+              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && scrollProducts(1)}
               aria-label="Ver mas productos"
             >
               {">"}

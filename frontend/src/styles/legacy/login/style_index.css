@@ -56,15 +56,16 @@ button {
     border-radius: 5px;
     font-size: 14px;
     margin-top: 10px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, box-shadow 0.2s ease;
 }
 
 button:hover {
     background-color: #45a049; /* Darker green on hover */
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 30%, transparent);
 }
 
 footer {
-  background: #1a1a1a; /* Darker color for gym theme */
+  background: var(--surface) !important;
   min-height: 5em;
   position: absolute;
   bottom: 0;

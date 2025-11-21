@@ -360,6 +360,7 @@ export default function PagoPage() {
                     name="card_num"
                     inputMode="numeric"
                     autoComplete="cc-number"
+                    aria-describedby={errors.card_num ? "card_num_error" : undefined}
                     value={form.card_num}
                     onChange={handleChange}
                     onFocus={() => handleFocus("card_num")}
@@ -367,41 +368,43 @@ export default function PagoPage() {
                     className={errors.card_num ? "payment-input payment-input--error" : "payment-input"}
                   />
                   <span className="payment-hint">16 a 19 digitos, sin guiones.</span>
-                  {errors.card_num && <span className="payment-error">{errors.card_num}</span>}
+                  {errors.card_num && <span id="card_num_error" className="payment-error" role="alert">{errors.card_num}</span>}
                 </label>
 
                 <div className="payment-field-grid">
                   <label className="payment-field">
                     <span className="payment-label">Expiracion (MM/YY)</span>
-                    <input
-                      type="text"
-                      name="exp"
-                      inputMode="numeric"
-                      autoComplete="cc-exp"
-                      value={form.exp}
-                      onChange={handleChange}
-                      onFocus={() => handleFocus("exp")}
-                      placeholder="12/28"
-                      className={errors.exp ? "payment-input payment-input--error" : "payment-input"}
-                    />
-                    {errors.exp && <span className="payment-error">{errors.exp}</span>}
+                  <input
+                    type="text"
+                    name="exp"
+                    inputMode="numeric"
+                    autoComplete="cc-exp"
+                    aria-describedby={errors.exp ? "exp_error" : undefined}
+                    value={form.exp}
+                    onChange={handleChange}
+                    onFocus={() => handleFocus("exp")}
+                    placeholder="12/28"
+                    className={errors.exp ? "payment-input payment-input--error" : "payment-input"}
+                  />
+                    {errors.exp && <span id="exp_error" className="payment-error" role="alert">{errors.exp}</span>}
                   </label>
 
                   <label className="payment-field">
                     <span className="payment-label">CVV</span>
                     <input
-                      type="text"
-                      name="cvv"
-                      inputMode="numeric"
-                      autoComplete="cc-csc"
-                      value={form.cvv}
-                      onChange={handleChange}
-                      onFocus={() => handleFocus("cvv")}
-                      placeholder="123"
-                      className={errors.cvv ? "payment-input payment-input--error" : "payment-input"}
-                    />
-                    <span className="payment-hint">3 o 4 digitos segun la tarjeta.</span>
-                    {errors.cvv && <span className="payment-error">{errors.cvv}</span>}
+                    type="text"
+                    name="cvv"
+                    inputMode="numeric"
+                    autoComplete="cc-csc"
+                    aria-describedby={errors.cvv ? "cvv_error" : undefined}
+                    value={form.cvv}
+                    onChange={handleChange}
+                    onFocus={() => handleFocus("cvv")}
+                    placeholder="123"
+                    className={errors.cvv ? "payment-input payment-input--error" : "payment-input"}
+                  />
+                  <span className="payment-hint">3 o 4 digitos segun la tarjeta.</span>
+                    {errors.cvv && <span id="cvv_error" className="payment-error" role="alert">{errors.cvv}</span>}
                   </label>
                 </div>
 
@@ -411,16 +414,17 @@ export default function PagoPage() {
                     type="text"
                     name="name"
                     autoComplete="cc-name"
+                    aria-describedby={errors.name ? "name_error" : undefined}
                     value={form.name}
                     onChange={handleChange}
                     onFocus={() => handleFocus("name")}
                     placeholder="Nombre Apellido"
                     className={errors.name ? "payment-input payment-input--error" : "payment-input"}
                   />
-                  {errors.name && <span className="payment-error">{errors.name}</span>}
+                  {errors.name && <span id="name_error" className="payment-error" role="alert">{errors.name}</span>}
                 </label>
 
-                {errors.general && <div className="payment-alert">{errors.general}</div>}
+                {errors.general && <div className="payment-alert" role="alert" aria-live="assertive">{errors.general}</div>}
 
                 <button type="submit" className="payment-submit" disabled={loading}>
                   {loading ? "Procesando pago..." : `Pagar ${formatearPrecio(totalToCharge)}`}
@@ -468,10 +472,10 @@ export default function PagoPage() {
                   <p>{totalItems > 0 ? `${totalItems} articulo${totalItems > 1 ? "s" : ""}` : "Sin articulos en el carrito"}</p>
                 </div>
 
-                {isSummaryLoading && <div className="payment-summary-state">Cargando resumen...</div>}
-                {combinedSummaryError && <div className="payment-summary-state payment-summary-state--error">{combinedSummaryError}</div>}
+                {isSummaryLoading && <div className="payment-summary-state" role="status" aria-live="polite">Cargando resumen...</div>}
+                {combinedSummaryError && <div className="payment-summary-state payment-summary-state--error" role="alert" aria-live="assertive">{combinedSummaryError}</div>}
                 {showEmptySummary && (
-                  <div className="payment-summary-state">
+                  <div className="payment-summary-state" role="status" aria-live="polite">
                     <p>No hay productos asociados al pago.</p>
                     <button type="button" className="payment-secondary-btn" onClick={() => navigate("/carrito")}>
                       Volver al carrito

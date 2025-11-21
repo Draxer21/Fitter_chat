@@ -55,23 +55,25 @@
   padding: 14px;
   font-size: 16px;
   font-weight: 600;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease, box-shadow 0.2s ease;
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  outline: 0;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 30%, transparent);
 }
 
 /* Navbar */
 .navbar-brand {
   font-size: 24px;
   font-weight: 700;
-  color: var(--white);
+  color: var(--text);
 }
 
 .navbar-dark .navbar-nav .nav-link {
-  color: var(--white);
+  color: var(--text);
   transition: all 0.3s ease;
 }
 
@@ -83,12 +85,12 @@
 /* Footer */
 footer {
   background: transparent;
-  color: var(--white);
+  color: var(--text);
   padding: 1.5rem 0;
 }
 
 footer a {
-  color: var(--white);
+  color: var(--text);
   transition: all 0.3s ease;
   text-decoration: none;
   font-weight: 500;

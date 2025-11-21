@@ -32,6 +32,40 @@ const j = async (resp) => {
   return body;
 };
 
+let csrfToken = null;
+let csrfPromise = null;
+
+const ensureCsrfToken = async () => {
+  if (csrfToken) {
+    return csrfToken;
+  }
+  if (!csrfPromise) {
+    csrfPromise = fetch(`${BASE}/auth/csrf-token`, { credentials: "include" })
+      .then(j)
+      .then((data) => {
+        const token = data?.csrf_token;
+        if (!token) {
+          throw new Error("No se pudo obtener CSRF token");
+        }
+        csrfToken = token;
+        return csrfToken;
+      })
+      .finally(() => {
+        csrfPromise = null;
+      });
+  }
+  return csrfPromise;
+};
+
+const csrfHeaders = async (headers = {}) => {
+  const token = await ensureCsrfToken();
+  return { ...headers, "X-CSRF-Token": token };
+};
+
+const resetCsrfToken = () => {
+  csrfToken = null;
+};
+
 export const API = {
   productos: {
     list: (q="") => fetch(`${BASE}/producto/${q}`, { credentials:"include" }).then(j),
@@ -65,9 +99,9 @@ export const API = {
   },
   auth: {
     me:    () => fetch(`${BASE}/auth/me`, { credentials:"include" }).then(j),
-    login: (u,p,opts={})=> fetch(`${BASE}/auth/login`, {
+    login: async (u,p,opts={})=> fetch(`${BASE}/auth/login`, {
       method:"POST",
-      headers:{ "Content-Type":"application/json" },
+      headers: await csrfHeaders({ "Content-Type":"application/json" }),
       credentials:"include",
       body: JSON.stringify({
         username:u,
@@ -79,20 +113,34 @@ export const API = {
         ...(opts && opts.backupCode ? { backup_code: opts.backupCode, recovery_code: opts.backupCode } : {})
       })
     }).then(j),
-    logout:() => fetch(`${BASE}/auth/logout`, { method:"POST", credentials:"include" }).then(j),
-    register: (payload) => fetch(`${BASE}/auth/register`, { method:"POST", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify(payload) }).then(j),
+    logout: async () => {
+      const response = await fetch(`${BASE}/auth/logout`, {
+        method: "POST",
+        headers: await csrfHeaders(),
+        credentials: "include",
+      });
+      const payload = await j(response);
+      resetCsrfToken();
+      return payload;
+    },
+    register: async (payload) => fetch(`${BASE}/auth/register`, {
+      method:"POST",
+      headers: await csrfHeaders({ "Content-Type":"application/json" }),
+      credentials:"include",
+      body: JSON.stringify(payload)
+    }).then(j),
     mfa: {
       status: () => fetch(`${BASE}/auth/mfa/status`, { credentials:"include" }).then(j),
-      setup:  () => fetch(`${BASE}/auth/mfa/setup`, { method:"POST", credentials:"include" }).then(j),
-      confirm: ({ code }) => fetch(`${BASE}/auth/mfa/confirm`, {
+      setup:  async () => fetch(`${BASE}/auth/mfa/setup`, { method:"POST", credentials:"include", headers: await csrfHeaders() }).then(j),
+      confirm: async ({ code }) => fetch(`${BASE}/auth/mfa/confirm`, {
         method:"POST",
-        headers:{ "Content-Type":"application/json" },
+        headers: await csrfHeaders({ "Content-Type":"application/json" }),
         credentials:"include",
         body: JSON.stringify({ code })
       }).then(j),
-      disable: ({ code, backupCode } = {}) => fetch(`${BASE}/auth/mfa/disable`, {
+      disable: async ({ code, backupCode } = {}) => fetch(`${BASE}/auth/mfa/disable`, {
         method:"POST",
-        headers:{ "Content-Type":"application/json" },
+        headers: await csrfHeaders({ "Content-Type":"application/json" }),
         credentials:"include",
         body: JSON.stringify({
           ...(code ? { code, totp: code } : {}),

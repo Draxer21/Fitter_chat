@@ -57,12 +57,12 @@ export default function CarritoPage() {
     <div className="cart-container">
       <h1 className="cart-title">CARRITO</h1>
 
-      {isLoading && <div className="loading-cart">Cargando...</div>}
+      {isLoading && <div className="loading-cart" role="status" aria-live="polite">Cargando...</div>}
 
-      {errorMessage && <div className="error-cart">{errorMessage}</div>}
+      {errorMessage && <div className="error-cart" role="alert" aria-live="assertive">{errorMessage}</div>}
 
       {!isLoading && !errorMessage && rows.length === 0 && (
-        <div className="empty-cart">Sin Productos</div>
+        <div className="empty-cart" role="status" aria-live="polite">Sin Productos</div>
       )}
 
       {!isLoading && !errorMessage && rows.length > 0 && (

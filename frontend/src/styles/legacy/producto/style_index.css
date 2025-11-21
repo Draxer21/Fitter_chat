@@ -126,7 +126,7 @@ body {
 
 /* NAVBAR */
 .custom-navbar{
-    background-color: #1a1a1a; 
+    background-color: var(--surface) !important; 
 }
 
 .nav-link{
@@ -247,11 +247,12 @@ button {
     border-radius: 5px;
     font-size: 14px;
     margin-top: 10px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, box-shadow 0.2s ease;
 }
 
 button:hover {
     background-color: #45a049; 
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 30%, transparent);
 }
 
 
@@ -274,7 +275,7 @@ button:hover {
 /* FOOTER */
 
 .footer{
-    background-color: #1a1a1a; 
+    background-color: var(--surface) !important; 
     padding: 50px 0; /* primero es vertical y el segundo es horizontal */
     
 }

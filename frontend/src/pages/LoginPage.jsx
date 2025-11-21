@@ -91,6 +91,7 @@ export default function LoginPage() {
                 <input
                   id='loginUsername'
                   className='form-control'
+                  aria-invalid={Boolean(message)}
                   value={username}
                   onChange={(event) => setUsername(event.target.value)}
                   placeholder={t('login.username.placeholder')}
@@ -104,6 +105,7 @@ export default function LoginPage() {
                   type='password'
                   id='loginPassword'
                   className='form-control'
+                  aria-invalid={Boolean(message)}
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
                   placeholder={t('login.password.placeholder')}
@@ -142,7 +144,7 @@ export default function LoginPage() {
                 <span>{t('login.noAccount')} </span>
                 <Link to='/registro'>{t('login.gotoRegister')}</Link>
               </div>
-              {message && <div className='alert alert-danger mt-2'>{message}</div>}
+              {message && <div className='alert alert-danger mt-2' role='alert' aria-live='assertive'>{message}</div>}
               <div className='d-flex justify-content-center m-3'>
                 <button
                   type='submit'
@@ -160,4 +162,3 @@ export default function LoginPage() {
     </main>
   );
 }
-

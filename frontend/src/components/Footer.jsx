@@ -1,6 +1,6 @@
 export default function Footer() {
   return (
-    <footer className="footer bg-dark text-light border-top-0">
+    <footer className="footer border-top-0">
       <div className="container-footer">
         {/* Top section: brand + tagline */}
         <div className="footer-section footer-top text-center">
@@ -18,8 +18,10 @@ export default function Footer() {
             <div className="footer-links">
               <h4>Fitter</h4>
               <ul>
-                <li><a href="#!">Sobre Nosotros</a></li>
-                <li><a href="#!">Ubicaciones</a></li>
+                <li><a href="/sobre-nosotros">Sobre Nosotros</a></li>
+                <li><a href="/terminos">Términos y Condiciones</a></li>
+                <li><a href="/privacidad">Privacidad</a></li>
+                <li><a href="/accesibilidad">Accesibilidad</a></li>
               </ul>
             </div>
 
@@ -27,11 +29,11 @@ export default function Footer() {
               <h4>Dirección y Contacto</h4>
               <ul>
                 <li>
-                  <a href="https://www.google.com/maps/place/Gran+Av.+José+Miguel+Carrera+6543,+La+Cisterna">
-                    123 Avenida Fitness <br /> Suite 101 <br /> Ciudad Gimnasio
+                  <a href="https://www.google.com/maps/place/Av.+Observatorio+1934,+La+Pintana,+Región+Metropolitana/@-33.5616978,-70.6335762,15z/data=!4m6!3m5!1s0x9662da1832296fb3:0x9dc1e819b6d95231!8m2!3d-33.5640081!4d-70.6428511!16s%2Fg%2F11knl2fylp?entry=ttu&g_ep=EgoyMDI1MTExNy4wIKXMDSoASAFQAw%3D%3D">
+                    Avenida Observatorio 1934 <br /> La Pintana <br /> Región Metropolitana
                   </a>
                 </li>
-                <li><a href="#!">+1 (555) 123-4567</a></li>
+                <li><a href="#!">+56 9 5011 7527 / +56 2 7279 1541</a></li>
               </ul>
             </div>
 

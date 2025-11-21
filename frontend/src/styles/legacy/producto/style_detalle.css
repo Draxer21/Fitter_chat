@@ -16,7 +16,7 @@ body {
 }
 /* NAVBAR */
 .custom-navbar{
-    background-color: #1a1a1a; 
+    background-color: var(--surface) !important; 
 }
 
 .nav-link{
@@ -122,7 +122,7 @@ button.comprar:hover {
 /* FOOTER */
 
 .footer{
-    background-color: #1a1a1a; 
+    background-color: var(--surface) !important; 
     padding: 50px 0; /* primero es vertical y el segundo es horizontal */
     
 }
@@ -148,7 +148,7 @@ button.comprar:hover {
 
 .footer-links h4{
     font-size: 20px;
-    color: white;
+    color: var(--text);
     margin-bottom: 25px;
     font-weight: 500;
     border-bottom: 2px solid #4CAF50; 
@@ -159,7 +159,7 @@ button.comprar:hover {
 .footer-links ul li a{
     font-size: 18px;
     text-decoration: none;
-    color: gainsboro;
+    color: var(--text);
     display: block;
     margin-bottom: 7px;
     transition: all 0.5s ease;
@@ -167,7 +167,7 @@ button.comprar:hover {
 }
 
 .footer-links ul li a:hover{
-    color: white;
+    color: var(--primary);
     padding-left: 3px;
 }
 

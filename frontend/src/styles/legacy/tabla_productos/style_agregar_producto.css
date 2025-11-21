@@ -26,7 +26,7 @@ body {
 
 /* NAVBAR */
 .custom-navbar{
-    background-color: #1a1a1a; 
+    background-color: var(--surface) !important; 
 }
 
 .nav-link{
@@ -39,7 +39,7 @@ body {
 /* FOOTER */
 
 .footer{
-    background-color: #1a1a1a; 
+    background-color: var(--surface) !important; 
     padding: 50px 0; /* primero es vertical y el segundo es horizontal */
     
 }

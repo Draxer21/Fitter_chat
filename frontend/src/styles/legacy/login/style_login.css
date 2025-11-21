@@ -6,7 +6,7 @@
 }
 /* FONDO NAVBAR */
 .custom-navbar{
-    background-color: #1a1a1a; /* Darker color for gym theme */
+    background-color: var(--surface) !important;
 }
 
 .logo_peluqueria{ /* Renamed to logo_fitter in nav.html, but keeping class name for now */
@@ -35,7 +35,7 @@ body {
 /* FOOTER */
 
 .footer{
-    background-color: #1a1a1a; /* Darker color for gym theme */
+    background-color: var(--surface) !important;
     padding: 50px 0; /* primero es vertical y el segundo es horizontal */
     
 }
