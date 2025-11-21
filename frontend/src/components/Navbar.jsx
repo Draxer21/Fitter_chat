@@ -3,6 +3,8 @@ import { useRef, useState } from 'react';
 import Logo from '../components/Logo';
 import { useLocale } from '../contexts/LocaleContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
+import { useFontSize } from '../contexts/FontSizeContext';
 
 const closeBootstrapModal = (ref) => {
   const Modal = window.bootstrap && window.bootstrap.Modal;
@@ -19,6 +21,8 @@ const closeBootstrapModal = (ref) => {
 export default function Navbar() {
   const { t, locale, setLocale } = useLocale();
   const { user, isAdmin, isAuthenticated, logout: logoutUser } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const { increase, decrease, reset, scale } = useFontSize();
   const [supportEmail, setSupportEmail] = useState('');
   const [supportDesc, setSupportDesc] = useState('');
   const navigate = useNavigate();
@@ -65,11 +69,16 @@ export default function Navbar() {
     setLocale(locale === 'es' ? 'en' : 'es');
   };
 
+  const handleToggleTheme = () => {
+    toggleTheme();
+    closeNavbarCollapse();
+  };
+
   const currentUserLabel = user?.username || user?.full_name || user?.email || 'Usuario';
 
   return (
     <>
-      <nav className='navbar navbar-expand-lg navbar-dark custom-navbar p-3 fixed-top shadow-sm'>
+      <nav className='navbar navbar-expand-lg custom-navbar p-3 fixed-top shadow-sm'>
         <NavLink className='navbar-brand' to='/'>
           <Logo src='/fitter_logo.png' alt='Fitter' width={120} height={80} className='d-inline-block align-text-top' />
         </NavLink>
@@ -81,7 +90,7 @@ export default function Navbar() {
           data-bs-target='#navbarNavDropdown'
           aria-controls='navbarNavDropdown'
           aria-expanded='false'
-          aria-label='Toggle navigation'
+          aria-label='Alternar navegación'
         >
           <span className='navbar-toggler-icon' />
         </button>
@@ -93,9 +102,9 @@ export default function Navbar() {
             </li>
 
             <li className='nav-item dropdown'>
-              <a className='nav-link dropdown-toggle' href='#!' id='navbarDropdownMenuLink' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
+              <button className='nav-link dropdown-toggle' id='navbarDropdownMenuLink' type="button" data-bs-toggle='dropdown' aria-expanded='false'>
                 {t('nav.products')}
-              </a>
+              </button>
               <div className='dropdown-menu' aria-labelledby='navbarDropdownMenuLink'>
                 <NavLink className='dropdown-item' to='/catalogo' onClick={closeNavbarCollapse}>
                   Catálogo completo
@@ -130,16 +139,16 @@ export default function Navbar() {
             )}
 
             <li className='nav-item'>
-              <a className='nav-link' href='#!' data-bs-toggle='modal' data-bs-target='#supportModal'>
+              <button className='nav-link btn btn-link p-0 text-start' type="button" data-bs-toggle='modal' data-bs-target='#supportModal'>
                 {t('nav.support')}
-              </a>
+              </button>
             </li>
 
             {isAuthenticated && (
               <li className='nav-item dropdown'>
-                <a className='nav-link dropdown-toggle' href='#!' id='userMenuLink' role='button' data-bs-toggle='dropdown' aria-expanded='false'>
+                <button className='nav-link dropdown-toggle' id='userMenuLink' type="button" data-bs-toggle='dropdown' aria-expanded='false'>
                   {t('nav.greeting')}, {currentUserLabel}
-                </a>
+                </button>
                 <ul className='dropdown-menu dropdown-menu-end' aria-labelledby='userMenuLink'>
                   <li>
                     <NavLink className='dropdown-item' to='/cuenta/perfil' onClick={closeNavbarCollapse}>
@@ -164,8 +173,29 @@ export default function Navbar() {
 
           <ul className='navbar-nav ms-auto align-items-center gap-2'>
             <li className='nav-item'>
-              <button type='button' className='btn btn-outline-light btn-sm' onClick={toggleLocale}>
+              <button
+                type='button'
+                className='btn btn-outline-secondary btn-sm'
+                onClick={handleToggleTheme}
+                aria-pressed={theme === 'dark'}
+              >
+                {theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+              </button>
+            </li>
+            <li className='nav-item'>
+              <button type='button' className='btn btn-outline-secondary btn-sm' onClick={toggleLocale}>
                 {locale === 'es' ? 'EN' : 'ES'}
+              </button>
+            </li>
+            <li className='nav-item d-flex align-items-center gap-1'>
+              <button type='button' className='btn btn-outline-secondary btn-sm' onClick={decrease} aria-label='Disminuir tamaño de letra'>
+                A-
+              </button>
+              <button type='button' className='btn btn-outline-secondary btn-sm' onClick={increase} aria-label='Aumentar tamaño de letra'>
+                A+
+              </button>
+              <button type='button' className='btn btn-outline-secondary btn-sm' onClick={reset} aria-label='Restablecer tamaño de letra'>
+                {Math.round(scale * 100)}%
               </button>
             </li>
             {!isAuthenticated && (
@@ -226,22 +256,22 @@ export default function Navbar() {
             </div>
             <div className='modal-body'>
               <strong>
-                <a href='https://api.whatsapp.com/send/?phone=945747265&text&type=phone_number&app_absent=0' style={{ textDecoration: 'none' }}>
-                  <i className='fa-brands fa-whatsapp' /> +1 (555) 123-4567
+                <a href='https://api.whatsapp.com/send/?phone=56950117527&text&type=phone_number&app_absent=0' style={{ textDecoration: 'none' }}>
+                  <i className='fa-brands fa-whatsapp' /> +56 9 5011-7527 (WhatsApp)
                 </a>
               </strong>
               <br />
               <br />
               <strong>
-                <a href='tel:+15551234567' style={{ textDecoration: 'none' }}>
-                  <i className='fa-solid fa-phone' /> +1 (555) 123-4567 24/7
+                <a href='tel:+56972791541' style={{ textDecoration: 'none' }}>
+                  <i className='fa-solid fa-phone' /> +56 9 7279 1541 24/7
                 </a>
               </strong>
               <br />
               <br />
               <strong>
-                <a href='mailto:support@fittergym.com' style={{ textDecoration: 'none' }}>
-                  <i className='fa-solid fa-envelope' /> support@fittergym.com
+                <a href='mailto:supporfitter@gmail.com' style={{ textDecoration: 'none' }}>
+                  <i className='fa-solid fa-envelope' /> supporfitter@gmail.com
                 </a>
               </strong>
               <br />
@@ -280,4 +310,3 @@ export default function Navbar() {
     </>
   );
 }
-
