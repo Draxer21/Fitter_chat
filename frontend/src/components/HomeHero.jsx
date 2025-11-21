@@ -6,7 +6,7 @@ export default function HomeHero() {
   const { t } = useLocale();
 
   const style = {
-    backgroundImage: "linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('/gym.jpg')",
+    backgroundImage: "linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), url('/proyecto.jpg')",
     backgroundSize: 'cover',
     backgroundPosition: 'center center',
   };
