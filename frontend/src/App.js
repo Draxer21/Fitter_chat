@@ -2,6 +2,7 @@
 import { Suspense, useEffect, lazy } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import "./styles/fixed-layout.css";
+import "./App.css";
 
 import ChatWidget from "./ChatWidget";
 import Navbar from "./components/Navbar";
@@ -9,6 +10,8 @@ import Footer from "./components/Footer";
 import { LocaleProvider } from "./contexts/LocaleContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import { FontSizeProvider } from "./contexts/FontSizeContext";
 import LegacyStylesLayout from "./layouts/LegacyStylesLayout";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -25,6 +28,10 @@ const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const AccountSecurityPage = lazy(() => import("./pages/AccountSecurityPage"));
 const CatalogPage = lazy(() => import("./pages/CatalogPage"));
 const AdminSalesPage = lazy(() => import("./pages/AdminSalesPage"));
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const TermsPage = lazy(() => import("./pages/TermsPage"));
+const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
+const AccessibilityPage = lazy(() => import("./pages/AccessibilityPage"));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -53,45 +60,54 @@ function ChatWidgetToggle() {
 
 export default function App() {
   return (
-    <LocaleProvider>
-      <AuthProvider>
-        <CartProvider>
-          <BrowserRouter>
-            <ScrollToTop />
-            <Navbar />
+    <ThemeProvider>
+      <FontSizeProvider>
+        <LocaleProvider>
+          <AuthProvider>
+            <CartProvider>
+              <BrowserRouter>
+                <a className="skip-link" href="#main-content">Saltar al contenido principal</a>
+                <ScrollToTop />
+                <Navbar />
 
-            <main className="app-content-safe-area">
-              <Suspense fallback={<div style={{ padding: 16 }}>Cargando.</div>}>
-                                <Routes>
-                  <Route element={<LegacyStylesLayout />}>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/tienda" element={<HomePage />} />
-                    <Route path="/producto/:id" element={<ProductoDetalle />} />
-                    <Route path="/registro" element={<RegistroPage />} />
-                    <Route path="/login" element={<LoginPage />} />
-                  </Route>
+                <main id="main-content" className="app-content-safe-area">
+                  <Suspense fallback={<div style={{ padding: 16 }}>Cargando.</div>}>
+                    <Routes>
+                      <Route element={<LegacyStylesLayout />}>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/tienda" element={<HomePage />} />
+                        <Route path="/producto/:id" element={<ProductoDetalle />} />
+                        <Route path="/registro" element={<RegistroPage />} />
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/sobre-nosotros" element={<AboutPage />} />
+                        <Route path="/terminos" element={<TermsPage />} />
+                        <Route path="/privacidad" element={<PrivacyPage />} />
+                        <Route path="/accesibilidad" element={<AccessibilityPage />} />
+                      </Route>
 
-                  <Route path="/catalogo" element={<CatalogPage />} />
-                  <Route path="/carrito" element={<CarritoPage />} />
-                  <Route path="/pago" element={<PagoPage />} />
-                  <Route path="/boleta" element={<BoletaPage />} />
-                  <Route path="/admin/productos" element={<TablaProductos />} />
-                  <Route path="/admin/productos/nuevo" element={<ProductoForm />} />
-                  <Route path="/admin/productos/:id/editar" element={<ProductoForm />} />
-                  <Route path="/admin/ventas" element={<AdminSalesPage />} />
-                  <Route path="/rutina/:id" element={<RutinaPage />} />
-                  <Route path="/cuenta/perfil" element={<ProfilePage />} />
-                  <Route path="/cuenta/seguridad" element={<AccountSecurityPage />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </main>
-            <Footer />
+                      <Route path="/catalogo" element={<CatalogPage />} />
+                      <Route path="/carrito" element={<CarritoPage />} />
+                      <Route path="/pago" element={<PagoPage />} />
+                      <Route path="/boleta" element={<BoletaPage />} />
+                      <Route path="/admin/productos" element={<TablaProductos />} />
+                      <Route path="/admin/productos/nuevo" element={<ProductoForm />} />
+                      <Route path="/admin/productos/:id/editar" element={<ProductoForm />} />
+                      <Route path="/admin/ventas" element={<AdminSalesPage />} />
+                      <Route path="/rutina/:id" element={<RutinaPage />} />
+                      <Route path="/cuenta/perfil" element={<ProfilePage />} />
+                      <Route path="/cuenta/seguridad" element={<AccountSecurityPage />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Suspense>
+                </main>
+                <Footer />
 
-            <ChatWidgetToggle />
-          </BrowserRouter>
-        </CartProvider>
-      </AuthProvider>
-    </LocaleProvider>
+                <ChatWidgetToggle />
+              </BrowserRouter>
+            </CartProvider>
+          </AuthProvider>
+        </LocaleProvider>
+      </FontSizeProvider>
+    </ThemeProvider>
   );
 }
