@@ -7,6 +7,10 @@ for %%I in ("%ROOT_DIR%") do set "ROOT_DIR=%%~fI"
 set "CHATBOT_DIR=%ROOT_DIR%\Chatbot"
 set "FRONTEND_DIR=%ROOT_DIR%\frontend"
 set "DEFAULT_VENV=%ROOT_DIR%\.venv\Scripts\python.exe"
+if not defined PYTHONWARNINGS (
+    rem Silencia deprecations ruidosas en Rasa/TensorFlow/SQLAlchemy
+    set "PYTHONWARNINGS=ignore::DeprecationWarning:pkg_resources,ignore::DeprecationWarning:sqlalchemy,ignore::sqlalchemy.exc.MovedIn20Warning,ignore::DeprecationWarning:jax"
+)
 
 if not defined PYTHON_BIN (
     if exist "%DEFAULT_VENV%" (

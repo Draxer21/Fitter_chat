@@ -6,6 +6,7 @@ from typing import Any, Dict
 from flask import Flask, request, jsonify, render_template, session as flask_session
 from logging.handlers import RotatingFileHandler
 import requests
+from dotenv import load_dotenv
 
 from .config import (
     build_cors_config,
@@ -31,6 +32,11 @@ except Exception:
 
 
 def create_app() -> Flask:
+    # Carga opcional de variables de entorno desde .env para no exportarlas en cada sesión.
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    load_dotenv(os.path.join(base_dir, ".env"))
+    load_dotenv()
+
     app = Flask(__name__, static_folder="static", template_folder="templates")
 
     # ---------------- Config ----------------

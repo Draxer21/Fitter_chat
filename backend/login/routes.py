@@ -9,6 +9,12 @@ from ..extensions import db
 from .models import User
 bp = Blueprint("login", __name__)
 
+from ..security.csrf import (
+    get_or_create_csrf_token,
+    set_csrf_cookie,
+    validate_csrf,
+)
+
 
 def _normalize_email(value: str) -> str:
     return (value or "").strip().lower()
@@ -28,8 +34,24 @@ def _current_user() -> Optional[User]:
     return user
 
 
+def _require_csrf():
+    if not validate_csrf():
+        return jsonify({"error": "CSRF token invalido"}), 400
+    return None
+
+
+@bp.get("/csrf-token")
+def csrf_token():
+    token = get_or_create_csrf_token()
+    response = jsonify({"csrf_token": token})
+    response.headers["Cache-Control"] = "no-store"
+    return set_csrf_cookie(response)
+
+
 @bp.post("/register")
 def register():
+    if (error := _require_csrf()) is not None:
+        return error
     data = request.get_json(force=True, silent=True) or {}
     full_name = (data.get("full_name") or "").strip()
     email = _normalize_email(data.get("email"))
@@ -63,6 +85,8 @@ def register():
 
 @bp.post("/login")
 def do_login():
+    if (error := _require_csrf()) is not None:
+        return error
     data = request.get_json(force=True, silent=True) or {}
     identifier = (data.get("username") or data.get("user") or data.get("email") or "").strip().lower()
     password = data.get("pwd") or data.get("password") or ""
@@ -105,6 +129,8 @@ def do_login():
 
 @bp.post("/logout")
 def do_logout():
+    if (error := _require_csrf()) is not None:
+        return error
     session.clear()
     return jsonify({"ok": True}), 200
 
@@ -132,6 +158,8 @@ def mfa_status():
 
 @bp.post("/mfa/setup")
 def mfa_setup():
+    if (error := _require_csrf()) is not None:
+        return error
     user = _current_user()
     if not user:
         return jsonify({"error": "No autenticado"}), 401
@@ -144,6 +172,8 @@ def mfa_setup():
 
 @bp.post("/mfa/confirm")
 def mfa_confirm():
+    if (error := _require_csrf()) is not None:
+        return error
     user = _current_user()
     if not user:
         return jsonify({"error": "No autenticado"}), 401
@@ -172,6 +202,8 @@ def mfa_confirm():
 
 @bp.post("/mfa/disable")
 def mfa_disable():
+    if (error := _require_csrf()) is not None:
+        return error
     user = _current_user()
     if not user:
         return jsonify({"error": "No autenticado"}), 401

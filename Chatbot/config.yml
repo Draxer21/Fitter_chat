@@ -52,6 +52,6 @@ policies:
     core_fallback_action_name: "utter_fuera_de_alcance"
     enable_fallback_prediction: true
   - name: TEDPolicy
-    max_history: 8
+    max_history: 15
     epochs: 80
     constrain_similarities: true
