@@ -2,124 +2,151 @@ export default function TermsPage() {
   return (
     <main className="container py-5 legal-page">
       <div className="legal-hero mb-4">
-        <p className="legal-meta text-uppercase fw-semibold small mb-2">
-          Última actualización: 31 de octubre de 2025
+        <p className="legal-meta text-uppercase fw-semibold small mb-2">Última actualización: 22 de noviembre de 2025</p>
+        <h1 className="legal-title mb-2">Términos y Condiciones de Uso de Fitter</h1>
+        <p className="mb-0">
+          Estos Términos se rigen por la legislación chilena, en particular por la Ley N° 19.496 sobre Protección de los Derechos de los Consumidores y la Ley N° 21.719 sobre Protección de Datos Personales, además de otras normas aplicables.
         </p>
-        <h1 className="legal-title mb-2">Términos y condiciones / Tratamiento de datos – FITTER</h1>
-        <p className="legal-subtitle">Cambia la fecha cuando corresponda.</p>
       </div>
 
       <div className="legal-grid">
         <section className="legal-card">
-          <h2 className="legal-section-title">1. Identificación del responsable del tratamiento</h2>
+          <h2 className="legal-section-title">1. Aceptación de los Términos</h2>
           <p>
-            El presente sitio web y la aplicación móvil FITTER son administrados por FITTER SpA, empresa chilena dedicada al desarrollo de soluciones tecnológicas para el acompañamiento deportivo y el bienestar físico, con domicilio en [Ciudad], Chile.
+            Al registrarte, acceder o utilizar cualquiera de los servicios de Fitter, confirmas que has leído, comprendido y aceptas estos Términos en su
+            totalidad. Si no estás de acuerdo, por favor, no utilices la plataforma.
           </p>
-          <p className="mb-0">
-            Para cualquier consulta sobre esta política o el tratamiento de datos personales, puede comunicarse a través del correo: privacidad@fitter.cl.
+          <p>
+            Debes ser mayor de 18 años o, si eres menor, contar con el consentimiento de un tutor legal. Proporcionarás información veraz y actualizada
+            durante el registro y uso de la plataforma. Si actúas en nombre de una entidad, garantizas tener autoridad para vincularla a estos Términos.
           </p>
         </section>
 
         <section className="legal-card">
-          <h2 className="legal-section-title">2. Finalidad del tratamiento de datos</h2>
+          <h2 className="legal-section-title">2. Descripción del Servicio</h2>
           <p>
-            Al registrarse en FITTER, utilizar la aplicación o enviar información a través de los formularios disponibles, el usuario autoriza a FITTER al tratamiento de los datos personales entregados (por ejemplo: nombre, correo electrónico, datos básicos de perfil y datos relacionados con su actividad física) con el interés legítimo y/o contractual de:
+            Fitter es una aplicación full-stack que ofrece rutinas de ejercicio personalizadas, recomendaciones de estilo de vida, un chatbot asistido por IA,
+            una tienda en línea y gestión de usuarios (registro, perfiles, autenticación multifactor, notificaciones y panel administrativo).
           </p>
+          <p>
+            Las rutinas y recomendaciones no constituyen asesoramiento médico profesional. Fitter no reemplaza la evaluación de un profesional de la salud;
+            recomendamos consultar con médicos, nutricionistas o entrenadores certificados antes de iniciar cualquier programa.
+          </p>
+        </section>
+
+        <section className="legal-card">
+          <h2 className="legal-section-title">3. Registro y Cuentas de Usuario</h2>
+          <h3>3.1 Creación de Cuenta</h3>
+          <p>
+            Para acceder a servicios personalizados, debes registrarte proporcionando información precisa, incluyendo nombre, correo electrónico, datos físicos
+            y preferencias. El registro es gratuito para usuarios básicos, pero puede requerir verificación.
+          </p>
+          <h3>3.2 Responsabilidades del Usuario</h3>
           <ul className="ps-4">
-            <li>Crear y gestionar su cuenta de usuario en la plataforma.</li>
-            <li>Configurar su perfil de entrenamiento (objetivos, nivel de experiencia, preferencias).</li>
-            <li>Permitir la interacción con el chatbot de inteligencia artificial y la entrega de recomendaciones generales de entrenamiento y bienestar.</li>
-            <li>Registrar y mostrar su progreso dentro de la aplicación.</li>
-            <li>Atender consultas, solicitudes o comentarios enviados por los usuarios.</li>
-            <li>Mantener comunicación relacionada con el servicio (avisos técnicos, actualizaciones, cambios en términos y políticas).</li>
+            <li>Mantener la confidencialidad de tus credenciales y códigos MFA.</li>
+            <li>Notificar a soporte@fitter.cl ante accesos no autorizados.</li>
+            <li>Responsabilizarse por las actividades realizadas bajo su cuenta.</li>
+            <li>El MFA es obligatorio para cuentas administrativas y recomendado para todos.</li>
           </ul>
-          <p className="mb-0">
-            En ningún caso los datos personales serán utilizados para fines distintos a los declarados ni serán cedidos a terceros con fines comerciales sin la autorización expresa del usuario.
+          <h3>3.3 Suspensión o Terminación</h3>
+          <p>
+            Fitter puede suspender o terminar cuentas por incumplimiento de estos Términos, actividades fraudulentas o inactividad. En caso de terminación,
+            se perderá acceso a los datos salvo los requeridos por ley.
           </p>
         </section>
 
         <section className="legal-card">
-          <h2 className="legal-section-title">3. Base legal del tratamiento</h2>
-          <p>El tratamiento de los datos personales se basa en:</p>
+          <h2 className="legal-section-title">4. Privacidad y Protección de Datos</h2>
+          <p>
+            Fitter se compromete a proteger la privacidad conforme a la normativa aplicable. Consulte la Política de Privacidad y Política de Seguridad para
+            detalles completos.
+          </p>
+          <p>
+            Datos recopilados: información personal (nombre, email, datos físicos, condiciones médicas), datos de uso y preferencias. Uso: personalizar servicios,
+            procesar pagos y mejorar la plataforma. No vendemos datos a terceros sin consentimiento.
+          </p>
+          <p>
+            Protección: datos sensibles se cifran con AES-128 (Fernet), se almacenan en servidores seguros y se anonimizan en logs. Rotación de claves anual.
+            Derechos: acceso, rectificación, eliminación o portabilidad. Solicítalo a privacidad@fitter.cl.
+          </p>
+        </section>
+
+        <section className="legal-card">
+          <h2 className="legal-section-title">5. Uso Aceptable</h2>
+          <p>Al utilizar Fitter, te comprometes a:</p>
           <ul className="ps-4">
-            <li>
-              La ejecución de la relación contractual entre el usuario y FITTER, necesaria para prestar los servicios de la plataforma (creación de cuenta, uso de la app, generación de recomendaciones).
-            </li>
-            <li>
-              El consentimiento del usuario, especialmente para el tratamiento de datos vinculados a su actividad física y bienestar, que pueden considerarse datos especialmente protegidos.
-            </li>
-            <li>
-              El interés legítimo de FITTER en mantener comunicación con sus usuarios, mejorar la calidad del servicio y garantizar la seguridad de la plataforma, respetando en todo momento los derechos y libertades de los titulares de datos.
-            </li>
+            <li>Usar la plataforma para fines personales y no comerciales sin autorización.</li>
+            <li>No violar leyes ni derechos de terceros.</li>
+            <li>No intentar hackear, inyectar código malicioso, enviar spam o sobrecargar servidores.</li>
+            <li>No utilizar el chatbot para actividades ilícitas o perjudiciales.</li>
           </ul>
-          <p className="mb-0">
-            Este tratamiento es necesario para responder a solicitudes iniciadas voluntariamente por el usuario y para el funcionamiento normal de la plataforma, sin perjuicio de que el titular conserve en todo momento sus derechos de acceso, rectificación, cancelación y oposición.
-          </p>
         </section>
 
         <section className="legal-card">
-          <h2 className="legal-section-title">4. Conservación de los datos</h2>
+          <h2 className="legal-section-title">6. Propiedad Intelectual</h2>
           <p>
-            Los datos proporcionados se conservarán durante el tiempo que la cuenta de usuario se mantenga activa y por un periodo máximo de 24 meses desde la última interacción relevante en la plataforma, o hasta que el titular solicite su eliminación, siempre que no exista una obligación legal de conservarlos por más tiempo.
+            Todo el contenido de Fitter (código, diseños, logos, textos, imágenes, algoritmos y bases de datos) es propiedad exclusiva de Fitter SpA o sus
+            licenciadores. No se permite copiar, distribuir o modificar sin autorización escrita.
           </p>
-          <p className="mb-0">
-            Pasados dichos plazos, los datos serán eliminados o, en su caso, anonimizados de forma segura y definitiva para fines estadísticos.
-          </p>
-        </section>
-
-        <section className="legal-card">
-          <h2 className="legal-section-title">5. Derechos de los titulares</h2>
           <p>
-            El titular de los datos podrá ejercer en cualquier momento los derechos reconocidos por la normativa chilena en materia de protección de datos personales, incluyendo:
-          </p>
-          <ul className="ps-4">
-            <li>Derecho de acceso: conocer qué datos personales son tratados y con qué finalidad.</li>
-            <li>Derecho de rectificación: solicitar la corrección de datos inexactos o desactualizados.</li>
-            <li>
-              Derecho de cancelación o eliminación: pedir la eliminación de sus datos cuando ya no sean necesarios para los fines declarados o cuando retire su consentimiento, en la medida en que la ley lo permita.
-            </li>
-            <li>Derecho de oposición: oponerse al tratamiento basado en interés legítimo o a ciertas comunicaciones.</li>
-          </ul>
-          <p className="mb-0">
-            Las solicitudes podrán realizarse por escrito al correo: privacidad@fitter.cl, indicando nombre completo, medio de contacto y el derecho que se desea ejercer.
+            El usuario retiene derechos sobre su contenido personal, pero concede a Fitter una licencia no exclusiva para procesarlo y mostrarlo en la
+            plataforma.
           </p>
         </section>
 
         <section className="legal-card">
-          <h2 className="legal-section-title">6. Seguridad de la información</h2>
+          <h2 className="legal-section-title">7. Pagos y Compras</h2>
+          <h3>7.1 Tienda en Línea</h3>
+          <p>La tienda permite comprar productos con carrito, pagos seguros y boletas electrónicas. Los precios incluyen IVA y pueden variar.</p>
+          <h3>7.2 Procesamiento de Pagos</h3>
+          <p>Pagos se procesan a través de pasarelas seguras. Fitter no almacena datos de tarjetas.</p>
+          <h3>7.3 Reembolsos y Devoluciones</h3>
           <p>
-            FITTER implementa medidas técnicas y organizativas adecuadas para garantizar la seguridad y confidencialidad de los datos personales, evitando su pérdida, acceso no autorizado o manipulación indebida.
-          </p>
-          <p className="mb-0">
-            Entre estas medidas se incluyen, entre otras, el uso de comunicaciones cifradas, controles de acceso a los sistemas, registro de eventos relevantes y revisiones periódicas de la configuración de seguridad.
+            Productos defectuosos: derecho a devolución dentro de 7 días, conforme a la Ley del Consumidor. Servicios digitales: no reembolsables una vez
+            utilizados, salvo fallos técnicos imputables a Fitter. Solicitudes a soporte@fitter.cl.
           </p>
         </section>
 
         <section className="legal-card">
-          <h2 className="legal-section-title">7. Enlaces y servicios de terceros</h2>
+          <h2 className="legal-section-title">8. Descargos de Responsabilidad</h2>
           <p>
-            La plataforma FITTER puede estar vinculada a servicios de terceros (por ejemplo, proveedores de infraestructura, herramientas de analítica o pasarelas de pago). Estos servicios mantienen sus propias políticas de privacidad, las cuales el usuario puede revisar en los sitios oficiales de cada proveedor.
-          </p>
-          <p className="mb-0">
-            FITTER no se hace responsable por el tratamiento de datos personales que dichos terceros realicen fuera de lo informado en esta política.
+            Las rutinas y recomendaciones son generales y no constituyen asesoramiento médico. Fitter no asume responsabilidad por lesiones o daños.
+            Respecto a disponibilidad, no garantizamos servicio 100% ininterrumpido.
           </p>
         </section>
 
         <section className="legal-card">
-          <h2 className="legal-section-title">8. Modificaciones de esta política</h2>
+          <h2 className="legal-section-title">9. Terminación</h2>
           <p>
-            FITTER se reserva el derecho de modificar estos términos de tratamiento de datos para adecuarlos a cambios normativos, a mejoras en sus procesos de protección de datos o a nuevas funcionalidades de la plataforma.
-          </p>
-          <p className="mb-0">
-            Cualquier modificación será publicada oportunamente en esta misma página, indicando la fecha de actualización. Cuando los cambios sean relevantes, se informará al usuario mediante avisos en la aplicación o por correo electrónico.
+            Los Términos permanecen vigentes mientras uses la plataforma. Puedes terminar eliminando tu cuenta. Fitter puede terminar por incumplimiento,
+            notificando con 30 días de antelación salvo casos graves.
           </p>
         </section>
 
         <section className="legal-card">
-          <h2 className="legal-section-title">9. Aceptación de los términos</h2>
-          <p className="mb-0">
-            El registro en la plataforma, el uso de la aplicación o el envío de información a través de los formularios de FITTER implican la aceptación expresa de estos Términos y Condiciones relativos al tratamiento de datos personales, de las finalidades indicadas y de las bases legales descritas.
+          <h2 className="legal-section-title">10. Modificaciones</h2>
+          <p>
+            Fitter puede actualizar estos Términos por cambios normativos, técnicos o de servicio. Avisaremos con 15 días de antelación. El uso continuado
+            implica aceptación.
           </p>
+        </section>
+
+        <section className="legal-card">
+          <h2 className="legal-section-title">11. Ley Aplicable y Resolución de Disputas</h2>
+          <p>
+            Estos Términos se rigen por la legislación de la República de Chile. En particular, la relación entre los usuarios y Fitter se ajusta a la Ley N° 19.496 sobre Protección de los Derechos de los Consumidores y a la Ley N° 21.719 sobre Protección de Datos Personales, junto con otras normas sectoriales y de protección de datos aplicables.
+          </p>
+          <p>
+            Cualquier disputa derivada de estos Términos será sometida, en primera instancia, a intentos de resolución amistosa. Si no fuera posible, las partes se someterán a la jurisdicción de los tribunales competentes de Chile.
+          </p>
+        </section>
+
+        <section className="legal-card">
+          <h2 className="legal-section-title">12. Contacto</h2>
+          <p>
+            Para consultas o ejercer derechos, contacta a soporte@fitter.cl o privacidad@fitter.cl.
+          </p>
+          <p className="mb-0">Al aceptar estos Términos, reconoces haber leído y comprendido todas las secciones.</p>
         </section>
       </div>
     </main>
