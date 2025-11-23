@@ -3,8 +3,6 @@ import { useRef, useState } from 'react';
 import Logo from '../components/Logo';
 import { useLocale } from '../contexts/LocaleContext';
 import { useAuth } from '../contexts/AuthContext';
-import { useTheme } from '../contexts/ThemeContext';
-import { useFontSize } from '../contexts/FontSizeContext';
 
 const closeBootstrapModal = (ref) => {
   const Modal = window.bootstrap && window.bootstrap.Modal;
@@ -19,10 +17,8 @@ const closeBootstrapModal = (ref) => {
 };
 
 export default function Navbar() {
-  const { t, locale, setLocale } = useLocale();
+  const { t } = useLocale();
   const { user, isAdmin, isAuthenticated, logout: logoutUser } = useAuth();
-  const { theme, toggleTheme } = useTheme();
-  const { increase, decrease, reset, scale } = useFontSize();
   const [supportEmail, setSupportEmail] = useState('');
   const [supportDesc, setSupportDesc] = useState('');
   const navigate = useNavigate();
@@ -65,14 +61,7 @@ export default function Navbar() {
     closeNavbarCollapse();
   };
 
-  const toggleLocale = () => {
-    setLocale(locale === 'es' ? 'en' : 'es');
-  };
 
-  const handleToggleTheme = () => {
-    toggleTheme();
-    closeNavbarCollapse();
-  };
 
   const currentUserLabel = user?.username || user?.full_name || user?.email || 'Usuario';
 
@@ -172,32 +161,6 @@ export default function Navbar() {
           </ul>
 
           <ul className='navbar-nav ms-auto align-items-center gap-2'>
-            <li className='nav-item'>
-              <button
-                type='button'
-                className='btn btn-outline-secondary btn-sm'
-                onClick={handleToggleTheme}
-                aria-pressed={theme === 'dark'}
-              >
-                {theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
-              </button>
-            </li>
-            <li className='nav-item'>
-              <button type='button' className='btn btn-outline-secondary btn-sm' onClick={toggleLocale}>
-                {locale === 'es' ? 'EN' : 'ES'}
-              </button>
-            </li>
-            <li className='nav-item d-flex align-items-center gap-1'>
-              <button type='button' className='btn btn-outline-secondary btn-sm' onClick={decrease} aria-label='Disminuir tamaño de letra'>
-                A-
-              </button>
-              <button type='button' className='btn btn-outline-secondary btn-sm' onClick={increase} aria-label='Aumentar tamaño de letra'>
-                A+
-              </button>
-              <button type='button' className='btn btn-outline-secondary btn-sm' onClick={reset} aria-label='Restablecer tamaño de letra'>
-                {Math.round(scale * 100)}%
-              </button>
-            </li>
             {!isAuthenticated && (
               <li className='nav-item me-2'>
                 <NavLink className='btn btn-warning rounded-pill' to='/login'>{t('nav.login.cta')}</NavLink>

@@ -7,6 +7,7 @@ import "./App.css";
 import ChatWidget from "./ChatWidget";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import SideControls from "./components/SideControls";
 import { LocaleProvider } from "./contexts/LocaleContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
@@ -102,6 +103,7 @@ export default function App() {
                 </main>
                 <Footer />
 
+                <SideControls />
                 <ChatWidgetToggle />
               </BrowserRouter>
             </CartProvider>
