@@ -7,22 +7,26 @@ Docente Guía: Ivan Riquelme Nuñez
 ---
 
 ## 📌 Descripción
-Fitter es un **chatbot en español** diseñado con **Rasa** para el contexto de gimnasios y centros deportivos.  
-Permite a los usuarios:
-- Consultar rutinas personalizadas de entrenamiento.
-- Obtener información de servicios.
+Fitter es una **plataforma integral para gimnasios y centros deportivos** con chatbot en español diseñado con **Rasa**. Permite a los usuarios y administradores:
+- Consultar rutinas personalizadas de entrenamiento (a través del chatbot).
+- Gestionar inventario y productos.
+- Realizar compras y pagos simulados.
 - Registrar reservas de clases.
-- Resolver dudas frecuentes.
+- Gestionar órdenes y perfiles de usuario.
+- Recibir notificaciones por email.
+- Autenticación segura con MFA.
 
-El sistema se integra con un **backend en Flask/Django** y una interfaz web básica en **HTML/JS**, cumpliendo con la normativa chilena (Ley 21.719) sobre protección de datos.
+El sistema cumple con la normativa chilena (Ley 21.719) sobre protección de datos.
 
 ---
 
 ## 🛠️ Tecnologías utilizadas
 - **Python 3.10** (entorno base)
 - **Rasa 3.6** (NLP / NLU)
-- **Flask** (servidor backend para integración web)
-- **HTML + JS** (interfaz de usuario simple)
+- **Flask** (servidor backend)
+- **SQLAlchemy** (ORM para base de datos)
+- **HTML + JavaScript Vanilla** (interfaz web)
+- **Docker** (containerización)
 - **GitHub** (versionamiento)
 
 ---
@@ -47,40 +51,79 @@ El sistema se integra con un **backend en Flask/Django** y una interfaz web bás
 1. **Prepara las dependencias una sola vez**
    ```bash
    python -m venv .venv
+   # En Windows:
+   .venv\Scripts\Activate.ps1
+   # En Linux/Mac:
    source .venv/bin/activate
+   
    pip install -r requirements.txt
    pip install rasa
-   npm install --prefix frontend
    ```
 2. **Exporta las variables sensibles** (ejemplo):
    ```bash
-   export PROFILE_ENCRYPTION_KEY="<clave Fernet>"
-   export CHAT_CONTEXT_API_KEY="<token opcional para Rasa/actions>"
+   # Windows (PowerShell):
+   $env:PROFILE_ENCRYPTION_KEY="<clave-Fernet>"
+   $env:CHAT_CONTEXT_API_KEY="<token-opcional>"
+   
+   # Linux/Mac:
+   export PROFILE_ENCRYPTION_KEY="<clave-Fernet>"
+   export CHAT_CONTEXT_API_KEY="<token-opcional>"
    ```
-3. **Inicia todo desde la terminal integrada de VS Code**:
-   ```bash
-   ./scripts/start_project.sh
-   ```
-   En Windows usa:
+3. **Inicia los servicios desde la terminal integrada de VS Code**:
    ```bat
    scripts\start_project.bat
    ```
-   El script levanta cuatro servicios:
+   El script levanta tres servicios:
    - Backend Flask en `http://localhost:5000`
    - Servidor Rasa en `http://localhost:5005`
    - Servidor de acciones Rasa SDK en `http://localhost:5055`
-   - Frontend React en `http://localhost:3000`
-
-   Puedes omitir componentes con flags como `--skip-frontend` o `--skip-chatbot`. Usa `./scripts/start_project.sh --help` o `scripts\start_project.bat --help` para ver todas las opciones y variables disponibles.
 
 Cuando termines la sesión, presiona `Ctrl+C` en la terminal para cerrar todos los servicios de forma ordenada.
 
-## 🧪 Generar 2 000 ejemplos por intent
+## 📁 Estructura del proyecto
 
-Usa el envoltorio `scripts/generate_nlu_dataset.py` para recrear el dataset NLU a partir de los nuevos YAML en `Chatbot/data/specs`.
+```
+Fitter/
+├── backend/              # Servidor Flask con módulos de negocio
+│   ├── carritoapp/       # Gestión de carrito de compras
+│   ├── chat/             # Integración con Rasa Chatbot
+│   ├── gestor_inventario/# Gestión de productos e inventario
+│   ├── login/            # Autenticación y MFA
+│   ├── orders/           # Gestión de órdenes
+│   ├── profile/          # Perfiles de usuario (con cifrado)
+│   ├── security/         # Seguridad y sesiones
+│   ├── notifications/    # Notificaciones por email
+│   ├── migrations/       # Migraciones de BD (Alembic)
+│   └── templates/        # Templates HTML
+├── Chatbot/              # Modelos y configuración de Rasa
+│   ├── data/             # NLU, stories, rules, specs
+│   └── models/           # Modelos entrenados
+├── scripts/              # Scripts de utilidad
+│   ├── start_project.bat # Script de inicio
+│   └── generate_nlu_dataset.py
+├── infra/                # Configuración Docker y Nginx
+└── requirements.txt      # Dependencias Python
+```
+
+## 🧪 Generar ejemplos NLU
+
+Usa el script `scripts/generate_nlu_dataset.py` para recrear el dataset NLU a partir de los YAML en `Chatbot/data/specs`:
 
 ```bash
 python scripts/generate_nlu_dataset.py --update-nlu
 ```
 
-El comando anterior genera hasta 2 000 ejemplos por intent con `Chatbot/tools/generate_nlu.py`, deja un respaldo en `Chatbot/data/generated/nlu_generated.yml` y reemplaza `Chatbot/data/nlu.yml` cuando se pasa `--update-nlu`. Ajusta `--per-intent`, `--seed` o `--spec-dir` según lo necesites.
+El comando genera hasta 2 000 ejemplos por intent, crea un respaldo en `Chatbot/data/generated/nlu_generated.yml` y actualiza `Chatbot/data/nlu.yml`.
+
+## 🧪 Tests
+
+Ejecuta los tests del backend:
+
+```bash
+python -m pytest backend/tests/
+```
+
+Incluye tests para:
+- Autenticación MFA
+- Modelos de productos
+- Perfiles de usuario
