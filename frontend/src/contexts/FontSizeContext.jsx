@@ -35,7 +35,7 @@ export function FontSizeProvider({ children }) {
       decrease: () => setScale((prev) => clamp(prev - STEP)),
       reset: () => setScale(1),
     }),
-    []
+    [scale]
   );
 
   return <FontSizeContext.Provider value={value}>{children}</FontSizeContext.Provider>;
