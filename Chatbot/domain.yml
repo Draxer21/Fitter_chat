@@ -67,35 +67,30 @@ slots:
     mappings:
       - type: from_entity
         entity: ejercicios_num
-      - type: from_text
 
   tiempo_disponible:
     type: text
     mappings:
       - type: from_entity
         entity: tiempo_disponible
-      - type: from_text
 
   condiciones_salud:
     type: text
     mappings:
       - type: from_entity
         entity: condiciones_salud
-      - type: from_text
 
   alergias:
     type: text
     mappings:
       - type: from_entity
         entity: alergias
-      - type: from_text
 
   formato:
     type: text
     mappings:
       - type: from_entity
         entity: formato
-      - type: from_text
 
   contacto:
     type: text
@@ -106,62 +101,75 @@ slots:
         entity: email
       - type: from_entity
         entity: telefono
-      - type: from_text
 
   codigo_reserva:
     type: text
     mappings:
       - type: from_entity
         entity: codigo_reserva
-      - type: from_text
 
   peso:
     type: float
     influence_conversation: true
     mappings:
       - type: from_text
+        conditions:
+          - active_loop: profile_form
+            requested_slot: peso
 
   altura:
     type: float
     influence_conversation: true
     mappings:
       - type: from_text
+        conditions:
+          - active_loop: profile_form
+            requested_slot: altura
 
   objetivo_fitness:
     type: text
     influence_conversation: true
     mappings:
       - type: from_text
+        conditions:
+          - active_loop: profile_form
+            requested_slot: objetivo_fitness
 
   padecimientos:
     type: text
     influence_conversation: true
     mappings:
       - type: from_text
+        conditions:
+          - active_loop: profile_form
+            requested_slot: padecimientos
 
   preferencia_dieta:
     type: text
     influence_conversation: true
     mappings:
       - type: from_text
+        conditions:
+          - active_loop: profile_form
+            requested_slot: preferencia_dieta
 
   resumen_perfil:
     type: text
     influence_conversation: false
     mappings:
-      - type: from_text
+      - type: custom
 
   perfil_completo:
     type: bool
     influence_conversation: true
     mappings:
-      - type: from_text
+      - type: custom
 
   servicio_pendiente:
     type: text
     influence_conversation: true
     mappings:
-      - type: from_text
+      - type: custom
 
 responses:
   utter_saludar:
