@@ -18,7 +18,9 @@ body {
 /* "GESTOR DE INVENTARIO" */
 h1{
     text-align: center;
-    margin-top: 20px;
+    font-weight: 600;
+    color: inherit;
+    font-size: 2rem;
 }
 
 .logo_peluqueria{ 
@@ -126,9 +128,122 @@ h1{
 .tabla-productos-wrapper{
     width: 100%;
     min-height: 60vh;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .tabla-productos-wrapper table{
     width: 100%;
     margin-bottom: 0;
 }
+
+.tabla-productos-wrapper tbody td {
+    vertical-align: middle !important;
+}
+
+/* Botón de añadir producto */
+.btn-success {
+    color: #ffffff !important;
+    font-weight: 500;
+}
+
+.btn-success:hover {
+    color: #ffffff !important;
+}
+
+/* Mejorar botones de acción */
+.tabla-productos-wrapper .btn-action {
+    padding: 0;
+    min-width: 40px;
+    max-width: 40px;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    border: none;
+    line-height: 1;
+    vertical-align: middle;
+    flex-shrink: 0;
+}
+
+.tabla-productos-wrapper td.align-middle {
+    vertical-align: middle !important;
+    padding: 0.75rem !important;
+}
+
+.tabla-productos-wrapper .d-flex.align-items-center {
+    height: 100%;
+    min-height: 40px;
+    gap: 0.5rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.tabla-productos-wrapper .btn-action {
+    margin: 0 !important;
+    float: none !important;
+}
+
+.tabla-productos-wrapper .btn-warning {
+    background-color: #ffc107 !important;
+    color: #000000 !important;
+}
+
+.tabla-productos-wrapper .btn-warning:hover {
+    background-color: #ffca2c !important;
+    color: #000000 !important;
+}
+
+.tabla-productos-wrapper .btn-danger {
+    background-color: #dc3545 !important;
+    color: #ffffff !important;
+}
+
+.tabla-productos-wrapper .btn-danger:hover {
+    background-color: #bb2d3b !important;
+    color: #ffffff !important;
+}
+
+.tabla-productos-wrapper .btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+}
+
+.tabla-productos-wrapper .btn-action:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.tabla-productos-wrapper .btn-action i {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Mejorar responsive de tabla */
+@media (max-width: 992px) {
+    .tabla-productos-wrapper {
+        font-size: 0.875rem;
+    }
+    
+    .tabla-productos-wrapper img {
+        width: 50px !important;
+        height: 50px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .tabla-productos-wrapper {
+        font-size: 0.75rem;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+}
+

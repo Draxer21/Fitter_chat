@@ -105,23 +105,21 @@ export default function ProductoForm() {
     }
   };
 
-  const titulo = isEdit ? "Editar Producto/Servicio" : "Anadir Producto/Servicio";
+  const titulo = isEdit ? "Editar Producto/Servicio" : "Añadir Producto/Servicio";
 
   return (
-    <div className="container mt-5">
-      <center>
-        <h1 style={{ marginBottom: 80 }}>{titulo}</h1>
-      </center>
+    <div className="container mt-5 mb-5">
+      <h1 className="text-center mb-5">{titulo}</h1>
 
       {loading ? (
         <div className="alert alert-info">Cargando...</div>
       ) : (
-        <form onSubmit={save} style={{ marginBottom: 80 }}>
+        <form onSubmit={save} className="producto-form mb-5">
           <div className="table-responsive">
-            <table className="table">
+            <table className="table table-bordered producto-form-table">
               <tbody>
                 <tr>
-                  <th>Nombre</th>
+                  <th scope="row">Nombre</th>
                   <td>
                     <input
                       className="form-control"
@@ -132,7 +130,7 @@ export default function ProductoForm() {
                   </td>
                 </tr>
                 <tr>
-                  <th>Precio</th>
+                  <th scope="row">Precio</th>
                   <td>
                     <input
                       className="form-control"
@@ -145,7 +143,7 @@ export default function ProductoForm() {
                   </td>
                 </tr>
                 <tr>
-                  <th>Descripcion</th>
+                  <th scope="row">Descripción</th>
                   <td>
                     <textarea
                       className="form-control"
@@ -155,7 +153,7 @@ export default function ProductoForm() {
                   </td>
                 </tr>
                 <tr>
-                  <th>Categoria</th>
+                  <th scope="row">Categoría</th>
                   <td>
                     <select
                       className="form-control"
@@ -171,7 +169,7 @@ export default function ProductoForm() {
                   </td>
                 </tr>
                 <tr>
-                  <th>Stock</th>
+                  <th scope="row">Stock</th>
                   <td>
                     <input
                       className="form-control"
@@ -183,7 +181,7 @@ export default function ProductoForm() {
                   </td>
                 </tr>
                 <tr>
-                  <th>Imagen</th>
+                  <th scope="row">Imagen</th>
                   <td>
                     <input type="file" accept="image/*" onChange={onFile} className="form-control" />
                   </td>
@@ -195,10 +193,10 @@ export default function ProductoForm() {
           {err && <div className="alert alert-danger">{err}</div>}
 
           {preview && (
-            <div className="mb-3">
-              <label>Previsualizacion</label>
-              <div>
-                <img src={preview} alt="preview" style={{ maxWidth: 200, maxHeight: 200 }} />
+            <div className="mb-4">
+              <h5>Previsualización</h5>
+              <div className="preview-container p-3 border rounded">
+                <img src={preview} alt="Previsualización del producto" style={{ maxWidth: 200, maxHeight: 200, objectFit: "contain" }} />
               </div>
             </div>
           )}

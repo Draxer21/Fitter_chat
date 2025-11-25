@@ -14,16 +14,20 @@ export default function TablaProductos() {
   const [items, setItems] = useState([]);
   const [err, setErr] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [loading, setLoading] = useState(true);
   const nav = useNavigate();
   const { isAdmin, initialized, refresh } = useAuth();
 
   const load = useCallback(async () => {
+    setLoading(true);
     try {
       const data = await API.productos.list();
       setItems(data);
       setErr("");
     } catch (e) {
       setErr(e.message || "No se pudo cargar el inventario.");
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -65,9 +69,9 @@ export default function TablaProductos() {
 
   return (
     <main className="flex-grow-1">
-      <div className="container-fluid px-4">
-        <h1>Gestion de Inventario</h1>
-        <div className="row g-3 align-items-center mb-3">
+      <div className="container-fluid px-4 py-5">
+        <h1 className="mb-4 mt-4">Gestión de Inventario</h1>
+        <div className="row g-3 align-items-center mb-4">
           <div className="col-12 col-md-8">
             <form className="input-group" role="search" onSubmit={(e) => e.preventDefault()}>
               <span className="input-group-text bg-dark text-white border-secondary">
@@ -84,26 +88,44 @@ export default function TablaProductos() {
             </form>
           </div>
           <div className="col-12 col-md-4 d-grid d-md-flex justify-content-md-end">
-            <Link to="/admin/productos/nuevo" className="btn btn-success">
-              Anadir Producto/Servicio
+            <Link 
+              to="/admin/productos/nuevo" 
+              className="btn btn-success"
+              aria-label="Añadir nuevo producto o servicio al inventario"
+            >
+              <i className="fa-solid fa-plus me-2" aria-hidden="true" />
+              Añadir Producto/Servicio
             </Link>
           </div>
         </div>
 
-        {err && <div className="alert alert-danger">{err}</div>}
+        {err && (
+          <div className="alert alert-danger" role="alert">
+            <i className="fa-solid fa-exclamation-triangle me-2" aria-hidden="true" />
+            {err}
+          </div>
+        )}
 
-        <div className="table-responsive tabla-productos-wrapper mt-3">
-          <table className="table table-dark table-striped table-bordered">
+        {loading ? (
+          <div className="text-center py-5">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Cargando productos...</span>
+            </div>
+            <p className="mt-3 text-muted">Cargando inventario...</p>
+          </div>
+        ) : (
+          <div className="table-responsive tabla-productos-wrapper mt-3">
+            <table className="table table-dark table-striped table-bordered" aria-label="Tabla de productos del inventario">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Precio</th>
-                <th>Descripcion</th>
-                <th>Categoria</th>
-                <th>Stock</th>
-                <th>Imagen</th>
-                <th>Acciones</th>
+                <th scope="col">ID</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Precio</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Categoría</th>
+                <th scope="col">Stock</th>
+                <th scope="col">Imagen</th>
+                <th scope="col">Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -121,13 +143,23 @@ export default function TablaProductos() {
                     <td>
                       <img src={imageSrc} alt={pr.nombre} style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 6 }} />
                     </td>
-                    <td className="text-center">
-                      <div className="d-flex justify-content-center gap-2">
-                        <Link to={`/admin/productos/${pr.id}/editar`} className="btn btn-warning" aria-label={`Editar ${pr.nombre}`}>
-                          <i className="fa-solid fa-pencil" />
+                    <td className="text-center align-middle">
+                      <div className="d-flex justify-content-center align-items-center gap-2">
+                        <Link 
+                          to={`/admin/productos/${pr.id}/editar`} 
+                          className="btn btn-warning btn-action"
+                          aria-label={`Editar ${pr.nombre}`}
+                          title="Editar"
+                        >
+                          <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
                         </Link>
-                        <button className="btn btn-danger" onClick={() => del(pr.id)} aria-label={`Eliminar ${pr.nombre}`}>
-                          <i className="fa-solid fa-trash" />
+                        <button 
+                          className="btn btn-danger btn-action" 
+                          onClick={() => del(pr.id)} 
+                          aria-label={`Eliminar ${pr.nombre}`}
+                          title="Eliminar"
+                        >
+                          <i className="fa-solid fa-trash-can" aria-hidden="true" />
                         </button>
                       </div>
                     </td>
@@ -144,6 +176,14 @@ export default function TablaProductos() {
             </tbody>
           </table>
         </div>
+        )}
+
+        {!loading && filteredItems.length > 0 && (
+          <div className="mt-3 text-muted small">
+            <i className="fa-solid fa-box me-2" aria-hidden="true" />
+            Mostrando {filteredItems.length} de {items.length} producto{items.length !== 1 ? 's' : ''}
+          </div>
+        )}
       </div>
     </main>
   );
