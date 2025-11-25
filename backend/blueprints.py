@@ -55,6 +55,11 @@ _BLUEPRINTS: Iterable[BlueprintSpec] = (
         url_prefix="/profile",
     ),
     BlueprintSpec(
+        label="payments",
+        import_path="backend.payments.routes",
+        attr="payments_bp",
+    ),
+    BlueprintSpec(
         label="metrics",
         import_path="backend.metrics.routes",
     ),
