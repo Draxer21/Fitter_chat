@@ -1,0 +1,72 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fitter
+      POSTGRES_PASSWORD: fitter
+      POSTGRES_DB: fitter
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    environment:
+      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://fitter:fitter@db:5432/fitter
+      RASA_BASE_URL: http://rasa:5005
+      RASA_REST_WEBHOOK: /webhooks/rest/webhook
+      RASA_PARSE_ENDPOINT: /model/parse
+      CHAT_CONTEXT_API_KEY: ${CHAT_CONTEXT_API_KEY:-change-me}
+      PROFILE_ENCRYPTION_KEY: ${PROFILE_ENCRYPTION_KEY:-change-me}
+      METRICS_API_KEY: ${METRICS_API_KEY:-change-me}
+      FLASK_DEBUG: "0"
+    depends_on:
+      - db
+    ports:
+      - "5000:5000"
+
+  rasa:
+    image: rasa/rasa:3.6.20-full
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ../Chatbot:/app
+    command: >
+      run --enable-api --cors "*" --port 5005
+    ports:
+      - "5005:5005"
+
+  rasa-actions:
+    image: rasa/rasa-sdk:3.6.2
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ../Chatbot:/app
+    command: >
+      run actions --port 5055
+    ports:
+      - "5055:5055"
+    depends_on:
+      - rasa
+
+  nginx:
+    image: nginx:1.26
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - rasa
+      - rasa-actions
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    # Monta certificados si tienes TLS:
+    #   - ./certs:/etc/nginx/certs:ro
+
+volumes:
+  db_data:
