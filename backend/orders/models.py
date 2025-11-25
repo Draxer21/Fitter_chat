@@ -26,7 +26,6 @@ class Order(db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     items = db.relationship("OrderItem", back_populates="order", cascade="all, delete-orphan", lazy="joined")
-    payment = db.relationship("Payment", back_populates="order", uselist=False, cascade="all, delete-orphan")
 
     def to_dict(self) -> Dict[str, Any]:
         return {

@@ -42,12 +42,6 @@ class AppConfig:
     MAX_MESSAGE_LEN: int = 5000
     DATA_RETENTION_DAYS: int = 730
     METRICS_API_KEY: str = ""
-    
-    # MercadoPago configuration
-    MERCADOPAGO_ACCESS_TOKEN: str = ""
-    MERCADOPAGO_PUBLIC_KEY: str = ""
-    MERCADOPAGO_NOTIFICATION_URL: str = ""
-    FRONTEND_URL: str = "http://localhost:3000"
 
     @classmethod
     def from_env(cls, env: Optional[Env] = None) -> "AppConfig":
@@ -83,16 +77,6 @@ class AppConfig:
                 env.get("DATA_RETENTION_DAYS"), cls.DATA_RETENTION_DAYS
             ),
             METRICS_API_KEY=env.get("METRICS_API_KEY", cls.METRICS_API_KEY),
-            MERCADOPAGO_ACCESS_TOKEN=env.get(
-                "MERCADOPAGO_ACCESS_TOKEN", cls.MERCADOPAGO_ACCESS_TOKEN
-            ),
-            MERCADOPAGO_PUBLIC_KEY=env.get(
-                "MERCADOPAGO_PUBLIC_KEY", cls.MERCADOPAGO_PUBLIC_KEY
-            ),
-            MERCADOPAGO_NOTIFICATION_URL=env.get(
-                "MERCADOPAGO_NOTIFICATION_URL", cls.MERCADOPAGO_NOTIFICATION_URL
-            ),
-            FRONTEND_URL=env.get("FRONTEND_URL", cls.FRONTEND_URL),
         )
 
     def to_mapping(self) -> Dict[str, Any]:
