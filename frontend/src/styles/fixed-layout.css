@@ -41,8 +41,15 @@
   display: flex;
   align-items: center;
   height: 100%;
-  padding: 0.45rem 0.75rem;
-  line-height: 1.2;
+  padding: 0.5rem 0.75rem;
+  line-height: 1.5;
+  border: none;
+  background: transparent;
+  text-decoration: none;
+}
+
+.custom-navbar .nav-link[type="button"] {
+  cursor: pointer;
 }
 
 .custom-navbar .navbar-nav {
@@ -96,6 +103,42 @@
   background: var(--bg);
   color: var(--text);
   border: 1px solid var(--border);
+}
+
+/* Estilos para íconos de navegación (chat y carrito) */
+.custom-navbar .nav-icon {
+  transition: transform 0.2s ease;
+}
+
+.custom-navbar .nav-icon-link {
+  opacity: 1 !important;
+}
+
+.custom-navbar .nav-icon-link:hover .nav-icon,
+.custom-navbar .nav-icon-link:focus-visible .nav-icon {
+  transform: scale(1.15);
+}
+
+/* Forzar visibilidad de íconos en tema oscuro */
+[data-theme="dark"] .custom-navbar .nav-icon {
+  color: #ffffff !important;
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
+
+/* Forzar visibilidad de íconos en tema claro */
+[data-theme="light"] .custom-navbar .nav-icon {
+  color: #000000 !important;
+  fill: #000000 !important;
+  stroke: #000000 !important;
+}
+
+/* Asegurar que los links de íconos no cambien el color */
+.custom-navbar .nav-icon-link:hover,
+.custom-navbar .nav-icon-link:focus-visible {
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
 }
 
 .custom-navbar .dropdown-item:hover,

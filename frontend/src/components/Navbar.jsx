@@ -115,20 +115,20 @@ export default function Navbar() {
 
             {isAdmin && (
               <>
-                <li className='nav-item'>
-                  <NavLink className='nav-link' to='/admin/productos'>{t('nav.admin.inventory')}</NavLink>
+                <li className='nav-item' role="none">
+                  <NavLink className='nav-link' to='/admin/productos' role="menuitem">{t('nav.admin.inventory')}</NavLink>
                 </li>
-                <li className='nav-item'>
-                  <NavLink className='nav-link' to='/admin/productos/nuevo'>{t('nav.admin.addProduct')}</NavLink>
+                <li className='nav-item' role="none">
+                  <NavLink className='nav-link' to='/admin/productos/nuevo' role="menuitem">{t('nav.admin.addProduct')}</NavLink>
                 </li>
-                <li className='nav-item'>
-                  <NavLink className='nav-link' to='/admin/ventas'>Panel de ventas</NavLink>
+                <li className='nav-item' role="none">
+                  <NavLink className='nav-link' to='/admin/ventas' role="menuitem">Panel de ventas</NavLink>
                 </li>
               </>
             )}
 
-            <li className='nav-item'>
-              <button className='nav-link btn btn-link p-0 text-start' type="button" data-bs-toggle='modal' data-bs-target='#supportModal'>
+            <li className='nav-item' role="none">
+              <button className='nav-link' type="button" data-bs-toggle='modal' data-bs-target='#supportModal' role="menuitem">
                 {t('nav.support')}
               </button>
             </li>
@@ -167,25 +167,27 @@ export default function Navbar() {
               </li>
             )}
             <li className='nav-item' role="none">
-              <NavLink className='nav-link d-flex align-items-center' to='/carrito' aria-label='Ver carrito de compras' role="menuitem">
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  width='28'
-                  height='28'
-                  viewBox='0 0 24 24'
-                  fill='white'
-                  stroke='white'
-                  strokeWidth='0'
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  aria-hidden='true'
-                  focusable="false"
-                >
-                  <title>Icono de carrito de compras</title>
-                  <circle cx='9' cy='21' r='1' />
-                  <circle cx='20' cy='21' r='1' />
-                  <path d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6' />
-                </svg>
+              <NavLink 
+                className='nav-link d-flex align-items-center px-3' 
+                to='/chat' 
+                aria-label='Abrir asistente virtual' 
+                role="menuitem"
+                title="Chat"
+                style={{ fontSize: '24px', fontWeight: 'bold' }}
+              >
+                💬
+              </NavLink>
+            </li>
+            <li className='nav-item' role="none">
+              <NavLink 
+                className='nav-link d-flex align-items-center px-3' 
+                to='/carrito' 
+                aria-label='Ver carrito de compras' 
+                role="menuitem"
+                title="Carrito"
+                style={{ fontSize: '24px', fontWeight: 'bold' }}
+              >
+                🛒
               </NavLink>
             </li>
           </ul>
