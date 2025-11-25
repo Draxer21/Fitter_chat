@@ -68,7 +68,11 @@ if not defined HAS_MODEL (
 )
 
 if not defined PROFILE_ENCRYPTION_KEY (
-    echo [!] La variable PROFILE_ENCRYPTION_KEY no esta configurada. Usa una clave Fernet antes de trabajar con perfiles reales.
+    echo [!] Generando clave PROFILE_ENCRYPTION_KEY automaticamente...
+    for /f "delims=" %%A in ('%PYTHON_BIN% -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"') do (
+        set "PROFILE_ENCRYPTION_KEY=%%A"
+    )
+    echo [✓] Clave generada: !PROFILE_ENCRYPTION_KEY!
 )
 
 if not defined BACKEND_PORT set "BACKEND_PORT=5000"

@@ -165,7 +165,7 @@ slots:
 
 responses:
   utter_saludar:
-    - text: "Hola, soy Fitter. En que puedo ayudarte hoy?"
+    - text: "¡Hola! Soy Fitter, tu compañero de entrenamiento. ¿Qué tal, amigo? ¿En qué te doy una mano hoy?"
       buttons:
         - title: "Ver mi perfil"
           payload: "/consultar_perfil"
@@ -177,37 +177,37 @@ responses:
           payload: "/soporte_general"
 
   utter_info_servicios:
-    - text: "Puedo generar rutinas, sugerir dietas, enviar planes por correo, consultar reservas y ayudarte a actualizar tu perfil."
+    - text: "Puedo generar rutinas, sugerir dietas, enviar planes por correo, consultar reservas y ayudarte a actualizar tu perfil. Estoy aquí para que entrenes con confianza."
 
   utter_dolor_lesion:
     - text: "Si notas dolor o una lesion recurrente, baja la intensidad y consulta con un profesional."
 
   utter_pedir_contacto:
-    - text: "Necesito un correo o telefono para enviarte la rutina. Me lo compartes?"
+    - text: "Genial, necesito un correo o teléfono para enviarte la rutina. ¿Me lo compartes, por fa?"
 
   utter_envio_rutina_correo:
-    - text: "Perfecto, en unos minutos te envio la rutina a {contacto}."
+    - text: "Perfecto, en unos minutos te envío la rutina a {contacto}. ¡Avísame si necesitas otro formato!"
 
   utter_ask_codigo_reserva:
-    - text: "Indica el codigo de tu reserva para revisar el estado."
+    - text: "Indícame el código de tu reserva y te cuento el estado, amigo."
 
   utter_reserva_estado:
-    - text: "Estado de la reserva {codigo_reserva}: actualizado y confirmado."
+    - text: "Estado de la reserva {codigo_reserva}: actualizado y confirmado. ¿Algo más que quieras revisar?"
 
   utter_suscripcion_alta:
-    - text: "Activemos tu suscripcion. Dime el plan que prefieres y el metodo de pago."
+    - text: "¡Vamos con tu suscripción! Dime qué plan prefieres y el método de pago, y lo dejamos listo."
 
   utter_suscripcion_baja:
-    - text: "Puedo cancelar o pausar tu suscripcion. Confirma como deseas proceder."
+    - text: "Puedo cancelar o pausar tu suscripción. Cuéntame cómo prefieres proceder y lo hago enseguida."
 
   utter_fuera_de_alcance:
-    - text: "Lo siento, aun no puedo ayudarte con eso. Puedes reformular tu consulta?"
+    - text: "Lo siento, aún no puedo ayudarte con eso. ¿Te parece si lo intentamos de otra manera o me das más detalles, amigo?"
 
   utter_perfil_resumen:
     - text: "{resumen_perfil}"
 
   utter_perfil_incompleto:
-    - text: "Para continuar necesito datos basicos de tu perfil. Prefieres actualizarlos aqui o desde la pagina?"
+    - text: "Para continuar necesito datos básicos de tu perfil. ¿Prefieres actualizarlos aquí conmigo o desde la página?"
       buttons:
         - title: "Actualizar con el bot"
           payload: "/actualizar_perfil_bot"
@@ -215,13 +215,13 @@ responses:
           payload: "/navegar_perfil_web"
 
   utter_link_perfil:
-    - text: "Puedes actualizar tu informacion desde la pagina de perfil en https://app.fitter/perfil. Cuando hayas terminado, vuelve y dime si necesitas algo mas."
+    - text: "Puedes actualizar tu información desde la página de perfil en https://app.fitter/perfil. Cuando termines, vuelve y dime si necesitas algo más."
 
   utter_perfil_actualizado:
-    - text: "Perfecto, ya tengo tus datos al dia. Puedo continuar con lo que estabamos revisando."
+    - text: "Perfecto, ya tengo tus datos al día. ¿Seguimos con lo que estábamos viendo o hay algo más en lo que te ayude?"
 
   utter_soporte_opciones:
-    - text: "Selecciona el tipo de ayuda que necesitas."
+    - text: "Dime cómo te puedo ayudar, amigo. Elige una opción y vamos al tiro:"
       buttons:
         - title: "Problemas con MFA"
           payload: "/soporte_mfa"

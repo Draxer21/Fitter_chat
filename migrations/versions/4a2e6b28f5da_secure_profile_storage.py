@@ -7,6 +7,7 @@ import os
 
 from alembic import op
 import sqlalchemy as sa
+from sqlalchemy import inspect
 from cryptography.fernet import Fernet, InvalidToken
 
 # revision identifiers, used by Alembic.
@@ -52,10 +53,7 @@ def _decrypt_payload(cipher: Fernet, payload: bytes) -> dict:
     return json.loads(decrypted.decode("utf-8"))
 
 
-def upgrade() -> None:
-    bind = op.get_bind()
-    cipher = _load_cipher()
-
+def _create_profile_table():
     op.create_table(
         "user_profile",
         sa.Column("id", sa.Integer(), primary_key=True),
@@ -66,24 +64,76 @@ def upgrade() -> None:
         sa.Column("updated_at", sa.DateTime(), nullable=False, default=datetime.utcnow),
     )
 
-    result = bind.execute(
-        sa.text(
-            "SELECT id, weight_kg, height_cm, body_fat_percent, fitness_goal, dietary_preferences, "
-            "health_conditions, additional_notes FROM \"user\""
-        )
-    )
-    now = datetime.utcnow()
 
-    for row in result.mappings():
+def _build_legacy_select(columns: set) -> str:
+    # Usa NULL con cast cuando la columna no existe en el esquema legacy.
+    def _expr(name: str, sql_type: str) -> str:
+        if name in columns:
+            return f'"{name}"'
+        return f"NULL::{sql_type} AS \"{name}\""
+
+    parts = [
+        _expr("weight_kg", "double precision"),
+        _expr("height_cm", "double precision"),
+        _expr("body_fat_percent", "double precision"),
+        _expr("fitness_goal", "varchar"),
+        _expr("dietary_preferences", "varchar"),
+        _expr("health_conditions", "jsonb"),
+        _expr("additional_notes", "text"),
+        _expr("created_at", "timestamp"),
+        _expr("updated_at", "timestamp"),
+    ]
+    return "SELECT user_id, " + ", ".join(parts) + " FROM user_profile"
+
+
+def upgrade() -> None:
+    bind = op.get_bind()
+    cipher = _load_cipher()
+    insp = inspect(bind)
+    has_table = "user_profile" in insp.get_table_names()
+    columns = set()
+    if has_table:
+        columns = {col["name"] for col in insp.get_columns("user_profile")}
+
+    # Extrae filas legadas si existe tabla sin cifrado.
+    legacy_rows = []
+    if has_table and "encrypted_payload" not in columns:
+        legacy_rows = list(
+            bind.execute(
+                sa.text(_build_legacy_select(columns))
+            ).mappings()
+        )
+        op.drop_table("user_profile")
+        has_table = False
+
+    if not has_table:
+        _create_profile_table()
+
+    # Determina fuente de datos para payloads.
+    now = datetime.utcnow()
+    if legacy_rows:
+        source_rows = legacy_rows
+    elif not columns or "encrypted_payload" not in columns:
+        source_rows = bind.execute(
+            sa.text(
+                "SELECT id as user_id, weight_kg, height_cm, body_fat_percent, fitness_goal, dietary_preferences, "
+                "health_conditions, additional_notes, NULL::timestamp as created_at, NULL::timestamp as updated_at "
+                "FROM \"user\""
+            )
+        ).mappings()
+    else:
+        source_rows = []
+
+    for row in source_rows:
         profile = {
-            "weight_kg": row["weight_kg"],
-            "height_cm": row["height_cm"],
-            "body_fat_percent": row["body_fat_percent"],
-            "fitness_goal": row["fitness_goal"],
-            "dietary_preferences": row["dietary_preferences"],
-            "health_conditions": row["health_conditions"] or [],
-            "additional_notes": row["additional_notes"],
-            "last_updated_at": now.isoformat(),
+            "weight_kg": row.get("weight_kg"),
+            "height_cm": row.get("height_cm"),
+            "body_fat_percent": row.get("body_fat_percent"),
+            "fitness_goal": row.get("fitness_goal"),
+            "dietary_preferences": row.get("dietary_preferences"),
+            "health_conditions": row.get("health_conditions") or [],
+            "additional_notes": row.get("additional_notes"),
+            "last_updated_at": (row.get("updated_at") or now).isoformat(),
         }
         normalized = {k: v for k, v in profile.items() if v not in (None, [], "")}
         if not normalized:
@@ -96,17 +146,20 @@ def upgrade() -> None:
                 "VALUES (:user_id, :payload, :checksum, :created_at, :updated_at)"
             ),
             {
-                "user_id": row["id"],
+                "user_id": row["user_id"],
                 "payload": encrypted,
                 "checksum": checksum,
-                "created_at": now,
-                "updated_at": now,
+                "created_at": row.get("created_at") or now,
+                "updated_at": row.get("updated_at") or now,
             },
         )
 
+    # Limpia columnas de perfil en la tabla user si existen.
+    user_columns = {col["name"] for col in insp.get_columns("user")}
     with op.batch_alter_table("user", schema=None) as batch_op:
         for column in reversed(PROFILE_FIELDS):
-            batch_op.drop_column(column)
+            if column in user_columns:
+                batch_op.drop_column(column)
 
 
 def downgrade() -> None:
