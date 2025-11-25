@@ -1,5 +1,5 @@
 .home-offers-section {
-    --offers-bg: #ffffff;
+    --offers-bg: var(--bg);
     width: 100%;
     background: var(--offers-bg);
 }
@@ -38,12 +38,12 @@
 
 .productos-scroll-wrapper::before {
     left: 0;
-    background: linear-gradient(to right, var(--offers-bg), rgba(255,255,255,0));
+    background: linear-gradient(to right, var(--bg), rgba(255,255,255,0));
 }
 
 .productos-scroll-wrapper::after {
     right: 0;
-    background: linear-gradient(to left, var(--offers-bg), rgba(255,255,255,0));
+    background: linear-gradient(to left, var(--bg), rgba(255,255,255,0));
 }
 
 .productos-scroll-btn {
@@ -171,8 +171,8 @@ body {
 }
 
 .productos-scroll > .producto {
-    background-color: #fff;
-    border: 1px solid #ddd;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 14px;
     flex: 0 0 auto;
     width: clamp(220px, 22vw, 320px);
@@ -181,6 +181,7 @@ body {
     box-shadow: 0 8px 16px rgba(15, 23, 42, 0.08);
     transition: transform 0.3s, box-shadow 0.3s;
     scroll-snap-align: start;
+    color: var(--text);
 }
 
 .productos-scroll > .producto:hover {
@@ -204,28 +205,29 @@ body {
 
 .productos h2 {
     font-size: 18px;
-    color: #333;
+    color: var(--text);
     margin: 10px 0 5px;
 }
 
 .productos p {
-    color: #777;
+    color: var(--muted);
     margin: 5px 0;
     font-size: 14px;
 }
 
 .productos .precio {
     font-weight: bold;
-    color: #444;
+    color: var(--text);
     font-size: 16px;
     margin-top: 5px;
 }
 
 .producto a{
     text-decoration: none;
+    color: inherit;
 }
 .producto h4 {
-    color: black;
+    color: var(--text);
     font-size: 20px; /* Ajusta el tamaño si es necesario */
     text-align: center; /* Opcional: centra el texto */
     word-break: break-word; /* Rompe palabras largas */

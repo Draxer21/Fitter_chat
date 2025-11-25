@@ -1,47 +1,42 @@
 /* Side controls: collapsed bar that expands on hover to reveal buttons */
 .side-controls {
   position: fixed;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
+  left: 12px;
+  bottom: 20px;
   z-index: 1200;
-  transition: width 180ms ease, box-shadow 180ms ease;
   width: 48px;
   overflow: visible;
+  will-change: width;
 }
 
 .side-controls-inner {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
-  background: rgba(255,255,255,0.92);
-  color: #111;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--text);
   border-radius: 12px;
   padding: 8px;
   box-shadow: 0 6px 18px rgba(0,0,0,0.12);
   width: 48px;
-  align-items: center;
+  transition: width 180ms ease-out, padding 180ms ease-out, flex-direction 180ms ease-out, background-color 200ms ease, color 200ms ease;
+  flex-wrap: nowrap;
 }
 
-/* Dark theme adjustments */
-.theme-dark .side-controls-inner,
-body.theme-dark .side-controls-inner {
-  background: rgba(24,24,24,0.9);
-  color: #eee;
-}
-
-.side-controls:hover,
-.side-controls:focus-within {
-  width: 180px;
+.theme-dark .side-controls-inner {
+  background: rgba(11, 16, 32, 0.95);
 }
 
 .side-controls:hover .side-controls-inner,
 .side-controls:focus-within .side-controls-inner {
-  width: 180px;
+  width: 200px;
   flex-direction: row;
   align-items: center;
+  justify-content: flex-start;
   padding: 10px 12px;
+  flex-wrap: wrap;
 }
 
 .sc-btn {
@@ -75,8 +70,25 @@ body.theme-dark .side-controls-inner {
 
 .sc-theme { }
 .sc-lang { }
-.sc-zoom { display: inline-flex; flex-direction: row; align-items: center; gap:6px }
-.sc-zoom .sc-btn { font-weight: 600 }
+.sc-zoom { 
+  display: flex; 
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 32px;
+  height: auto;
+}
+.side-controls:hover .sc-zoom,
+.side-controls:focus-within .sc-zoom {
+  flex-direction: row;
+  width: auto;
+  gap: 6px;
+}
+.sc-zoom .sc-btn { 
+  font-weight: 600;
+  padding: 4px 6px;
+}
 
 @media (max-width: 640px) {
   .side-controls { display: none; }

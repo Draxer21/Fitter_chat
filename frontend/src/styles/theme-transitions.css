@@ -1,0 +1,61 @@
+/* Theme transition styles - enables smooth color transitions when theme changes */
+
+/* Force theme colors on all elements */
+html,
+body,
+#root {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  transition: background-color 200ms ease, 
+              color 200ms ease !important;
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 200ms ease, 
+              color 200ms ease,
+              border-color 200ms ease !important;
+}
+
+/* Reduce transitions on inputs to avoid lag */
+input,
+textarea,
+select {
+  transition: none !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  transition: border-color 200ms ease, box-shadow 200ms ease !important;
+}
+
+/* Preserve transform/position animations (not theme-related) */
+button,
+a,
+.btn {
+  transition: background-color 200ms ease,
+              color 200ms ease,
+              border-color 200ms ease,
+              transform 150ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+button:active,
+.btn:active {
+  transition: none !important;
+}
+
+/* Override legacy colors with theme variables */
+.productos > div {
+  background-color: var(--bg) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+/* Generic white background elements */
+div[style*="background-color: #fff"],
+div[style*="background-color: #ffffff"],
+[style*="background-color: #fff"],
+[style*="background-color: #ffffff"] {
+  background-color: var(--bg) !important;
+}

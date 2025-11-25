@@ -1,0 +1,160 @@
+/* CRITICAL: Theme CSS loaded LAST to override Bootstrap and other styles */
+
+/* Force body and root to always have theme colors */
+html {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+body {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  transition: background-color 200ms ease, color 200ms ease !important;
+}
+
+#root {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+/* Override Bootstrap defaults */
+.bg-white,
+.bg-light,
+[class*="bg-white"],
+[class*="bg-light"] {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+/* Form controls */
+.form-control,
+.form-select,
+.input-group {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+  border-color: var(--primary) !important;
+}
+
+/* Cards */
+.card {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+.card-body {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+/* Text utilities */
+.text-dark,
+.text-black {
+  color: var(--text) !important;
+}
+
+.text-muted {
+  color: var(--muted) !important;
+}
+
+/* Links */
+a {
+  color: var(--primary) !important;
+}
+
+a:hover {
+  color: var(--primary-press) !important;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: #fff !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-press) !important;
+  border-color: var(--primary-press) !important;
+}
+
+/* Tables */
+.table {
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.table-light {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+/* Dropdowns */
+.dropdown-menu {
+  background-color: var(--bg) !important;
+  border-color: var(--border) !important;
+}
+
+.dropdown-item {
+  color: var(--text) !important;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+/* Modals */
+.modal-content {
+  background-color: var(--bg) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+.modal-header {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+}
+
+.modal-body {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+.modal-footer {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+}
+
+/* Alerts */
+.alert {
+  background-color: var(--surface) !important;
+  border-color: var(--border) !important;
+  color: var(--text) !important;
+}
+
+/* Badges */
+.badge {
+  background-color: var(--primary) !important;
+}
+
+/* Code blocks */
+code,
+pre {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+/* Ensure all text inherits color */
+h1, h2, h3, h4, h5, h6,
+p, span, div, section, article {
+  color: inherit;
+}

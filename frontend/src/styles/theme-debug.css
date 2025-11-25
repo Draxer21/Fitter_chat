@@ -1,0 +1,18 @@
+/* Test: Verify CSS variables are working */
+
+/* This file is for testing - can be deleted after verification */
+body {
+  --test-bg: var(--bg);
+  --test-text: var(--text);
+}
+
+/* Debugging: show what variables are being used */
+html::before {
+  content: "Light mode loaded. Check DevTools for CSS variables.";
+  display: none;
+}
+
+html.theme-dark::before {
+  content: "Dark mode loaded. Check DevTools for CSS variables.";
+  display: none;
+}

@@ -19,12 +19,14 @@
   position: sticky;
   top: 100px;
   align-self: start;
+  color: #111111;
 }
 
 .catalog-filters h2,
 .catalog-cart__header h2 {
   font-size: 1.4rem;
   margin-bottom: 8px;
+  color: #111111;
 }
 
 .catalog-filter-group {
@@ -58,6 +60,7 @@
   overflow: hidden;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
+  
 }
 
 .catalog-card:hover {
@@ -95,15 +98,17 @@
 .catalog-card__body {
   padding: 16px;
   flex-grow: 1;
+  color: #111111;
 }
 
 .catalog-card__body h3 {
   font-size: 1.1rem;
   margin-bottom: 8px;
+  color: #111111;
 }
 
 .catalog-card__description {
-  color: #6c757d;
+  color: #111111;
   font-size: 0.9rem;
   max-height: 60px;
   overflow: hidden;
@@ -114,6 +119,7 @@
   justify-content: space-between;
   font-size: 0.9rem;
   font-weight: 600;
+  color: #111111;
   margin-top: 12px;
 }
 
@@ -123,6 +129,11 @@
   gap: 8px;
   padding: 16px;
   border-top: 1px solid #f0f0f0;
+}
+
+.catalog-card__btn {
+  flex: 1 1 0;
+  text-align: center;
 }
 
 .catalog-cart__header {
@@ -139,6 +150,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  color: #111111;
 }
 
 .catalog-cart__list li {
@@ -147,6 +159,7 @@
   gap: 12px;
   border-bottom: 1px dashed #e4e4e4;
   padding-bottom: 8px;
+  color: #111111;
 }
 
 .catalog-cart__total {
@@ -155,6 +168,7 @@
   justify-content: space-between;
   margin-bottom: 12px;
   font-size: 1.1rem;
+  color: #111111;
 }
 
 @media (max-width: 1200px) {

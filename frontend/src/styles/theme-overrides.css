@@ -1,0 +1,106 @@
+/* Final CSS overrides to ensure theme is applied everywhere */
+
+/* Force all backgrounds to use CSS variables */
+.container,
+.container-fluid {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* Bootstrap form controls */
+.form-control,
+.form-select {
+  background-color: var(--bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.form-control::placeholder {
+  color: var(--muted);
+}
+
+/* Cards */
+.card {
+  background-color: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.card-body {
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-press);
+  border-color: var(--primary-press);
+}
+
+/* Text utilities */
+.text-muted {
+  color: var(--muted) !important;
+}
+
+.bg-light {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+.bg-dark {
+  background-color: var(--surface) !important;
+  color: var(--text) !important;
+}
+
+/* Ensure modal backgrounds respect theme */
+.modal-content {
+  background-color: var(--bg);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.modal-header {
+  border-color: var(--border);
+  background-color: var(--surface);
+}
+
+.modal-footer {
+  border-color: var(--border);
+  background-color: var(--surface);
+}
+
+/* Dropdown menus */
+.dropdown-menu {
+  background-color: var(--bg);
+  border-color: var(--border);
+}
+
+.dropdown-item {
+  color: var(--text);
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+/* Ensure all text uses theme colors */
+h1, h2, h3, h4, h5, h6,
+p, span, a, li {
+  color: inherit;
+}
+
+/* Links */
+a {
+  color: var(--primary);
+}
+
+a:hover {
+  color: var(--primary-press);
+}
