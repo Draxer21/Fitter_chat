@@ -135,6 +135,8 @@ export default function CatalogPage() {
     }
   };
 
+  const totalItems = cartItems.reduce((acc, item) => acc + (item.cantidad || 0), 0);
+
   return (
     <main className="catalog-layout container-fluid py-4">
       <div className="row justify-content-center">
@@ -228,10 +230,10 @@ export default function CatalogPage() {
                   const image = product.imagen_url || "/fitter_logo.png";
                   return (
                     <article key={product.id} className="catalog-card">
-                      <div className="catalog-card__image">
+                      <Link to={`/producto/${product.id}`} className="catalog-card__image">
                         <img src={image} alt={product.nombre} loading="lazy" />
                         {product.categoria && <span className="catalog-card__badge">{product.categoria}</span>}
-                      </div>
+                      </Link>
                       <div className="catalog-card__body">
                         <h3>{product.nombre}</h3>
                         <p className="catalog-card__description">{product.descripcion || "Sin descripción"}</p>
@@ -250,12 +252,12 @@ export default function CatalogPage() {
                         </div>
                       </div>
                       <div className="catalog-card__actions">
-                        <Link to={`/producto/${product.id}`} className="btn btn-outline-secondary btn-sm">
+                        <Link to={`/producto/${product.id}`} className="btn btn-outline-secondary btn-sm catalog-card__btn">
                           Ver detalle
                         </Link>
                         <button
                           type="button"
-                          className="btn btn-dark btn-sm"
+                          className="btn btn-dark btn-sm catalog-card__btn"
                           disabled={outOfStock}
                           onClick={() => addToCart(product.id)}
                         >
@@ -271,7 +273,7 @@ export default function CatalogPage() {
             <aside className="catalog-cart">
               <div className="catalog-cart__header">
                 <h2>Tu carrito</h2>
-                <span>{cartItems.length} productos</span>
+                <span>{totalItems} producto{totalItems === 1 ? "" : "s"}</span>
               </div>
               {cartItems.length === 0 ? (
                 <p className="text-muted mb-0">No tienes productos agregados.</p>

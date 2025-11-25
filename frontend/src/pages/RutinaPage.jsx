@@ -74,10 +74,10 @@ export default function RutinaPage() {
         <h1 style={{ fontSize: 22, fontWeight: 600 }}>
           Rutina: {titulo(musculo)} · {nivel}
         </h1>
-        <p style={{ color: "#555" }}>
+        <p style={{ color: "var(--muted)" }}>
           Objetivo: <strong>{objetivo}</strong>
         </p>
-        <p style={{ color: "#777" }}>ID: {id}</p>
+        <p style={{ color: "var(--muted)" }}>ID: {id}</p>
 
         {usandoFallback && (
           <div

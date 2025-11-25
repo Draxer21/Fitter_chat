@@ -211,11 +211,11 @@ export default function Navbar() {
       <div className='modal fade' id='supportModal' tabIndex={-1} aria-labelledby='supportModalLabel' aria-hidden='true' ref={supportModalRef}>
         <div className='modal-dialog'>
           <div className='modal-content'>
-            <div className='modal-header' style={{ backgroundColor: 'black' }}>
-              <h1 className='modal-title fs-5' id='supportModalLabel' style={{ color: '#ffffff' }}>
+            <div className='modal-header'>
+              <h1 className='modal-title fs-5' id='supportModalLabel'>
                 {t('support.title')}
               </h1>
-              <button type='button' className='btn-close' data-bs-dismiss='modal' aria-label='Close' style={{ backgroundColor: '#ffffff' }} />
+              <button type='button' className='btn-close' data-bs-dismiss='modal' aria-label='Close' />
             </div>
             <div className='modal-body'>
               <strong>

@@ -14,7 +14,7 @@ export default function HomeHero() {
   return (
     <header className="home-hero" style={style}>
       <div className="hero-overlay" />
-      <div className="hero-inner container">
+      <div className="hero-inner">
         <div className="hero-content">
           <h1 className="hero-title">
             <span className="muted">{t('home.hero.title.muted')}</span>{' '}

@@ -16,7 +16,7 @@ export default function BoletaPage() {
   const items = useMemo(() => Object.values(carrito.items || data?.items || {}), [carrito, data]);
   const total = useMemo(() => carrito.total ?? data?.total_carrito ?? data?.total ?? 0, [carrito, data]);
 
-  if (err) return <div style={{ padding: 16, color: "#b91c1c" }}>{err}</div>;
+  if (err) return <div style={{ padding: 16, color: "var(--text)" }} className="text-danger">{err}</div>;
   if (!data) return <div style={{ padding: 16 }}>Generando boleta…</div>;
 
   return (

@@ -26,7 +26,7 @@ export default function TiendaPage() {
   };
 
   if (loading) return <div style={{ padding: 16 }}>Cargando productos…</div>;
-  if (err) return <div style={{ padding: 16, color: "#b91c1c" }}>{err}</div>;
+  if (err) return <div style={{ padding: 16, color: "var(--text)" }} className="text-danger">{err}</div>;
 
   return (
     <div className="legacy-scope" style={{ padding: 16 }}>
