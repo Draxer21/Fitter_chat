@@ -11,7 +11,7 @@ function getOrCreateSenderId() {
   return v;
 }
 
-export default function Chatbot({ endpoint = "/chat/send", senderId }) {
+export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessage }) {
   const uidRef = useRef(senderId || getOrCreateSenderId());
 
   const [messages, setMessages] = useState(() => [
@@ -57,6 +57,11 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
     pushMessage({ from: "user", text });
     setInput("");
     setLoading(true);
+
+    // Llamar callback si existe
+    if (onNewMessage && typeof onNewMessage === "function") {
+      onNewMessage(text);
+    }
 
     abortRef.current?.abort();
     const controller = new AbortController();

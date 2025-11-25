@@ -37,6 +37,7 @@ const AboutPage = lazy(() => import("./pages/AboutPage"));
 const TermsPage = lazy(() => import("./pages/TermsPage"));
 const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const AccessibilityPage = lazy(() => import("./pages/AccessibilityPage"));
+const ChatPage = lazy(() => import("./pages/ChatPage"));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -55,7 +56,7 @@ function NotFound() {
   );
 }
 
-const HIDDEN_CHAT_ROUTES = ["/login", "/registro", "/pago", "/boleta"];
+const HIDDEN_CHAT_ROUTES = ["/login", "/registro", "/pago", "/boleta", "/chat"];
 
 function ChatWidgetToggle() {
   const { pathname } = useLocation();
@@ -91,6 +92,7 @@ export default function App() {
                       </Route>
 
                       <Route path="/catalogo" element={<CatalogPage />} />
+                      <Route path="/chat" element={<ChatPage />} />
                       <Route path="/carrito" element={<CarritoPage />} />
                       <Route path="/pago" element={<PagoPage />} />
                       <Route path="/boleta" element={<BoletaPage />} />
