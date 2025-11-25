@@ -100,6 +100,14 @@ class ChatUserContext(db.Model):
     def to_metadata(self) -> Dict[str, Any]:
         # Keep metadata compact to avoid inflating Rasa payloads.
         meta_history = []
+        last_explanation = None
+        for item in reversed(self.history or []):
+            if last_explanation:
+                break
+            if isinstance(item, dict) and "explanation" in item:
+                exp = item.get("explanation")
+                if isinstance(exp, str) and exp.strip():
+                    last_explanation = exp.strip()[:300]
         for item in (self.history or [])[-5:]:
             meta_history.append(
                 {
@@ -113,5 +121,5 @@ class ChatUserContext(db.Model):
             "last_routine": self.last_routine,
             "last_diet": self.last_diet,
             "recent_history": meta_history,
+            "last_explanation": last_explanation,
         }
-

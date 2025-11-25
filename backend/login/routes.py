@@ -297,6 +297,7 @@ def profile_update():
 
     data = request.get_json(force=True, silent=True) or {}
     errors: List[str] = []
+    profile_payload = {}
     if "full_name" in data:
         new_name = _sanitize_optional_string(data.get("full_name"), max_length=120)
         if not new_name:
@@ -307,48 +308,63 @@ def profile_update():
     weight, error = _parse_optional_float(data.get("weight_kg"), field="weight_kg", minimum=0.0)
     if error:
         errors.append(error)
-    elif weight is not None:
-        user.weight_kg = weight
-    elif data.get("weight_kg") in ("", None):
-        user.weight_kg = None
+    elif "weight_kg" in data:
+        profile_payload["weight_kg"] = weight
 
     height, error = _parse_optional_float(data.get("height_cm"), field="height_cm", minimum=0.0)
     if error:
         errors.append(error)
-    elif height is not None:
-        user.height_cm = height
-    elif data.get("height_cm") in ("", None):
-        user.height_cm = None
+    elif "height_cm" in data:
+        profile_payload["height_cm"] = height
 
     body_fat, error = _parse_optional_float(
         data.get("body_fat_percent"), field="body_fat_percent", minimum=0.0, maximum=100.0
     )
     if error:
         errors.append(error)
-    elif body_fat is not None:
-        user.body_fat_percent = body_fat
-    elif data.get("body_fat_percent") in ("", None):
-        user.body_fat_percent = None
+    elif "body_fat_percent" in data:
+        profile_payload["body_fat_percent"] = body_fat
 
     if "fitness_goal" in data:
-        user.fitness_goal = _sanitize_optional_string(data.get("fitness_goal"), max_length=255)
+        profile_payload["fitness_goal"] = _sanitize_optional_string(data.get("fitness_goal"), max_length=255)
 
     if "dietary_preferences" in data:
-        user.dietary_preferences = _sanitize_optional_string(data.get("dietary_preferences"), max_length=255)
+        profile_payload["dietary_preferences"] = _sanitize_optional_string(
+            data.get("dietary_preferences"), max_length=255
+        )
 
     if "additional_notes" in data:
-        user.additional_notes = _sanitize_optional_string(data.get("additional_notes"), max_length=2000)
+        profile_payload["additional_notes"] = _sanitize_optional_string(
+            data.get("additional_notes"), max_length=2000
+        )
 
     if "health_conditions" in data:
         conditions, error = _parse_health_conditions(data.get("health_conditions"))
         if error:
             errors.append(error)
         else:
-            user.health_conditions = conditions
+            # Se almacena como texto simplificado para el perfil cifrado.
+            profile_payload["medical_conditions"] = ", ".join(conditions) if conditions else None
 
     if errors:
         db.session.rollback()
         return jsonify({"error": "; ".join(errors)}), 400
+
+    profile = user.ensure_profile()
+    try:
+        profile.update_from_payload(profile_payload)
+    except ValueError as exc:
+        db.session.rollback()
+        return jsonify({"error": str(exc)}), 400
+
+    # Limpiamos campos de salud en texto plano en el modelo User.
+    user.weight_kg = None
+    user.height_cm = None
+    user.body_fat_percent = None
+    user.fitness_goal = None
+    user.dietary_preferences = None
+    user.health_conditions = None
+    user.additional_notes = None
 
     db.session.commit()
     return jsonify({"ok": True, "profile": user.to_dict()}), 200

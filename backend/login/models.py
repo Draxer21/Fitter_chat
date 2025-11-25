@@ -98,31 +98,59 @@ class User(db.Model):
         if self.profile:
             return self.profile
         from ..profile.models import UserProfile  # import local para evitar ciclos
+        from ..security.profile_crypto import encrypt_profile_payload, profile_payload_checksum
 
-        self.profile = UserProfile(user=self)
+        # Crear un perfil con payload vacío pero cifrado
+        empty_payload = {
+            "weight_kg": None,
+            "height_cm": None,
+            "age_years": None,
+            "sex": None,
+            "activity_level": None,
+            "primary_goal": None,
+            "allergies": None,
+            "medical_conditions": None,
+            "notes": None,
+            "body_fat_percent": None,
+            "fitness_goal": None,
+            "dietary_preferences": None,
+            "additional_notes": None,
+        }
+        encrypted = encrypt_profile_payload(empty_payload)
+        checksum = profile_payload_checksum(encrypted)
+        
+        self.profile = UserProfile(
+            user=self,
+            encrypted_payload=encrypted,
+            payload_checksum=checksum
+        )
         db.session.add(self.profile)
         return self.profile
 
     def to_dict(self, *, include_profile: bool = True) -> Dict[str, any]:
+        profile_data: Optional[Dict[str, any]] = None
+        if include_profile and self.profile:
+            profile_data = self.profile.to_dict()
+
         data = {
             "id": self.id,
             "email": self.email,
             "username": self.username,
             "full_name": self.full_name,
             "is_admin": self.is_admin,
-            "weight_kg": self.weight_kg,
-            "height_cm": self.height_cm,
-            "body_fat_percent": self.body_fat_percent,
-            "fitness_goal": self.fitness_goal,
-            "dietary_preferences": self.dietary_preferences,
-            "health_conditions": self.health_conditions or [],
-            "additional_notes": self.additional_notes,
+            "weight_kg": (profile_data or {}).get("weight_kg", self.weight_kg),
+            "height_cm": (profile_data or {}).get("height_cm", self.height_cm),
+            "body_fat_percent": (profile_data or {}).get("body_fat_percent", self.body_fat_percent),
+            "fitness_goal": (profile_data or {}).get("fitness_goal", self.fitness_goal),
+            "dietary_preferences": (profile_data or {}).get("dietary_preferences", self.dietary_preferences),
+            "health_conditions": (profile_data or {}).get("medical_conditions", self.health_conditions) or [],
+            "additional_notes": (profile_data or {}).get("additional_notes", self.additional_notes),
             "totp_enabled": bool(self.totp_enabled),
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
         }
         if include_profile:
-            data["profile"] = self.profile.to_dict() if self.profile else None
+            data["profile"] = profile_data
         return data
 
     @classmethod

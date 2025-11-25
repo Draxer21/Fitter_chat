@@ -51,9 +51,15 @@ def _get_profile(user: User, create_if_missing: bool = True) -> Optional[UserPro
 def _profile_to_response(profile: UserProfile) -> Dict[str, object]:
     data = profile.to_dict()
     data["weight_bmi"] = None
-    if profile.height_cm and profile.height_cm > 0 and profile.weight_kg and profile.weight_kg > 0:
-        m = profile.height_cm / 100
-        data["weight_bmi"] = round(profile.weight_kg / (m * m), 2)
+    try:
+        height_cm = float(data.get("height_cm") or 0)
+        weight_kg = float(data.get("weight_kg") or 0)
+    except (TypeError, ValueError):
+        height_cm = 0
+        weight_kg = 0
+    if height_cm > 0 and weight_kg > 0:
+        m = height_cm / 100
+        data["weight_bmi"] = round(weight_kg / (m * m), 2)
     return data
 
 
@@ -98,11 +104,14 @@ def profile_update():
     contexts = ChatUserContext.query.filter_by(user_id=user.id).all()
     for ctx in contexts:
         changed = False
-        if profile.allergies is not None and ctx.allergies != profile.allergies:
-            ctx.allergies = profile.allergies
+        snapshot = profile.to_dict()
+        allergies = snapshot.get("allergies")
+        medical_conditions = snapshot.get("medical_conditions")
+        if allergies is not None and ctx.allergies != allergies:
+            ctx.allergies = allergies
             changed = True
-        if profile.medical_conditions is not None and ctx.medical_conditions != profile.medical_conditions:
-            ctx.medical_conditions = profile.medical_conditions
+        if medical_conditions is not None and ctx.medical_conditions != medical_conditions:
+            ctx.medical_conditions = medical_conditions
             changed = True
         if changed:
             ctx.touch()

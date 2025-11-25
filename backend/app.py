@@ -2,6 +2,7 @@
 import os
 import json
 import logging
+import time
 from typing import Any, Dict
 from flask import Flask, request, jsonify, render_template, session as flask_session
 from logging.handlers import RotatingFileHandler
@@ -18,6 +19,7 @@ from .bootstrap import init_extensions, load_models
 from .blueprints import register_blueprints
 from .extensions import db, cors  # unica instancia compartida
 from .chat.service import ChatService, ChatServiceError, ServiceResponse
+from .metrics import metrics, setup_metrics_logger
 
 # (opcional) rate limit si lo tienes instalado
 Limiter = None
@@ -90,6 +92,9 @@ def create_app() -> Flask:
     init_extensions(app)
     load_models(app)
 
+    # ---------------- Metrics logger ----------------
+    setup_metrics_logger(app.logger)
+
     # ---------------- Blueprints ----------------
     register_blueprints(app)
 
@@ -124,16 +129,33 @@ def create_app() -> Flask:
 
     @app.post("/chat/send")
     def chat_send():
+        started = time.perf_counter()
+        status = "ok"
+        status_code = 200
         try:
             data: Dict[str, Any] = request.get_json(force=True, silent=False)
         except Exception:
             db.session.rollback()
+            status = "error"
+            status_code = 400
+            elapsed_ms = (time.perf_counter() - started) * 1000
+            metrics.inc_counter("chat_send_total", tags={"status": status, "code": status_code})
+            metrics.observe_latency("chat_send_latency_ms", elapsed_ms, tags={"status": status})
             return _json_error("JSON invalido", 400)
 
         try:
             result = chat_service.send_message(data, request.headers, flask_session)
         except ChatServiceError as exc:
+            status = "error"
+            status_code = exc.status_code
+            elapsed_ms = (time.perf_counter() - started) * 1000
+            metrics.inc_counter("chat_send_total", tags={"status": status, "code": status_code})
+            metrics.observe_latency("chat_send_latency_ms", elapsed_ms, tags={"status": status})
             return _json_error(exc.message, exc.status_code)
+        status_code = result.status_code
+        elapsed_ms = (time.perf_counter() - started) * 1000
+        metrics.inc_counter("chat_send_total", tags={"status": status, "code": status_code})
+        metrics.observe_latency("chat_send_latency_ms", elapsed_ms, tags={"status": status})
         return jsonify(result.payload), result.status_code
 
     @app.get("/chat/context/<sender>")
@@ -160,16 +182,34 @@ def create_app() -> Flask:
 
     @app.post("/nlu/parse")
     def nlu_parse():
+        started = time.perf_counter()
+        status = "ok"
+        status_code = 200
         try:
             data: Dict[str, Any] = request.get_json(force=True, silent=False)
         except Exception:
+            status = "error"
+            status_code = 400
+            elapsed_ms = (time.perf_counter() - started) * 1000
+            metrics.inc_counter("nlu_parse_total", tags={"status": status, "code": status_code})
+            metrics.observe_latency("nlu_parse_latency_ms", elapsed_ms, tags={"status": status})
             return _json_error("JSON invÃ¡lido", 400)
 
         text = str(data.get("text", "")).strip()
         if not text:
+            status = "error"
+            status_code = 400
+            elapsed_ms = (time.perf_counter() - started) * 1000
+            metrics.inc_counter("nlu_parse_total", tags={"status": status, "code": status_code})
+            metrics.observe_latency("nlu_parse_latency_ms", elapsed_ms, tags={"status": status})
             return _json_error("El campo 'text' es obligatorio.", 400)
         max_message_len = int(app.config.get("MAX_MESSAGE_LEN", 5000))
         if len(text) > max_message_len:
+            status = "error"
+            status_code = 413
+            elapsed_ms = (time.perf_counter() - started) * 1000
+            metrics.inc_counter("nlu_parse_total", tags={"status": status, "code": status_code})
+            metrics.observe_latency("nlu_parse_latency_ms", elapsed_ms, tags={"status": status})
             return _json_error("El texto es demasiado largo.", 413)
 
         try:
@@ -182,10 +222,22 @@ def create_app() -> Flask:
             payload = resp.json()
         except requests.exceptions.RequestException as e:
             app.logger.exception("Fallo al contactar Rasa en /nlu/parse")
+            status = "error"
+            status_code = 502
+            elapsed_ms = (time.perf_counter() - started) * 1000
+            metrics.inc_counter("nlu_parse_total", tags={"status": status, "code": status_code})
+            metrics.observe_latency("nlu_parse_latency_ms", elapsed_ms, tags={"status": status})
             return _json_error(f"No se pudo contactar a Rasa NLU: {e}", 502)
         except json.JSONDecodeError:
+            status = "error"
+            status_code = 502
+            elapsed_ms = (time.perf_counter() - started) * 1000
+            metrics.inc_counter("nlu_parse_total", tags={"status": status, "code": status_code})
+            metrics.observe_latency("nlu_parse_latency_ms", elapsed_ms, tags={"status": status})
             return _json_error("Respuesta de Rasa NLU no es JSON vÃ¡lido.", 502)
-
+        elapsed_ms = (time.perf_counter() - started) * 1000
+        metrics.inc_counter("nlu_parse_total", tags={"status": status, "code": 200})
+        metrics.observe_latency("nlu_parse_latency_ms", elapsed_ms, tags={"status": status})
         return jsonify(payload), 200
 
     # ---------------- Seguridad bÃ¡sica en headers ----------------
