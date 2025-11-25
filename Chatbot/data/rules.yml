@@ -23,6 +23,23 @@ rules:
       - slot_was_set:
           - perfil_completo: null
 
+  - rule: atender solicitud de rutina con perfil incompleto
+    steps:
+      - intent: solicitar_rutina
+      - action: action_fetch_profile
+      - slot_was_set:
+          - perfil_completo: false
+      - action: utter_perfil_incompleto
+      - action: action_listen
+
+  - rule: atender solicitud de rutina con perfil completo
+    steps:
+      - intent: solicitar_rutina
+      - action: action_fetch_profile
+      - slot_was_set:
+          - perfil_completo: true
+      - action: action_generar_rutina
+
   - rule: atender solicitud de dieta
     steps:
       - intent: solicitar_dieta
@@ -30,12 +47,46 @@ rules:
       - slot_was_set:
           - perfil_completo: null
 
+  - rule: atender solicitud de dieta con perfil incompleto
+    steps:
+      - intent: solicitar_dieta
+      - action: action_fetch_profile
+      - slot_was_set:
+          - perfil_completo: false
+      - action: utter_perfil_incompleto
+      - action: action_listen
+
+  - rule: atender solicitud de dieta con perfil completo
+    steps:
+      - intent: solicitar_dieta
+      - action: action_fetch_profile
+      - slot_was_set:
+          - perfil_completo: true
+      - action: action_generar_dieta
+
   - rule: consultar perfil
     steps:
       - intent: consultar_perfil
       - action: action_fetch_profile
       - slot_was_set:
           - perfil_completo: null
+
+  - rule: consultar perfil incompleto
+    steps:
+      - intent: consultar_perfil
+      - action: action_fetch_profile
+      - slot_was_set:
+          - perfil_completo: false
+      - action: utter_perfil_incompleto
+      - action: action_listen
+
+  - rule: consultar perfil completo
+    steps:
+      - intent: consultar_perfil
+      - action: action_fetch_profile
+      - slot_was_set:
+          - perfil_completo: true
+      - action: utter_mostrar_perfil
 
   - rule: actualizar perfil
     steps:
