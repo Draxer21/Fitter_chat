@@ -55,11 +55,43 @@
 </div>
 <script>
   document.getElementById("hacer-compra").addEventListener("click", function(event) {
-      event.preventDefault();  // Prevenir el comportamiento por defecto del botón
+      event.preventDefault();
 
-      // Llamada AJAX para validar el carrito
-      fetch("{% url 'validar_carrito' %}", {
-          method: "GET",
+      // Obtener información del usuario de la sesión o solicitar
+      const userName = "{{ request.session.get('full_name', '') }}" || prompt("Ingresa tu nombre completo:");
+      const userEmail = "{{ request.session.get('email', '') }}" || prompt("Ingresa tu email:");
+
+      if (!userName || !userEmail) {
+          Swal.fire({
+              title: "Datos incompletos",
+              text: "Necesitamos tu nombre y email para procesar la compra",
+              icon: "warning",
+              confirmButtonText: "OK"
+          });
+          return;
+      }
+
+      // Mostrar loading
+      Swal.fire({
+          title: 'Procesando...',
+          text: 'Creando tu orden de compra',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          didOpen: () => {
+              Swal.showLoading();
+          }
+      });
+
+      // Llamar al endpoint de pago
+      fetch("/carrito/pagar", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+              name: userName,
+              email: userEmail
+          })
       })
       .then(response => response.json())
       .then(data => {
@@ -70,34 +102,37 @@
                   icon: "error",
                   confirmButtonText: "OK"
               });
-          } else if (data.errores) {
-              let errores = data.errores.join('<br>');
+          } else if (data.payment_url || data.sandbox_payment_url) {
+              // Redirigir a MercadoPago
+              const paymentUrl = data.sandbox_payment_url || data.payment_url;
+              
               Swal.fire({
-                  title: "Error",
-                  html: errores,
-                  icon: "error",
-                  confirmButtonText: "OK"
+                  title: "Redirigiendo a MercadoPago",
+                  text: "Serás redirigido a la plataforma de pago segura",
+                  icon: "info",
+                  timer: 2000,
+                  timerProgressBar: true,
+                  showConfirmButton: false
+              }).then(() => {
+                  window.location.href = paymentUrl;
               });
           } else {
               Swal.fire({
-                  title: "¡Compra exitosa!",
-                  text: "Gracias por tu compra. Serás redirigido a tu boleta",
-                  icon: "success",
+                  title: "Error",
+                  text: "No se pudo crear la preferencia de pago",
+                  icon: "error",
                   confirmButtonText: "OK"
-              }).then((result) => {
-                  if (result.isConfirmed) {
-                      window.location.href = "{% url 'Boleta' %}";
-                  }
               });
           }
       })
       .catch(error => {
           Swal.fire({
               title: "Error",
-              text: "Hubo un problema con la validación del carrito.",
+              text: "Hubo un problema al procesar tu compra. Por favor intenta nuevamente.",
               icon: "error",
               confirmButtonText: "OK"
           });
+          console.error("Error:", error);
       });
   });
 </script>

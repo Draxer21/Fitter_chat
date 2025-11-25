@@ -39,11 +39,39 @@ export default function CarritoPage() {
         setShowLoginPrompt(true);
         return;
       }
-    } catch {
-      setShowLoginPrompt(true);
-      return;
+      
+      // Llamar al endpoint de pago con MercadoPago
+      setActionError("");
+      const response = await fetch('/carrito/pagar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          // El backend tomará el nombre y email de la sesión
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setActionError(data.error || 'Error al procesar la compra');
+        return;
+      }
+
+      // Redirigir a MercadoPago
+      const paymentUrl = data.sandbox_payment_url || data.payment_url;
+      if (paymentUrl) {
+        window.location.href = paymentUrl;
+      } else {
+        setActionError('No se pudo obtener la URL de pago');
+      }
+
+    } catch (err) {
+      setActionError(err?.message || 'Error al procesar la compra');
+      setShowLoginPrompt(false);
     }
-    window.location.href = "/pago";
   };
 
   const isLoading = status === "loading";

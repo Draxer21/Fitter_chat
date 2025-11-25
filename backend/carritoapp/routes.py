@@ -11,6 +11,7 @@ from sqlalchemy import select
 from ..extensions import db
 from ..gestor_inventario.models import Producto
 from ..orders.models import Order
+from ..payments.service import MercadoPagoService
 from .carrito import Carrito
 
 bp = Blueprint("carrito", __name__)
@@ -189,64 +190,102 @@ def validar_carrito():
 
 @bp.post("/pagar")
 def procesar_pago():
-    data = request.get_json(silent=True) or {}
-
-    carrito = Carrito()
-    snapshot = carrito.snapshot()
-    if not snapshot.get("items"):
-        return jsonify({"error": "Carrito vacio."}), 400
-
-    card_num = (data.get("card_num") or "").replace(" ", "").replace("-", "")
-    exp = data.get("exp") or ""
-    cvv = data.get("cvv") or ""
-    name = (data.get("name") or session.get("full_name") or "").strip()
-    email = (data.get("email") or session.get("email") or session.get("user_email") or "").strip()
-
-    if not card_num.isdigit() or not (13 <= len(card_num) <= 19) or not _luhn_checksum(card_num):
-        return jsonify({"error": "Numero de tarjeta invalido."}), 400
-
+    """
+    Crear orden y redirigir a MercadoPago para el pago
+    """
     try:
-        mes, anno = exp.split("/")
-        mes = int(mes)
-        anno = int("20" + anno) if len(anno) == 2 else int(anno)
-        ahora = datetime.now()
-        expiracion = datetime(anno, mes, 1)
-        if expiracion < datetime(ahora.year, ahora.month, 1):
-            return jsonify({"error": "Tarjeta expirada."}), 400
-    except Exception:
-        return jsonify({"error": "Fecha de expiracion invalida (MM/YY)."}), 400
+        data = request.get_json(silent=True) or {}
 
-    if not cvv.isdigit() or len(cvv) not in (3, 4):
-        return jsonify({"error": "CVV invalido."}), 400
+        carrito = Carrito()
+        snapshot = carrito.snapshot()
+        
+        current_app.logger.info(f"Snapshot del carrito: {snapshot}")
+        
+        if not snapshot.get("items"):
+            return jsonify({"error": "Carrito vacio."}), 400
 
-    if not name:
-        return jsonify({"error": "Nombre del titular requerido."}), 400
+        # Obtener información del usuario
+        name = (data.get("name") or session.get("full_name") or "").strip()
+        email = (data.get("email") or session.get("email") or session.get("user_email") or "").strip()
 
-    exito, mensaje = validar_y_deducir(snapshot)
-    if not exito:
-        return jsonify({"error": mensaje or "Error procesando compra o stock insuficiente."}), 400
+        if not name:
+            return jsonify({"error": "Nombre requerido."}), 400
+        
+        if not email:
+            return jsonify({"error": "Email requerido."}), 400
 
-    try:
+        # Validar y deducir stock
+        exito, mensaje = validar_y_deducir(snapshot)
+        if not exito:
+            return jsonify({"error": mensaje or "Error procesando compra o stock insuficiente."}), 400
+
+        # Verificar que el total sea mayor a 0
+        total = float(snapshot.get("total", 0))
+        if total <= 0:
+            current_app.logger.error(f"Total inválido en snapshot: {total}")
+            return jsonify({"error": "El total de la compra debe ser mayor a 0"}), 400
+
+        # Crear la orden
         user_id = session.get("uid")
         order = Order.from_cart_snapshot(
             snapshot=snapshot,
-            status="paid",
+            status="pending",
             user_id=int(user_id) if user_id else None,
             customer_name=name,
-            customer_email=email or None,
-            payment_method="card",
-            payment_reference=card_num[-4:],
+            customer_email=email,
+            payment_method="mercadopago",
+            payment_reference=None,
             metadata={"snapshot": snapshot},
         )
         db.session.commit()
-    except Exception as exc:  # pragma: no cover - rollback y log
+        
+        current_app.logger.info(f"Orden creada: {order.id}, total: {order.total_amount}")
+        
+        # Preparar items para MercadoPago
+        items = []
+        for item_data in snapshot.get("items", {}).values():
+            items.append({
+                'name': item_data.get('nombre', 'Producto'),
+                'quantity': item_data.get('cantidad', 1),
+                'price': float(item_data.get('precio_unitario', 0))
+            })
+        
+        current_app.logger.info(f"Items para MercadoPago: {items}")
+        
+        # Crear preferencia de MercadoPago
+        mp_service = MercadoPagoService()
+        payer_info = {
+            'email': email,
+            'name': name.split()[0] if name else '',
+            'surname': ' '.join(name.split()[1:]) if len(name.split()) > 1 else ''
+        }
+        
+        result = mp_service.create_preference(
+            order_id=order.id,
+            items=items,
+            payer_info=payer_info
+        )
+        
+        # Limpiar el carrito
+        carrito.limpiar()
+        session["last_order_id"] = order.id
+        
+        # Devolver URL de MercadoPago
+        return jsonify({
+            "exito": "Orden creada. Redirigiendo a MercadoPago...",
+            "order_id": order.id,
+            "payment_url": result.get("init_point"),
+            "sandbox_payment_url": result.get("sandbox_init_point"),
+            "preference_id": result.get("preference_id")
+        }), 200
+        
+    except ValueError as exc:
+        current_app.logger.error(f"ValueError en procesar_pago: {str(exc)}")
+        return jsonify({"error": str(exc)}), 400
+    except Exception as exc:
         db.session.rollback()
-        current_app.logger.exception("No se pudo registrar el pedido: %s", exc)
-        return jsonify({"error": "Pago procesado, pero no se pudo registrar la orden. Contacta soporte."}), 500
-
-    carrito.limpiar()
-    session["last_order_id"] = order.id
-    return jsonify({"exito": "Pago procesado y compra validada.", "order_id": order.id}), 200
+        current_app.logger.exception(f"Error al crear orden o preferencia de pago: {str(exc)}")
+        return jsonify({"error": f"Error al procesar la orden: {str(exc)}"}), 500
 
 
 # --------- Vistas ---------
@@ -322,4 +361,39 @@ def generar_boleta_json():
             "total_carrito": float(total),
         }
     ), 200
+
+
+# --------- Páginas de retorno de MercadoPago ---------
+@bp.get("/payment/success")
+def payment_success():
+    """Página de retorno cuando el pago es exitoso"""
+    order_id = session.get("last_order_id")
+    return render_template("payment_success.html", order_id=order_id)
+
+
+@bp.get("/payment/failure")
+def payment_failure():
+    """Página de retorno cuando el pago es rechazado"""
+    return render_template("payment_failure.html")
+
+
+@bp.get("/payment/pending")
+def payment_pending():
+    """Página de retorno cuando el pago está pendiente"""
+    order_id = session.get("last_order_id")
+    return render_template("payment_pending.html", order_id=order_id)
+
+
+@bp.get("/orden/<int:order_id>")
+def ver_orden(order_id: int):
+    """Ver detalles de una orden"""
+    order = db.session.get(Order, order_id)
+    if not order:
+        return jsonify({"error": "Orden no encontrada."}), 404
+    
+    if not _order_is_visible(order):
+        return jsonify({"error": "No autorizado."}), 403
+    
+    # Redirigir a la boleta con el ID de la orden
+    return render_template("boleta.html", order_id=order_id)
 

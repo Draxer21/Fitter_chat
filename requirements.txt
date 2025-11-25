@@ -32,6 +32,7 @@ sqlalchemy>=1.4,<2.0
 pyotp==2.9.0
 cryptography==43.0.1
 reportlab==4.0.9
+mercadopago
 numpy==1.23.5
 tensorflow==2.10.1
 tensorflow-estimator==2.10.0
