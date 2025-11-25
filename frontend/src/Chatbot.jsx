@@ -294,22 +294,44 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
           <>
             {(hasText || hasRoutineLink || routineDetail || dietPlan || m.image) ? <br /> : null}
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 6 }}>
-              {m.buttons.map((b, idx) => (
-                <button
-                  key={`btn-${m.id}-${idx}`}
-                  type="button"
-                  onClick={() => {
-                    const payload = b?.payload || b?.title || "";
-                    if (payload) {
-                      setInput(payload);
-                      setTimeout(sendMessage, 0);
-                    }
-                  }}
-                  style={{ padding: "6px 10px", borderRadius: 8, border: "1px solid #ddd", background: "#fff", cursor: "pointer" }}
-                >
-                  {b?.title || "Opcion"}
-                </button>
-              ))}
+              {m.buttons.map((b, idx) => {
+                const buttonTitle = b?.title || b?.text || b?.label || `Opción ${idx + 1}`;
+                const buttonPayload = b?.payload || b?.title || "";
+                
+                return (
+                  <button
+                    key={`btn-${m.id}-${idx}`}
+                    type="button"
+                    onClick={() => {
+                      if (buttonPayload) {
+                        setInput(buttonPayload);
+                        setTimeout(sendMessage, 0);
+                      }
+                    }}
+                    style={{ 
+                      padding: "8px 16px", 
+                      borderRadius: 8, 
+                      border: "1px solid #d1d5db", 
+                      background: "#ffffff", 
+                      color: "#1f2937",
+                      cursor: "pointer",
+                      fontSize: "0.9rem",
+                      fontWeight: "500",
+                      transition: "all 0.2s"
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "#f3f4f6";
+                      e.currentTarget.style.borderColor = "#9ca3af";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "#ffffff";
+                      e.currentTarget.style.borderColor = "#d1d5db";
+                    }}
+                  >
+                    {buttonTitle}
+                  </button>
+                );
+              })}
             </div>
           </>
         )}
