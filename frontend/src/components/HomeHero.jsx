@@ -12,8 +12,8 @@ export default function HomeHero() {
   };
 
   return (
-    <header className="home-hero" style={style}>
-      <div className="hero-overlay" />
+    <header className="home-hero" style={style} role="banner" aria-label="Página principal">
+      <div className="hero-overlay" aria-hidden="true" />
       <div className="hero-inner">
         <div className="hero-content">
           <h1 className="hero-title">
@@ -26,14 +26,14 @@ export default function HomeHero() {
           </h2>
           <p className="hero-desc">{t('home.hero.description')}</p>
           <div className="hero-cta">
-            <a className="btn btn-outline-dark btn-lg" href="/registro">
+            <a className="btn btn-outline-dark btn-lg" href="/registro" aria-label="Registrarse en Fitter">
               {t('home.hero.cta')}
             </a>
           </div>
         </div>
       </div>
 
-      <div className="hero-features container">
+      <section className="hero-features container" role="region" aria-label="Características principales">
         <div className="row">
           <div className="col-md-3 feature">
             <h5>{t('home.hero.feature.training.title')}</h5>
@@ -52,7 +52,7 @@ export default function HomeHero() {
             <p>{t('home.hero.feature.community.desc')}</p>
           </div>
         </div>
-      </div>
+      </section>
     </header>
   );
 }

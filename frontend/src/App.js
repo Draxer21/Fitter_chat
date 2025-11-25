@@ -6,6 +6,7 @@ import "./styles/fixed-layout.css";
 import "./styles/theme-transitions.css";
 import "./styles/theme-overrides.css";
 import "./styles/theme-final-override.css";
+import "./styles/accessibility.css";
 
 import ChatWidget from "./ChatWidget";
 import Navbar from "./components/Navbar";
@@ -74,7 +75,7 @@ export default function App() {
                 <ScrollToTop />
                 <Navbar />
 
-                <main id="main-content" className="app-content-safe-area">
+                <main id="main-content" className="app-content-safe-area" tabIndex="-1" role="main" aria-label="Contenido principal">
                   <Suspense fallback={<div style={{ padding: 16 }}>Cargando.</div>}>
                     <Routes>
                       <Route element={<LegacyStylesLayout />}>

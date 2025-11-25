@@ -67,9 +67,9 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className='navbar navbar-expand-lg custom-navbar p-3 fixed-top shadow-sm'>
-        <NavLink className='navbar-brand' to='/'>
-          <Logo src='/fitter_logo.png' alt='Fitter' width={120} height={80} className='d-inline-block align-text-top' />
+      <nav className='navbar navbar-expand-lg custom-navbar p-3 fixed-top shadow-sm' role="navigation" aria-label="Navegación principal">
+        <NavLink className='navbar-brand' to='/' aria-label='Ir a página principal de Fitter'>
+          <Logo src='/fitter_logo.png' alt='Logo de Fitter - Plataforma de fitness y entrenamiento' width={120} height={80} className='d-inline-block align-text-top' />
         </NavLink>
 
         <button
@@ -79,22 +79,22 @@ export default function Navbar() {
           data-bs-target='#navbarNavDropdown'
           aria-controls='navbarNavDropdown'
           aria-expanded='false'
-          aria-label='Alternar navegación'
+          aria-label='Abrir menú de navegación'
         >
-          <span className='navbar-toggler-icon' />
+          <span className='navbar-toggler-icon' aria-hidden="true" />
         </button>
 
         <div className='collapse navbar-collapse' id='navbarNavDropdown' ref={collapseRef}>
-          <ul className='navbar-nav'>
-            <li className='nav-item'>
-              <NavLink className='nav-link' to='/'>{t('nav.home')}</NavLink>
+          <ul className='navbar-nav' role="menubar">
+            <li className='nav-item' role="none">
+              <NavLink className='nav-link' to='/' role="menuitem">{t('nav.home')}</NavLink>
             </li>
 
-            <li className='nav-item dropdown'>
-              <button className='nav-link dropdown-toggle' id='navbarDropdownMenuLink' type="button" data-bs-toggle='dropdown' aria-expanded='false'>
+            <li className='nav-item dropdown' role="none">
+              <button className='nav-link dropdown-toggle' id='navbarDropdownMenuLink' type="button" data-bs-toggle='dropdown' aria-expanded='false' aria-haspopup="true" role="menuitem">
                 {t('nav.products')}
               </button>
-              <div className='dropdown-menu' aria-labelledby='navbarDropdownMenuLink'>
+              <div className='dropdown-menu' aria-labelledby='navbarDropdownMenuLink' role="menu">
                 <NavLink className='dropdown-item' to='/catalogo' onClick={closeNavbarCollapse}>
                   Catálogo completo
                 </NavLink>
@@ -138,20 +138,20 @@ export default function Navbar() {
                 <button className='nav-link dropdown-toggle' id='userMenuLink' type="button" data-bs-toggle='dropdown' aria-expanded='false'>
                   {t('nav.greeting')}, {currentUserLabel}
                 </button>
-                <ul className='dropdown-menu dropdown-menu-end' aria-labelledby='userMenuLink'>
-                  <li>
-                    <NavLink className='dropdown-item' to='/cuenta/perfil' onClick={closeNavbarCollapse}>
+                <ul className='dropdown-menu dropdown-menu-end' aria-labelledby='userMenuLink' role="menu">
+                  <li role="none">
+                    <NavLink className='dropdown-item' to='/cuenta/perfil' onClick={closeNavbarCollapse} role="menuitem">
                       Mi información
                     </NavLink>
                   </li>
-                  <li>
-                    <NavLink className='dropdown-item' to='/cuenta/seguridad' onClick={closeNavbarCollapse}>
+                  <li role="none">
+                    <NavLink className='dropdown-item' to='/cuenta/seguridad' onClick={closeNavbarCollapse} role="menuitem">
                       Seguridad (MFA)
                     </NavLink>
                   </li>
-                  <li><hr className='dropdown-divider' /></li>
-                  <li>
-                    <button className='dropdown-item' type='button' data-bs-toggle='modal' data-bs-target='#logoutModal'>
+                  <li role="separator"><hr className='dropdown-divider' /></li>
+                  <li role="none">
+                    <button className='dropdown-item' type='button' data-bs-toggle='modal' data-bs-target='#logoutModal' role="menuitem">
                       {t('nav.logout')}
                     </button>
                   </li>
@@ -160,14 +160,14 @@ export default function Navbar() {
             )}
           </ul>
 
-          <ul className='navbar-nav ms-auto align-items-center gap-2'>
+          <ul className='navbar-nav ms-auto align-items-center gap-2' role="menubar">
             {!isAuthenticated && (
-              <li className='nav-item me-2'>
-                <NavLink className='btn btn-warning rounded-pill' to='/login'>{t('nav.login.cta')}</NavLink>
+              <li className='nav-item me-2' role="none">
+                <NavLink className='btn btn-warning rounded-pill' to='/login' role="menuitem" aria-label='Iniciar sesión'>{t('nav.login.cta')}</NavLink>
               </li>
             )}
-            <li className='nav-item'>
-              <NavLink className='nav-link d-flex align-items-center' to='/carrito' aria-label='Carrito de Compras'>
+            <li className='nav-item' role="none">
+              <NavLink className='nav-link d-flex align-items-center' to='/carrito' aria-label='Ver carrito de compras' role="menuitem">
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   width='28'
@@ -179,9 +179,9 @@ export default function Navbar() {
                   strokeLinecap='round'
                   strokeLinejoin='round'
                   aria-hidden='true'
-                  role='img'
+                  focusable="false"
                 >
-                  <title>Carrito de compras</title>
+                  <title>Icono de carrito de compras</title>
                   <circle cx='9' cy='21' r='1' />
                   <circle cx='20' cy='21' r='1' />
                   <path d='M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6' />
