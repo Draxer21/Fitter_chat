@@ -27,9 +27,59 @@
     <title>Fitter</title>
     <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <!-- Theme CSS - Loaded FIRST to establish CSS variables -->
+    <style>
+      :root {
+        --bg: #ffffff !important;
+        --text: #111827 !important;
+        --muted: #6b7280 !important;
+        --border: #e5e7eb !important;
+        --primary: #0f766e !important;
+        --primary-press: #0b5f58 !important;
+        --surface: #f8fafc !important;
+        --user-bubble: #dcf8c6 !important;
+        --bot-bubble: #f3f4f6 !important;
+      }
+      
+      .theme-dark,
+      .theme-dark body,
+      body.theme-dark {
+        --bg: #0b1020 !important;
+        --text: #e5e7eb !important;
+        --muted: #9ca3af !important;
+        --border: #1f2937 !important;
+        --primary: #15803d !important;
+        --primary-press: #166534 !important;
+        --surface: #111827 !important;
+        --user-bubble: #1f2937 !important;
+        --bot-bubble: #111827 !important;
+      }
+      
+      html {
+        background-color: var(--bg) !important;
+        color: var(--text) !important;
+      }
+      
+      body, #root {
+        background-color: var(--bg) !important;
+        color: var(--text) !important;
+        transition: background-color 200ms ease, color 200ms ease !important;
+      }
+    </style>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script>
+      // Apply theme immediately before React renders
+      (function() {
+        const stored = localStorage.getItem('theme-preference');
+        const theme = (stored === 'light' || stored === 'dark') ? stored : 'light';
+        if (theme === 'dark') {
+          document.documentElement.classList.add('theme-dark');
+          document.body.classList.add('theme-dark');
+        }
+      })();
+    </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.

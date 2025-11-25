@@ -20,6 +20,23 @@ El sistema cumple con la normativa chilena (Ley 21.719) sobre protección de dat
 
 ---
 
+## 🌙 Sistema de temas (Modo Claro / Oscuro)
+
+La aplicación frontend incluye un **sistema de temas dinámico** con soporte completo para modo claro y oscuro:
+
+- **Acceso rápido:** Botón 🌙/☀️ en la esquina inferior izquierda (controles laterales)
+- **Persistencia:** El tema seleccionado se guarda en `localStorage` y se mantiene entre sesiones
+- **Respuesta del SO:** Se detecta automáticamente la preferencia del sistema operativo (si no hay tema guardado)
+- **Variables CSS:** Sistema de variables CSS (`--bg`, `--text`, `--primary`, etc.) que se aplican globalmente
+- **Transiciones suaves:** Cambios de color suave de 200ms para mejor UX
+- **Cobertura completa:** Todos los componentes (Bootstrap, formularios, botones, modales, etc.) respetan el tema
+
+**Colores por tema:**
+- Modo claro: Fondo blanco (#ffffff), texto oscuro (#111827)
+- Modo oscuro: Fondo muy oscuro (#0b1020), texto claro (#e5e7eb)
+
+---
+
 ## 🛠️ Tecnologías utilizadas
 - **Python 3.10** (entorno base)
 - **Rasa 3.6** (NLP / NLU)

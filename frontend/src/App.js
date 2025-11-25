@@ -1,8 +1,11 @@
 // src/App.js
 import { Suspense, useEffect, lazy } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
-import "./styles/fixed-layout.css";
 import "./App.css";
+import "./styles/fixed-layout.css";
+import "./styles/theme-transitions.css";
+import "./styles/theme-overrides.css";
+import "./styles/theme-final-override.css";
 
 import ChatWidget from "./ChatWidget";
 import Navbar from "./components/Navbar";

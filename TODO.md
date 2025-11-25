@@ -22,6 +22,9 @@
 - [x] JavaScript Vanilla para funcionalidad del cliente
 - [x] API client (apijs.js) para comunicación con backend
 - [x] Validación de formularios
+- [x] Sistema de temas (Modo claro/oscuro) con CSS variables
+- [x] Context API para manejo de tema global
+- [x] Persistencia de preferencia de tema
 
 ### Chatbot (Rasa)
 - [x] Configuración de dominio
