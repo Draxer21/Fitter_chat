@@ -35,6 +35,9 @@ const ChatPage = lazy(() => import("./pages/ChatPage"));
 const PaymentSuccessPage = lazy(() => import("./pages/PaymentSuccessPage"));
 const PaymentFailurePage = lazy(() => import("./pages/PaymentFailurePage"));
 const PaymentPendingPage = lazy(() => import("./pages/PaymentPendingPage"));
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 function ScrollToTop() {
