@@ -1,0 +1,94 @@
+intent: cambiar_musculo_rutina
+templates:
+  - "Ahora quiero que trabajemos mas {muscle_group}"
+  - "Cambiarias el foco a {muscle_group}? {reason}"
+  - "Podemos priorizar {muscle_group} en la rutina"
+  - "Me gustaria que el entrenamiento se centre en {muscle_group}; {reason}"
+  - "Por favor orienta la rutina para fortalecer {muscle_group}"
+  - "Quiero un bloque especial enfocado en {muscle_group}; {timeline}"
+  - "Necesito que los ejercicios activen {muscle_group} con enfasis en {focus}"
+  - "Agrega sesiones para {muscle_group} usando {method}; {reason}"
+slots:
+  muscle_group:
+    - gluteos
+    - dorsal ancho
+    - hombros
+    - abdomen
+    - isquiotibiales
+    - gemelos
+    - pectorales
+    - core profundo
+    - manguito rotador
+    - trapecios
+    - biceps
+    - triceps
+    - antebrazos
+    - gluteo medio
+    - gluteo mayor
+    - femorales
+    - aductores
+    - abductores
+    - cadena posterior completa
+    - deltoides posteriores
+    - deltoides frontales
+    - errectores espinales
+    - rotadores de cadera
+    - serratos
+    - flexores de cadera
+    - musculatura del pie
+    - estabilizadores de rodilla
+  reason:
+    - los tengo rezagados
+    - quiero equilibrar mi fisico
+    - me lo recomendo mi fisio
+    - siento debilidad ahi
+    - para mejorar mi postura
+    - necesito mas estabilidad
+    - quiero mejorar mi rendimiento en running
+    - busco prevenir lesiones
+    - siento que no progresan
+    - necesito mas potencia
+    - mi entrenador lo sugirio
+    - quiero equilibrar masa muscular
+    - me ayuda para otro deporte
+    - debo rehabilitar una zona
+    - quiero activar mas fibras
+    - me recomendaron reforzarlo
+  timeline:
+    - al menos durante este mes
+    - por las proximas semanas
+    - hasta que recupere fuerza
+    - mientras preparo una competencia
+    - por todo este trimestre
+    - hasta mi proxima evaluacion
+    - durante la temporada actual
+    - hasta que mejore mi tecnica
+    - mientras trabajo con mi fisio
+    - hasta mi proxima carrera
+  focus:
+    - fuerza maxima
+    - resistencia muscular
+    - estabilidad articular
+    - control neuromuscular
+    - movilidad especifica
+    - trabajo isometrico
+    - hipertrofia especifica
+    - equilibrio muscular
+    - activacion previa a competir
+    - potencia explosiva
+  method:
+    - bandas de resistencia
+    - tempo controlado
+    - superseries
+    - trabajo unilateral
+    - pausas isometricas
+    - drop sets
+    - series gigantes
+    - contrastes de fuerza
+    - ejercicios pliometricos
+static_examples:
+  - "Cambia la rutina para enfocarla en gluteos y piernas."
+  - "Quiero priorizar el core esta semana."
+  - "Necesito que el plan se enfoque en hombros y espalda alta."
+  - "Pasa el foco a pecho y brazos, no quiero otra rutina nueva."
+  - "Ajusta el plan actual para trabajar mas espalda."

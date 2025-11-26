@@ -67,33 +67,40 @@ export default function CarritoPage() {
 
       {!isLoading && !errorMessage && rows.length > 0 && (
         <>
-          {rows.map((v) => (
-            <div key={v.producto_id} className="cart-item">
-              <img
-                src={v.imagen || "/placeholder.jpg"}
-                alt={v.nombre}
-                className="cart-item-image"
-              />
-              <div className="cart-item-details">
-                <div className="cart-item-name">{v.nombre}</div>
-                <div className="cart-item-price">
-                  Precio unitario: {formatearPrecio(v.precio_unitario)} | Total: {formatearPrecio(v.acumulado)}
-                </div>
-                <div className="cart-item-controls">
-                  <button onClick={() => handleDec(v.producto_id)} className="quantity-btn" disabled={isUpdating}>
-                    -
-                  </button>
-                  <span className="quantity-display">{v.cantidad}</span>
-                  <button onClick={() => handleInc(v.producto_id)} className="quantity-btn" disabled={isUpdating}>
-                    +
-                  </button>
-                  <button onClick={() => handleRemove(v.producto_id)} className="remove-btn" disabled={isUpdating}>
-                    Eliminar
-                  </button>
+          {rows.map((v) => {
+            const imageUrl = v.imagen && v.imagen.startsWith('/static/') 
+              ? `http://localhost:5000${v.imagen}` 
+              : v.imagen || "/placeholder.jpg";
+            
+            return (
+              <div key={v.producto_id} className="cart-item">
+                <img
+                  src={imageUrl}
+                  alt={v.nombre}
+                  className="cart-item-image"
+                  onError={(e) => { e.target.src = "/placeholder.jpg"; }}
+                />
+                <div className="cart-item-details">
+                  <div className="cart-item-name">{v.nombre}</div>
+                  <div className="cart-item-price">
+                    Precio unitario: {formatearPrecio(v.precio_unitario)} | Total: {formatearPrecio(v.acumulado)}
+                  </div>
+                  <div className="cart-item-controls">
+                    <button onClick={() => handleDec(v.producto_id)} className="quantity-btn" disabled={isUpdating}>
+                      -
+                    </button>
+                    <span className="quantity-display">{v.cantidad}</span>
+                    <button onClick={() => handleInc(v.producto_id)} className="quantity-btn" disabled={isUpdating}>
+                      +
+                    </button>
+                    <button onClick={() => handleRemove(v.producto_id)} className="remove-btn" disabled={isUpdating}>
+                      Eliminar
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           <div className="cart-summary">
             <div className="cart-total">Total: {formatearPrecio(totalValue)}</div>

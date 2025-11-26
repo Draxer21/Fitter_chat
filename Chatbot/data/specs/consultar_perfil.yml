@@ -1,0 +1,152 @@
+intent: consultar_perfil
+templates:
+  - "{saludo} quiero ver {posesivo} perfil"
+  - "{saludo} necesito revisar {posesivo} perfil"
+  - "muestrame los datos de mi perfil"
+  - "que informacion tienes sobre mi perfil"
+  - "{saludo_capital} dime si {posesivo} perfil incluye {detalle}"
+  - "{saludo} podrias resumir {posesivo} perfil con {enfoque}?"
+  - "{solicitud} confirmado {detalle} antes de continuar"
+  - "{pregunta} si {posesivo} perfil esta completo para {accion}" 
+  - "{saludo} muestra un resumen de {detalle} que tengas guardado"
+  - "{saludo} {accion_verbo} {posesivo} perfil para {proposito}"
+  - "{saludo_capital} revisa {detalle} y dime {momento}"
+  - "{pregunta} que {canal} tiene registrado sobre {detalle}"
+  - "{saludo} necesito que {canal} muestre {detalle} para {proposito}"
+  - "{saludo_capital} dime {momento} si {posesivo} perfil refleja {detalle_ext}"
+  - "{solicitud} {accion_verbo} {posesivo} perfil del {periodo}"
+  - "{saludo} {accion_verbo} {posesivo} perfil porque {motivo_consulta}"
+  - "{saludo} puedes enviar un resumen de {detalle} por {canal}"
+  - "{pregunta} que {canal} registro sobre {detalle} durante {periodo}"
+  - "{saludo} {accion_verbo} {posesivo} perfil {momento} para {proposito}"
+slots:
+  saludo:
+    - hola
+    - oye
+    - buenas
+    - que tal
+    - hey
+    - ""
+    - buen dia
+    - bot
+  saludo_capital:
+    - Hola
+    - Buenas
+    - Hey
+    - Que tal
+    - Buen dia
+  posesivo:
+    - mi
+    - el
+    - mi propio
+    - el perfil de mi cuenta
+    - la ficha
+    - mis datos
+  detalle:
+    - peso y altura
+    - planes de entrenamiento
+    - avances registrados
+    - medidas corporales
+    - restricciones medicas
+    - objetivos activos
+    - historial de rutinas
+    - datos personales
+    - fechas de evaluacion
+    - ultimas reservas
+    - datos de contacto
+    - progresos mensuales
+    - notas del coach
+    - recordatorios
+  enfoque:
+    - los ultimos cambios
+    - todo lo esencial
+    - lo relacionado a salud
+    - las metas actuales
+    - la informacion basica
+    - lo que falte completar
+    - lo mas importante
+    - lo registrado esta semana
+  solicitud:
+    - necesito
+    - quiero
+    - me gustaria
+    - podrias
+    - agradeceria
+    - dime por favor
+    - revisa por favor
+  pregunta:
+    - dime
+    - verifica
+    - confirma
+    - revisa
+    - muestrame
+    - cuentame
+    - indagame
+    - verifica porfa
+  accion:
+    - generar una rutina
+    - planear mi dieta
+    - agendar clases
+    - revisar objetivos
+    - compartirlo con mi coach
+    - preparar una sesion
+  accion_verbo:
+    - revisar
+    - validar
+    - comprobar
+    - consultar
+    - actualizar
+    - mostrar
+    - sincronizar
+    - confirmar
+  proposito:
+    - planear la semana
+    - ver mis progresos
+    - confirmar mis metas
+    - ajustar mi dieta
+    - compartirlo con mi entrenador
+    - coordinar una sesion medica
+    - preparar un seguimiento
+    - cerrar un ciclo
+  momento:
+    - antes de continuar
+    - ahora mismo
+    - hoy
+    - en este momento
+    - antes de entrenar
+    - despues de entrenar
+  canal:
+    - el sistema
+    - la plataforma
+    - el bot
+    - tu registro
+    - la base de datos
+    - la app
+    - el portal
+  detalle_ext:
+    - mis objetivos trimestrales
+    - mi condicion fisica
+    - mis preferencias de entrenamiento
+    - mis alergias
+    - mis reservas
+    - mis resultados
+  periodo:
+    - ultimo mes
+    - esta semana
+    - hoy
+    - ultimo trimestre
+    - el periodo actual
+    - el ultimo registro
+  motivo_consulta:
+    - quiero confirmar mis objetivos
+    - necesito saber mis progresos
+    - debo verificar medidas
+    - ajustare mi dieta
+    - el coach lo pidio
+    - reviso mi salud
+static_examples:
+  - "quiero comprobar si mi perfil esta completo"
+  - "dime si ya cargue peso y altura"
+  - "resumeme mi informacion personal"
+  - "podrias mostrarme mis progresos registrados"
+  - "antes de seguir quiero ver mis datos"

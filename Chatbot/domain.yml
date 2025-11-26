@@ -1,41 +1,28 @@
 version: "3.1"
 
 intents:
-  - saludar
-  - despedir
+  - actualizar_perfil
+  - actualizar_perfil_bot
   - ayuda
-  - agradecimiento
-  - info_servicios
-  - horarios
-  - precios_planes
-  - privacidad
-  - ubicacion
-  - consejo_nutricion
-  - dolor_lesion
-  - sugerir_rutina
-  - resumen_rutina
-  - crear_reserva
-  - consultar_reserva
-  - cancelar_reserva
-  - suscripcion_cambio_plan
-  - suscripcion_alta
-  - suscripcion_baja
-  - contacto_humano
-  - fuera_de_alcance
-  - afirmar
-  - negar
-  - informar
-  - progreso_registrar
-  - mostrar_rutina_pantalla
-  - enviar_rutina_correo
-  # RUTINA
-  - solicitar_rutina
-  - solicitar_dieta
+  - cambiar_musculo_rutina
   - cambiar_nivel_rutina
   - cambiar_objetivo_rutina
-  - cambiar_musculo_rutina
-  - otra_rutina
-  - formato_entrega_rutina
+  - consultar_perfil
+  - consultar_reserva
+  - detener_formulario
+  - dolor_lesion
+  - enviar_rutina_correo
+  - informar
+  - mostrar_rutina_pantalla
+  - navegar_perfil_web
+  - saludar
+  - solicitar_dieta
+  - solicitar_rutina
+  - soporte_general
+  - soporte_mfa
+  - suscripcion_alta
+  - suscripcion_baja
+  - nlu_fallback
 
 entities:
   - objetivo
@@ -165,6 +152,70 @@ slots:
         entity: tiempo_disponible
       - type: from_text
 
+  # Perfil del usuario
+  peso:
+    type: float
+    influence_conversation: true
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: profile_form
+            requested_slot: peso
+
+  altura:
+    type: float
+    influence_conversation: true
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: profile_form
+            requested_slot: altura
+
+  objetivo_fitness:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: profile_form
+            requested_slot: objetivo_fitness
+
+  padecimientos:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: profile_form
+            requested_slot: padecimientos
+
+  preferencia_dieta:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: profile_form
+            requested_slot: preferencia_dieta
+
+  resumen_perfil:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  perfil_completo:
+    type: bool
+    influence_conversation: true
+    mappings:
+      - type: custom
+
+  servicio_pendiente:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: custom
+
   formato:
     type: text
     influence_conversation: false
@@ -243,6 +294,14 @@ forms:
       - alergias
       - formato
 
+  profile_form:
+    required_slots:
+      - peso
+      - altura
+      - objetivo_fitness
+      - padecimientos
+      - preferencia_dieta
+
   reserva_form:
     required_slots:
       - clase
@@ -281,6 +340,18 @@ responses:
   utter_dolor_lesion:
     - text: "Si sientes un dolor agudo o inusual, detén el ejercicio y consulta a un profesional."
 
+  utter_perfil_resumen:
+    - text: "{resumen_perfil}"
+
+  utter_perfil_incompleto:
+    - text: "Para continuar necesito datos básicos de tu perfil. ¿Prefieres actualizarlos aquí conmigo o desde la página?"
+
+  utter_perfil_actualizado:
+    - text: "Perfil actualizado. ¿Quieres que genere tu rutina o dieta con esta información?"
+
+  utter_form_cancelado:
+    - text: "Formulario cancelado. Si quieres continuar más tarde, solo avísame."
+
   # PROMPTS DEL FORM RUTINA
   utter_ask_musculo:
     - text: "¿Qué grupo muscular deseas trabajar? (pecho, espalda, piernas, hombros, brazos, core, fullbody, cardio)"
@@ -308,6 +379,22 @@ responses:
 
   utter_ask_formato:
     - text: "¿Cómo prefieres recibir la rutina? (pantalla / correo / WhatsApp)"
+
+  # PROMPTS DEL FORM PERFIL
+  utter_ask_peso:
+    - text: "¿Cuál es tu peso actual en kg?"
+
+  utter_ask_altura:
+    - text: "¿Cuál es tu altura en cm?"
+
+  utter_ask_objetivo_fitness:
+    - text: "¿Cuál es tu objetivo principal de fitness? (ej: ganar masa, perder grasa, mejorar resistencia)"
+
+  utter_ask_padecimientos:
+    - text: "¿Tienes algún padecimiento o condición de salud relevante? Si no aplica, responde \"ninguno\"."
+
+  utter_ask_preferencia_dieta:
+    - text: "¿Tienes alguna preferencia o restricción dietaria? (vegetariana, sin lactosa, sin gluten, ninguna)"
 
   # RESÚMENES / ENTREGA DE RUTINA
   utter_resumen_rutina:
@@ -348,6 +435,15 @@ responses:
   utter_suscripcion_cambio_plan:
     - text: "¿A qué plan deseas cambiarte? (Mensual, Trimestral, Anual)"
 
+  utter_soporte_opciones:
+    - text: "Puedo ayudarte con recuperación de cuenta, MFA y problemas de acceso. ¿Qué necesitas?"
+
+  utter_soporte_mfa:
+    - text: "Para MFA, verifica tu app de autenticación o solicita un código de respaldo. ¿Quieres regenerar códigos?"
+
+  utter_link_perfil:
+    - text: "Abre tu perfil en la web: https://fitter.com/perfil"
+
   # RESERVAS
   utter_confirmar_reserva:
     - text: "Por favor confirma: {clase} el {fecha} a las {hora}. ¿Procedo a crear la reserva?"
@@ -374,6 +470,8 @@ actions:
   - action_suscripcion_cambio_plan
   - action_generar_rutina
   - action_generar_dieta
+  - action_fetch_profile
+  - action_submit_profile_form
 
 session_config:
   session_expiration_time: 60

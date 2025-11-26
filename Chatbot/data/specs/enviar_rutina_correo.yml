@@ -1,0 +1,65 @@
+intent: enviar_rutina_correo
+templates:
+  - "Por favor envía la rutina {version} a {destination}"
+  - "¿Podrías mandarme {version} de mi plan al {destination}?"
+  - "Necesito recibir la rutina {detail} por {channel}"
+  - "Me envías {version} de la rutina {frequency} al {destination}? {followup}"
+  - "Quiero que la rutina {detail} llegue por {channel} a {destination}"
+  - "¿Puedes reenviar {version} y {attachment} a {destination}?"
+slots:
+  version:
+    - actualizada
+    - semanal
+    - completa
+    - en PDF
+    - con las modificaciones
+    - resumida
+    - extendida
+    - en formato tabla
+  destination:
+    - mi correo personal
+    - mi email del trabajo
+    - la casilla registrada
+    - mi bandeja principal
+    - el mail que use al registrarme
+    - mi email alternativo
+    - el correo de mi entrenador
+    - mi bandeja de Gmail
+  detail:
+    - de esta semana
+    - con los nuevos ajustes
+    - reestructurada
+    - con notas del coach
+    - con las series detalladas
+    - con el historial comparado
+  channel:
+    - correo electronico
+    - mail
+    - email
+    - e-mail
+    - mensaje electronico
+  frequency:
+    - cada lunes
+    - solo hoy
+    - cuando haya cambios
+    - al final de la semana
+    - diariamente
+  followup:
+    - Necesito compartirla con mi fisio.
+    - Quiero tener un respaldo.
+    - La revisare desde el telefono.
+    - Asi la imprimo mas tarde.
+    - Es para seguirla mientras viajo.
+  attachment:
+    - la dieta complementaria
+    - el plan anterior
+    - el historial de progreso
+    - las notas de la ultima evaluacion
+    - el archivo csv de registros
+static_examples:
+  - "Manda mi rutina al correo, gracias."
+  - "Reenviame la rutina anterior a mi email."
+  - "Quisiera la rutina en PDF en mi bandeja de entrada."
+  - "Necesito el plan semanal en mi correo alternativo."
+  - "Enviamela por correo, no en pantalla."
+  - "Mandala por mail por favor."

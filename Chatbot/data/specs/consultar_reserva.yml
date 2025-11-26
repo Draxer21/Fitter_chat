@@ -1,0 +1,54 @@
+intent: consultar_reserva
+templates:
+  - "¿Puedes confirmarme {detail} de mi reserva {time_ref}?"
+  - "Necesito saber {detail} de la reserva {time_ref}, {extra}"
+  - "¿En qué {detail} quedó mi reserva {time_ref}?"
+  - "Quiero revisar {detail} de la reserva {time_ref} porque {reason}"
+  - "Me ayudas a verificar {detail} de la reserva {time_ref}? {followup}"
+  - "Por favor dime {detail} de mi reserva {time_ref}."
+slots:
+  detail:
+    - la hora
+    - la fecha
+    - el estado
+    - la sede
+    - la sala asignada
+    - el entrenador asignado
+    - la duracion
+    - el cupo restante
+  time_ref:
+    - de mañana
+    - de esta semana
+    - que hice ayer
+    - del viernes
+    - para la clase de spinning
+    - del proximo lunes
+    - que reserve hace un rato
+    - para la sesion de evaluacion
+    - del finde
+  extra:
+    - por si debo cambiarla
+    - para prepararme
+    - porque quiza llegue tarde
+    - asi organizo mi agenda
+    - para enviarsela a un amigo
+    - y evitar confusiones
+  reason:
+    - quiero coordinarme con mis amigos
+    - necesito saber si coincide con mi trabajo
+    - tal vez tenga que reprogramarla
+    - no recuerdo el detalle exacto
+    - me llego una alerta y quiero confirmar
+  followup:
+    - estoy chequeando mi agenda
+    - necesito reservar transporte
+    - quiero avisarle a mi entrenador
+    - quiero ver si hay que pagar algo extra
+    - para estar seguro de llegar a tiempo
+static_examples:
+  - "¿Cuál es mi próxima reserva?"
+  - "Confírmame si tengo turno con el coach mañana."
+  - "¿Sigue vigente la reserva del sábado a la tarde?"
+  - "Necesito saber si la reserva de spinning está confirmada."
+  - "Ver mi reserva y su estado."
+  - "Estado de mi reserva por favor."

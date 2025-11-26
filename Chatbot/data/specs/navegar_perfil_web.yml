@@ -1,0 +1,144 @@
+intent: navegar_perfil_web
+templates:
+  - "quiero abrir la pagina del perfil"
+  - "pasame el enlace para actualizar mi perfil"
+  - "{saludo} abrire el perfil en la web"
+  - "prefiero hacerlo en la aplicacion web"
+  - "{saludo_capital} comparte el link directo al perfil"
+  - "{solicitud} {accion} desde el navegador"
+  - "{preferencia} usar la web, enviame el acceso"
+  - "{saludo} abre la seccion de perfil en {dispositivo}"
+  - "{necesidad} ingresar por la web para editar {detalle}"
+  - "{saludo} estoy en {dispositivo_movil} y {motivo}, mandame el enlace"
+  - "{solicitud} abrir el perfil {momento} usando {dispositivo}"
+  - "{saludo} necesito que {tipo_enlace} me lleve al perfil para {motivo_web}"
+  - "{preferencia} abrir {accion} desde {contexto_web}"
+  - "{saludo} {motivo_web_corto}, {solicitud} {tipo_enlace} hacia {destino_web} en {canal_web}"
+  - "{saludo_capital} {preferencia} usar {canal_web}, {solicitud} {accion} {destino_web}"
+slots:
+  saludo:
+    - hola
+    - oye
+    - buenas
+    - hey
+    - ""
+  saludo_capital:
+    - Hola
+    - Buenas
+    - Hey
+  solicitud:
+    - necesito
+    - quiero
+    - podrias
+    - me gustaria
+    - agradeceria
+    - dime como
+  accion:
+    - abrir la pagina
+    - acceder al perfil
+    - entrar al panel
+    - editar mis datos
+    - revisar mi informacion
+    - ajustar configuraciones
+  preferencia:
+    - prefiero
+    - mejor
+    - decidi
+    - opte por
+    - elegi
+    - me acomoda
+  dispositivo:
+    - el navegador
+    - la web
+    - la version desktop
+    - el portal
+    - el sitio oficial
+    - la app web
+  necesidad:
+    - debo
+    - necesito
+    - me urge
+    - quiero
+  detalle:
+    - mis datos
+    - la configuracion
+    - las medidas
+    - el correo
+    - la foto
+    - mi informacion medica
+  dispositivo_movil:
+    - el celular
+    - una tablet
+    - el laptop del trabajo
+    - un pc prestado
+    - la oficina
+    - la sala del gym
+  motivo:
+    - es mas comodo
+    - no tengo instalada la app
+    - quiero revisar con calma
+    - necesito hacerlo en grande
+    - estoy comparando datos
+    - me pidieron revisarlo
+  momento:
+    - ahora mismo
+    - hoy
+    - en este instante
+    - antes de entrenar
+    - despues de entrenar
+    - este fin de semana
+  tipo_enlace:
+    - el enlace directo
+    - la url corta
+    - el boton
+    - el acceso rapido
+    - el portal de perfil
+    - el acceso seguro
+    - el link manual
+    - la opcion web
+  motivo_web:
+    - actualizar mi informacion
+    - revisar las metricas
+    - subir una foto
+    - validar datos con mi coach
+    - descargar un reporte
+    - revisar pagos
+    - compartirlo con otra persona
+    - corregir algo urgente
+  contexto_web:
+    - mi navegador
+    - la computadora del trabajo
+    - la sala de computo
+    - el ipad
+    - la smart tv
+    - el cowork
+    - el laboratorio
+  motivo_web_corto:
+    - necesito trabajar desde pantalla grande
+    - estoy en el computador
+    - la app movil falla
+    - el coach me pidio revisar
+    - debo adjuntar evidencia
+    - quiero verificar datos precisos
+  destino_web:
+    - del perfil
+    - de ajustes
+    - de configuraciones
+    - de datos personales
+    - de medidas
+    - de contacto
+    - de seguridad
+    - de objetivos
+  canal_web:
+    - el navegador de escritorio
+    - la version web
+    - el portal oficial
+    - el sitio del gym
+    - el explorador del trabajo
+    - el laptop del club
+static_examples:
+  - "dame el link del perfil por favor"
+  - "lo actualizare manualmente desde la pagina"
+  - "abre el acceso al perfil en el navegador"
+  - "enviame el acceso web al perfil"
+  - "quiero entrar desde el pc"

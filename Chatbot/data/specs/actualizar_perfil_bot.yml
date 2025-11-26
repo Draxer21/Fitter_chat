@@ -1,0 +1,92 @@
+intent: actualizar_perfil_bot
+templates:
+  - "prefiero actualizarlo contigo"
+  - "{confirmacion}, hagamoslo en el chat"
+  - "{confirmacion} ayudame tu con los datos"
+  - "quiero que el bot actualice mi perfil"
+  - "{confirmacion_capital} completare el formulario contigo"
+  - "{confirmacion} {preferencia} para completar los datos"
+  - "{dispositivo} me queda mas comodo, asi que hazlo tu"
+  - "{confirmacion} guiame paso a paso aqui"
+  - "{solicitud} que tu manejes la captura del perfil"
+  - "prefiero evitar la web y {accion_chat}"
+  - "{saludo} {confirmacion} prefiero {accion_chat} {detalle} porque {motivo}"
+  - "{saludo} {contexto}, asi que {confirmacion} {preferencia}"
+  - "{solicitud} {motivo_corto} y {accion_chat}"
+slots:
+  confirmacion:
+    - si
+    - claro
+    - vale
+    - de acuerdo
+    - por supuesto
+    - obvio
+  confirmacion_capital:
+    - Si
+    - Claro
+    - Vale
+    - Obvio
+  preferencia:
+    - aqui mismo
+    - en esta conversacion
+    - dentro del chat
+    - contigo directamente
+    - en este hilo
+    - por esta app
+  dispositivo:
+    - desde el celular
+    - en el chat movil
+    - por aqui
+    - en esta ventana
+    - sin salir de whatsapp
+    - en el panel del bot
+  solicitud:
+    - necesito
+    - prefiero
+    - quisiera
+    - me gustaria
+  accion_chat:
+    - lo hagamos por chat
+    - lo resolvamos por aqui
+    - lo completes tu
+    - lo capturemos juntos
+    - lo hagamos paso a paso aqui
+    - tu lo gestiones
+    - lo llenemos juntos
+  saludo:
+    - hola
+    - hey
+    - buenas
+    - que tal
+    - ""
+  detalle:
+    - todos los datos pendientes
+    - mi informacion personal
+    - el perfil completo
+    - las medidas nuevas
+    - mis objetivos
+    - la parte de salud
+  motivo:
+    - quiero verificar todo contigo
+    - asi evito errores
+    - no tengo acceso a la web
+    - me resulta mas rapido
+    - estoy desde el telefono
+    - no quiero abrir mas ventanas
+  contexto:
+    - estoy en movimiento
+    - no tengo un pc cerca
+    - mi conexion es limitada
+    - no puedo abrir la pagina
+    - uso datos moviles
+  motivo_corto:
+    - no quiero equivocarme
+    - no puedo entrar a la web
+    - quiero hacerlo asistido
+    - necesito ayuda guiada
+static_examples:
+  - "hagamos la actualizacion aqui mismo"
+  - "si, guia tu la actualizacion del perfil"
+  - "mejor lo completo con el asistente"
+  - "no quiero abrir otra pagina, hazlo tu"
+  - "toma los datos desde esta conversacion"

@@ -164,6 +164,7 @@ body {
 .cart-item-name {
     font-size: 1.5rem;
     font-weight: bold;
+<<<<<<< Updated upstream
     color: #333;
     margin-bottom: 10px;
 }
@@ -174,6 +175,28 @@ body {
     margin-bottom: 10px;
 }
 
+=======
+    color: #1a1a1a;
+    margin-bottom: 10px;
+}
+
+[data-theme="dark"] .cart-item-name {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.cart-item-price {
+    font-size: 1.2rem;
+    color: #4a5568;
+    margin-bottom: 10px;
+}
+
+[data-theme="dark"] .cart-item-price {
+    color: #cbd5e1;
+    font-weight: 500;
+}
+
+>>>>>>> Stashed changes
 .cart-item-controls {
     display: flex;
     align-items: center;
@@ -227,12 +250,24 @@ body {
 }
 
 .cart-total {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     font-weight: bold;
+<<<<<<< Updated upstream
     color: #333;
     margin-bottom: 20px;
 }
 
+=======
+    color: #1a1a1a;
+    margin-bottom: 20px;
+}
+
+[data-theme="dark"] .cart-total {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+>>>>>>> Stashed changes
 .cart-actions {
     display: flex;
     justify-content: space-between;

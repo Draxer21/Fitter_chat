@@ -110,6 +110,11 @@ export const API = {
     list: (params="") => fetch(`${BASE}/admin/orders${params ? `?${params}` : ""}`, { credentials:"include" }).then(j),
     receiptPdf: (id) => fetch(`${BASE}/orders/${id}/receipt.pdf`, { credentials:"include" }),
   },
+  payments: {
+    getOrderPayment: (orderId) => fetch(`${BASE}/api/payments/order/${orderId}`, { credentials:"include" }).then(j),
+    getStatus: (orderId) => fetch(`${BASE}/api/payments/status/${orderId}`, { credentials:"include" }).then(j),
+    verifyPayment: (paymentId) => fetch(`${BASE}/api/payments/verify/${paymentId}`, { method:"POST", credentials:"include" }).then(j),
+  },
   chat: {
     send:  (sender,message)=> fetch(`${BASE}/chat/send`, { method:"POST", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify({ sender, message }) }).then(j),
   }

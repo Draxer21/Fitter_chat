@@ -1,0 +1,63 @@
+intent: saludar
+templates:
+  - "{greeting}! {question}"
+  - "{greeting}, {alias}. {question}"
+  - "{greeting_capital}, {alias}. {question}"
+  - "Que tengas {time_of_day}, {alias}. {followup}"
+  - "¡{greeting}! {smalltalk} {question}"
+slots:
+  greeting:
+    - hola
+    - buenos días
+    - buenas tardes
+    - qué tal
+    - hey
+    - buenas noches
+    - holis
+    - qué onda
+  alias:
+    - coach
+    - asistente
+    - fitter
+    - equipo
+    - bot
+    - amigo
+    - compa
+    - máquina
+  question:
+    - ¿cómo estás?
+    - ¿todo bien?
+    - ¿listo para entrenar?
+    - ¿me ayudas hoy?
+    - ¿qué hay de nuevo?
+    - ¿arrancamos?
+    - ¿me das una mano?
+    - ¿tenés un minuto?
+  greeting_capital:
+    - Hola
+    - Buenas
+    - Hey
+    - Qué tal
+    - Hola hola
+  time_of_day:
+    - un buen día
+    - una buena tarde
+    - una linda noche
+    - un gran inicio de semana
+    - una jornada productiva
+  followup:
+    - vengo con ganas de entrenar
+    - hoy necesito motivación
+    - espero que estés listo para ayudarme
+    - ojalá podamos planear algo bueno
+    - traigo dudas y quiero resolverlas
+  smalltalk:
+    - Qué gusto encontrarte.
+    - Hace rato no hablábamos.
+    - Se siente bien volver a entrenar.
+    - Llegué con toda la energía.
+    - Ando medio perdido.
+static_examples:
+  - "¡Hola! Necesito tu ayuda."
+  - "Buenas, ¿estás disponible?"
+  - "¿Qué onda, bot?"

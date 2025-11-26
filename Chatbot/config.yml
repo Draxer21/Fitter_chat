@@ -19,24 +19,35 @@ pipeline:
   - name: CountVectorsFeaturizer
     min_ngram: 1
     max_ngram: 2
+    analyzer: word
   - name: CountVectorsFeaturizer
     analyzer: char_wb
     min_ngram: 3
-    max_ngram: 6
+    max_ngram: 5
   - name: DIETClassifier
-    epochs: 150
+    epochs: 80
     constrain_similarities: true
     evaluate_on_number_of_examples: 150
     evaluate_every_number_of_epochs: 5
-    early_stopping_patience: 8
+    early_stopping_patience: 6
     batch_strategy: "sequence"
-    learning_rate: 0.002
+    learning_rate: 0.0015
+    batch_size: 16
+    transformer_size: 64
+    embedding_dimension: 64
+    number_of_transformer_layers: 1
+    number_of_attention_heads: 2
+    hidden_layers_sizes:
+      text: [64]
+    max_seq_length: 128
+    dropout_rate: 0.2
   - name: EntitySynonymMapper
   - name: ResponseSelector
-    epochs: 75
+    epochs: 40
     constrain_similarities: true
+    ranking_length: 5
   - name: FallbackClassifier
-    threshold: 0.35
+    threshold: 0.30
     ambiguity_threshold: 0.05
 
 policies:
@@ -46,6 +57,6 @@ policies:
     core_fallback_action_name: "utter_fuera_de_alcance"
     enable_fallback_prediction: true
   - name: TEDPolicy
-    max_history: 8
-    epochs: 80
+    max_history: 10
+    epochs: 60
     constrain_similarities: true

@@ -1,0 +1,57 @@
+intent: dolor_lesion
+templates:
+  - "Tengo dolor en {body_part} cuando hago {movement}"
+  - "Me molesta {body_part} desde {event}, lo tenemos en cuenta?"
+  - "{body_part} se resiente si realizo {movement}"
+  - "Siento pinchazos en {body_part} cada vez que hago {movement}; {severity}"
+  - "¿Podemos ajustar la rutina? {body_part} duele desde {event}"
+  - "Quiero evitar {movement} porque {body_part} se inflama"
+slots:
+  body_part:
+    - la rodilla derecha
+    - la zona lumbar
+    - el hombro izquierdo
+    - el tendon de Aquiles
+    - el cuello
+    - la munieca
+    - el codo
+    - el gluteo medio
+    - la cadera
+    - el gemelo izquierdo
+    - los isquiotibiales
+    - el tobillo
+    - la planta del pie
+    - el trapecio
+  movement:
+    - sentadillas profundas
+    - press militar
+    - correr en cinta
+    - saltos
+    - dominadas
+    - planchas largas
+    - estocadas
+    - peso muerto
+    - remo con barra
+    - saltos pliometricos
+    - kettlebell swings
+    - burpees
+    - trotar en asfalto
+  event:
+    - la ultima sesion
+    - un partido del fin de semana
+    - la rehabilitacion reciente
+    - hace unos dias
+    - que empezamos el nuevo plan
+    - el ultimo entrenamiento de fuerza
+    - la carrera de ayer
+  severity:
+    - es un dolor leve pero molesto
+    - se inflama de inmediato
+    - siento tirones constantes
+    - se adormece la zona
+    - me cuesta recuperar al dia siguiente
+static_examples:
+  - "Me duele la rodilla cuando corro."
+  - "Siento pinchazos en la espalda baja al levantar peso."
+  - "El hombro esta sensible desde la semana pasada."
+  - "Tengo molestias en el tendon de Aquiles al saltar."

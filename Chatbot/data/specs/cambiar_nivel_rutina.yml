@@ -1,0 +1,77 @@
+intent: cambiar_nivel_rutina
+templates:
+  - "Sube el nivel de la rutina a {level} porque {reason}"
+  - "Baja la intensidad a {level}; {reason}"
+  - "Ajusta la dificultad para que sea {level}"
+  - "Quisiera que la rutina quede en nivel {level}; {reason}"
+  - "Podemos mover el plan a {level}? {timeline}"
+  - "Necesito que el entrenamiento sea {level} ya que {reason}"
+  - "Configura la semana a un nivel {level}; {context}"
+  - "Haz que las sesiones de {session_type} sean {level}, por favor"
+slots:
+  level:
+    - principiante
+    - intermedio
+    - avanzado
+    - suave
+    - desafiante
+    - moderado
+    - explosivo
+    - intermedio alto
+    - basico
+    - progresivo
+    - regenerativo
+    - intermedio bajo
+    - avanzado plus
+    - ligero
+    - de descarga
+  reason:
+    - estoy demasiado exigido
+    - quiero entrenar mas duro
+    - me lesione recientemente
+    - ya me resulta facil
+    - el medico lo sugirio
+    - necesito adaptarme a mi agenda
+    - dormire menos esta semana
+    - quiero acelerar resultados
+    - me siento estancado
+    - el trabajo esta pesado
+    - debo cuidar una lesion vieja
+    - empece otro deporte
+    - deseo priorizar la tecnica
+    - quiero evitar el sobreentrenamiento
+    - empece a dormir mejor
+    - quiero enfocarme en movilidad
+  timeline:
+    - al menos por dos semanas
+    - mientras dura mi rehabilitacion
+    - hasta el proximo chequeo
+    - solo por este mes
+    - hasta que me acostumbre
+    - mientras duren mis vacaciones
+    - mientras preparo mi examen fisico
+    - por todo este trimestre
+    - hasta mi viaje de entrenamiento
+    - durante el proximo ciclo
+  context:
+    - necesito progresar gradualmente
+    - quiero planificar semanas de descarga
+    - busco tener sesiones cortas pero efectivas
+    - prefiero retarme con intervalos duros
+    - deseo proteger mis articulaciones
+    - estoy mezclando clases grupales
+    - vengo de una temporada intensa
+    - necesito coordinarlo con cross training
+  session_type:
+    - cardio
+    - fuerza
+    - movilidad
+    - core
+    - HIIT
+    - funcional
+static_examples:
+  - "Pasa la rutina a nivel intermedio."
+  - "Reduce la intensidad porque estoy cansado."
+  - "Quiero subir a nivel avanzado para preparar una competencia."
+  - "Mi nivel actual es principiante, bajalo asi."
+  - "Ponlo en intermedio bajo, no quiero cambiar de objetivo."

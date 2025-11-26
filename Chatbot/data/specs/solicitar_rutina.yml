@@ -1,0 +1,103 @@
+intent: solicitar_rutina
+templates:
+  - "Necesito una rutina {modality} para {goal} considerando {condition}"
+  - "Puedes disenar un plan {frequency} que me ayude a {goal} si tengo {condition}?"
+  - "Quisiera un entrenamiento {environment} porque deseo {goal} y ademas {condition}"
+  - "Arma una rutina {style} enfocada en {goal}; recuerda que {condition}"
+  - "Busco un programa {modality} de {frequency} orientado a {goal} porque {condition}"
+  - "Genera un calendario {style} adaptable que me permita {goal} aun cuando {condition}"
+  - "Preparame una rutina {environment} para {goal}; {condition}, asi que ajusta el impacto"
+  - "Quiero un plan {style} que combine {equipment} y me ayude a {goal} pese a que {condition}"
+slots:
+  modality:
+    - completa
+    - de fuerza
+    - funcional
+    - express
+    - de bajo impacto
+    - de resistencia
+    - con peso corporal
+    - combinada
+    - de movilidad
+    - con enfoque metabolico
+    - progresiva por fases
+    - orientada a core
+    - enfocada en circuito
+  goal:
+    - bajar grasa
+    - ganar masa muscular
+    - mejorar mi resistencia
+    - fortalecer mi zona lumbar
+    - tonificar brazos y hombros
+    - controlar mi presion arterial
+    - retomar el ritmo despues de una lesion
+    - prepararme para una carrera de 10k
+    - mejorar mi flexibilidad general
+    - estabilizar mis articulaciones
+    - aumentar mi potencia en sprints
+    - complementar mi entrenamiento de ciclismo
+    - reducir mi porcentaje de grasa corporal
+  condition:
+    - tengo hipertension controlada
+    - convivo con asma leve
+    - mis rodillas son sensibles
+    - me estoy recuperando de una lumbalgia
+    - soy intolerante al impacto
+    - padezco sindrome metabolico
+    - vengo del sedentarismo
+    - tengo poco tiempo entre semana
+    - recien sali de covid prolongado
+    - viajo mucho y entreno en hoteles
+    - me lesione el tobillo hace poco
+    - debo evitar cargas sobre la cervical
+    - solo dispongo de 30 minutos diarios
+  frequency:
+    - de tres dias
+    - semanal
+    - quincenal
+    - diario pero liviano
+    - adaptable a mis turnos de trabajo
+    - dividido en bloques de 20 minutos
+    - con doble sesion en fin de semana
+    - alternando dias de cardio y fuerza
+    - cuatro dias con descanso activo
+    - micro sesiones distribuidas
+  environment:
+    - en casa
+    - en el gimnasio
+    - al aire libre
+    - usando solo bandas elasticas
+    - con elementos minimos
+    - para viajar
+    - en la oficina
+    - aprovechando parque y escaleras
+    - en un espacio reducido
+    - usando una terraza
+  style:
+    - progresiva
+    - personalizada
+    - suave pero constante
+    - orientada a movilidad
+    - mixta entre cardio y fuerza
+    - inspirada en HIIT moderado
+    - basada en intervalos largos
+    - enfocada en circuitos funcionales
+    - estructurada por bloques tematicos
+    - priorizando tecnica
+  equipment:
+    - bandas y mancuernas ligeras
+    - kettlebells y bicicleta estatica
+    - TRX y minibands
+    - poleas y peso libre
+    - unicamente el peso de mi cuerpo
+    - balon suizo y rueda de abdominales
+    - steps y cuerdas
+    - maquina de remo y eliptica
+static_examples:
+  - "Puedes armarme una rutina personalizada para ganar fuerza sin impacto?"
+  - "Quiero una rutina que combine cardio ligero y ejercicios de core porque soy hipertenso."
+  - "Necesito un entrenamiento semanal que respete mi lesion de espalda y ayude a bajar de peso."
+  - "Requiero un plan rapido de 20 minutos diarios para trabajar en casa."
+  - "Quiero trabajar pecho y brazos en una rutina completa."
+  - "Necesito ideas de ejercicios para piernas y gluteos."
+  - "Muestrame otra rutina alternativa sin cambiar objetivos."

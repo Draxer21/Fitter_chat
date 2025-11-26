@@ -1,0 +1,62 @@
+intent: suscripcion_baja
+templates:
+  - "Quiero {action} {plan} porque {reason}"
+  - "¿Cómo puedo {action} mi {plan}? {reason}"
+  - "Necesito {action} {plan}; {reason}"
+  - "Por favor ayúdame a {action} {plan}; {timeline}"
+  - "Estoy pensando en {action} {plan} ya que {reason}. ¿Qué pasos sigo?"
+  - "¿Podrías {action} {plan}? {extra}"
+  - "Me gustaría {action} {plan} inmediatamente; {timeline}"
+slots:
+  action:
+    - darme de baja de
+    - cancelar
+    - suspender
+    - terminar
+    - pausar
+    - congelar
+    - desactivar
+    - anular
+  plan:
+    - mi plan premium
+    - la membresia mensual
+    - el paquete anual
+    - la suscripcion familiar
+    - el plan corporativo
+    - el plan trimestral
+    - el combo de nutricion
+    - el paquete de clases ilimitadas
+    - la membresia con nutricionista
+  reason:
+    - me mudare pronto
+    - estoy lesionado
+    - no podre entrenar un tiempo
+    - quiero evaluar otras opciones
+    - necesito reducir gastos
+    - empece un viaje largo
+    - mi medico me indico descansar
+    - perdi el empleo
+    - prefiero concentrarme en rehabilitacion
+    - consegui otro programa temporalmente
+  timeline:
+    - me gustaria hacerlo hoy mismo
+    - quiero hacerlo antes de la proxima facturacion
+    - necesito pausarlo durante tres meses
+    - quiero detenerlo hasta nuevo aviso
+    - prefiero suspenderlo por 30 dias
+    - necesito que entre en vigor al final del mes
+    - me gustaria que quede inactivo por 60 dias
+  extra:
+    - no quiero recargos adicionales
+    - quiero evitar la renovacion automatica
+    - me gustaria confirmar si hay penalizacion
+    - avísame si debo completar algun formulario
+    - deseo recibir una confirmacion por correo
+    - necesito un comprobante de la baja
+static_examples:
+  - "Cancela mi suscripcion actual, por favor."
+  - "Dame de baja porque no podre continuar."
+  - "Quiero suspender el plan sin multas."
+  - "Me gustaria pausar mi plan premium hasta nuevo aviso."
+  - "Quiero darme de baja ya mismo."
+  - "Cancelar suscripcion, no quiero renovarla."

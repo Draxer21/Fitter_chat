@@ -273,27 +273,47 @@ export default function PagoPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validate()) {
+    
+    // Validación simplificada - solo nombre requerido
+    const errs = {};
+    if (!form.name.trim()) {
+      errs.name = "Nombre requerido.";
+    }
+    
+    setErrors(errs);
+    if (Object.keys(errs).length > 0) {
       return;
     }
+    
     setLoading(true);
     try {
+      // Llamar al endpoint que crea la orden y genera preferencia de MercadoPago
       const result = await API.carrito.pagar({
-        ...form,
-        card_num: form.card_num.replace(/\s/g, ""),
-        name: form.name.trim()
+        name: form.name.trim(),
+        email: "" // Se obtendrá del usuario en sesión en el backend
       });
-      await refreshCart().catch(() => {});
-      const orderId = result?.order_id;
-      if (orderId) {
-        navigate(`/boleta?order=${orderId}`);
+      
+      // El backend retorna init_point para redirigir a MercadoPago
+      if (result?.init_point) {
+        // Guardar order_id en localStorage por si vuelve
+        if (result.order_id) {
+          localStorage.setItem('pending_order_id', result.order_id);
+        }
+        
+        // Abrir MercadoPago en nueva pestaña
+        window.open(result.init_point, '_blank');
+        
+        // Mostrar mensaje en la página actual
+        setErrors({ 
+          general: "Se abrió MercadoPago en una nueva pestaña. Completa el pago allí y luego regresa aquí." 
+        });
+        setLoading(false);
       } else {
-        navigate("/boleta");
+        throw new Error("No se recibió el link de pago");
       }
     } catch (err) {
       const message = err?.payload?.error || err.message || "No se pudo procesar el pago. Inténtalo nuevamente.";
       setErrors({ general: message });
-    } finally {
       setLoading(false);
     }
   };
@@ -331,29 +351,18 @@ export default function PagoPage() {
             <section className="payment-main">
               <div className="payment-main-headline">
                 <h1>Completa tu pago</h1>
-                <p>Verifica los datos y finaliza la compra con una experiencia segura inspirada en los portales bancarios.</p>
+                <p>Serás redirigido a MercadoPago para completar tu compra de forma segura.</p>
               </div>
 
               <div className="payment-main-visuals">
-                <PaymentCardPreview
-                  number={displayNumber}
-                  name={displayName}
-                  exp={displayExp}
-                  cvv={displayCvv}
-                  focus={focusedField}
-                  brand={cardBrand}
-                />
-
-                <div className="payment-card-logos" aria-hidden="true">
-                  <span className="payment-logo payment-logo--visa">VISA</span>
-                  <span className="payment-logo payment-logo--mastercard">Mastercard</span>
-                  <span className="payment-logo payment-logo--amex">Amex</span>
-                  <span className="payment-logo payment-logo--diners">Diners</span>
+                <div className="payment-card-logos" aria-hidden="true" style={{ display: 'flex', justifyContent: 'center', gap: '1rem', padding: '2rem 0' }}>
+                  <img src="https://http2.mlstatic.com/storage/logos-api-admin/a5f047d0-9be0-11ec-aad4-c3381f368aaf-xl@2x.png" alt="MercadoPago" style={{ height: '40px' }} />
                 </div>
               </div>
 
               <form className="payment-form" onSubmit={handleSubmit} noValidate>
                 <label className="payment-field">
+<<<<<<< Updated upstream
                   <span className="payment-label">Numero de tarjeta</span>
                   <input
                     type="text"
@@ -411,24 +420,37 @@ export default function PagoPage() {
                     type="text"
                     name="name"
                     autoComplete="cc-name"
+=======
+                  <span className="payment-label">Nombre completo</span>
+                  <input
+                    type="text"
+                    name="name"
+                    autoComplete="name"
+                    aria-describedby={errors.name ? "name_error" : undefined}
+>>>>>>> Stashed changes
                     value={form.name}
                     onChange={handleChange}
                     onFocus={() => handleFocus("name")}
-                    placeholder="Nombre Apellido"
+                    placeholder="Tu nombre completo"
                     className={errors.name ? "payment-input payment-input--error" : "payment-input"}
                   />
+<<<<<<< Updated upstream
                   {errors.name && <span className="payment-error">{errors.name}</span>}
+=======
+                  <span className="payment-hint">Este nombre aparecerá en tu boleta.</span>
+                  {errors.name && <span id="name_error" className="payment-error" role="alert">{errors.name}</span>}
+>>>>>>> Stashed changes
                 </label>
 
                 {errors.general && <div className="payment-alert">{errors.general}</div>}
 
                 <button type="submit" className="payment-submit" disabled={loading}>
-                  {loading ? "Procesando pago..." : `Pagar ${formatearPrecio(totalToCharge)}`}
+                  {loading ? "Redirigiendo a MercadoPago..." : `Continuar al pago ${formatearPrecio(totalToCharge)}`}
                 </button>
                 <div className="payment-terms">
                   <p>
-                    Al continuar aceptas nuestros terminos y condiciones. Este cargo puede aparecer en tu estado de cuenta como
-                    <strong> Fitter</strong>.
+                    Al continuar serás redirigido a <strong>MercadoPago</strong> para completar tu pago de forma segura.
+                    Aceptas nuestra <a href="/terminos">política de privacidad</a>.
                   </p>
                 </div>
               </form>
@@ -442,8 +464,8 @@ export default function PagoPage() {
                     />
                   </svg>
                   <div>
-                    <h3>Compra protegida</h3>
-                    <p>Aplicamos protocolos PCI-DSS y verificacion de identidad para proteger tus pagos.</p>
+                    <h3>Pago 100% seguro con MercadoPago</h3>
+                    <p>Certificación PCI-DSS y cifrado de extremo a extremo. Acepta todas las tarjetas y métodos de pago.</p>
                   </div>
                 </div>
                 <div className="payment-trust-item">
@@ -454,8 +476,8 @@ export default function PagoPage() {
                     />
                   </svg>
                   <div>
-                    <h3>Entrega garantizada</h3>
-                    <p>Si algo falla, nuestro equipo estara disponible 24/7 para ayudarte con tu pedido.</p>
+                    <h3>Compra protegida</h3>
+                    <p>Protección al comprador y garantía de devolución. Soporte disponible 24/7.</p>
                   </div>
                 </div>
               </div>

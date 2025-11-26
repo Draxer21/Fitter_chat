@@ -1,0 +1,129 @@
+intent: soporte_mfa
+templates:
+  - "{saludo} tengo problemas con el mfa"
+  - "{saludo} mi codigo totp no funciona"
+  - "no puedo ingresar con el doble factor"
+  - "el autenticador no acepta mi codigo"
+  - "{saludo_capital} {problema}" 
+  - "{saludo} necesito soporte MFA porque {detalle}" 
+  - "{urgencia} me ayudes con el autenticador {app}" 
+  - "{saludo} el codigo de {app} me marca {fallo}" 
+  - "{solicitud} revisar el segundo factor, {detalle_corto}" 
+  - "{saludo} {situacion} y {urgencia} soporte MFA"
+  - "{solicitud} instrucciones para {accion_mfa}"
+  - "{saludo} necesito soporte MFA para {accion_mfa} porque {detalle}" 
+  - "{urgencia} me orienten, {estado_mfa}"
+  - "{saludo} mi {resultado_mfa} asi que {urgencia} soporte"
+  - "{saludo} {situacion} y {detalle}, {solicitud} {accion_mfa}"
+slots:
+  saludo:
+    - hola
+    - oye
+    - buenas
+    - hey
+    - ""
+  saludo_capital:
+    - Hola
+    - Buenas
+    - Hey
+  problema:
+    - mi codigo de respaldo fue rechazado
+    - el telefono nuevo no sincroniza el autentificador
+    - no recibo el segundo factor
+    - el token expira muy rapido
+    - no puedo registrar el QR
+    - me pide un codigo que nunca llega
+    - cambie de dispositivo y quedo bloqueado
+  detalle:
+    - cambie de celular
+    - perdi acceso a la app
+    - me pide un codigo que no tengo
+    - siempre dice codigo invalido
+    - ya no tengo los codigos de respaldo
+    - no recuerdo la clave
+    - resetee el telefono
+    - desinstale la app
+    - reinstale el sistema
+    - cambie la hora del telefono
+    - perdi las claves impresas
+  urgencia:
+    - urge que
+    - necesito que
+    - por favor
+    - me gustaria que
+    - agradeceria que
+    - seria genial que
+  app:
+    - Authy
+    - Google Authenticator
+    - Microsoft Authenticator
+    - la app del banco
+    - el autenticador del gym
+    - 1Password
+    - FreeOTP
+    - Duo Mobile
+  fallo:
+    - como invalido
+    - expirado
+    - fuera de tiempo
+    - incorrecto
+    - duplicado
+    - bloqueado
+    - sincronizacion fallida
+    - codigo usado
+  solicitud:
+    - puedes
+    - necesito que
+    - me ayudas a
+    - podrias
+    - agradeceria que
+    - indicame como
+  detalle_corto:
+    - no me deja entrar
+    - no reconoce el codigo
+    - se desconfiguro
+    - no sincroniza
+    - quedo bloqueado
+    - no puedo resetearlo
+    - no genera codigos
+  situacion:
+    - perdi el movil anterior
+    - formatee el telefono
+    - un compañero necesita acceso
+    - me quede sin codigos
+    - se borro la app
+    - la hora esta desajustada
+    - cambie de plan
+    - restaure una copia
+    - la camara no lee el QR
+  accion_mfa:
+    - registrar un nuevo dispositivo
+    - recuperar los codigos de respaldo
+    - desactivar temporalmente el MFA
+    - resetear el autenticador
+    - volver a configurar el QR
+    - actualizar el secreto
+    - migrar el MFA a otro telefono
+    - validar un codigo de respaldo
+    - reactivar mi aplicacion
+    - sincronizar el tiempo
+  estado_mfa:
+    - estoy bloqueado fuera de la cuenta
+    - no puedo completar el segundo paso
+    - el sistema desconoce mis codigos
+    - no aparece el prompt
+    - me rechaza todo el tiempo
+    - no acepta ningun token
+  resultado_mfa:
+    - codigo totp falla
+    - app queda en blanco
+    - QR no carga
+    - enlace caduca
+    - codigo de respaldo invalido
+    - token llega tarde
+static_examples:
+  - "ayudame con la autenticacion de dos factores"
+  - "el codigo del autenticador falla siempre"
+  - "necesito soporte para el segundo factor"
+  - "me quede sin codigos de respaldo"
+  - "no puedo escanear el QR del MFA"

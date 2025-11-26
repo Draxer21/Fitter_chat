@@ -1,5 +1,6 @@
 // Chatbot.jsx
 import { useEffect, useRef, useState } from "react";
+import "./styles/ChatbotEmbed.css";
 
 function getOrCreateSenderId() {
   const k = "rasa_uid";
@@ -103,17 +104,9 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
 
   const Bubble = ({ children, from }) => (
     <div
-      className="message"
-      style={{
-        display: "inline-block",
-        padding: "8px 12px",
-        borderRadius: from === "user" ? "16px 16px 0 16px" : "16px 16px 16px 0",
-        background: from === "user" ? "#DCF8C6" : "#F1F0F0",
-        color: from === "user" ? "#0b1120" : "#111827",
-        maxWidth: "85%",
-        whiteSpace: "pre-wrap",
-        wordBreak: "break-word"
-      }}
+      className={`fw-embedded-chat__bubble ${
+        from === "user" ? "fw-embedded-chat__bubble--user" : "fw-embedded-chat__bubble--bot"
+      }`}
     >
       {children}
     </div>
@@ -142,7 +135,8 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
             <button
               type="button"
               onClick={() => window.open(m.custom.url, "_blank", "noopener,noreferrer")}
-              style={{ marginTop: hasText ? 6 : 0, padding: "6px 12px", borderRadius: 8, border: "none", background: "#007bff", color: "white", cursor: "pointer" }}
+              className="fw-embedded-chat__btn fw-embedded-chat__btn--blue"
+              style={{ marginTop: hasText ? 6 : 0 }}
               aria-label={m.custom.title || "Abrir rutina"}
             >
               {m.custom.title || "Abrir rutina"}
@@ -155,13 +149,14 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
             <button
               type="button"
               onClick={() => routineKey && toggleCard(routineKey)}
-              style={{ marginTop: hasText || hasRoutineLink ? 6 : 0, padding: "6px 12px", borderRadius: 8, border: "1px solid #2563eb", background: "#1d4ed8", color: "white", cursor: "pointer" }}
+              className="fw-embedded-chat__btn fw-embedded-chat__btn--blue"
+              style={{ marginTop: hasText || hasRoutineLink ? 6 : 0 }}
             >
               {isRoutineExpanded ? "Ocultar rutina" : "Ver rutina aqui"}
             </button>
             {isRoutineExpanded && (
-              <div style={{ marginTop: 8, background: "rgba(255,255,255,0.85)", padding: "8px 10px", borderRadius: 8, textAlign: "left", lineHeight: 1.45 }}>
-                {routineDetail.header && <p style={{ margin: 0, fontWeight: 600 }}>{routineDetail.header}</p>}
+              <div className="fw-embedded-chat__card">
+                {routineDetail.header && <p className="fw-embedded-chat__card-title">{routineDetail.header}</p>}
                 <div style={{ fontSize: "0.85rem", marginTop: 6, display: "grid", gap: 4 }}>
                   <span><strong>Tiempo:</strong> {routineDetail.summary?.tiempo_min ?? "-"} min</span>
                   <span><strong>Ejercicios:</strong> {routineDetail.summary?.ejercicios ?? "-"}</span>
@@ -170,7 +165,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
                   <span><strong>Nivel:</strong> {routineDetail.summary?.nivel ?? "-"}</span>
                 </div>
                 {Array.isArray(routineDetail.summary?.health_notes) && routineDetail.summary.health_notes.length > 0 && (
-                  <div style={{ marginTop: 8, fontSize: "0.8rem", background: "#FEF3C7", borderRadius: 8, padding: "6px 8px", color: "#92400e" }}>
+                  <div className="fw-embedded-chat__alert fw-embedded-chat__alert--amber">
                     <strong>Precauciones:</strong>
                     <ul style={{ margin: "6px 0 0 16px", padding: 0 }}>
                       {routineDetail.summary.health_notes.map((note, idx) => (
@@ -185,7 +180,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
                   </p>
                 )}
                 {routineDetail.fallback_notice && (
-                  <p style={{ marginTop: 6, fontSize: "0.8rem", color: "#92400e" }}>
+                  <p className="fw-embedded-chat__note fw-embedded-chat__note--warning">
                     {routineDetail.fallback_notice}
                   </p>
                 )}
@@ -219,13 +214,14 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
             <button
               type="button"
               onClick={() => dietKey && toggleCard(dietKey)}
-              style={{ marginTop: hasText || hasRoutineLink || routineDetail ? 6 : 0, padding: "6px 12px", borderRadius: 8, border: "1px solid #059669", background: "#047857", color: "white", cursor: "pointer" }}
+              className="fw-embedded-chat__btn fw-embedded-chat__btn--green"
+              style={{ marginTop: hasText || hasRoutineLink || routineDetail ? 6 : 0 }}
             >
               {isDietExpanded ? "Ocultar dieta" : "Ver plan de dieta"}
             </button>
             {isDietExpanded && (
-              <div style={{ marginTop: 8, background: "rgba(236, 253, 245, 0.9)", padding: "8px 10px", borderRadius: 8, textAlign: "left", lineHeight: 1.45 }}>
-                <p style={{ margin: 0, fontWeight: 600 }}>Objetivo: {dietPlan.objective || "equilibrada"}</p>
+              <div className="fw-embedded-chat__card fw-embedded-chat__card--green">
+                <p className="fw-embedded-chat__card-title">Objetivo: {dietPlan.objective || "equilibrada"}</p>
                 <div style={{ fontSize: "0.85rem", marginTop: 6, display: "grid", gap: 4 }}>
                   {dietSummary.calorias && <span><strong>Calorias:</strong> {dietSummary.calorias}</span>}
                   {dietSummary.macros?.proteinas && <span><strong>Proteinas:</strong> {dietSummary.macros.proteinas}</span>}
@@ -233,7 +229,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
                   {dietSummary.macros?.grasas && <span><strong>Grasas:</strong> {dietSummary.macros.grasas}</span>}
                 </div>
                 {dietAdjustments.length > 0 && (
-                  <div style={{ marginTop: 8, fontSize: "0.8rem", background: "#fef3c7", borderRadius: 8, padding: "6px 8px", color: "#b45309" }}>
+                  <div className="fw-embedded-chat__alert fw-embedded-chat__alert--amber">
                     <strong>Ajustes de salud:</strong>
                     <ul style={{ margin: "6px 0 0 16px", padding: 0 }}>
                       {dietAdjustments.map((note, idx) => (
@@ -254,7 +250,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
                   </ol>
                 )}
                 {allergenHits.length > 0 && (
-                  <div style={{ marginTop: 8, fontSize: "0.8rem", background: "#fee2e2", borderRadius: 8, padding: "6px 8px", color: "#b91c1c" }}>
+                  <div className="fw-embedded-chat__alert fw-embedded-chat__alert--red">
                     <strong>Atencion alergias:</strong>
                     <ul style={{ margin: "6px 0 0 16px", padding: 0 }}>
                       {allergenHits.map((hit, idx) => (
@@ -288,6 +284,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
         {Array.isArray(m.buttons) && m.buttons.length > 0 && (
           <>
             {(hasText || hasRoutineLink || routineDetail || dietPlan || m.image) ? <br /> : null}
+<<<<<<< Updated upstream
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 6 }}>
               {m.buttons.map((b, idx) => (
                 <button
@@ -305,6 +302,52 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
                   {b?.title || "Opcion"}
                 </button>
               ))}
+=======
+            <div className="fw-embedded-chat__quick-buttons">
+              {m.buttons.map((b, idx) => {
+                const buttonTitle = b?.title || b?.text || b?.label || `Opción ${idx + 1}`;
+                const buttonPayload = b?.payload || b?.title || "";
+                
+                return (
+                  <button
+                    key={`btn-${m.id}-${idx}`}
+                    type="button"
+                    onClick={async () => {
+                      if (buttonPayload) {
+                        // Mostrar el título como mensaje del usuario
+                        pushMessage({ from: "user", text: buttonTitle });
+                        setLoading(true);
+                        setErrorText("");
+                        
+                        try {
+                          const res = await fetch(endpoint, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ sender: uidRef.current, message: buttonPayload }),
+                          });
+                          
+                          if (!res.ok) {
+                            throw new Error(`HTTP ${res.status}`);
+                          }
+                          
+                          const data = await res.json();
+                          const botMsgs = normalizeBotPayloads(data);
+                          setMessages((prev) => botMsgs.length ? [...prev, ...botMsgs] : [...prev, { from: "bot", id: nextId.current++, text: "No recibí respuesta." }]);
+                        } catch (err) {
+                          console.error("Error enviando payload del botón:", err);
+                          pushMessage({ from: "bot", text: "Error al procesar tu solicitud." });
+                        } finally {
+                          setLoading(false);
+                        }
+                      }
+                    }}
+                    className="fw-embedded-chat__btn fw-embedded-chat__btn--ghost"
+                  >
+                    {buttonTitle}
+                  </button>
+                );
+              })}
+>>>>>>> Stashed changes
             </div>
           </>
         )}
@@ -314,49 +357,42 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
 
 
   return (
-    <div
-      style={{
-        border: "1px solid #ccc",
-        padding: 10,
-        borderRadius: 8,
-        width: "min(900px, 95%)",
-        margin: "16px auto",
-        background: "#fff",
-        boxShadow: "0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06)"
-      }}
-      role="region"
-      aria-label="Chat con asistente FITTER"
-    >
-      <div ref={scrollRef} style={{ height: 360, overflowY: "auto", marginBottom: 10, padding: 6 }} aria-live="polite">
+    <div className="fw-embedded-chat" role="region" aria-label="Chat con asistente FITTER">
+      <div ref={scrollRef} className="fw-embedded-chat__scroll" aria-live="polite">
         {messages.map((m) => (
-          <div key={m.id} style={{ textAlign: m.from === "user" ? "right" : "left", margin: "6px 0" }}>
+          <div
+            key={m.id}
+            className={`fw-embedded-chat__row ${
+              m.from === "user" ? "fw-embedded-chat__row--user" : "fw-embedded-chat__row--bot"
+            }`}
+          >
             <Bubble from={m.from}>{renderMessageContent(m)}</Bubble>
           </div>
         ))}
-        {loading && <div style={{ fontStyle: "italic", color: "#666", padding: "4px 6px" }}>Escribiendo…</div>}
+        {loading && <div className="fw-embedded-chat__typing">Escribiendo…</div>}
       </div>
 
       {errorText && (
-        <div style={{ color: "#b91c1c", background: "#fee2e2", border: "1px solid #fecaca", borderRadius: 8, padding: "6px 10px", marginBottom: 8 }} role="alert">
+        <div className="fw-embedded-chat__error" role="alert">
           {errorText}
         </div>
       )}
 
-      <div style={{ display: "flex", gap: 8 }}>
+      <div className="fw-embedded-chat__composer">
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={onKeyDown}
           placeholder="Escribe tu mensaje…"
           rows={1}
-          style={{ flex: 1, padding: 10, borderRadius: 8, border: "1px solid #ccc", resize: "vertical", minHeight: 42, maxHeight: 160 }}
+          className="fw-embedded-chat__input"
           aria-label="Cuadro de mensaje"
           disabled={loading}
         />
         <button
           onClick={sendMessage}
           disabled={loading || input.trim().length === 0}
-          style={{ padding: "10px 14px", borderRadius: 8, border: "none", background: loading ? "#9ca3af" : "#4CAF50", color: "white", cursor: loading ? "not-allowed" : "pointer" }}
+          className="fw-embedded-chat__send"
           aria-busy={loading}
           aria-label="Enviar mensaje"
         >

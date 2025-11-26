@@ -1,0 +1,75 @@
+intent: cambiar_objetivo_rutina
+templates:
+  - "Cambia mi objetivo a {new_goal} porque {reason}"
+  - "Ahora quiero que el plan busque {new_goal}; {reason}"
+  - "Podemos ajustar la meta para {new_goal}? {reason}"
+  - "Prefiero enfocarme en {new_goal} a partir de ahora; {reason}"
+  - "Por favor actualiza mi objetivo principal a {new_goal} ya que {reason}"
+  - "Quiero sustituir mi meta actual por {new_goal}; {timeline}"
+  - "Necesito que la rutina apunte a {new_goal} porque {context}"
+  - "Hable con {support} y coincidimos en pasar a {new_goal}"
+slots:
+  new_goal:
+    - ganar masa muscular
+    - bajar grasa
+    - mejorar mi resistencia aerobica
+    - fortalecer la zona lumbar
+    - preparar un 10k
+    - enfocarme en movilidad
+    - aumentar potencia en piernas
+    - mejorar mi postura
+    - trabajar equilibrio y estabilidad
+    - preparar una competencia de crossfit
+    - desarrollar fuerza maxima
+    - centrarme en definicion muscular
+    - priorizar la resistencia muscular local
+    - mejorar la velocidad en sprints
+    - incrementar mi capacidad pulmonar
+    - enfocarme en fuerza del tren superior
+    - lograr estabilidad de core
+    - prepararme para trail running
+    - optimizar mi recuperacion activa
+    - reducir el estres
+  reason:
+    - cambie de prioridad
+    - el medico me lo recomendo
+    - me lesione y necesito adaptarme
+    - tengo una competencia pronto
+    - quiero variar mi entrenamiento
+    - me cuesta seguir el plan actual
+    - me gustaria ver progreso en otra area
+    - necesito compatibilizarlo con mi salud
+    - tengo poco tiempo y debo optimizar
+    - mis objetivos nutricionales cambiaron
+    - me siento raro con el plan actual
+    - quiero apoyar mi tratamiento medico
+    - mi entrenador me sugirio el cambio
+  timeline:
+    - quiero lograrlo en tres meses
+    - me gustaria alcanzarlo antes de fin de ano
+    - lo necesito cuanto antes
+    - deseo verlo reflejado en mi proxima evaluacion
+    - busco resultados visibles en seis semanas
+    - me prepare para una carrera en 90 dias
+    - necesito el cambio antes de mis vacaciones
+    - quiero lograrlo en un semestre
+  context:
+    - empece a practicar otro deporte
+    - participe en una carrera y vi que debo mejorar
+    - mi fisioterapeuta me pidio ajustar el plan
+    - voy a un viaje deportivo
+    - cambie mi meta de bienestar general
+    - regresare a competir en natacion
+    - voy a iniciar un programa de nutricion especializado
+  support:
+    - mi entrenador
+    - mi nutricionista
+    - mi fisio
+    - mi medico
+    - mi companero de entrenamiento
+static_examples:
+  - "Quiero cambiar el objetivo de adelgazar a ganar musculo."
+  - "Ajusta la meta para enfocarla en movilidad y flexibilidad."
+  - "Actualiza mi meta a prepararme para una maraton."
+  - "Cambia el objetivo a hipertrofia, quiero priorizar masa."
+  - "Ahora prefiero bajar grasa en vez de fuerza maxima."

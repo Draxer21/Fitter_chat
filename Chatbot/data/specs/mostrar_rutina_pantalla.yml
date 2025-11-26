@@ -1,0 +1,57 @@
+intent: mostrar_rutina_pantalla
+templates:
+  - "Muestrame {format} la rutina {period}"
+  - "Quiero ver {format} el plan {detail} aqui mismo"
+  - "Despliega {format} la rutina {detail} en pantalla"
+  - "Ensename {format} la rutina {period}; {followup}"
+  - "Puedes mostrar {format} la rutina {detail}? {context}"
+slots:
+  format:
+    - en pantalla
+    - ahora mismo
+    - por favor
+    - con detalle
+    - resumida
+    - paso a paso
+    - resaltando los cambios
+    - con colores
+  period:
+    - de esta semana
+    - del dia de hoy
+    - del mes completo
+    - con los cambios recientes
+    - que generaste recien
+    - de la proxima semana
+    - que corresponde al plan avanzado
+    - del bloque de fuerza
+  detail:
+    - con repeticiones y series
+    - incluyendo calentamiento
+    - con los descansos sugeridos
+    - comparada con la anterior
+    - filtrada por tren superior
+    - segmentada por dias
+    - con notas del coach
+    - incluyendo estiramientos
+    - mostrando el volumen total
+  followup:
+    - quiero confirmarla antes de entrenar
+    - asi la reviso desde el ordenador
+    - necesito copiarla a mi cuaderno
+    - deseo validar que sea correcta
+    - quiero enviarla por captura
+    - la usare en mi tablet
+  context:
+    - me resulta mas comodo leerla asi
+    - necesito revisarla con mi entrenador
+    - quiero asegurarme de no olvidar nada
+    - tengo poco tiempo y quiero un vistazo rapido
+    - me sirve para comparar con la semana pasada
+    - deseo ver los ejercicios nuevos
+static_examples:
+  - "Ensename la rutina actual."
+  - "Quiero ver la rutina en pantalla con todos los ejercicios."
+  - "Muestra el plan del lunes aqui mismo."
+  - "Necesito visualizar la rutina antes de descargarla."
+  - "Prefiero verla aqui mismo en pantalla, no por correo."
+  - "Ver rutina ahora en la app."

@@ -25,6 +25,17 @@ const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const AccountSecurityPage = lazy(() => import("./pages/AccountSecurityPage"));
 const CatalogPage = lazy(() => import("./pages/CatalogPage"));
 const AdminSalesPage = lazy(() => import("./pages/AdminSalesPage"));
+<<<<<<< Updated upstream
+=======
+const AboutPage = lazy(() => import("./pages/AboutPage"));
+const TermsPage = lazy(() => import("./pages/TermsPage"));
+const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
+const AccessibilityPage = lazy(() => import("./pages/AccessibilityPage"));
+const ChatPage = lazy(() => import("./pages/ChatPage"));
+const PaymentSuccessPage = lazy(() => import("./pages/PaymentSuccessPage"));
+const PaymentFailurePage = lazy(() => import("./pages/PaymentFailurePage"));
+const PaymentPendingPage = lazy(() => import("./pages/PaymentPendingPage"));
+>>>>>>> Stashed changes
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -71,6 +82,7 @@ export default function App() {
                     <Route path="/login" element={<LoginPage />} />
                   </Route>
 
+<<<<<<< Updated upstream
                   <Route path="/catalogo" element={<CatalogPage />} />
                   <Route path="/carrito" element={<CarritoPage />} />
                   <Route path="/pago" element={<PagoPage />} />
@@ -87,6 +99,28 @@ export default function App() {
               </Suspense>
             </main>
             <Footer />
+=======
+                      <Route path="/catalogo" element={<CatalogPage />} />
+                      <Route path="/chat" element={<ChatPage />} />
+                      <Route path="/carrito" element={<CarritoPage />} />
+                      <Route path="/pago" element={<PagoPage />} />
+                      <Route path="/payment/success" element={<PaymentSuccessPage />} />
+                      <Route path="/payment/failure" element={<PaymentFailurePage />} />
+                      <Route path="/payment/pending" element={<PaymentPendingPage />} />
+                      <Route path="/boleta" element={<BoletaPage />} />
+                      <Route path="/admin/productos" element={<TablaProductos />} />
+                      <Route path="/admin/productos/nuevo" element={<ProductoForm />} />
+                      <Route path="/admin/productos/:id/editar" element={<ProductoForm />} />
+                      <Route path="/admin/ventas" element={<AdminSalesPage />} />
+                      <Route path="/rutina/:id" element={<RutinaPage />} />
+                      <Route path="/cuenta/perfil" element={<ProfilePage />} />
+                      <Route path="/cuenta/seguridad" element={<AccountSecurityPage />} />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
+                  </Suspense>
+                </main>
+                <Footer />
+>>>>>>> Stashed changes
 
             <ChatWidgetToggle />
           </BrowserRouter>

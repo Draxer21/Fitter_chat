@@ -139,7 +139,23 @@ def validar_y_deducir(snapshot: Optional[Dict[str, Any]] = None) -> Tuple[bool, 
 # --------- Endpoints JSON ---------
 @bp.get("/estado")
 def estado_carrito():
-    return jsonify(_get_carrito()), 200
+    estado = _get_carrito()
+    items = estado.get("items", {})
+    
+    # Enriquecer items con imágenes si no las tienen
+    producto_ids = [int(item.get("producto_id")) for item in items.values() if item.get("producto_id")]
+    if producto_ids:
+        productos = db.session.execute(
+            select(Producto).where(Producto.id.in_(producto_ids))
+        ).scalars().all()
+        productos_map = {p.id: p for p in productos}
+        
+        for pid, item in items.items():
+            producto_id = int(item.get("producto_id", 0))
+            if producto_id in productos_map and not item.get("imagen"):
+                item["imagen"] = productos_map[producto_id].imagen_url()
+    
+    return jsonify(estado), 200
 
 
 @bp.post("/agregar/<int:producto_id>")
@@ -189,6 +205,9 @@ def validar_carrito():
 
 @bp.post("/pagar")
 def procesar_pago():
+    """
+    Crear orden y generar preferencia de pago en MercadoPago
+    """
     data = request.get_json(silent=True) or {}
 
     carrito = Carrito()
@@ -196,57 +215,94 @@ def procesar_pago():
     if not snapshot.get("items"):
         return jsonify({"error": "Carrito vacio."}), 400
 
-    card_num = (data.get("card_num") or "").replace(" ", "").replace("-", "")
-    exp = data.get("exp") or ""
-    cvv = data.get("cvv") or ""
+    # Obtener datos del usuario
     name = (data.get("name") or session.get("full_name") or "").strip()
     email = (data.get("email") or session.get("email") or session.get("user_email") or "").strip()
-
-    if not card_num.isdigit() or not (13 <= len(card_num) <= 19) or not _luhn_checksum(card_num):
-        return jsonify({"error": "Numero de tarjeta invalido."}), 400
-
-    try:
-        mes, anno = exp.split("/")
-        mes = int(mes)
-        anno = int("20" + anno) if len(anno) == 2 else int(anno)
-        ahora = datetime.now()
-        expiracion = datetime(anno, mes, 1)
-        if expiracion < datetime(ahora.year, ahora.month, 1):
-            return jsonify({"error": "Tarjeta expirada."}), 400
-    except Exception:
-        return jsonify({"error": "Fecha de expiracion invalida (MM/YY)."}), 400
-
-    if not cvv.isdigit() or len(cvv) not in (3, 4):
-        return jsonify({"error": "CVV invalido."}), 400
-
+    
     if not name:
-        return jsonify({"error": "Nombre del titular requerido."}), 400
+        return jsonify({"error": "Nombre requerido."}), 400
+    
+    if not email:
+        return jsonify({"error": "Email requerido."}), 400
 
+    # Validar stock antes de crear la orden
     exito, mensaje = validar_y_deducir(snapshot)
     if not exito:
         return jsonify({"error": mensaje or "Error procesando compra o stock insuficiente."}), 400
 
     try:
+        # Crear orden con estado pending
         user_id = session.get("uid")
         order = Order.from_cart_snapshot(
             snapshot=snapshot,
-            status="paid",
+            status="pending",
+            payment_status="pending",
             user_id=int(user_id) if user_id else None,
             customer_name=name,
-            customer_email=email or None,
-            payment_method="card",
-            payment_reference=card_num[-4:],
+            customer_email=email,
+            payment_method="mercadopago",
             metadata={"snapshot": snapshot},
         )
         db.session.commit()
-    except Exception as exc:  # pragma: no cover - rollback y log
+        
+        # Crear preferencia de pago en MercadoPago
+        from ..payments.service import MercadoPagoService
+        
+        # Preparar items para MercadoPago
+        items = []
+        for item in order.items:
+            items.append({
+                'name': item.product_name,
+                'quantity': item.quantity,
+                'price': float(item.unit_price)
+            })
+        
+        # Separar nombre y apellido
+        name_parts = name.split()
+        payer_name = name_parts[0] if name_parts else "Cliente"
+        payer_surname = " ".join(name_parts[1:]) if len(name_parts) > 1 else "Fitter"
+        
+        payer_info = {
+            'name': payer_name,
+            'surname': payer_surname,
+            'email': email
+        }
+        
+        mp_service = MercadoPagoService()
+        preference = mp_service.create_preference(
+            order_id=order.id,
+            items=items,
+            payer_info=payer_info
+        )
+        
+        # Limpiar carrito
+        carrito.limpiar()
+        session["last_order_id"] = order.id
+        
+        return jsonify({
+            "exito": "Orden creada exitosamente.",
+            "order_id": order.id,
+            "preference_id": preference["preference_id"],
+            "init_point": preference["init_point"],
+            "sandbox_init_point": preference.get("sandbox_init_point"),
+        }), 200
+        
+    except ValueError as exc:
         db.session.rollback()
-        current_app.logger.exception("No se pudo registrar el pedido: %s", exc)
-        return jsonify({"error": "Pago procesado, pero no se pudo registrar la orden. Contacta soporte."}), 500
-
-    carrito.limpiar()
-    session["last_order_id"] = order.id
-    return jsonify({"exito": "Pago procesado y compra validada.", "order_id": order.id}), 200
+        current_app.logger.error("Error de configuración MercadoPago: %s", exc)
+        return jsonify({"error": "MercadoPago no está configurado correctamente. Contacta al administrador."}), 500
+    except Exception as exc:
+        db.session.rollback()
+        current_app.logger.exception("No se pudo crear la preferencia de pago: %s", exc)
+        
+        # Mensaje más específico si es error de autenticación
+        error_msg = str(exc)
+        if "unauthorized" in error_msg.lower() or "invalid access token" in error_msg.lower():
+            return jsonify({
+                "error": "Las credenciales de MercadoPago no son válidas. Verifica la configuración en el panel de administración."
+            }), 500
+        
+        return jsonify({"error": "No se pudo procesar el pago. Contacta soporte."}), 500
 
 
 # --------- Vistas ---------

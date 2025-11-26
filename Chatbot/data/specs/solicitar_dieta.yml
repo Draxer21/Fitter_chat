@@ -1,0 +1,54 @@
+intent: solicitar_dieta
+templates:
+  - "Necesito un plan de alimentacion para {goal} teniendo {condition}"
+  - "¿Puedes crear una dieta {style} porque {reason}?"
+  - "Me gustaria una guia alimenticia para {goal}; recuerda que {condition}"
+  - "Quiero un menu {style} que me ayude a {goal}, considerando que {condition}"
+  - "Busco recomendaciones alimenticias para {goal}; {reason}"
+  - "Podrias armar una dieta que combine con mi entrenamiento y {condition}?"
+slots:
+  goal:
+    - bajar grasa
+    - ganar masa muscular
+    - mantener mi peso
+    - mejorar rendimiento deportivo
+    - controlar el colesterol
+    - acompanhar mi rutina de fuerza
+    - mejorar mi digestion
+    - subir masa sin grasa
+    - prepararme para una competencia
+  condition:
+    - soy intolerante a la lactosa
+    - tengo hipertension
+    - soy vegetariano
+    - tengo diabetes tipo 2
+    - tengo gastritis
+    - practico ayuno intermitente
+    - sigo una dieta vegana
+    - tengo alergia al mani
+    - debo evitar gluten
+    - tengo trigliceridos altos
+  style:
+    - equilibrada
+    - rica en proteinas
+    - baja en carbohidratos
+    - sin azucar anadida
+    - antiinflamatoria
+    - apta para celiacos
+    - tipo mediterranea
+    - con enfoque keto
+    - basada en plantas
+  reason:
+    - quiero optimizar mi entrenamiento
+    - necesito controlar mi salud
+    - mi medico lo sugirio
+    - quiero mejorar mis tiempos
+    - me siento sin energia
+    - busco mantenerme saciado
+    - quiero evitar picos de glucosa
+    - me resulta dificil planificar comidas
+static_examples:
+  - "Arma una dieta para acompanar mi rutina."
+  - "Quiero un menu semanal para bajar de peso."
+  - "Necesito recomendaciones alimenticias para hipertension."
+  - "Diseniame una dieta sin lactosa que apoye mi entrenamiento."

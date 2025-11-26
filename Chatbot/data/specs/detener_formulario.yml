@@ -1,0 +1,127 @@
+intent: detener_formulario
+templates:
+  - "{saludo} cancela este formulario"
+  - "{saludo} no quiero seguir con esto"
+  - "deten el formulario por favor"
+  - "dejemoslo asi por ahora"
+  - "{saludo} pausa la captura porque {motivo}"
+  - "{solicitud} detener el formulario {momento}"
+  - "prefiero {accion} y continuar luego"
+  - "{saludo_capital} corta el flujo, {agradecimiento}"
+  - "{orden} que dejemos pendiente el formulario"
+  - "{saludo} {razon} asi que {accion_detalle}"
+  - "{solicitud} {estado_emocion} y necesito {accion_detalle}"
+  - "{indicacion} {saludo_corto} detengamos el formulario {momento_detalle} porque {motivo_ext} y {estado_modal}"
+  - "{orden} {motivo_ext} asi que {accion_detalle} {momento_detalle}"
+slots:
+  saludo:
+    - oye
+    - por favor
+    - hola
+    - hey
+    - nada mas
+    - ""
+  saludo_capital:
+    - Por favor
+    - Oye
+    - Hey
+    - Hola
+  motivo:
+    - necesito revisar mis datos
+    - me falta informacion
+    - no tengo todo a mano
+    - debo confirmar algo antes
+    - me equivoque
+  solicitud:
+    - podrias
+    - necesito
+    - te pido
+    - agradeceria
+  momento:
+    - por ahora
+    - un momento
+    - este minuto
+    - hoy
+  accion:
+    - detener aqui
+    - cancelarlo
+    - dejarlo pendiente
+    - terminar ahora
+    - pausar
+    - interrumpirlo
+  agradecimiento:
+    - gracias
+    - por favor
+    - si puedes
+  orden:
+    - prefiero
+    - mejor
+    - haz
+    - quiero
+    - necesito
+    - por favor
+  indicacion:
+    - por favor
+    - te pido
+    - necesito
+    - urge
+    - seria bueno
+    - prefiero
+  saludo_corto:
+    - ""
+    - oye
+    - bot
+    - compa
+    - amigo
+    - asistente
+  razon:
+    - voy a retomarlo despues
+    - no quiero seguir
+    - me llamaron
+    - me quede sin tiempo
+    - debo consultar datos
+    - estoy ocupado
+  accion_detalle:
+    - detener el cuestionario
+    - frenar el formulario
+    - pausar la captura
+    - parar el flujo
+    - terminar el paso actual
+    - ponerlo en pausa
+    - suspenderlo
+  estado_emocion:
+    - estoy apurado
+    - estoy confundido
+    - estoy cansado
+    - estoy corto de tiempo
+    - me maree
+    - estoy ocupado
+    - tengo prisa
+  momento_detalle:
+    - por el momento
+    - hasta nuevo aviso
+    - en este minuto
+    - hasta que tenga datos
+    - hasta mas tarde
+    - por hoy
+  motivo_ext:
+    - me falta documentacion
+    - debo consultar a mi entrenador
+    - me distraje con otra tarea
+    - no tengo conexion
+    - recibi una llamada
+    - necesito confirmar pesos
+    - perdi el hilo
+  estado_modal:
+    - estoy en llamada
+    - estoy viajando
+    - estoy sin teclado
+    - no puedo concentrarme
+    - no tengo tiempo
+    - quiero retomarlo despues
+static_examples:
+  - "no quiero completar mas datos"
+  - "detener, gracias"
+  - "prefiero terminar aqui"
+  - "dejemos pendiente la captura"
+  - "luego continuamos, cancela"

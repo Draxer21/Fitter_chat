@@ -1,0 +1,64 @@
+intent: suscripcion_alta
+templates:
+  - "Quiero {action} {plan} porque {motivation}"
+  - "Puedes {action} mi cuenta al {plan}? {motivation}"
+  - "Deseo {action} el {plan} {timeframe}"
+  - "Estoy listo para {action} {plan}; {motivation}"
+  - "Me ayudarias a {action} {plan}? {followup}"
+  - "Necesito {action} {plan} antes de {deadline}"
+slots:
+  action:
+    - suscribirme al
+    - activar
+    - contratar
+    - darme de alta en el
+    - subir al
+    - actualizarme al
+    - pasarme al
+    - habilitar el
+  plan:
+    - plan premium
+    - paquete anual completo
+    - plan mensual con nutricion
+    - plan elite con clases en vivo
+    - plan corporativo
+    - plan familiar plus
+    - combo entrenamiento y dieta
+    - plan trimestral con asesorias
+    - plan ilimitado
+  motivation:
+    - quiero entrenar todos los dias
+    - necesito seguimiento personalizado
+    - me interesa el combo con dieta
+    - busco mas clases on-demand
+    - deseo beneficios para mi pareja
+    - tengo un nuevo objetivo ambicioso
+    - quiero prepararme para competir
+    - necesito acceso a evaluaciones frecuentes
+  timeframe:
+    - a partir de hoy
+    - esta misma semana
+    - desde el proximo mes
+    - por los proximos tres meses
+    - cuanto antes
+    - desde el lunes
+    - al terminar mi plan actual
+  followup:
+    - Quiero aprovechar la promo actual.
+    - Estoy decidido a entrenar mas seguido.
+    - Me gustaria incluir a mi pareja.
+    - Quiero sumar las clases en vivo.
+    - Me encanta el soporte personalizado.
+  deadline:
+    - que cierre la promocion
+    - que termine el mes
+    - que viaje al exterior
+    - que comience la nueva temporada
+    - que expire mi plan vigente
+static_examples:
+  - "Activa el plan premium anual, por favor."
+  - "Quiero contratar el plan con nutricionista."
+  - "Dame de alta en el plan elite desde hoy."
+  - "Necesito subir al plan ilimitado antes del lunes."
+  - "Quiero suscribirme, activalo ya."
+  - "Empezar la suscripcion ahora mismo."

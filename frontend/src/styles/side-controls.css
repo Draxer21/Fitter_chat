@@ -1,0 +1,105 @@
+/* Side controls: collapsed bar that expands on hover to reveal buttons */
+.side-controls {
+  position: fixed;
+  left: 12px;
+  bottom: 20px;
+  z-index: 1200;
+  width: 48px;
+  overflow: visible;
+  will-change: width;
+}
+
+.side-controls-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(245, 248, 252, 0.98);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+  width: 48px;
+  transition: width 180ms ease-out, padding 180ms ease-out, flex-direction 180ms ease-out, background-color 200ms ease, color 200ms ease;
+  flex-wrap: nowrap;
+}
+
+.theme-dark .side-controls-inner {
+  background: rgba(11, 16, 32, 0.95);
+  border-color: rgba(99, 115, 129, 0.5);
+}
+
+.side-controls:hover .side-controls-inner,
+.side-controls:focus-within .side-controls-inner {
+  width: 240px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px 12px;
+  flex-wrap: wrap;
+}
+
+.sc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: none;
+  background: transparent;
+  padding: 6px 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--text);
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.sc-btn:hover {
+  background: rgba(15, 118, 110, 0.12);
+  color: var(--text);
+}
+
+.sc-btn:focus {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+}
+
+.sc-label {
+  display: none;
+  font-size: 14px;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+.side-controls:hover .sc-label,
+.side-controls:focus-within .sc-label {
+  display: inline-block;
+}
+
+.sc-theme { }
+.sc-lang { }
+.sc-zoom { 
+  display: flex; 
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 32px;
+  height: auto;
+}
+.side-controls:hover .sc-zoom,
+.side-controls:focus-within .sc-zoom {
+  flex-direction: row;
+  width: auto;
+  gap: 6px;
+}
+.sc-zoom .sc-btn { 
+  font-weight: 600;
+  padding: 4px 6px;
+}
+
+@media (max-width: 640px) {
+  .side-controls { display: none; }
+}

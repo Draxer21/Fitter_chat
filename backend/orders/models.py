@@ -16,7 +16,8 @@ class Order(db.Model):
     user_id = db.Column(db.Integer, nullable=True, index=True)
     customer_name = db.Column(db.String(255), nullable=True)
     customer_email = db.Column(db.String(255), nullable=True)
-    status = db.Column(db.String(32), nullable=False, default="paid", index=True)
+    status = db.Column(db.String(32), nullable=False, default="pending", index=True)
+    payment_status = db.Column(db.String(32), nullable=False, default="pending", index=True)
     total_amount = db.Column(db.Numeric(12, 2), nullable=False)
     currency = db.Column(db.String(8), nullable=False, default="CLP")
     payment_method = db.Column(db.String(64), nullable=True)
@@ -34,6 +35,7 @@ class Order(db.Model):
             "customer_name": self.customer_name,
             "customer_email": self.customer_email,
             "status": self.status,
+            "payment_status": self.payment_status,
             "total_amount": float(self.total_amount),
             "currency": self.currency,
             "payment_method": self.payment_method,
@@ -49,7 +51,8 @@ class Order(db.Model):
         cls,
         *,
         snapshot: Dict[str, Any],
-        status: str = "paid",
+        status: str = "pending",
+        payment_status: str = "pending",
         user_id: Optional[int] = None,
         customer_name: Optional[str] = None,
         customer_email: Optional[str] = None,
@@ -67,6 +70,7 @@ class Order(db.Model):
             customer_name=customer_name,
             customer_email=customer_email,
             status=status,
+            payment_status=payment_status,
             total_amount=total_amount,
             payment_method=payment_method,
             payment_reference=payment_reference,

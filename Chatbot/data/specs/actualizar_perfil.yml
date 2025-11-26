@@ -1,0 +1,83 @@
+intent: actualizar_perfil
+templates:
+  - "{saludo} quiero {accion} {posesivo} perfil para {motivo}"
+  - "{saludo} necesito {accion} los {dato} porque {motivo_corto}"
+  - "{saludo} ayudame a poner al dia {posesivo} perfil con {detalle}"
+  - "{tono} {accion} toda la informacion que tengas registrada"
+  - "me gustaria {accion} {posesivo} perfil agregando {detalle}"
+  - "{saludo_capital} revisemos si {posesivo} perfil refleja {detalle}"
+  - "{accion_rapida} los {dato} ahora mismo"
+  - "{saludo} quiero corregir {detalle} en el perfil antes de seguir"
+slots:
+  saludo:
+    - hola
+    - oye
+    - buenas
+    - que tal
+    - hey
+    - ""
+  saludo_capital:
+    - Hola
+    - Buenas
+    - Hey
+    - Que tal
+  accion:
+    - actualizar
+    - modificar
+    - corregir
+    - ajustar
+    - editar
+    - revisar
+  accion_rapida:
+    - actualicemos
+    - cambiemos
+    - ajustemos
+    - modifiquemos
+  posesivo:
+    - mi
+    - el
+    - mi propio
+    - el perfil de mi cuenta
+    - mi perfil completo
+  dato:
+    - datos personales
+    - datos del perfil
+    - datos guardados
+    - informacion medica
+    - medidas corporales
+    - historico de peso
+  detalle:
+    - peso y altura nuevos
+    - preferencias de entrenamiento
+    - las metas actualizadas
+    - mis condiciones de salud
+    - mi plan de nutricion
+    - los horarios que manejo
+    - mi nivel de experiencia
+    - los objetivos 2024
+  motivo:
+    - mantenerlo al dia
+    - que refleje mi situacion actual
+    - empezar una rutina distinta
+    - que mi coach tenga datos correctos
+    - preparar una nueva dieta
+    - que no se pierda informacion vieja
+  motivo_corto:
+    - cambie mis medidas
+    - subi o baje de peso
+    - estoy en otro objetivo
+    - hay datos desactualizados
+    - registre nuevos habitos
+    - ahora entreno diferente
+  tono:
+    - por favor
+    - si puedes
+    - necesito que
+    - me gustaria que
+static_examples:
+  - "quiero corregir mi peso y altura registrados"
+  - "puedes actualizar mis datos personales"
+  - "necesito modificar la informacion de mi cuenta"
+  - "agrega que ahora entreno funcional"
+  - "borra los datos viejos y carga los nuevos"
+  - "verifica que mis medidas coincidan con la app"

@@ -1,0 +1,111 @@
+intent: soporte_general
+templates:
+  - "{saludo} necesito soporte"
+  - "{saludo} requiero ayuda del equipo"
+  - "a quien contacto para soporte"
+  - "necesito asistencia con la plataforma"
+  - "{saludo_capital} {urgencia} alguien me ayude con {problema}"
+  - "{saludo} puedes derivarme a soporte para {problema}" 
+  - "{solicitud} opciones de ayuda, tengo {problema_corto}"
+  - "{saludo} quiero que soporte revise {area}"
+  - "{saludo} {necesidad} hablar con alguien del equipo"
+  - "{saludo} {urgencia} soporte tecnico por {origen_problema}"
+  - "{saludo} {necesidad} soporte porque {impacto}"
+  - "{solicitud} un canal de ayuda para {problema}" 
+  - "{saludo} {urgencia} contactar {canal_soporte} por {tipo_incidencia}"
+  - "{saludo} necesito que soporte revise {tipo_incidencia} porque {impacto}" 
+slots:
+  saludo:
+    - hola
+    - oye
+    - buenas
+    - que tal
+    - hey
+    - ""
+  saludo_capital:
+    - Hola
+    - Buenas
+    - Hey
+  urgencia:
+    - necesito que
+    - urge que
+    - me gustaria que
+    - seria ideal que
+    - por favor que
+    - agradeceria que
+  problema:
+    - un error en mi rutina
+    - un cobro extraño
+    - la configuracion del perfil
+    - el acceso al portal
+    - las notificaciones
+    - mi suscripcion
+    - la facturacion
+    - el historial de entrenamientos
+    - la app movil
+    - la version web
+  problema_corto:
+    - un error raro
+    - un problema general
+    - inconvenientes tecnicos
+    - dudas
+    - fallas varias
+    - consultas sobre pagos
+  solicitud:
+    - podrias mostrarme
+    - necesito saber
+    - quiero ver
+    - dime
+    - indicame
+    - cuentame
+  area:
+    - mi cuenta
+    - los pagos
+    - la app
+    - los reportes
+    - la seccion de reservas
+    - el chatbot
+    - soporte tecnico
+  necesidad:
+    - necesito
+    - quisiera
+    - me urge
+    - prefiero
+    - me encantaria
+    - agradeceria
+  origen_problema:
+    - la actualizacion mas reciente
+    - un bug en la app
+    - cambios en mi plan
+    - un corte de servicio
+    - mi ultimo pago
+    - mi tarjeta
+    - una migracion
+  impacto:
+    - no puedo continuar
+    - no entiendo los mensajes
+    - mi perfil quedo bloqueado
+    - no puedo registrar rutinas
+    - me sale un error desconocido
+    - pierdo el seguimiento
+    - no puedo pagar
+  canal_soporte:
+    - algun agente
+    - un especialista
+    - soporte humano
+    - alguien por correo
+    - alguien por telefono
+    - el equipo tecnico
+  tipo_incidencia:
+    - mi cuenta bloqueada
+    - tickets de pago
+    - fallas generales
+    - cambios de plan
+    - dudas administrativas
+    - soporte onboarding
+static_examples:
+  - "quiero ver las opciones de soporte"
+  - "me ayudas con un problema general"
+  - "necesito hablar con soporte por favor"
+  - "derivame con alguien de soporte"
+  - "puedes darme un correo de ayuda"

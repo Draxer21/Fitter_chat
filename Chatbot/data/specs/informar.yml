@@ -1,0 +1,79 @@
+intent: informar
+templates:
+  - "Peso {weight} y mido {height}; ademas {condition}"
+  - "Tengo {condition} y {preference}, te sirve?"
+  - "Mis datos: {age}, {weight}, {condition}, {availability}"
+  - "Quiero que sepas que {condition}; entreno {availability}"
+  - "Para que tengas contexto: {age}, {weight}, {height}, {condition}, entreno {availability}"
+  - "Te cuento que {condition}; {preference} y actualmente peso {weight}"
+  - "En mi perfil figura {condition} y {preference}; lo tienes registrado?"
+slots:
+  weight:
+    - 55 kg
+    - 63 kilos
+    - 72 kg
+    - 78 kilos
+    - 85 kilos
+    - 90 kg
+    - 95 kg
+    - 102 kilos
+  height:
+    - 1.58 m
+    - 1.62 metros
+    - 1.65 metros
+    - 1.70 m
+    - 1.72 m
+    - 1.78 metros
+    - 1.80 metros
+    - 1.90 m
+  condition:
+    - tengo hipertension controlada
+    - estoy recuperandome de una lesion de rodilla
+    - soy intolerante a la lactosa
+    - convivo con asma leve
+    - tengo escoliosis moderada
+    - soy vegetariano desde hace anios
+    - tengo sindrome metabolico
+    - mi medico recomendo bajo impacto
+    - recien sali de covid prolongado
+    - tengo antecedente de hernia lumbar
+    - soy celiaco y cuido mi dieta
+    - tengo lupus en remision
+  preference:
+    - entreno mejor por la maniana
+    - prefiero rutinas sin saltos
+    - me gusta combinar cardio y fuerza
+    - entreno con bandas elasticas
+    - solo tengo mancuernas ligeras
+    - trabajo con kettlebells en casa
+    - necesito sesiones cortas
+    - entreno con mi pareja los fines
+  age:
+    - tengo 25 anios
+    - tengo 30 anios
+    - tengo 34 anios
+    - tengo 42
+    - tengo 48
+    - tengo 55 anios
+    - tengo 61
+    - tengo 67 anios
+  availability:
+    - dos veces por semana
+    - solo los fines de semana
+    - en la noche
+    - en la hora de almuerzo
+    - cuatro veces por semana
+    - lunes miercoles y viernes
+    - cada maniana antes del trabajo
+    - cuando mis hijos duermen
+static_examples:
+  - "Soy hipertenso y peso 80 kilos."
+  - "Tengo 30 anios, mido 1.70 y entreno con ligas."
+  - "Estoy operado del hombro y solo puedo hacer bajo impacto."
+  - "Tengo 52 anios y disponibilidad solo los fines de semana."
+  - "Mi nivel actual es principiante, solo para que lo registres."
+  - "No tengo equipo, es nada, anotalo."
+  - "Sin condiciones de salud, todo bien."
+  - "Agenda pilates, es la clase que quiero ahora."
+  - "Mi objetivo es hipertrofia, solo informando."
+  - "Prefiero verla en pantalla, dejo el dato."

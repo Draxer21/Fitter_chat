@@ -36,7 +36,7 @@ class Carrito:
         total = sum(Decimal(str(item.get("acumulado", 0))) for item in self.items.values())
         self.carrito["total"] = float(total)
 
-    def _actualizar_item(self, pid: str, nombre: str, precio_unitario: float, cantidad: int) -> None:
+    def _actualizar_item(self, pid: str, nombre: str, precio_unitario: float, cantidad: int, imagen: str = None) -> None:
         acumulado = float(Decimal(str(precio_unitario)) * cantidad)
         self.items[pid] = {
             "producto_id": int(pid),
@@ -44,6 +44,7 @@ class Carrito:
             "cantidad": cantidad,
             "precio_unitario": precio_unitario,
             "acumulado": acumulado,
+            "imagen": imagen,
         }
 
     def agregar(self, producto) -> Dict[str, Any]:
@@ -56,7 +57,8 @@ class Carrito:
 
         cantidad_nueva = cantidad_actual + 1
         precio_unitario = float(producto.precio)
-        self._actualizar_item(pid, producto.nombre, precio_unitario, cantidad_nueva)
+        imagen = producto.imagen_url() if hasattr(producto, 'imagen_url') else None
+        self._actualizar_item(pid, producto.nombre, precio_unitario, cantidad_nueva, imagen)
         self._recalcular_total()
         self.guardar()
         return self.snapshot()
@@ -78,7 +80,8 @@ class Carrito:
                 self.items.pop(pid)
             else:
                 precio_unitario = float(producto.precio)
-                self._actualizar_item(pid, item.get("nombre", producto.nombre), precio_unitario, nueva_cantidad)
+                imagen = producto.imagen_url() if hasattr(producto, 'imagen_url') else item.get("imagen")
+                self._actualizar_item(pid, item.get("nombre", producto.nombre), precio_unitario, nueva_cantidad, imagen)
             self._recalcular_total()
             self.guardar()
         return self.snapshot()

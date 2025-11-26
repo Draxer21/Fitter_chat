@@ -1,0 +1,102 @@
+intent: ayuda
+templates:
+  - "Necesito ayuda con {topic}, me orientas?"
+  - "No se como {issue}, que hago?"
+  - "Me podrias explicar {topic}? No estoy seguro."
+  - "Tengo dudas sobre {issue}, me das una mano?"
+  - "Podrias guiarme para {issue}? {feeling}"
+  - "Hola, estoy confundido con {topic}. {followup}"
+  - "Me pierdo cuando intento {issue}. Alguna sugerencia?"
+  - "Quiero soporte con {topic}; {followup}"
+  - "Puedes indicarme como {issue}? {context}"
+  - "Hola {tone}, necesito ayuda con {topic}. {followup}"
+slots:
+  topic:
+    - mi rutina actual
+    - los planes disponibles
+    - las reservas de clases
+    - la configuracion del chatbot
+    - el seguimiento de progreso
+    - el envio de la rutina
+    - los recordatorios por correo
+    - los datos guardados en mi perfil
+    - la integracion con el calendario
+    - los recordatorios push
+    - los historiales de entrenamiento
+    - los ajustes de notificaciones
+    - la gestion de pagos
+    - la renovacion de la suscripcion
+    - el acceso a los videos on-demand
+    - el historial de chat
+  issue:
+    - actualizar mis datos
+    - cambiar mi objetivo
+    - cancelar una clase
+    - enviar la rutina por correo
+    - saber que plan contratar
+    - ajustar la intensidad
+    - desbloquear un entrenamiento
+    - recuperar una reserva perdida
+    - compartir mi rutina con un amigo
+    - editar mi perfil de salud
+    - sincronizarlo con el calendario
+    - reactivar notificaciones
+    - canjear un codigo promocional
+    - registrar mis medidas
+    - cambiar el idioma de la app
+    - ver mis objetivos anteriores
+    - generar un reporte de progreso
+    - compartir resultados con mi entrenador
+    - acceder a rutinas antiguas
+    - enviar mis datos al coach
+    - revisar los pagos realizados
+    - activar recordatorios diarios
+    - reiniciar mi progreso
+  feeling:
+    - no quiero equivocarme
+    - estoy algo perdido
+    - me da miedo romper algo
+    - no entiendo bien los pasos
+    - prefiero confirmarlo contigo
+    - no encuentro la opcion adecuada
+    - siento que falta informacion
+    - no quiero tocar nada sin instrucciones
+    - me urge solucionarlo
+    - quiero hacerlo correctamente a la primera
+    - tengo miedo de perder datos
+  followup:
+    - me ayudas paso a paso?
+    - dame una guia rapida, por favor
+    - necesito una explicacion simple
+    - podrias darme instrucciones claras?
+    - no quiero desconfigurarlo
+    - quiero asegurarme de hacerlo bien
+    - agradeceria un tutorial corto
+    - me ayudas con una lista de pasos?
+    - necesito un video o enlace de soporte
+    - puedes mostrarme un ejemplo?
+    - me explicas como lo haces tu?
+  context:
+    - es la primera vez que lo intento
+    - ya probe pero no funciono
+    - me aparecio un error y no se que significa
+    - quiero evitar perder mis datos
+    - necesito resolverlo antes de entrenar
+    - estoy desde el telefono y es confuso
+    - estoy ayudando a otra persona con su cuenta
+    - quiero hacerlo rapido entre reuniones
+    - tengo prisa antes de salir
+  tone:
+    - amigo
+    - equipo
+    - campeon
+    - entrenador
+    - bot
+    - colega
+    - compa
+static_examples:
+  - "Necesito ayuda general, no se por donde empezar."
+  - "Estoy un poco perdido con las funciones del bot."
+  - "Me ayudas a entender como funciona todo esto?"
+  - "No encontro la opcion de compartir la rutina, me das una mano?"
+  - "Explicame paso a paso como usarte."
