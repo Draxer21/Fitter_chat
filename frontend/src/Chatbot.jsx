@@ -286,6 +286,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
             {(hasText || hasRoutineLink || routineDetail || dietPlan || m.image) ? <br /> : null}
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 6 }}>
               {m.buttons.map((b, idx) => (
                 <button
@@ -304,6 +305,8 @@ export default function Chatbot({ endpoint = "/chat/send", senderId }) {
                 </button>
               ))}
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
             <div className="fw-embedded-chat__quick-buttons">

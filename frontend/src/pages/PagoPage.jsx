@@ -364,6 +364,7 @@ export default function PagoPage() {
                 <label className="payment-field">
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                   <span className="payment-label">Numero de tarjeta</span>
                   <input
                     type="text"
@@ -432,6 +433,12 @@ export default function PagoPage() {
                     type="text"
                     name="name"
 >>>>>>> Stashed changes
+=======
+                  <span className="payment-label">Nombre completo</span>
+                  <input
+                    type="text"
+                    name="name"
+>>>>>>> Stashed changes
                     autoComplete="name"
                     aria-describedby={errors.name ? "name_error" : undefined}
 >>>>>>> Stashed changes
@@ -443,8 +450,11 @@ export default function PagoPage() {
                   />
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
                   {errors.name && <span className="payment-error">{errors.name}</span>}
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
                   <span className="payment-hint">Este nombre aparecerá en tu boleta.</span>

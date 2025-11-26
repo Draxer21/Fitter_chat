@@ -166,6 +166,7 @@ body {
     font-weight: bold;
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     color: #333;
     margin-bottom: 10px;
 }
@@ -188,6 +189,19 @@ body {
 
 .cart-item-price {
     font-size: 1.2rem;
+=======
+    color: #1a1a1a;
+    margin-bottom: 10px;
+}
+
+[data-theme="dark"] .cart-item-name {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.cart-item-price {
+    font-size: 1.2rem;
+>>>>>>> Stashed changes
 =======
     color: #1a1a1a;
     margin-bottom: 10px;
@@ -268,11 +282,14 @@ body {
     font-weight: bold;
 <<<<<<< Updated upstream
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     color: #333;
     margin-bottom: 20px;
 }
 
 =======
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
     color: #1a1a1a;
