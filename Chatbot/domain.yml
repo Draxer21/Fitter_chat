@@ -97,10 +97,6 @@ slots:
     mappings:
       - type: from_entity
         entity: contacto
-      - type: from_entity
-        entity: email
-      - type: from_entity
-        entity: telefono
 
   codigo_reserva:
     type: text
@@ -221,6 +217,9 @@ responses:
           payload: "/actualizar_perfil_bot"
         - title: "Abrir pagina de perfil"
           payload: "/navegar_perfil_web"
+
+  utter_mostrar_perfil:
+    - text: "Aquí tienes tu perfil: {resumen_perfil}"
 
   utter_link_perfil:
     - text: "Puedes actualizar tu información desde la página de perfil en https://app.fitter/perfil. Cuando termines, vuelve y dime si necesitas algo más."

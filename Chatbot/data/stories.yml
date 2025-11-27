@@ -45,6 +45,7 @@ stories:
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: true
+    - action: utter_perfil_resumen
     - action: action_generar_rutina
 
 - story: dieta con perfil completo
@@ -75,6 +76,7 @@ stories:
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: true
+    - action: utter_perfil_resumen
     - action: action_generar_dieta
 
 - story: consultar perfil resumen

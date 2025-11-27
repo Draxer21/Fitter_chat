@@ -27,6 +27,14 @@ def client(app):
     return app.test_client()
 
 
+def csrf_headers(client):
+    resp = client.get("/auth/csrf-token")
+    assert resp.status_code == 200
+    token = resp.get_json().get("csrf_token")
+    assert token
+    return {"X-CSRF-Token": token}
+
+
 def register_and_login(client):
     payload = {
         "full_name": "Perfil Test",
@@ -34,7 +42,7 @@ def register_and_login(client):
         "username": "profile_user",
         "password": "Secret123",
     }
-    resp = client.post("/auth/register", json=payload)
+    resp = client.post("/auth/register", json=payload, headers=csrf_headers(client))
     assert resp.status_code == 201
     return payload
 
@@ -78,7 +86,7 @@ def test_profile_lookup_with_api_key(client, app):
     register_and_login(client)
     client.put("/profile/me", json={"weight_kg": 70, "activity_level": "moderar"})
 
-    client.post("/auth/logout")
+    client.post("/auth/logout", headers=csrf_headers(client))
     headers = {"X-Context-Key": "ctx-key"}
     resp = client.get("/profile/me", headers=headers, query_string={"user_id": 1})
     assert resp.status_code == 200
@@ -87,9 +95,26 @@ def test_profile_lookup_with_api_key(client, app):
     assert profile["weight_kg"] == 70
 
 
+def test_profile_update_with_api_key(client, app):
+    register_and_login(client)
+    with app.app_context():
+        user = User.query.filter_by(username="profile_user").first()
+        assert user is not None
+        user_id = user.id
+
+    client.post("/auth/logout", headers=csrf_headers(client))
+    headers = {"X-Context-Key": "ctx-key"}
+    payload = {"user_id": user_id, "weight_kg": 88.2, "medical_conditions": "asma leve"}
+    resp = client.put("/profile/me", headers=headers, json=payload)
+    assert resp.status_code == 200
+    profile = resp.get_json().get("profile")
+    assert profile["weight_kg"] == 88.2
+    assert profile["medical_conditions"] == "asma leve"
+
+
 def test_profile_requires_auth_without_key(client):
     register_and_login(client)
-    client.post("/auth/logout")
+    client.post("/auth/logout", headers=csrf_headers(client))
     resp = client.get("/profile/me")
     assert resp.status_code == 401
 

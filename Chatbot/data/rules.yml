@@ -38,6 +38,7 @@ rules:
       - action: action_fetch_profile
       - slot_was_set:
           - perfil_completo: true
+      - action: utter_perfil_resumen
       - action: action_generar_rutina
 
   - rule: atender solicitud de dieta
@@ -62,6 +63,7 @@ rules:
       - action: action_fetch_profile
       - slot_was_set:
           - perfil_completo: true
+      - action: utter_perfil_resumen
       - action: action_generar_dieta
 
   - rule: consultar perfil

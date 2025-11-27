@@ -9,6 +9,7 @@ import logging
 from urllib.parse import quote
 
 import requests
+from dotenv import load_dotenv
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -20,6 +21,11 @@ logger = logging.getLogger(__name__)
 # =========================================================
 # Helpers
 # =========================================================
+# Carga el .env del proyecto para que el action server tenga las mismas variables
+_BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+load_dotenv(os.path.join(_BASE_DIR, ".env"))
+load_dotenv()  # fallback a variables del entorno del shell
+
 BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL", "http://localhost:5000").strip().rstrip("/")
 CONTEXT_TIMEOUT = float(os.getenv("CHAT_CONTEXT_TIMEOUT", "4"))
 CONTEXT_API_KEY = os.getenv("CHAT_CONTEXT_API_KEY", "").strip() or os.getenv("BACKEND_CONTEXT_KEY", "").strip()
@@ -27,7 +33,7 @@ REQUIRE_AUTH_FOR_ROUTINE = os.getenv("CHAT_REQUIRE_AUTH", "1").lower() not in {"
 NOTIFICATIONS_TIMEOUT = float(os.getenv("CHAT_NOTIFY_TIMEOUT", "6"))
 EMAIL_ROUTINE_ENABLED = os.getenv("CHAT_EMAIL_ROUTINE", "1").lower() not in {"0", "false", "no"}
 ROUTINE_EMAIL_SUBJECT = (os.getenv("CHAT_ROUTINE_EMAIL_SUBJECT", "Tu rutina diaria Fitter") or "Tu rutina diaria Fitter").strip()
-PROFILE_UPDATE_PATH = "/profile/update"
+PROFILE_UPDATE_PATH = "/profile/me"
 
 
 def send_context_update(sender_id: str, payload: Dict[str, Any]) -> None:
@@ -389,7 +395,7 @@ class ActionSubmitProfileForm(Action):
             return []
 
         try:
-            resp = requests.post(
+            resp = requests.put(
                 f"{BACKEND_BASE_URL.rstrip('/')}{PROFILE_UPDATE_PATH}",
                 json=payload,
                 headers=headers,

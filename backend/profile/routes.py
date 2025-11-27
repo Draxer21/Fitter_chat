@@ -90,11 +90,29 @@ def profile_me():
 
 @bp.put("/me")
 def profile_update():
+    payload = request.get_json(force=True, silent=True) or {}
+    if not isinstance(payload, dict):
+        return jsonify({"error": "JSON invalido"}), 400
+
+    payload_user_id = payload.pop("user_id", None)
     user = _current_user()
+    if not user and _context_api_key_valid():
+        raw_user_id = payload_user_id
+        if raw_user_id is None:
+            raw_user_id = request.args.get("user_id", type=int)
+        if raw_user_id is None:
+            return jsonify({"error": "user_id requerido"}), 400
+        try:
+            user_id = int(raw_user_id)
+        except (TypeError, ValueError):
+            return jsonify({"error": "user_id invalido"}), 400
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "Usuario no encontrado"}), 404
     if not user:
         return jsonify({"error": "No autenticado"}), 401
+
     profile = user.profile or user.ensure_profile()
-    payload = request.get_json(force=True, silent=True) or {}
     try:
         profile.update_from_payload(payload)
     except ValueError as exc:
