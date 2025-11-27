@@ -1,29 +1,58 @@
 // Chatbot.jsx
 import { useEffect, useRef, useState } from "react";
+import "./styles/Chatbot.css";
 
-function getOrCreateSenderId() {
-  const k = "rasa_uid";
-  let v = localStorage.getItem(k);
+const SENDER_STORAGE_KEY = "rasa_uid";
+
+function createSenderId() {
+  return `web-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+function getOrCreateSenderId(forceNew = false) {
+  let v = !forceNew ? localStorage.getItem(SENDER_STORAGE_KEY) : null;
   if (!v) {
-    v = `web-${Math.random().toString(36).slice(2, 10)}`;
-    localStorage.setItem(k, v);
+    v = createSenderId();
+    localStorage.setItem(SENDER_STORAGE_KEY, v);
   }
   return v;
 }
 
-export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessage }) {
+export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessage, initialMessages = [] }) {
   const uidRef = useRef(senderId || getOrCreateSenderId());
 
-  const [messages, setMessages] = useState(() => [
-    { id: 1, from: "bot", text: "¡Hola! Soy FITTER. ¿En qué te ayudo?" }
-  ]);
+  const [messages, setMessages] = useState(() => {
+    // Si hay mensajes iniciales, usarlos; si no, mostrar el mensaje de bienvenida
+    if (initialMessages && initialMessages.length > 0) {
+      return initialMessages.map((msg, idx) => ({
+        id: idx + 1,
+        from: msg.from || "bot",
+        text: msg.text
+      }));
+    }
+    return [{ id: 1, from: "bot", text: "¡Hola! Soy FITTER. ¿En qué te ayudo?" }];
+  });
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [errorText, setErrorText] = useState("");
   const [expandedCards, setExpandedCards] = useState({});
-  const nextId = useRef(2);
+  const nextId = useRef(initialMessages.length > 0 ? initialMessages.length + 1 : 2);
   const scrollRef = useRef(null);
   const abortRef = useRef(null);
+
+  // Actualizar mensajes cuando cambian los initialMessages
+  useEffect(() => {
+    if (initialMessages && initialMessages.length > 0) {
+      setMessages(initialMessages.map((msg, idx) => ({
+        id: idx + 1,
+        from: msg.from || "bot",
+        text: msg.text
+      })));
+      nextId.current = initialMessages.length + 1;
+    } else {
+      setMessages([{ id: 1, from: "bot", text: "¡Hola! Soy FITTER. ¿En qué te ayudo?" }]);
+      nextId.current = 2;
+    }
+  }, [initialMessages]);
 
   // Autoscroll
   useEffect(() => {
@@ -49,6 +78,40 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
     }));
   };
 
+  const sendToBackend = async (text, retrying = false) => {
+    abortRef.current?.abort();
+    const controller = new AbortController();
+    abortRef.current = controller;
+
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ sender: uidRef.current, message: text }),
+      signal: controller.signal
+    });
+
+    if (res.status === 401 && !retrying) {
+      // Sender quedó asociado a otro usuario; regeneramos y reintentamos una vez
+      localStorage.removeItem(SENDER_STORAGE_KEY);
+      uidRef.current = getOrCreateSenderId(true);
+      return sendToBackend(text, true);
+    }
+
+    if (!res.ok) {
+      const t = await res.text().catch(() => "");
+      throw new Error(`HTTP ${res.status}${t ? `: ${t.slice(0, 160)}` : ""}`);
+    }
+
+    const data = await res.json();
+    const botMsgs = normalizeBotPayloads(data);
+    setMessages((prev) =>
+      botMsgs.length
+        ? [...prev, ...botMsgs]
+        : [...prev, { from: "bot", id: nextId.current++, text: "No recibí respuesta. ¿Puedes intentar de nuevo?" }]
+    );
+  };
+
   const sendMessage = async () => {
     const text = input.trim();
     if (!text || loading) return;
@@ -58,31 +121,12 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
     setInput("");
     setLoading(true);
 
-    // Llamar callback si existe
     if (onNewMessage && typeof onNewMessage === "function") {
       onNewMessage(text);
     }
 
-    abortRef.current?.abort();
-    const controller = new AbortController();
-    abortRef.current = controller;
-
     try {
-      const res = await fetch(endpoint, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sender: uidRef.current, message: text }),
-        signal: controller.signal
-      });
-
-      if (!res.ok) {
-        const t = await res.text().catch(() => "");
-        throw new Error(`HTTP ${res.status}${t ? `: ${t.slice(0, 160)}` : ""}`);
-      }
-
-      const data = await res.json();
-      const botMsgs = normalizeBotPayloads(data);
-      setMessages((prev) => botMsgs.length ? [...prev, ...botMsgs] : [...prev, { from: "bot", id: nextId.current++, text: "No recibí respuesta. ¿Puedes intentar de nuevo?" }]);
+      await sendToBackend(text);
     } catch (e) {
       const msg = e?.name === "AbortError" ? "Solicitud cancelada." : "Error de conexión con el backend.";
       setErrorText(typeof e?.message === "string" ? e.message : msg);
@@ -107,19 +151,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
   };
 
   const Bubble = ({ children, from }) => (
-    <div
-      className="message"
-      style={{
-        display: "inline-block",
-        padding: "8px 12px",
-        borderRadius: from === "user" ? "16px 16px 0 16px" : "16px 16px 16px 0",
-        background: from === "user" ? "#DCF8C6" : "#F1F0F0",
-        color: from === "user" ? "#0b1120" : "#111827",
-        maxWidth: "85%",
-        whiteSpace: "pre-wrap",
-        wordBreak: "break-word"
-      }}
-    >
+    <div className={`message-bubble ${from === "user" ? "user-bubble" : "bot-bubble"}`}>
       {children}
     </div>
   );
@@ -147,7 +179,8 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
             <button
               type="button"
               onClick={() => window.open(m.custom.url, "_blank", "noopener,noreferrer")}
-              style={{ marginTop: hasText ? 6 : 0, padding: "6px 12px", borderRadius: 8, border: "none", background: "#007bff", color: "white", cursor: "pointer" }}
+              className="message-action-button message-primary-button"
+              style={{ marginTop: hasText ? 6 : 0 }}
               aria-label={m.custom.title || "Abrir rutina"}
             >
               {m.custom.title || "Abrir rutina"}
@@ -160,12 +193,13 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
             <button
               type="button"
               onClick={() => routineKey && toggleCard(routineKey)}
-              style={{ marginTop: hasText || hasRoutineLink ? 6 : 0, padding: "6px 12px", borderRadius: 8, border: "1px solid #2563eb", background: "#1d4ed8", color: "white", cursor: "pointer" }}
+              className="message-action-button message-routine-button"
+              style={{ marginTop: hasText || hasRoutineLink ? 6 : 0 }}
             >
               {isRoutineExpanded ? "Ocultar rutina" : "Ver rutina aqui"}
             </button>
             {isRoutineExpanded && (
-              <div style={{ marginTop: 8, background: "rgba(255,255,255,0.85)", padding: "8px 10px", borderRadius: 8, textAlign: "left", lineHeight: 1.45 }}>
+              <div className="routine-card">
                 {routineDetail.header && <p style={{ margin: 0, fontWeight: 600 }}>{routineDetail.header}</p>}
                 <div style={{ fontSize: "0.85rem", marginTop: 6, display: "grid", gap: 4 }}>
                   <span><strong>Tiempo:</strong> {routineDetail.summary?.tiempo_min ?? "-"} min</span>
@@ -175,7 +209,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
                   <span><strong>Nivel:</strong> {routineDetail.summary?.nivel ?? "-"}</span>
                 </div>
                 {Array.isArray(routineDetail.summary?.health_notes) && routineDetail.summary.health_notes.length > 0 && (
-                  <div style={{ marginTop: 8, fontSize: "0.8rem", background: "#FEF3C7", borderRadius: 8, padding: "6px 8px", color: "#92400e" }}>
+                  <div className="health-warning">
                     <strong>Precauciones:</strong>
                     <ul style={{ margin: "6px 0 0 16px", padding: 0 }}>
                       {routineDetail.summary.health_notes.map((note, idx) => (
@@ -224,12 +258,13 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
             <button
               type="button"
               onClick={() => dietKey && toggleCard(dietKey)}
-              style={{ marginTop: hasText || hasRoutineLink || routineDetail ? 6 : 0, padding: "6px 12px", borderRadius: 8, border: "1px solid #059669", background: "#047857", color: "white", cursor: "pointer" }}
+              className="message-action-button message-diet-button"
+              style={{ marginTop: hasText || hasRoutineLink || routineDetail ? 6 : 0 }}
             >
               {isDietExpanded ? "Ocultar dieta" : "Ver plan de dieta"}
             </button>
             {isDietExpanded && (
-              <div style={{ marginTop: 8, background: "rgba(236, 253, 245, 0.9)", padding: "8px 10px", borderRadius: 8, textAlign: "left", lineHeight: 1.45 }}>
+              <div className="diet-card">
                 <p style={{ margin: 0, fontWeight: 600 }}>Objetivo: {dietPlan.objective || "equilibrada"}</p>
                 <div style={{ fontSize: "0.85rem", marginTop: 6, display: "grid", gap: 4 }}>
                   {dietSummary.calorias && <span><strong>Calorias:</strong> {dietSummary.calorias}</span>}
@@ -238,7 +273,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
                   {dietSummary.macros?.grasas && <span><strong>Grasas:</strong> {dietSummary.macros.grasas}</span>}
                 </div>
                 {dietAdjustments.length > 0 && (
-                  <div style={{ marginTop: 8, fontSize: "0.8rem", background: "#fef3c7", borderRadius: 8, padding: "6px 8px", color: "#b45309" }}>
+                  <div className="health-warning">
                     <strong>Ajustes de salud:</strong>
                     <ul style={{ margin: "6px 0 0 16px", padding: 0 }}>
                       {dietAdjustments.map((note, idx) => (
@@ -259,7 +294,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
                   </ol>
                 )}
                 {allergenHits.length > 0 && (
-                  <div style={{ marginTop: 8, fontSize: "0.8rem", background: "#fee2e2", borderRadius: 8, padding: "6px 8px", color: "#b91c1c" }}>
+                  <div className="allergen-alert">
                     <strong>Atencion alergias:</strong>
                     <ul style={{ margin: "6px 0 0 16px", padding: 0 }}>
                       {allergenHits.map((hit, idx) => (
@@ -308,25 +343,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
                         setTimeout(sendMessage, 0);
                       }
                     }}
-                    style={{ 
-                      padding: "8px 16px", 
-                      borderRadius: 8, 
-                      border: "1px solid #d1d5db", 
-                      background: "#ffffff", 
-                      color: "#1f2937",
-                      cursor: "pointer",
-                      fontSize: "0.9rem",
-                      fontWeight: "500",
-                      transition: "all 0.2s"
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.background = "#f3f4f6";
-                      e.currentTarget.style.borderColor = "#9ca3af";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.background = "#ffffff";
-                      e.currentTarget.style.borderColor = "#d1d5db";
-                    }}
+                    className="quick-reply-button"
                   >
                     {buttonTitle}
                   </button>
@@ -342,48 +359,40 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
 
   return (
     <div
-      style={{
-        border: "1px solid #ccc",
-        padding: 10,
-        borderRadius: 8,
-        width: "min(900px, 95%)",
-        margin: "16px auto",
-        background: "#fff",
-        boxShadow: "0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06)"
-      }}
+      className="chatbot-container"
       role="region"
       aria-label="Chat con asistente FITTER"
     >
-      <div ref={scrollRef} style={{ height: 360, overflowY: "auto", marginBottom: 10, padding: 6 }} aria-live="polite">
+      <div ref={scrollRef} className="chatbot-messages" aria-live="polite">
         {messages.map((m) => (
-          <div key={m.id} style={{ textAlign: m.from === "user" ? "right" : "left", margin: "6px 0" }}>
+          <div key={m.id} className={`chatbot-message ${m.from === "user" ? "user-message" : "bot-message"}`}>
             <Bubble from={m.from}>{renderMessageContent(m)}</Bubble>
           </div>
         ))}
-        {loading && <div style={{ fontStyle: "italic", color: "#666", padding: "4px 6px" }}>Escribiendo…</div>}
+        {loading && <div className="chatbot-loading">Escribiendo…</div>}
       </div>
 
       {errorText && (
-        <div style={{ color: "#b91c1c", background: "#fee2e2", border: "1px solid #fecaca", borderRadius: 8, padding: "6px 10px", marginBottom: 8 }} role="alert">
+        <div className="chatbot-error" role="alert">
           {errorText}
         </div>
       )}
 
-      <div style={{ display: "flex", gap: 8 }}>
+      <div className="chatbot-input-container">
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={onKeyDown}
           placeholder="Escribe tu mensaje…"
           rows={1}
-          style={{ flex: 1, padding: 10, borderRadius: 8, border: "1px solid #ccc", resize: "vertical", minHeight: 42, maxHeight: 160 }}
+          className="chatbot-textarea"
           aria-label="Cuadro de mensaje"
           disabled={loading}
         />
         <button
           onClick={sendMessage}
           disabled={loading || input.trim().length === 0}
-          style={{ padding: "10px 14px", borderRadius: 8, border: "none", background: loading ? "#9ca3af" : "#4CAF50", color: "white", cursor: loading ? "not-allowed" : "pointer" }}
+          className="chatbot-send-button"
           aria-busy={loading}
           aria-label="Enviar mensaje"
         >

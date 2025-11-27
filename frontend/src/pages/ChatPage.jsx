@@ -3,25 +3,104 @@ import Chatbot from "../Chatbot";
 import { useAuth } from "../contexts/AuthContext";
 import "../styles/ChatPage.css";
 
+const STORAGE_KEY = "fitter_chat_conversations";
+const MAX_CONVERSATIONS = 50;
+
 export default function ChatPage() {
   const { isAuthenticated } = useAuth();
-  const [chatHistory, setChatHistory] = useState([]);
+  const [conversations, setConversations] = useState([]);
+  const [activeConversationId, setActiveConversationId] = useState(null);
+  const [activeMessages, setActiveMessages] = useState([]);
 
-  // Cargar historial de chats del localStorage
+  // Cargar conversaciones del localStorage
   useEffect(() => {
-    const loadHistory = () => {
-      const saved = localStorage.getItem("fitter_chat_history");
+    const loadConversations = () => {
+      const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
-          setChatHistory(parsed);
+          setConversations(parsed);
+          
+          // Si hay conversaciones, seleccionar la más reciente
+          if (parsed.length > 0) {
+            const latest = parsed[0];
+            setActiveConversationId(latest.id);
+            setActiveMessages(latest.messages || []);
+          }
         } catch (e) {
-          console.error("Error loading chat history:", e);
+          console.error("Error loading conversations:", e);
         }
       }
     };
-    loadHistory();
+    loadConversations();
   }, []);
+
+  // Crear nueva conversación
+  const createNewConversation = () => {
+    const newConv = {
+      id: Date.now(),
+      timestamp: new Date().toISOString(),
+      messages: [],
+      preview: "Nueva conversación"
+    };
+    
+    const updatedConvs = [newConv, ...conversations].slice(0, MAX_CONVERSATIONS);
+    setConversations(updatedConvs);
+    setActiveConversationId(newConv.id);
+    setActiveMessages([]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedConvs));
+  };
+
+  // Seleccionar conversación existente
+  const selectConversation = (convId) => {
+    const conv = conversations.find(c => c.id === convId);
+    if (conv) {
+      setActiveConversationId(convId);
+      setActiveMessages(conv.messages || []);
+    }
+  };
+
+  // Eliminar conversación
+  const deleteConversation = (convId, event) => {
+    event.stopPropagation(); // Evitar que se seleccione la conversación al hacer click en eliminar
+    
+    const updatedConvs = conversations.filter(c => c.id !== convId);
+    setConversations(updatedConvs);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedConvs));
+    
+    // Si se eliminó la conversación activa, seleccionar otra o limpiar
+    if (convId === activeConversationId) {
+      if (updatedConvs.length > 0) {
+        setActiveConversationId(updatedConvs[0].id);
+        setActiveMessages(updatedConvs[0].messages || []);
+      } else {
+        setActiveConversationId(null);
+        setActiveMessages([]);
+      }
+    }
+  };
+
+  // Actualizar conversación activa con nuevo mensaje
+  const updateActiveConversation = (newMessage) => {
+    const updatedConvs = conversations.map(conv => {
+      if (conv.id === activeConversationId) {
+        const updatedMessages = [...(conv.messages || []), newMessage];
+        return {
+          ...conv,
+          messages: updatedMessages,
+          preview: newMessage.text?.substring(0, 50) || "Conversación",
+          timestamp: new Date().toISOString()
+        };
+      }
+      return conv;
+    });
+
+    // Ordenar por timestamp más reciente
+    updatedConvs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    
+    setConversations(updatedConvs);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedConvs));
+  };
 
   return (
     <main className="chat-page">
@@ -30,33 +109,61 @@ export default function ChatPage() {
           {/* Sidebar con historial */}
           <div className="col-md-3 chat-sidebar">
             <div className="sidebar-header">
-              <h2 className="h5 mb-0">
-                <i className="fa-solid fa-message me-2" aria-hidden="true" />
-                Historial de Chats
-              </h2>
+              <div className="d-flex justify-content-between align-items-center">
+                <h2 className="h5 mb-0">
+                  <i className="fa-solid fa-message me-2" aria-hidden="true" />
+                  Conversaciones
+                </h2>
+                <button 
+                  className="btn btn-sm btn-success new-chat-btn"
+                  onClick={createNewConversation}
+                  title="Nueva conversación"
+                  aria-label="Crear nueva conversación"
+                >
+                  +
+                </button>
+              </div>
             </div>
             <div className="sidebar-content">
-              {chatHistory.length === 0 ? (
+              {conversations.length === 0 ? (
                 <div className="text-muted text-center py-4">
                   <i className="fa-solid fa-comments fa-3x mb-3 opacity-25" aria-hidden="true" />
-                  <p>No hay conversaciones previas</p>
-                  <small>Inicia una conversación para ver el historial</small>
+                  <p>No hay conversaciones</p>
+                  <small>Haz clic en + para crear una</small>
                 </div>
               ) : (
                 <div className="chat-history-list">
-                  {chatHistory.map((chat, idx) => (
-                    <div key={idx} className="chat-history-item">
-                      <div className="chat-date">
-                        <i className="fa-solid fa-clock me-2" aria-hidden="true" />
-                        {new Date(chat.timestamp).toLocaleDateString("es-CL", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                  {conversations.map((conv) => (
+                    <div 
+                      key={conv.id} 
+                      className={`chat-history-item ${conv.id === activeConversationId ? 'active' : ''}`}
+                      onClick={() => selectConversation(conv.id)}
+                    >
+                      <div className="chat-item-header">
+                        <div className="chat-date">
+                          <i className="fa-solid fa-clock me-2" aria-hidden="true" />
+                          {new Date(conv.timestamp).toLocaleDateString("es-CL", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </div>
+                        <button
+                          className="btn-delete-chat"
+                          onClick={(e) => deleteConversation(conv.id, e)}
+                          title="Eliminar conversación"
+                          aria-label="Eliminar conversación"
+                        >
+                          <i className="fa-solid fa-trash" aria-hidden="true" />
+                        </button>
                       </div>
-                      <div className="chat-preview">{chat.preview || "Conversación"}</div>
+                      <div className="chat-preview">{conv.preview || "Conversación"}</div>
+                      <div className="chat-message-count">
+                        <i className="fa-solid fa-message me-1" aria-hidden="true" />
+                        {conv.messages?.length || 0} mensajes
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -121,17 +228,19 @@ export default function ChatPage() {
               </div>
 
               <Chatbot
+                initialMessages={activeMessages}
                 onNewMessage={(msg) => {
-                  // Guardar en historial cuando hay un mensaje nuevo
-                  const newHistory = [
-                    {
-                      timestamp: new Date().toISOString(),
-                      preview: msg.substring(0, 50),
-                    },
-                    ...chatHistory.slice(0, 19), // Máximo 20 chats
-                  ];
-                  setChatHistory(newHistory);
-                  localStorage.setItem("fitter_chat_history", JSON.stringify(newHistory));
+                  // Si no hay conversación activa, crear una
+                  if (!activeConversationId) {
+                    createNewConversation();
+                  }
+                  
+                  // Actualizar la conversación activa
+                  updateActiveConversation({
+                    text: msg,
+                    timestamp: new Date().toISOString(),
+                    from: "user"
+                  });
                 }}
               />
             </div>
