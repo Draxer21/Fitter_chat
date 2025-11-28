@@ -35,6 +35,7 @@ NOTIFICATIONS_TIMEOUT = float(os.getenv("CHAT_NOTIFY_TIMEOUT", "6"))
 EMAIL_ROUTINE_ENABLED = os.getenv("CHAT_EMAIL_ROUTINE", "1").lower() not in {"0", "false", "no"}
 ROUTINE_EMAIL_SUBJECT = (os.getenv("CHAT_ROUTINE_EMAIL_SUBJECT", "Tu rutina diaria Fitter") or "Tu rutina diaria Fitter").strip()
 PROFILE_UPDATE_PATH = "/profile/me"
+CHAT_ENABLE_DIETA_CALC = os.getenv("CHAT_ENABLE_DIETA_CALC", "0").strip() in {"1", "true", "yes"}
 
 
 def send_context_update(sender_id: str, payload: Dict[str, Any]) -> None:
@@ -590,6 +591,105 @@ def parse_allergy_list(text: Optional[str]) -> List[str]:
         for item in re.split(r"[;,]", normalized)
         if item.strip()
     ]
+
+
+# =====================
+# Dieta: cálculos opt-in
+# =====================
+def mifflin_st_jeor(weight_kg: float, height_cm: float, age: int, sex: Optional[str]) -> float:
+    """Calcula BMR usando Mifflin-St Jeor. sex: 'f' o 'm' (insensible a mayúsculas)."""
+    s = -161 if (str(sex or "").strip().lower().startswith("f")) else 5
+    try:
+        return 10.0 * float(weight_kg) + 6.25 * float(height_cm) - 5.0 * float(age) + s
+    except Exception:
+        return 0.0
+
+
+ACTIVITY_MULTIPLIERS: Dict[str, float] = {
+    "sedentario": 1.2,
+    "ligero": 1.375,
+    "moderado": 1.55,
+    "activo": 1.725,
+    "muy_activo": 1.9,
+}
+
+
+def calc_target_kcal_and_macros(
+    weight_kg: Optional[float],
+    height_cm: Optional[float],
+    age: Optional[int],
+    sex: Optional[str],
+    activity_level: Optional[str],
+    objetivo: str,
+) -> Dict[str, Any]:
+    """Retorna dict con bmr, maintenance_kcal, target_kcal y macros en gramos.
+    Esta función es opt-in y no altera el flujo por defecto si faltan datos.
+    """
+    result: Dict[str, Any] = {
+        "bmr": None,
+        "maintenance_kcal": None,
+        "target_kcal": None,
+        "proteinas_g": None,
+        "carbs_g": None,
+        "fats_g": None,
+        "note": None,
+    }
+
+    if not weight_kg or not height_cm:
+        result["note"] = "Insuficientes datos para cálculo (falta peso o altura)."
+        return result
+
+    # defaults
+    age_val = int(age) if (age is not None) else 30
+    sex_val = (sex or "m").strip().lower()
+    activity_key = (activity_level or "moderado").strip().lower()
+    mult = ACTIVITY_MULTIPLIERS.get(activity_key, ACTIVITY_MULTIPLIERS["moderado"])
+
+    bmr = mifflin_st_jeor(weight_kg, height_cm, age_val, sex_val)
+    maintenance = bmr * mult
+
+    # objective adjustment
+    objetivo_norm = (objetivo or "").strip().lower()
+    if objetivo_norm in {"bajar_grasa", "perder_grasa", "bajar grasa", "perder peso"}:
+        target = maintenance - 300
+    elif objetivo_norm in {"hipertrofia", "ganar masa", "ganar masa muscular"}:
+        target = maintenance + 200
+    else:
+        target = maintenance
+
+    # Proteínas: g/kg según objetivo
+    if objetivo_norm in {"hipertrofia", "ganar masa"}:
+        prot_per_kg = 1.8
+    elif objetivo_norm in {"bajar_grasa", "bajar grasa"}:
+        prot_per_kg = 2.0
+    else:
+        prot_per_kg = 1.6
+
+    proteinas_g = round(prot_per_kg * weight_kg)
+    proteinas_kcal = proteinas_g * 4
+
+    # distribuir resto: 25% kcal a grasas, resto a carbs
+    remaining_kcal = max(0, target - proteinas_kcal)
+    fats_kcal = remaining_kcal * 0.25
+    carbs_kcal = remaining_kcal - fats_kcal
+
+    fats_g = round(fats_kcal / 9)
+    carbs_g = round(carbs_kcal / 4)
+
+    result.update({
+        "bmr": round(bmr),
+        "maintenance_kcal": round(maintenance),
+        "target_kcal": round(target),
+        "proteinas_g": int(proteinas_g),
+        "carbs_g": int(carbs_g),
+        "fats_g": int(fats_g),
+    })
+
+    if age is None or sex is None:
+        result["note"] = "Algunos datos (edad/sexo) faltan; resultados aproximados."
+
+    return result
+
 
 
 def _slot(tracker: Tracker, name: str) -> Optional[str]:
@@ -1442,6 +1542,37 @@ class ActionGenerarDieta(Action):
         macros = plan.get("macros", {})
         hydration = plan.get("hydration")
 
+        # Opt-in: calcular kcal objetivo y macros en gramos si la feature está activada
+        dieta_calc_info: Optional[Dict[str, Any]] = None
+        if CHAT_ENABLE_DIETA_CALC:
+            try:
+                weight = None
+                if profile_data and profile_data.get("weight_kg") is not None:
+                    weight = _to_float(profile_data.get("weight_kg"))
+                # intentar obtener altura/edad/sexo del perfil
+                height = None
+                if profile_data and profile_data.get("height_cm") is not None:
+                    height = _to_float(profile_data.get("height_cm"))
+                age = None
+                if profile_data and profile_data.get("age") is not None:
+                    try:
+                        age = int(profile_data.get("age"))
+                    except Exception:
+                        age = None
+                sex = profile_data.get("sex") if profile_data else None
+                activity = profile_data.get("activity_level") if profile_data else None
+
+                dieta_calc_info = calc_target_kcal_and_macros(
+                    weight_kg=weight,
+                    height_cm=height,
+                    age=age,
+                    sex=sex,
+                    activity_level=activity,
+                    objetivo=objetivo,
+                )
+            except Exception:
+                dieta_calc_info = None
+
         lines: List[str] = [
             f"Plan alimenticio sugerido para objetivo {plan_label} (nivel {nivel}).",
             f"Calorias estimadas: {plan.get('calorias', 'mantenimiento')}",
@@ -1488,6 +1619,16 @@ class ActionGenerarDieta(Action):
             "summary": {
                 "calorias": plan.get("calorias"),
                 "macros": macros,
+                # si se calculó la versión opt-in, añadimos valores absolutos
+                **({
+                    "target_kcal": dieta_calc_info.get("target_kcal"),
+                    "bmr": dieta_calc_info.get("bmr"),
+                    "maintenance_kcal": dieta_calc_info.get("maintenance_kcal"),
+                    "proteinas_g": dieta_calc_info.get("proteinas_g"),
+                    "carbs_g": dieta_calc_info.get("carbs_g"),
+                    "fats_g": dieta_calc_info.get("fats_g"),
+                    "dieta_note": dieta_calc_info.get("note"),
+                } if dieta_calc_info else {}),
                 "hydration": hydration,
                 "health_adjustments": adjustments or None,
                 "allergies": allergy_list or None,
