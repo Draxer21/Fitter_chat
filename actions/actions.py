@@ -10,6 +10,7 @@ from urllib.parse import quote
 
 import requests
 from dotenv import load_dotenv
+import threading
 
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
@@ -473,8 +474,10 @@ class ActionSubmitProfileForm(Action):
 
 def maybe_send_routine_email(
     ctx: Optional[Dict[str, Any]],
-    header_lines: List[str],
-    exercises: List[Dict[str, Any]],
+    header_lines: Optional[List[str]] = None,
+    exercises: Optional[List[Dict[str, Any]]] = None,
+    routine_data: Optional[Dict[str, Any]] = None,
+    attach: bool = False,
 ) -> Optional[Dict[str, Any]]:
     if not EMAIL_ROUTINE_ENABLED:
         return None
@@ -498,19 +501,35 @@ def maybe_send_routine_email(
         return base
 
     body_lines: List[str] = []
-    for line in header_lines:
-        body_lines.append(line)
-    body_lines.append("")
-    body_lines.append("Detalle de ejercicios:")
-    for entry in exercises:
-        body_lines.append(f"- {_format_exercise(entry)}")
-    body_lines.append("")
-    body_lines.append("Recuerda calentar antes de iniciar y ajustar la intensidad según tu sensación.")
+    if routine_data and isinstance(routine_data, dict):
+        # build body from routine_data
+        if routine_data.get("header"):
+            body_lines.append(routine_data.get("header"))
+        summary = routine_data.get("summary", {})
+        body_lines.append("")
+        body_lines.append("Detalle de ejercicios:")
+        for entry in routine_data.get("exercises", []):
+            body_lines.append(f"- {_format_exercise(entry)}")
+        body_lines.append("")
+        body_lines.append("Recuerda calentar antes de iniciar y ajustar la intensidad según tu sensación.")
+    else:
+        if header_lines:
+            for line in header_lines:
+                body_lines.append(line)
+        body_lines.append("")
+        body_lines.append("Detalle de ejercicios:")
+        if exercises:
+            for entry in exercises:
+                body_lines.append(f"- {_format_exercise(entry)}")
+        body_lines.append("")
+        body_lines.append("Recuerda calentar antes de iniciar y ajustar la intensidad según tu sensación.")
 
     payload = {
         "user_id": int(user_id),
         "body": "\n".join(body_lines).strip(),
         "subject": ROUTINE_EMAIL_SUBJECT,
+        "attach": bool(attach),
+        "routine_data": routine_data if routine_data else None,
     }
     headers: Dict[str, str] = {"Content-Type": "application/json"}
     if CONTEXT_API_KEY:
@@ -1214,6 +1233,29 @@ class ActionGenerarRutina(Action):
             profile_goal = str(profile_data["primary_goal"]).replace("_", " ").strip().lower()
 
         raw_musculo = _slot(tracker, "musculo")
+        # If the user hasn't provided a muscle group, ask explicitly and show profile summary
+        if not raw_musculo:
+            # show profile summary if available
+            if profile_data:
+                profile_bits: List[str] = []
+                weight = profile_data.get("weight_kg")
+                height = profile_data.get("height_cm")
+                goal = profile_data.get("primary_goal")
+                activity = profile_data.get("activity_level")
+                if weight:
+                    profile_bits.append(f"Peso: {weight} kg")
+                if height:
+                    profile_bits.append(f"Altura: {height} cm")
+                if goal:
+                    profile_bits.append(f"Objetivo declarado: {str(goal).replace('_', ' ')}")
+                if activity:
+                    profile_bits.append(f"Actividad: {activity}")
+                if profile_bits:
+                    resumen = "Datos perfil: " + " | ".join(profile_bits)
+                    dispatcher.utter_message(text=resumen)
+            # ask which muscle to train
+            dispatcher.utter_message(response="utter_ask_musculo")
+            return []
         musculo = (raw_musculo or "brazos").lower()
         nivel = (_slot(tracker, "nivel") or "intermedio").lower()
         objetivo = (_slot(tracker, "objetivo") or profile_goal or "fuerza").lower()
@@ -1323,15 +1365,18 @@ class ActionGenerarRutina(Action):
 
         dispatcher.utter_message(json_message=routine_summary)
 
-        email_status = maybe_send_routine_email(ctx, header_lines, structured_ejercicios)
-        if email_status:
-            status = email_status.get("status")
-            if status == "ok":
-                dispatcher.utter_message(text="También te envié esta rutina a tu correo registrado.")
-            elif status == "unauthorized":
-                dispatcher.utter_message(text="Tu sesión web expiró, por lo que no pude enviarte la rutina por correo. Inicia sesión nuevamente si deseas recibirla por email.")
-            else:
-                dispatcher.utter_message(text="No pude enviar la rutina por correo esta vez, pero aquí tienes todo el detalle para que lo sigas desde el chat.")
+        # Send the routine as an attached PDF to the user's email in background
+        # (do not block the action thread to avoid connector timeouts)
+        try:
+            if EMAIL_ROUTINE_ENABLED and ctx:
+                threading.Thread(
+                    target=maybe_send_routine_email,
+                    args=(ctx,),
+                    kwargs={"routine_data": routine_summary, "attach": True},
+                    daemon=True,
+                ).start()
+        except Exception as exc:
+            logger.warning("No se pudo iniciar thread para enviar rutina por correo: %s", exc)
 
         context_payload: Dict[str, Any] = {}
         if condiciones and condiciones.lower() not in {"", "ninguna", "ninguno", "no"}:
