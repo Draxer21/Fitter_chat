@@ -150,6 +150,40 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
     }));
   };
 
+  const downloadRoutine = async (routineDetail, format) => {
+    try {
+      const response = await fetch("/notifications/download-routine", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          format: format,
+          routine_data: routineDetail
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error al descargar: ${response.status}`);
+      }
+
+      // Descargar el archivo
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${routineDetail.routine_id || "rutina"}.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error("Error al descargar rutina:", error);
+      alert(`No se pudo descargar la rutina en formato ${format.toUpperCase()}. Intenta de nuevo.`);
+    }
+  };
+
   const Bubble = ({ children, from }) => (
     <div className={`message-bubble ${from === "user" ? "user-bubble" : "bot-bubble"}`}>
       {children}
@@ -208,6 +242,35 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
                   <span><strong>Objetivo:</strong> {routineDetail.summary?.objetivo ?? "-"}</span>
                   <span><strong>Nivel:</strong> {routineDetail.summary?.nivel ?? "-"}</span>
                 </div>
+                
+                {/* Botones de descarga */}
+                <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  <button
+                    type="button"
+                    onClick={() => downloadRoutine(routineDetail, "pdf")}
+                    className="download-button download-pdf"
+                    title="Descargar en PDF"
+                  >
+                    📄 Descargar PDF
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => downloadRoutine(routineDetail, "docx")}
+                    className="download-button download-docx"
+                    title="Descargar en Word"
+                  >
+                    📝 Descargar Word
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => sendRoutineByEmail(routineDetail)}
+                    className="download-button download-send"
+                    title="Enviar por correo"
+                  >
+                    📤 Enviar por correo
+                  </button>
+                </div>
+                
                 {Array.isArray(routineDetail.summary?.health_notes) && routineDetail.summary.health_notes.length > 0 && (
                   <div className="health-warning">
                     <strong>Precauciones:</strong>
@@ -354,6 +417,48 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
         )}
       </>
     );
+  };
+
+  const sendRoutineByEmail = async (routineDetail) => {
+    try {
+      // Build a simple body for email in case backend needs it
+      const lines = [];
+      if (routineDetail.header) lines.push(routineDetail.header);
+      lines.push("");
+      lines.push("Detalle de ejercicios:");
+      (routineDetail.exercises || []).forEach((ex) => {
+        const name = ex.nombre || ex.name || "Ejercicio";
+        const series = ex.series || ex.series || "-";
+        const reps = ex.repeticiones || ex.reps || "-";
+        lines.push(`- ${name} | ${series} x ${reps}`);
+      });
+
+      const payload = {
+        body: lines.join("\n"),
+        subject: "Tu rutina diaria Fitter",
+        attach: true,
+        format: "pdf",
+        routine_data: routineDetail,
+      };
+
+      const res = await fetch("/notifications/daily-routine", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        alert("No se pudo enviar la rutina por correo: " + (err.error || res.status));
+        return;
+      }
+
+      alert("Rutina enviada por correo correctamente.");
+    } catch (e) {
+      console.error(e);
+      alert("Error al enviar la rutina por correo. Reintenta más tarde.");
+    }
   };
 
 

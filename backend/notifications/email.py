@@ -18,6 +18,7 @@ from email.message import EmailMessage
 from typing import Optional
 
 from flask import current_app
+import mimetypes
 
 
 def _bool_env(name: str, default: str = "0") -> bool:
@@ -54,6 +55,8 @@ def send_email(
     body: str,
     from_email: Optional[str] = None,
     from_name: Optional[str] = None,
+    attachment_bytes: Optional[bytes] = None,
+    attachment_filename: Optional[str] = None,
 ) -> None:
     """
     Envía un correo simple en texto plano.
@@ -91,6 +94,15 @@ def send_email(
         from_email=sender_email,
         from_name=sender_name,
     )
+
+    # Adjuntar archivo si se proporcionó
+    if attachment_bytes and attachment_filename:
+        ctype, encoding = mimetypes.guess_type(attachment_filename)
+        if ctype is None:
+            maintype, subtype = ("application", "octet-stream")
+        else:
+            maintype, subtype = ctype.split("/", 1)
+        msg.add_attachment(attachment_bytes, maintype=maintype, subtype=subtype, filename=attachment_filename)
 
     smtp_class = smtplib.SMTP_SSL if use_ssl else smtplib.SMTP
     with smtp_class(host, port, timeout=10) as smtp:

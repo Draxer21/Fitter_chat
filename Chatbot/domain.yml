@@ -167,6 +167,12 @@ slots:
     mappings:
       - type: custom
 
+  ultima_rutina:
+    type: any
+    influence_conversation: false
+    mappings:
+      - type: custom
+
 responses:
   utter_saludar:
     - text: "¡Hola! Soy Fitter, tu compañero de entrenamiento. ¿Qué tal, amigo? ¿En qué te doy una mano hoy?"
@@ -209,6 +215,26 @@ responses:
 
   utter_perfil_resumen:
     - text: "{resumen_perfil}"
+
+  utter_ask_musculo:
+    - text: "¿Qué grupo muscular quieres entrenar? Elige una opción:" 
+      buttons:
+        - title: "Pecho"
+          payload: "/solicitar_rutina{\"musculo\": \"pecho\"}"
+        - title: "Espalda"
+          payload: "/solicitar_rutina{\"musculo\": \"espalda\"}"
+        - title: "Piernas"
+          payload: "/solicitar_rutina{\"musculo\": \"piernas\"}"
+        - title: "Hombros"
+          payload: "/solicitar_rutina{\"musculo\": \"hombros\"}"
+        - title: "Brazos"
+          payload: "/solicitar_rutina{\"musculo\": \"brazos\"}"
+        - title: "Core"
+          payload: "/solicitar_rutina{\"musculo\": \"core\"}"
+        - title: "Fullbody"
+          payload: "/solicitar_rutina{\"musculo\": \"fullbody\"}"
+        - title: "Cardio"
+          payload: "/solicitar_rutina{\"musculo\": \"cardio\"}"
 
   utter_perfil_incompleto:
     - text: "Para continuar necesito datos básicos de tu perfil. ¿Prefieres actualizarlos aquí conmigo o desde la página?"
