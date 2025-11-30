@@ -161,7 +161,8 @@ def create_app() -> Flask:
     @app.get("/chat/context/<sender>")
     def chat_context_get(sender: str):
         try:
-            result = chat_service.get_context(sender, request.headers, flask_session)
+            chat_id = request.args.get("chat_id")
+            result = chat_service.get_context(sender, chat_id, request.headers, flask_session)
         except ChatServiceError as exc:
             return _json_error(exc.message, exc.status_code)
         return jsonify(result.payload), result.status_code
@@ -175,7 +176,21 @@ def create_app() -> Flask:
             return _json_error("JSON invalido", 400)
 
         try:
-            result = chat_service.update_context(sender, data, request.headers, flask_session)
+            chat_id = request.args.get("chat_id") or data.get("chat_id")
+            result = chat_service.update_context(sender, chat_id, data, request.headers, flask_session)
+        except ChatServiceError as exc:
+            return _json_error(exc.message, exc.status_code)
+        return jsonify(result.payload), result.status_code
+
+    @app.get("/chat/sessions/<sender>")
+    def chat_sessions(sender: str):
+        try:
+            limit_arg = request.args.get("limit", None)
+            try:
+                limit = int(limit_arg) if limit_arg is not None else 50
+            except Exception:
+                limit = 50
+            result = chat_service.get_sessions(sender, limit, request.headers, flask_session)
         except ChatServiceError as exc:
             return _json_error(exc.message, exc.status_code)
         return jsonify(result.payload), result.status_code
