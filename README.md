@@ -165,12 +165,19 @@ Fitter implementa un conjunto completo de características de accesibilidad que 
 **Documentación técnica completa**: Ver [ACCESIBILIDAD.md](frontend/ACCESIBILIDAD.md)
 
 Incluye:
-- Ejemplos de código de implementación
-- Ratios de contraste detallados
-- Guía de uso de componentes accesibles
-- Checklist WCAG 2.1 completo
-- Referencias y recursos adicionales
 
+### 🪄 Script PowerShell
+¿Quieres que añada también un pequeño script PowerShell para que el revisor ejecute todo en Windows (activar venv + aplicar script SQL) y lo añada al README?
+Sí. Se añadió el script PowerShell `scripts/apply_schema_windows.ps1`.
+
+Ejemplo de uso en Windows (PowerShell):
+
+```powershell
+# Desde la raíz del repositorio (Windows PowerShell)
+.\scripts\apply_schema_windows.ps1
+```
+
+El script activa el virtualenv `.venv`, establece `PYTHONPATH` al directorio del repo y ejecuta `scripts/apply_schema_sql.py`.
 **Marco normativo chileno:**
 - Ley 20.422 (2010) - Igualdad de Oportunidades e Inclusión Social de Personas con Discapacidad
 - Decreto Supremo N°1 (2015) - Norma técnica sobre accesibilidad web
@@ -213,13 +220,21 @@ Incluye:
 ## ▶️ Arranque rápido en VS Code
 
 1. **Prepara las dependencias una sola vez**
+   Nota: este proyecto usa **Python 3.10**. Verifica la versión instalada antes de crear el entorno virtual.
+
    ```bash
+   # Verifica la versión de Python (debe ser 3.10.x)
+   python --version
+
+   # Crea el virtualenv (usa explícitamente el binario de Python 3.10 si tienes múltiples versiones)
    python -m venv .venv
-   # En Windows:
+
+   # En Windows (PowerShell):
    .venv\Scripts\Activate.ps1
+
    # En Linux/Mac:
    source .venv/bin/activate
-   
+
    pip install -r requirements.txt
    pip install rasa
    ```
@@ -291,3 +306,48 @@ Incluye tests para:
 - Autenticación MFA
 - Modelos de productos
 - Perfiles de usuario
+
+---
+
+**Database Migrations**: explicación de scripts y recomendaciones
+
+- **Propósito general**: El repositorio contiene migraciones Alembic y scripts auxiliares para facilitar la creación y actualización del esquema de la base de datos. Debido a cambios históricos en diferentes carpetas de migraciones, se incluye una migración "squash" idempotente y scripts seguros para instalar el esquema en una base de datos nueva o existente sin sobrescribir el historial de Alembic del servidor.
+
+- **Archivos importantes**:
+   - `backend/migrations/versions/20251129_squash_schema.py`: migración "squash" idempotente que crea las tablas y columnas principales si no existen (diseñada para instalaciones limpias). `down_revision = None` para facilitar instalaciones nuevas.
+   - `backend/migrations/versions/20251129_merge_squash_heads.py`: merge no-op que ayuda a reconciliar múltiples "heads" locales de Alembic sin ejecutar DDL.
+   - `backend/migrations/versions/20251129_add_chat_id_to_chat_user_context.py`: migración puntual que añade `chat_id` a `chat_user_context` (ya presente en el historial del proyecto).
+   - `scripts/apply_schema_sql.py`: script ejecutado por el mantenedor para aplicar SQL idempotente directamente a la base de datos (usa `ALTER TABLE IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`, etc.). Útil cuando la base de datos de destino tiene un historial Alembic distinto y se desea garantizar que las columnas/índices estén presentes sin tocar `alembic_version`.
+   - `scripts/apply_migrations.py`: helper para ejecutar Alembic desde el contexto de la aplicación Flask (útil si quieres que Alembic use la URL y engine configurados por Flask-SQLAlchemy).
+   - `scripts/inspect_migrations.py`: script de inspección que muestra el contenido de `alembic_version` en la BD y lista los archivos de migración disponibles (útil para diagnóstico).
+
+- **Cómo aplicar el esquema (recomendado)**
+
+   - Para una base de datos nueva (instalación fresca): usar Alembic normalmente desde `backend`:
+
+   ```powershell
+   & .venv\Scripts\Activate.ps1
+   cd backend
+   alembic -c migrations/alembic.ini upgrade head
+   ```
+
+   - Para una base de datos existente que tiene un historial Alembic distinto (caso del revisor): ejecutar el script idempotente que garantiza columnas y tablas sin manipular `alembic_version`:
+
+   ```powershell
+   & .venv\Scripts\Activate.ps1
+   $env:PYTHONPATH='G:\Fitter'
+   python scripts\apply_schema_sql.py
+   ```
+
+- **Notas importantes y advertencias**
+   - `scripts/apply_schema_sql.py` aplica DDL directamente (usando `IF NOT EXISTS`) en la BD; **no** modifica la tabla `alembic_version`. Esto evita romper historiales de migración en bases ya en producción. Recomendado cuando el árbol de migraciones del revisor/destino no coincide exactamente con el del repositorio.
+   - Si necesitas alinear el historial de Alembic (solo si sabes lo que haces), puedes usar `alembic stamp` para marcar la BD con la revisión actual del repo. Esto es intrusivo: haz backup de la BD antes de usar `stamp`.
+
+      ```powershell
+      # marca la BD con la última revisión del repo sin ejecutar DDL
+      alembic -c migrations/alembic.ini stamp head
+      ```
+
+   - Entregar el proyecto con la migración "squash" incluida garantiza que quien instale el proyecto desde cero pueda ejecutar `alembic upgrade head` sin dependencias entre ramas de migración. Para bases de datos ya existentes, usar `scripts/apply_schema_sql.py` tal como se muestra arriba.
+
+---
