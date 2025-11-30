@@ -19,6 +19,12 @@ from rasa_sdk.events import SlotSet, FollowupAction
 
 logger = logging.getLogger(__name__)
 
+# Optional local composer import (used when action server has access to backend package)
+try:
+    from backend.food.composer import compose_diet  # type: ignore
+except Exception:
+    compose_diet = None
+
 # =========================================================
 # Helpers
 # =========================================================
@@ -36,6 +42,7 @@ EMAIL_ROUTINE_ENABLED = os.getenv("CHAT_EMAIL_ROUTINE", "1").lower() not in {"0"
 ROUTINE_EMAIL_SUBJECT = (os.getenv("CHAT_ROUTINE_EMAIL_SUBJECT", "Tu rutina diaria Fitter") or "Tu rutina diaria Fitter").strip()
 PROFILE_UPDATE_PATH = "/profile/me"
 CHAT_ENABLE_DIETA_CALC = os.getenv("CHAT_ENABLE_DIETA_CALC", "0").strip() in {"1", "true", "yes"}
+CHAT_DIET_CATALOG = os.getenv("CHAT_DIET_CATALOG", "0").strip() in {"1", "true", "yes"}
 
 
 def send_context_update(sender_id: str, payload: Dict[str, Any]) -> None:
@@ -1505,10 +1512,44 @@ class ActionGenerarDieta(Action):
         if profile_data and profile_data.get("primary_goal"):
             profile_goal = str(profile_data["primary_goal"]).replace("_", " ").strip().lower()
 
-        objetivo = (_slot(tracker, "objetivo") or profile_goal or "equilibrada").lower()
+        # prefer explicit slot, then profile, then sensible default
+        objetivo_slot = _slot(tracker, "objetivo")
+        objetivo = (objetivo_slot or profile_goal or "equilibrada").lower()
         nivel = (_slot(tracker, "nivel") or "intermedio").lower()
         alergias = _slot(tracker, "alergias") or (profile_data.get("allergies") if profile_data else None) or "ninguna"
         condiciones = _slot(tracker, "condiciones_salud") or (profile_data.get("medical_conditions") if profile_data else None) or "ninguna"
+
+        # If essential info is missing (objetivo explicit or peso), ask like routines do
+        peso_slot = tracker.get_slot("peso")
+        missing_objetivo = not objetivo_slot and not profile_goal
+        missing_peso = (peso_slot is None) and not (profile_data and profile_data.get("weight_kg"))
+        if missing_objetivo or missing_peso:
+            # show profile summary if available
+            if profile_data:
+                profile_bits: List[str] = []
+                weight = profile_data.get("weight_kg")
+                height = profile_data.get("height_cm")
+                goal = profile_data.get("primary_goal")
+                activity = profile_data.get("activity_level")
+                if weight:
+                    profile_bits.append(f"Peso: {weight} kg")
+                if height:
+                    profile_bits.append(f"Altura: {height} cm")
+                if goal:
+                    profile_bits.append(f"Objetivo declarado: {str(goal).replace('_', ' ')}")
+                if activity:
+                    profile_bits.append(f"Actividad: {activity}")
+                if profile_bits:
+                    resumen = "Datos perfil: " + " | ".join(profile_bits)
+                    dispatcher.utter_message(text=resumen)
+
+            # ask for missing slots (objetivo first)
+            if missing_objetivo:
+                dispatcher.utter_message(response="utter_ask_objetivo")
+                return []
+            if missing_peso:
+                dispatcher.utter_message(response="utter_ask_peso")
+                return []
 
         plan = DIET_BASES.get(objetivo) or DIET_BASES.get("equilibrada")
         plan_label = objetivo if objetivo in DIET_BASES else "equilibrada"
@@ -1638,6 +1679,97 @@ class ActionGenerarDieta(Action):
             "meals": filtered_meals,
         }
 
+        # If catalog integration is enabled, prefer local composer when available
+        if CHAT_DIET_CATALOG:
+            used_composer = False
+            # try local composer first (faster, offline)
+            try:
+                if compose_diet:
+                    # choose target kcal from calculated info if available
+                    target_kcal = None
+                    if dieta_calc_info and isinstance(dieta_calc_info, dict):
+                        target_kcal = dieta_calc_info.get('target_kcal')
+                    if target_kcal is None:
+                        # fallback sensible default
+                        target_kcal = 2000
+                    n_meals = len(filtered_meals) or 3
+                    # allow composer to use the project's catalog file
+                    catalog_path = os.path.join(_BASE_DIR, 'backend', 'data', 'food_catalog.json')
+                    # determine weight to pass to composer
+                    weight_val = None
+                    try:
+                        if profile_data and profile_data.get('weight_kg') is not None:
+                            weight_val = _to_float(profile_data.get('weight_kg'))
+                        else:
+                            weight_val = _to_float(tracker.get_slot('peso'))
+                    except Exception:
+                        weight_val = None
+
+                    composed = compose_diet(
+                        int(target_kcal),
+                        n_meals=n_meals,
+                        catalog_path=catalog_path,
+                        exclude_allergens=allergy_list or None,
+                        objetivo=objetivo,
+                        weight_kg=weight_val,
+                    )
+                    if composed and isinstance(composed, dict):
+                        composed_meals: List[Dict[str, Any]] = []
+                        for meal in composed.get('meals', []):
+                            items_out: List[Dict[str, Any]] = []
+                            for it in meal.get('items', []):
+                                name = it.get('name') or it.get('id')
+                                qty = it.get('qty_g') or it.get('qty') or 100
+                                kcal = it.get('kcal')
+                                items_out.append({'name': name, 'qty': f"{int(qty)} g", 'kcal': kcal})
+                            composed_meals.append({'name': meal.get('name'), 'items': items_out, 'notes': None})
+                        diet_payload['meals'] = composed_meals
+                        used_composer = True
+            except Exception:
+                used_composer = False
+
+            # fallback to remote HTTP catalog composition if local composer not used
+            if not used_composer and BACKEND_BASE_URL:
+                try:
+                    exclude_allergens_param = ",".join([a for a in (allergy_list or [])])
+                    catalog_url = f"{BACKEND_BASE_URL.rstrip('/')}/notifications/catalog?limit=200"
+                    if exclude_allergens_param:
+                        catalog_url += f"&exclude_allergens={quote(exclude_allergens_param)}"
+                    resp = requests.get(catalog_url, timeout=CONTEXT_TIMEOUT)
+                    if resp.ok:
+                        catalog_items = resp.json().get('items', [])
+                    else:
+                        catalog_items = []
+                except Exception:
+                    catalog_items = []
+
+                # simple composition: for each meal, pick up to 3 items from catalog (rotating)
+                if catalog_items:
+                    composed_meals: List[Dict[str, Any]] = []
+                    idx = 0
+                    for meal in filtered_meals:
+                        items_for_meal: List[Dict[str, Any]] = []
+                        for _i in range(3):
+                            if not catalog_items:
+                                break
+                            item = catalog_items[idx % len(catalog_items)]
+                            idx += 1
+                            name = item.get('name') or item.get('name_es') or item.get('id')
+                            kcal100 = item.get('energy_kcal_100g') or 0
+                            qty_g = item.get('serving_size_g') or 100
+                            kcal = round((kcal100 * qty_g) / 100.0) if kcal100 else None
+                            items_for_meal.append({
+                                'name': name,
+                                'qty': f"{int(qty_g)} g",
+                                'kcal': kcal,
+                                'source': item.get('source'),
+                            })
+                        composed_meals.append({
+                            'name': meal.get('name'),
+                            'items': items_for_meal,
+                            'notes': meal.get('notes')
+                        })
+                    diet_payload['meals'] = composed_meals
         dispatcher.utter_message(json_message=diet_payload)
 
         context_payload: Dict[str, Any] = {}

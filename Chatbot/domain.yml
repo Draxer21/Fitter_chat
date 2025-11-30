@@ -275,6 +275,9 @@ responses:
   utter_ask_objetivo_fitness:
     - text: "Cual es tu objetivo principal ahora mismo? (ejemplo: bajar grasa, ganar masa, rendimiento)"
 
+  utter_ask_objetivo:
+    - text: "¿Cuál es tu objetivo principal? (ej. bajar_grasa, hipertrofia, equilibrada)"
+
   utter_ask_padecimientos:
     - text: "Tienes alguna condicion o padecimiento que deba considerar? Si no, dime \"ninguno\"."
 
