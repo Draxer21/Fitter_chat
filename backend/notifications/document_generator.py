@@ -314,3 +314,109 @@ def generate_routine_docx(routine_data: Dict[str, Any]) -> BytesIO:
     doc.save(buffer)
     buffer.seek(0)
     return buffer
+
+
+def generate_diet_pdf(diet_data: Dict[str, Any]) -> BytesIO:
+    """
+    Genera un PDF de la dieta.
+    """
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=letter,
+        rightMargin=0.75 * inch,
+        leftMargin=0.75 * inch,
+        topMargin=0.75 * inch,
+        bottomMargin=0.75 * inch
+    )
+    story = []
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle('Title', parent=styles['Heading1'], fontSize=18, alignment=TA_CENTER)
+    normal = ParagraphStyle('Normal', parent=styles['Normal'], fontSize=10)
+
+    header = diet_data.get('header', 'Dieta Fitter')
+    story.append(Paragraph(header, title_style))
+    story.append(Spacer(1, 0.2 * inch))
+
+    summary = diet_data.get('summary', {})
+    summary_items = []
+    if 'target_kcal' in summary:
+        summary_items.append(['Kcal objetivo:', str(summary.get('target_kcal'))])
+    if 'proteinas_g' in summary:
+        summary_items.append(['Proteínas (g):', str(summary.get('proteinas_g'))])
+    if 'carbs_g' in summary:
+        summary_items.append(['Carbohidratos (g):', str(summary.get('carbs_g'))])
+    if 'fats_g' in summary:
+        summary_items.append(['Grasas (g):', str(summary.get('fats_g'))])
+
+    if summary_items:
+        table = Table(summary_items, colWidths=[2.5 * inch, 3.5 * inch])
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#f3f4f6')),
+            ('TEXTCOLOR', (0, 0), (-1, -1), colors.HexColor('#111827')),
+            ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.HexColor('#d1d5db')),
+        ]))
+        story.append(table)
+        story.append(Spacer(1, 0.2 * inch))
+
+    meals = diet_data.get('meals', [])
+    if meals:
+        for meal in meals:
+            meal_title = Paragraph(meal.get('name', 'Comida'), styles['Heading2'])
+            story.append(meal_title)
+            story.append(Spacer(1, 0.05 * inch))
+            for item in meal.get('items', []):
+                name = item.get('name') or item.get('descripcion') or 'Alimento'
+                qty = item.get('qty', '')
+                kcal = item.get('kcal')
+                line = f"- {name} {qty}"
+                if kcal:
+                    line += f" • {kcal} kcal"
+                story.append(Paragraph(line, normal))
+            story.append(Spacer(1, 0.15 * inch))
+
+    footer_style = ParagraphStyle('Footer', parent=styles['Normal'], fontSize=8, alignment=TA_CENTER)
+    story.append(Spacer(1, 0.2 * inch))
+    story.append(Paragraph(f"Generado por Fitter • {datetime.now().strftime('%d/%m/%Y %H:%M')}", footer_style))
+
+    doc.build(story)
+    buffer.seek(0)
+    return buffer
+
+
+def generate_diet_docx(diet_data: Dict[str, Any]) -> BytesIO:
+    buffer = BytesIO()
+    doc = Document()
+    style = doc.styles['Normal']
+    style.font.name = 'Calibri'
+    doc.add_heading(diet_data.get('header', 'Dieta Fitter'), level=0)
+
+    summary = diet_data.get('summary', {})
+    if summary:
+        doc.add_heading('Resumen', level=1)
+        for k, v in [('Kcal objetivo', summary.get('target_kcal')), ('Proteínas (g)', summary.get('proteinas_g')), ('Carbs (g)', summary.get('carbs_g')), ('Grasas (g)', summary.get('fats_g'))]:
+            if v is not None:
+                p = doc.add_paragraph()
+                p.add_run(f"{k}: ").bold = True
+                p.add_run(str(v))
+
+    meals = diet_data.get('meals', [])
+    if meals:
+        for meal in meals:
+            doc.add_heading(meal.get('name', 'Comida'), level=2)
+            for item in meal.get('items', []):
+                name = item.get('name') or item.get('descripcion') or 'Alimento'
+                qty = item.get('qty', '')
+                kcal = item.get('kcal')
+                text = f"- {name} {qty}"
+                if kcal:
+                    text += f" • {kcal} kcal"
+                doc.add_paragraph(text)
+
+    doc.add_paragraph()
+    doc.add_paragraph(f"Generado por Fitter • {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+    doc.save(buffer)
+    buffer.seek(0)
+    return buffer

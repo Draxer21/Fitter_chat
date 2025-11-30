@@ -20,6 +20,19 @@ function getOrCreateSenderId(forceNew = false) {
 export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessage, initialMessages = [] }) {
   const uidRef = useRef(senderId || getOrCreateSenderId());
 
+  const CONSENT_KEY = "fitter_chat_consent";
+  const [consent, setConsent] = useState(() => localStorage.getItem(CONSENT_KEY) === "1");
+
+  const onConsentChange = (checked) => {
+    setConsent(checked);
+    try {
+      localStorage.setItem(CONSENT_KEY, checked ? "1" : "0");
+    } catch (e) {
+      // ignore
+    }
+    if (checked) setErrorText("");
+  };
+
   const [messages, setMessages] = useState(() => {
     // Si hay mensajes iniciales, usarlos; si no, mostrar el mensaje de bienvenida
     if (initialMessages && initialMessages.length > 0) {
@@ -114,6 +127,10 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
 
   const sendMessage = async () => {
     const text = input.trim();
+    if (!consent) {
+      setErrorText("Debes aceptar las condiciones de uso del chatbot para enviar mensajes.");
+      return;
+    }
     if (!text || loading) return;
 
     setErrorText("");
@@ -148,6 +165,103 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
       ...prev,
       [key]: !prev[key]
     }));
+  };
+
+  const openDietView = (diet) => {
+    try {
+      if (!diet) return;
+      // If server provided a direct URL (PDF or hosted page), open it
+      if (diet.url && typeof diet.url === "string") {
+        window.open(diet.url, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      // Otherwise create a printable HTML page with the diet content
+      const w = window.open("", "_blank", "noopener,noreferrer");
+      if (!w) return;
+
+      const escapeHtml = (s) => String(s === null || s === undefined ? "" : s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
+      const mealsHtml = (Array.isArray(diet.meals) ? diet.meals : []).map((meal, idx) => `
+        <li style="margin-bottom:10px">
+          <strong>${escapeHtml(meal?.name || `Comida ${idx + 1}`)}</strong>
+          <div style="margin-top:6px">${escapeHtml(Array.isArray(meal?.items) && meal.items.length ? meal.items.join(", ") : "Sin detalle")}</div>
+          ${meal?.notes ? `<div style="margin-top:6px;font-size:0.9rem;color:#374151">Nota: ${escapeHtml(meal.notes)}</div>` : ""}
+        </li>`).join("");
+
+      const adjustmentsHtml = (Array.isArray(diet.summary?.health_adjustments) ? diet.summary.health_adjustments : [])
+        .map(a => `<li>${escapeHtml(a)}</li>`).join("");
+
+      const allergensHtml = (Array.isArray(diet.summary?.allergies) ? diet.summary.allergies : [])
+        .map(a => `<span style="margin-right:6px">${escapeHtml(a)}</span>`).join("");
+
+      const html = `<!doctype html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <title>Plan de dieta - FITTER</title>
+          <meta name="viewport" content="width=device-width,initial-scale=1" />
+          <style>
+            body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;line-height:1.45;color:#111827;padding:20px}
+            .container{max-width:900px;margin:0 auto}
+            header{display:flex;justify-content:space-between;align-items:center}
+            h1{font-size:1.25rem;margin:0}
+            .meta{color:#6b7280;font-size:0.95rem}
+            .card{background:#f8fafc;padding:16px;border-radius:8px;margin-top:12px}
+            .meals{margin-top:12px}
+            .actions{margin-top:16px}
+            button{padding:8px 12px;border-radius:8px;border:none;background:#047857;color:#fff;cursor:pointer;margin-right:8px}
+            .print-only{display:inline-block}
+            @media print{.print-only{display:none}button{display:none}}
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <header>
+              <h1>Plan de dieta</h1>
+              <div class="meta">Objetivo: ${escapeHtml(diet.objective || diet.summary?.objective || "equilibrada")}</div>
+            </header>
+
+            <div class="card">
+              <div style="display:flex;gap:12px;flex-wrap:wrap">
+                ${diet.summary?.calorias ? `<div><strong>Calorías:</strong> ${escapeHtml(diet.summary.calorias)}</div>` : ""}
+                ${diet.summary?.macros ? `<div><strong>Proteínas:</strong> ${escapeHtml(diet.summary.macros.proteinas || "-")}</div>` : ""}
+                ${diet.summary?.macros ? `<div><strong>Carbohidratos:</strong> ${escapeHtml(diet.summary.macros.carbohidratos || "-")}</div>` : ""}
+                ${diet.summary?.macros ? `<div><strong>Grasas:</strong> ${escapeHtml(diet.summary.macros.grasas || "-")}</div>` : ""}
+              </div>
+
+              ${adjustmentsHtml ? `<div style="margin-top:10px"><strong>Ajustes de salud:</strong><ul>${adjustmentsHtml}</ul></div>` : ""}
+              ${allergensHtml ? `<div style="margin-top:10px"><strong>Alergias consideradas:</strong><div>${allergensHtml}</div></div>` : ""}
+
+              <div class="meals">
+                <h3 style="margin:8px 0">Comidas</h3>
+                <ol>${mealsHtml}</ol>
+              </div>
+
+              ${diet.summary?.hydration ? `<p style="margin-top:10px;color:#0ea5a4"><strong>Hidratación:</strong> ${escapeHtml(diet.summary.hydration)}</p>` : ""}
+            </div>
+
+            <div class="actions print-only">
+              <button onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
+              <button onclick="window.close()" style="background:#6b7280">Cerrar</button>
+            </div>
+            <p style="margin-top:18px;color:#6b7280;font-size:0.95rem">Generado por FITTER — revisa los ajustes si tienes condiciones médicas.</p>
+          </div>
+        </body>
+      </html>`;
+
+      w.document.open();
+      w.document.write(html);
+      w.document.close();
+      w.focus();
+    } catch (e) {
+      console.error("openDietView error", e);
+    }
   };
 
   const downloadRoutine = async (routineDetail, format) => {
@@ -320,11 +434,11 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
             {(hasText || hasRoutineLink || routineDetail) ? <br /> : null}
             <button
               type="button"
-              onClick={() => dietKey && toggleCard(dietKey)}
+              onClick={() => openDietView(dietPlan)}
               className="message-action-button message-diet-button"
               style={{ marginTop: hasText || hasRoutineLink || routineDetail ? 6 : 0 }}
             >
-              {isDietExpanded ? "Ocultar dieta" : "Ver plan de dieta"}
+              Ver plan de dieta
             </button>
             {isDietExpanded && (
               <div className="diet-card">
@@ -468,6 +582,32 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
       role="region"
       aria-label="Chat con asistente FITTER"
     >
+      {/* Consent overlay: si no acepta, bloquea la interacción */}
+      {!consent && (
+        <div className="chatbot-consent-overlay" role="dialog" aria-label="Consentimiento chatbot">
+          <div className="chatbot-consent-panel">
+            <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => onConsentChange(e.target.checked)}
+                aria-label="Aceptar condiciones de uso del chatbot"
+              />
+              <span style={{ fontSize: "0.95rem" }}>Acepto las condiciones de uso del chatbot y autorizo el procesamiento de los datos necesarios para su funcionamiento.</span>
+            </label>
+            <div style={{ marginTop: 12 }}>
+              <button
+                type="button"
+                onClick={() => onConsentChange(true)}
+                className="chatbot-send-button"
+                aria-label="Aceptar y continuar"
+              >
+                Aceptar y continuar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div ref={scrollRef} className="chatbot-messages" aria-live="polite">
         {messages.map((m) => (
           <div key={m.id} className={`chatbot-message ${m.from === "user" ? "user-message" : "bot-message"}`}>
@@ -492,11 +632,11 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
           rows={1}
           className="chatbot-textarea"
           aria-label="Cuadro de mensaje"
-          disabled={loading}
+          disabled={loading || !consent}
         />
         <button
           onClick={sendMessage}
-          disabled={loading || input.trim().length === 0}
+          disabled={loading || input.trim().length === 0 || !consent}
           className="chatbot-send-button"
           aria-busy={loading}
           aria-label="Enviar mensaje"

@@ -87,6 +87,39 @@ class ChatService:
         if metadata:
             rasa_payload["metadata"] = {"persisted_context": metadata}
 
+        # Attempt to parse the user's message to capture intent/entities for history
+        parsed_intent = None
+        parsed_entities = None
+        try:
+            parse_resp = self.http.post(
+                self.rasa_url(self.app.config["RASA_PARSE_ENDPOINT"]),
+                json={"text": message},
+                timeout=self.app.config.get("RASA_TIMEOUT_PARSE", 3),
+            )
+            parse_resp.raise_for_status()
+            parse_payload = parse_resp.json()
+            if isinstance(parse_payload, dict):
+                parsed_intent = (parse_payload.get("intent") or {}).get("name")
+                parsed_entities = [
+                    {"entity": e.get("entity"), "value": e.get("value")} for e in (parse_payload.get("entities") or [])
+                ]
+        except Exception:
+            # parsing is best-effort; continue without failing the request
+            parsed_intent = None
+            parsed_entities = None
+
+        # record the user's message into history including parsed NLU metadata
+        try:
+            entry = {"type": "user_message", "text": message}
+            if parsed_intent:
+                entry["intent"] = parsed_intent
+            if parsed_entities:
+                entry["entities"] = parsed_entities
+            manager.add_history_entry(entry)
+        except Exception:
+            # do not fail the request if history append fails
+            pass
+
         try:
             self._ensure_context_access(ctx, headers, flask_session)
             resp = self.http.post(
@@ -103,11 +136,23 @@ class ChatService:
             for item in payload:
                 if not isinstance(item, dict):
                     continue
+                # record bot textual reply if present
+                bot_text = item.get("text")
+                if isinstance(bot_text, str) and bot_text.strip():
+                    try:
+                        manager.add_history_entry({"type": "bot_message", "text": bot_text.strip()})
+                    except Exception:
+                        pass
                 custom_payload = item.get("custom")
                 if not custom_payload and isinstance(item.get("json_message"), dict):
                     custom_payload = item["json_message"]
                 if not isinstance(custom_payload, dict):
                     continue
+                # record full custom payload as a bot_custom entry for traceability
+                try:
+                    manager.add_history_entry({"type": "bot_custom", "data": custom_payload})
+                except Exception:
+                    pass
                 msg_type = str(custom_payload.get("type") or "").strip().lower()
                 explanation = None
                 for key in ("explanation", "reason", "why"):
@@ -151,11 +196,16 @@ class ChatService:
     def get_context(
         self,
         raw_sender: str,
+        chat_id: Optional[str],
         headers: Mapping[str, str],
         flask_session: MutableMapping[str, Any],
     ) -> ServiceResponse:
         sender = (raw_sender or "").strip()[:80]
-        ctx = ChatUserContext.query.filter_by(sender_id=sender).one_or_none()
+        if chat_id:
+            chat_id = str(chat_id)[:80]
+            ctx = ChatUserContext.query.filter_by(sender_id=sender, chat_id=chat_id).one_or_none()
+        else:
+            ctx = ChatUserContext.query.filter_by(sender_id=sender).one_or_none()
         if not ctx:
             expected_key = self.app.config.get("CHAT_CONTEXT_API_KEY", "")
             if context_api_key_valid(headers, expected_key) or session_uid(flask_session) is not None:
@@ -170,16 +220,59 @@ class ChatService:
         self.db.session.commit()
         return ServiceResponse({"context": manager.to_dict()}, 200)
 
+    def get_sessions(
+        self,
+        raw_sender: str,
+        limit: int = 50,
+        headers: Optional[Mapping[str, str]] = None,
+        flask_session: Optional[MutableMapping[str, Any]] = None,
+    ) -> ServiceResponse:
+        """List chat sessions for a given sender.
+
+        Returns a JSON payload with `sessions`: a list of session metadata objects
+        containing `chat_id`, `created_at`, `last_interaction_at`, and simple flags
+        for whether a last_diet/last_routine exists.
+        """
+        sender = (raw_sender or "").strip()[:80]
+        headers = headers or {}
+        # Require either API key or an active session to list sessions
+        expected_key = self.app.config.get("CHAT_CONTEXT_API_KEY", "")
+        if not (context_api_key_valid(headers, expected_key) or session_uid(flask_session) is not None):
+            raise ChatServiceError("No autorizado para listar sesiones.", 401)
+
+        query = ChatUserContext.query.filter_by(sender_id=sender).order_by(ChatUserContext.created_at.desc())
+        if limit and isinstance(limit, int) and limit > 0:
+            query = query.limit(limit)
+        ctxs = query.all()
+
+        sessions = []
+        for c in ctxs:
+            sessions.append(
+                {
+                    "chat_id": c.chat_id,
+                    "created_at": (c.created_at.isoformat() if c.created_at else None),
+                    "last_interaction_at": (c.last_interaction_at.isoformat() if c.last_interaction_at else None),
+                    "has_last_diet": bool(c.last_diet),
+                    "has_last_routine": bool(c.last_routine),
+                }
+            )
+
+        return ServiceResponse({"sessions": sessions}, 200)
+
     def update_context(
         self,
         raw_sender: str,
+        chat_id: Optional[str],
         raw_data: Any,
         headers: Mapping[str, str],
         flask_session: MutableMapping[str, Any],
     ) -> ServiceResponse:
         data = self._ensure_dict(raw_data)
         sender = (raw_sender or "").strip()[:80]
-        ctx = ChatUserContext.get_or_create(sender, session_uid(flask_session))
+        # Merge chat_id into sender if provided so model.get_or_create can parse it,
+        # or pass chat_id directly by constructing a combined sender string.
+        sender_for_lookup = sender if not chat_id else f"{sender}::{chat_id}"
+        ctx = ChatUserContext.get_or_create(sender_for_lookup, session_uid(flask_session))
         manager = ChatContextManager(ctx)
         try:
             self._ensure_context_access(ctx, headers, flask_session)
