@@ -107,6 +107,9 @@ export default function Navbar() {
                 <button type='button' className='dropdown-item' onClick={() => handleCategoryNavigate('Supplements')}>
                   {t('nav.products.supplements')}
                 </button>
+                <button type='button' className='dropdown-item' onClick={() => { navigate('/entrenos-unicos'); closeNavbarCollapse(); }}>
+                  Entrenos Únicos (Anime)
+                </button>
                 <button type='button' className='dropdown-item' onClick={() => handleCategoryNavigate('Merchandise')}>
                   {t('nav.products.merch')}
                 </button>

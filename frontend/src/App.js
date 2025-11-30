@@ -8,7 +8,7 @@ import "./styles/theme-overrides.css";
 import "./styles/theme-final-override.css";
 import "./styles/accessibility.css";
 
-import ChatWidget from "./ChatWidget";
+import ChatWidget from "./Chatwidget";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import SideControls from "./components/SideControls";
@@ -38,6 +38,7 @@ const TermsPage = lazy(() => import("./pages/TermsPage"));
 const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const AccessibilityPage = lazy(() => import("./pages/AccessibilityPage"));
 const ChatPage = lazy(() => import("./pages/ChatPage"));
+const EntrenosUnicos = lazy(() => import("./pages/EntrenosUnicos"));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -87,6 +88,7 @@ export default function App() {
                         <Route path="/login" element={<LoginPage />} />
                         <Route path="/sobre-nosotros" element={<AboutPage />} />
                         <Route path="/terminos" element={<TermsPage />} />
+                        <Route path="/entrenos-unicos" element={<EntrenosUnicos />} />
                         <Route path="/privacidad" element={<PrivacyPage />} />
                         <Route path="/accesibilidad" element={<AccessibilityPage />} />
                       </Route>
