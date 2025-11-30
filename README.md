@@ -167,8 +167,7 @@ Fitter implementa un conjunto completo de características de accesibilidad que 
 Incluye:
 
 ### 🪄 Script PowerShell
-¿Quieres que añada también un pequeño script PowerShell para que el revisor ejecute todo en Windows (activar venv + aplicar script SQL) y lo añada al README?
-Sí. Se añadió el script PowerShell `scripts/apply_schema_windows.ps1`.
+Se añadió el script PowerShell `scripts/apply_schema_windows.ps1`.
 
 Ejemplo de uso en Windows (PowerShell):
 
@@ -192,13 +191,36 @@ El script activa el virtualenv `.venv`, establece `PYTHONPATH` al directorio del
 ---
 
 ## 🛠️ Tecnologías utilizadas
+
+### Backend
 - **Python 3.10** (entorno base)
 - **Rasa 3.6** (NLP / NLU)
-- **Flask** (servidor backend)
-- **SQLAlchemy** (ORM para base de datos)
-- **HTML + JavaScript Vanilla** (interfaz web)
+- **Rasa SDK 3.6.2** (servidor de acciones)
+- **Flask 3.1.2** (servidor web)
+- **Flask-SQLAlchemy** (ORM)
+- **Flask-Migrate** (migraciones de base de datos)
+- **SQLAlchemy 1.4+** (motor de base de datos)
+- **PostgreSQL** con **psycopg2-binary 2.9.10**
+- **TensorFlow 2.12.0** (machine learning)
+- **Cryptography 43.0.1** (cifrado de datos sensibles)
+- **PyOTP 2.9.0** (autenticación de dos factores)
+- **ReportLab 4.0.9** (generación de PDFs)
+- **python-docx 1.1.2** (generación de documentos Word)
+- **MercadoPago SDK** (procesamiento de pagos)
+- **Requests 2.32.5** (cliente HTTP)
+- **python-dotenv 1.1.1** (variables de entorno)
+
+### Frontend
+- **React 18.2.0** (librería UI)
+- **React Router DOM 7.9.1** (enrutamiento)
+- **Bootstrap 5.3.8** (framework CSS)
+- **React Scripts 5.0.1** (tooling)
+
+### DevOps
 - **Docker** (containerización)
-- **GitHub** (versionamiento)
+- **Nginx** (proxy reverso)
+- **GitHub** (control de versiones)
+- **Alembic** (migraciones de esquema)
 
 ---
 
