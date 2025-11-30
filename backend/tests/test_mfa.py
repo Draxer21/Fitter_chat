@@ -8,6 +8,21 @@ from backend.extensions import db
 from backend.login.models import User
 
 
+def _get_csrf_token(client):
+    resp = client.get("/auth/csrf-token")
+    assert resp.status_code == 200, resp.get_data(as_text=True)
+    data = resp.get_json() or {}
+    token = data.get("csrf_token")
+    assert token, "csrf token missing"
+    return token
+
+
+def post_with_csrf(client, path, json=None):
+    token = _get_csrf_token(client)
+    headers = {"X-CSRF-Token": token}
+    return client.post(path, json=json, headers=headers)
+
+
 @pytest.fixture
 def app(monkeypatch):
     monkeypatch.setenv("SQLALCHEMY_DATABASE_URI", "sqlite:///:memory:")
@@ -38,13 +53,13 @@ def _register_user(client, email="user@example.com", username="user", password="
         "username": username,
         "password": password,
     }
-    resp = client.post("/auth/register", json=payload)
+    resp = post_with_csrf(client, "/auth/register", json=payload)
     assert resp.status_code == 201, resp.get_data(as_text=True)
     return payload
 
 
 def _setup_mfa(client):
-    setup_resp = client.post("/auth/mfa/setup")
+    setup_resp = post_with_csrf(client, "/auth/mfa/setup")
     assert setup_resp.status_code == 200, setup_resp.get_data(as_text=True)
     data = setup_resp.get_json()
     secret = data.get("secret")
@@ -53,7 +68,7 @@ def _setup_mfa(client):
 
 
 def _confirm_mfa(client, totp):
-    confirm_resp = client.post("/auth/mfa/confirm", json={"code": totp.now()})
+    confirm_resp = post_with_csrf(client, "/auth/mfa/confirm", json={"code": totp.now()})
     assert confirm_resp.status_code == 200, confirm_resp.get_data(as_text=True)
     payload = confirm_resp.get_json()
     backup_codes = payload.get("backup_codes") or payload.get("recovery_codes")
@@ -68,16 +83,16 @@ def test_login_with_totp_success(app, client):
     _confirm_mfa(client, totp)
 
     # logout and force new login flow
-    client.post("/auth/logout")
+    post_with_csrf(client, "/auth/logout")
 
-    resp = client.post("/auth/login", json={"username": creds["username"], "password": creds["password"]})
+    resp = post_with_csrf(client, "/auth/login", json={"username": creds["username"], "password": creds["password"]})
     assert resp.status_code == 401
     assert resp.get_json().get("mfa_required") is True
 
     # ensure new code window if confirm and login happened muy rápido
     time.sleep(0.5)
     code = totp.now()
-    resp = client.post("/auth/login", json={"username": creds["username"], "password": creds["password"], "totp": code})
+    resp = post_with_csrf(client, "/auth/login", json={"username": creds["username"], "password": creds["password"], "totp": code})
     assert resp.status_code == 200, resp.get_data(as_text=True)
     data = resp.get_json()
     assert data["user"]["email"] == creds["email"]
@@ -90,9 +105,10 @@ def test_login_with_backup_code_consumes_once(app, client):
     backup_codes = _confirm_mfa(client, totp)
     first_backup = backup_codes[0]
 
-    client.post("/auth/logout")
+    post_with_csrf(client, "/auth/logout")
 
-    resp = client.post(
+    resp = post_with_csrf(
+        client,
         "/auth/login",
         json={
             "username": creds["username"],
@@ -102,10 +118,11 @@ def test_login_with_backup_code_consumes_once(app, client):
     )
     assert resp.status_code == 200, resp.get_data(as_text=True)
 
-    client.post("/auth/logout")
+    post_with_csrf(client, "/auth/logout")
 
     # reuse should fail
-    resp = client.post(
+    resp = post_with_csrf(
+        client,
         "/auth/login",
         json={
             "username": creds["username"],
@@ -117,7 +134,8 @@ def test_login_with_backup_code_consumes_once(app, client):
 
     # totp still works
     time.sleep(0.5)
-    resp = client.post(
+    resp = post_with_csrf(
+        client,
         "/auth/login",
         json={
             "username": creds["username"],
@@ -135,19 +153,19 @@ def test_disable_mfa_requires_valid_code(app, client):
     _confirm_mfa(client, totp)
 
     # invalid code
-    resp = client.post("/auth/mfa/disable", json={"code": "000000"})
+    resp = post_with_csrf(client, "/auth/mfa/disable", json={"code": "000000"})
     assert resp.status_code == 401
 
     time.sleep(0.5)
     valid_code = totp.now()
-    resp = client.post("/auth/mfa/disable", json={"code": valid_code})
+    resp = post_with_csrf(client, "/auth/mfa/disable", json={"code": valid_code})
     assert resp.status_code == 200, resp.get_data(as_text=True)
 
     status = client.get("/auth/mfa/status")
     assert status.status_code == 200
     assert status.get_json().get("enabled") is False
 
-    client.post("/auth/logout")
-    resp = client.post("/auth/login", json={"username": creds["username"], "password": creds["password"]})
+    post_with_csrf(client, "/auth/logout")
+    resp = post_with_csrf(client, "/auth/login", json={"username": creds["username"], "password": creds["password"]})
     assert resp.status_code == 200, resp.get_data(as_text=True)
 

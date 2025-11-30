@@ -16,6 +16,7 @@ class ChatUserContext(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.String(80), nullable=False, unique=True, index=True)
+    chat_id = db.Column(db.String(80), nullable=True, index=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
     allergies = db.Column(db.Text, nullable=True)
     medical_conditions = db.Column(db.Text, nullable=True)
@@ -30,14 +31,24 @@ class ChatUserContext(db.Model):
     @classmethod
     def get_or_create(cls, sender_id: str, user_id: Optional[int] = None) -> "ChatUserContext":
         sender_id = (sender_id or "").strip()[:80]
-        ctx: Optional["ChatUserContext"] = cls.query.filter_by(sender_id=sender_id).one_or_none()
+        # If sender_id contains a chat separator '::', allow using it as chat_id
+        chat_id = None
+        if "::" in sender_id:
+            parts = sender_id.split("::", 1)
+            sender_id = parts[0][:80]
+            chat_id = parts[1][:80]
+
+        if chat_id:
+            ctx: Optional["ChatUserContext"] = cls.query.filter_by(sender_id=sender_id, chat_id=chat_id).one_or_none()
+        else:
+            ctx: Optional["ChatUserContext"] = cls.query.filter_by(sender_id=sender_id).one_or_none()
         if ctx:
             if user_id and not ctx.user_id:
                 ctx.user_id = user_id
             ctx.touch()
             return ctx
 
-        ctx = cls(sender_id=sender_id, user_id=user_id or None)
+        ctx = cls(sender_id=sender_id, chat_id=chat_id, user_id=user_id or None)
         db.session.add(ctx)
         return ctx
 

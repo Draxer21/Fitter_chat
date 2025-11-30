@@ -1,14 +1,40 @@
 /* Chatbot theme-aware styles */
 
 .chatbot-container {
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 8px;
-  width: min(900px, 95%);
-  margin: 16px auto;
-  background: #fff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.06);
+  /* Integrate with the page layout: let the parent .chat-container provide
+     the blue background and use the full inner width. Remove card styling
+     so the blue area visually is the chat. */
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  box-sizing: border-box;
+    width: 100%;
+        /* Allow the chatbot to expand laterally on very wide screens while
+          remaining centered and responsive. Increase max-width to give more
+          horizontal space on large desktop monitors. */
+        max-width: 1600px;
+        margin: 0 auto;
+        padding-left: 12px;
+        padding-right: 12px;
+    background: transparent;
+  box-shadow: none;
+  position: relative;
   transition: background-color 200ms ease, border-color 200ms ease;
+  /* make the chatbot a column flex container so messages area can grow/shrink
+     without overlapping footer; input remains fixed at the bottom */
+  display: flex;
+  flex-direction: column;
+  height: 100%; /* ocupar toda la altura disponible */
+  min-height: 0; /* allow flex children to shrink properly */
+}
+
+/* Responsive: on narrow viewports allow full width and reduce padding */
+@media (max-width: 900px) {
+  .chatbot-container {
+    max-width: 100%;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
 }
 
 .theme-dark .chatbot-container {
@@ -18,32 +44,43 @@
 }
 
 .chatbot-messages {
-  height: 360px;
+  /* Let the messages area fill the remaining vertical space inside the
+     .chatbot-container. This prevents it from growing to the viewport height
+     and ensures the footer remains visible. */
+  flex: 1 1 auto;
+  min-height: 0; /* necessary for proper flex overflow behavior */
   overflow-y: auto;
-  margin-bottom: 10px;
-  padding: 6px;
+  overflow-x: hidden;
+  margin-bottom: 0;
+    /* Slightly larger inner padding so messages don't touch the edges when
+      the container is expanded laterally */
+    padding: 14px 18px;
 }
 
 .theme-dark .chatbot-messages {
   background: transparent;
 }
 
+/* Contenedores de mensajes individuales */
 .chatbot-message {
-  margin: 6px 0;
+  display: flex;
+  margin-bottom: 12px;
+  width: 100%;
 }
 
 .chatbot-message.user-message {
-  text-align: right;
+  justify-content: flex-end; /* Alinear mensajes del usuario a la derecha */
 }
 
 .chatbot-message.bot-message {
-  text-align: left;
+  justify-content: flex-start; /* Alinear mensajes del bot a la izquierda */
 }
 
 .message-bubble {
   display: inline-block;
   padding: 8px 12px;
-  max-width: 85%;
+  /* allow bubbles to expand more horizontally within the wider container */
+  max-width: 90%;
   white-space: pre-wrap;
   word-break: break-word;
   transition: background-color 200ms ease, color 200ms ease;
@@ -86,8 +123,9 @@
   background: #fee2e2;
   border: 1px solid #fecaca;
   border-radius: 8px;
-  padding: 6px 10px;
-  margin-bottom: 8px;
+  padding: 8px 12px;
+  margin: 0 18px 8px 18px;
+  flex-shrink: 0;
 }
 
 .theme-dark .chatbot-error {
@@ -99,6 +137,14 @@
 .chatbot-input-container {
   display: flex;
   gap: 8px;
+  flex-shrink: 0; /* no permitir que se encoja */
+  padding: 12px 18px;
+  background: inherit;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.theme-dark .chatbot-input-container {
+  border-top-color: rgba(255, 255, 255, 0.1);
 }
 
 .chatbot-textarea {
@@ -284,6 +330,35 @@
   border-color: #9ca3af;
 }
 
+/* Overlay shown when user hasn't given consent */
+.chatbot-consent-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.95);
+  z-index: 60;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.theme-dark .chatbot-consent-overlay {
+  background: rgba(10, 12, 14, 0.9);
+  color: #e5e7eb;
+}
+
+.chatbot-consent-panel {
+  max-width: 720px;
+  background: transparent;
+  text-align: center;
+}
+
+.chatbot-consent-panel input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+}
+
 .theme-dark .quick-reply-button {
   background: #2a2e35 !important;
   border-color: #4b5563 !important;
@@ -322,4 +397,53 @@
 .theme-dark .allergen-alert {
   background: rgba(254, 226, 226, 0.15);
   color: #fca5a5;
+}
+
+/* Restore compact layout when Chatbot is rendered inside the floating
+   chat panel (.fw-chat-panel). Our previous changes widened the full-page
+   chat but unintentionally affected the floating widget — these overrides
+   keep the widget small and usable. */
+.fw-chat-panel .chatbot-container,
+body .fw-chat-panel .chatbot-container {
+  /* Force compact layout inside floating panel - increase specificity and
+     use !important to override other rules coming from global/chat styles. */
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.fw-chat-panel .chatbot-messages {
+  padding: 12px;
+  margin-bottom: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.fw-chat-panel .message-bubble {
+  max-width: 88%;
+  padding: 8px 12px;
+}
+
+.fw-chat-panel .chatbot-input-container { 
+  gap: 8px;
+  padding: 10px 12px;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.theme-dark .fw-chat-panel .chatbot-input-container {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 420px) {
+  .fw-chat-panel .chatbot-messages { padding: 8px; }
 }

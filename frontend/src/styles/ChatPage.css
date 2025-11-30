@@ -300,9 +300,14 @@
 .chat-container {
   flex: 1;
   overflow-y: auto;
-  padding: 1.5rem;
+  overflow-x: hidden;
+  padding: 0;
   background: #ffffff;
   transition: background-color 200ms ease;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
 }
 
 .theme-dark .chat-container {
@@ -314,8 +319,9 @@
   background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
   color: white;
   padding: 2rem;
-  border-radius: 12px;
+  border-radius: 0;
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  margin: 0 0 1.5rem 0;
 }
 
 .welcome-banner h3 {
@@ -392,6 +398,25 @@
 }
 
 /* Ajustes para el componente Chatbot dentro de la página */
+.chat-container .chatbot-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.chat-container .chatbot-messages {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+.chat-container .chatbot-input-container {
+  flex-shrink: 0;
+}
+
 .chat-container .fw-chat-body {
   max-height: none !important;
   height: auto !important;

@@ -17,8 +17,21 @@ function getOrCreateSenderId(forceNew = false) {
   return v;
 }
 
-export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessage, initialMessages = [] }) {
+export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessage, onBotMessage, initialMessages = [] }) {
   const uidRef = useRef(senderId || getOrCreateSenderId());
+
+  const CONSENT_KEY = "fitter_chat_consent";
+  const [consent, setConsent] = useState(() => localStorage.getItem(CONSENT_KEY) === "1");
+
+  const onConsentChange = (checked) => {
+    setConsent(checked);
+    try {
+      localStorage.setItem(CONSENT_KEY, checked ? "1" : "0");
+    } catch (e) {
+      // ignore
+    }
+    if (checked) setErrorText("");
+  };
 
   const [messages, setMessages] = useState(() => {
     // Si hay mensajes iniciales, usarlos; si no, mostrar el mensaje de bienvenida
@@ -110,10 +123,23 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
         ? [...prev, ...botMsgs]
         : [...prev, { from: "bot", id: nextId.current++, text: "No recibí respuesta. ¿Puedes intentar de nuevo?" }]
     );
+    
+    // Notificar los mensajes del bot al componente padre
+    if (onBotMessage && typeof onBotMessage === "function") {
+      botMsgs.forEach(msg => {
+        if (msg.text) {
+          onBotMessage({ text: msg.text, from: "bot", timestamp: new Date().toISOString() });
+        }
+      });
+    }
   };
 
   const sendMessage = async () => {
     const text = input.trim();
+    if (!consent) {
+      setErrorText("Debes aceptar las condiciones de uso del chatbot para enviar mensajes.");
+      return;
+    }
     if (!text || loading) return;
 
     setErrorText("");
@@ -148,6 +174,192 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
       ...prev,
       [key]: !prev[key]
     }));
+  };
+
+  const openDietView = (diet) => {
+    try {
+      if (!diet) {
+        console.error("No diet data provided");
+        alert("No hay datos de dieta disponibles");
+        return;
+      }
+      
+      // Log para debugging
+      console.log("Diet data:", diet);
+      console.log("Diet meals:", diet.meals);
+      if (diet.meals && diet.meals.length > 0) {
+        console.log("First meal items:", diet.meals[0].items);
+        console.log("First item type:", typeof diet.meals[0].items[0]);
+      }
+      
+      // If server provided a direct URL (PDF or hosted page), open it
+      if (diet.url && typeof diet.url === "string") {
+        window.open(diet.url, "_blank", "noopener,noreferrer");
+        return;
+      }
+
+      // Validate that we have some content to display
+      const hasMeals = Array.isArray(diet.meals) && diet.meals.length > 0;
+      const hasSummary = diet.summary && typeof diet.summary === 'object';
+      
+      if (!hasMeals && !hasSummary) {
+        console.error("Diet has no meals or summary");
+        alert("El plan de dieta no tiene información suficiente para mostrar");
+        return;
+      }
+
+      // Otherwise create a printable HTML page with the diet content
+      const escapeHtml = (s) => String(s === null || s === undefined ? "" : s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+
+      const mealsHtml = (Array.isArray(diet.meals) ? diet.meals : []).map((meal, idx) => {
+        // Handle both string arrays (old format) and object arrays (catalog format)
+        const items = meal?.items;
+        let itemsText = "Sin detalle";
+        if (Array.isArray(items) && items.length > 0) {
+          if (typeof items[0] === 'string') {
+            // Old format: array of strings
+            itemsText = items.join(", ");
+          } else if (typeof items[0] === 'object' && items[0]?.name) {
+            // Catalog format: array of {name, qty, kcal}
+            itemsText = items.map(it => 
+              `${it.name} (${it.qty || '100g'}${it.kcal ? `, ${it.kcal} kcal` : ''})`
+            ).join(", ");
+          }
+        }
+        return `
+        <li style="margin-bottom:10px">
+          <strong>${escapeHtml(meal?.name || `Comida ${idx + 1}`)}</strong>
+          <div style="margin-top:6px">${escapeHtml(itemsText)}</div>
+          ${meal?.notes ? `<div style="margin-top:6px;font-size:0.9rem;color:#374151">Nota: ${escapeHtml(meal.notes)}</div>` : ""}
+        </li>`;
+      }).join("");
+
+      const adjustmentsHtml = (Array.isArray(diet.summary?.health_adjustments) ? diet.summary.health_adjustments : [])
+        .map(a => `<li>${escapeHtml(a)}</li>`).join("");
+
+      const allergensHtml = (Array.isArray(diet.summary?.allergies) ? diet.summary.allergies : [])
+        .map(a => `<span style="margin-right:6px">${escapeHtml(a)}</span>`).join("");
+
+      console.log("=== GENERATING HTML ===");
+      console.log("Meals HTML length:", mealsHtml.length);
+      console.log("Adjustments HTML length:", adjustmentsHtml.length);
+
+      const html = `<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Plan de dieta - FITTER</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif; line-height: 1.6; color: #111827; padding: 20px; margin: 0; background: #ffffff; }
+    .container { max-width: 900px; margin: 0 auto; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #4CAF50; }
+    h1 { font-size: 1.8rem; margin: 0; color: #4CAF50; }
+    .meta { color: #6b7280; font-size: 0.95rem; }
+    .card { background: #f8fafc; padding: 20px; border-radius: 12px; margin-top: 16px; border: 1px solid #e5e7eb; }
+    .info-row { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px; }
+    .info-item { flex: 1; min-width: 150px; }
+    .info-item strong { color: #374151; }
+    .meals { margin-top: 20px; }
+    .meals h3 { margin: 0 0 12px 0; color: #374151; font-size: 1.2rem; }
+    .meals ol { padding-left: 20px; }
+    .meals li { margin-bottom: 12px; }
+    .meals li strong { color: #059669; }
+    .actions { margin-top: 20px; display: flex; gap: 10px; }
+    button { padding: 10px 20px; border-radius: 8px; border: none; background: #4CAF50; color: #fff; cursor: pointer; font-size: 1rem; font-weight: 500; transition: background 0.2s; }
+    button:hover { background: #45a049; }
+    button.secondary { background: #6b7280; }
+    button.secondary:hover { background: #4b5563; }
+    .print-only { display: block; }
+    .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; color: #6b7280; font-size: 0.9rem; text-align: center; }
+    ul { margin: 8px 0; padding-left: 20px; }
+    ul li { margin-bottom: 5px; }
+    @media print { .print-only { display: none !important; } button { display: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Plan de Dieta</h1>
+      <div class="meta">Objetivo: ${escapeHtml(diet.objective || diet.summary?.objective || "equilibrada")}</div>
+    </header>
+
+    <div class="card">
+      <div class="info-row">
+        ${diet.summary?.calorias ? `<div class="info-item"><strong>Calorías:</strong> ${escapeHtml(diet.summary.calorias)}</div>` : ""}
+        ${diet.summary?.macros?.proteinas ? `<div class="info-item"><strong>Proteínas:</strong> ${escapeHtml(diet.summary.macros.proteinas)}</div>` : ""}
+        ${diet.summary?.macros?.carbohidratos ? `<div class="info-item"><strong>Carbohidratos:</strong> ${escapeHtml(diet.summary.macros.carbohidratos)}</div>` : ""}
+        ${diet.summary?.macros?.grasas ? `<div class="info-item"><strong>Grasas:</strong> ${escapeHtml(diet.summary.macros.grasas)}</div>` : ""}
+      </div>
+
+      ${adjustmentsHtml ? `<div style="margin-top:15px"><strong style="color:#374151">Ajustes de salud:</strong><ul>${adjustmentsHtml}</ul></div>` : ""}
+      ${allergensHtml ? `<div style="margin-top:15px"><strong style="color:#374151">Alergias consideradas:</strong><div style="margin-top:5px">${allergensHtml}</div></div>` : ""}
+
+      <div class="meals">
+        <h3>Menú Diario</h3>
+        <ol>${mealsHtml || '<li>No hay comidas disponibles</li>'}</ol>
+      </div>
+
+      ${diet.summary?.hydration ? `<p style="margin-top:15px;color:#0ea5a4;font-weight:500"><strong>💧 Hidratación:</strong> ${escapeHtml(diet.summary.hydration)}</p>` : ""}
+    </div>
+
+    <div class="actions print-only">
+      <button onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+      <button class="secondary" onclick="window.close()">Cerrar</button>
+    </div>
+    
+    <div class="footer">
+      <p>Generado por <strong>FITTER</strong> — Consulta con un profesional de la salud antes de realizar cambios significativos en tu dieta.</p>
+    </div>
+  </div>
+</body>
+</html>`;
+
+      console.log("HTML generated, length:", html.length);
+      
+      const w = window.open("", "_blank", "noopener,noreferrer");
+      if (!w) {
+        console.error("Failed to open window - popup blocked?");
+        alert("No se pudo abrir la ventana. Por favor, permite ventanas emergentes para este sitio.");
+        return;
+      }
+
+      console.log("Window opened successfully");
+
+      try {
+        w.document.open();
+        w.document.write(html);
+        w.document.close();
+        console.log("HTML written successfully");
+      } catch (err) {
+        console.error("Error writing document:", err);
+        alert("No se pudo generar el documento. Intenta de nuevo.");
+        try {
+          w.close();
+        } catch (e) {
+          console.error("Could not close window:", e);
+        }
+        return;
+      }
+      
+      // Esperar a que el documento cargue antes de dar foco
+      setTimeout(() => {
+        try {
+          w.focus();
+        } catch (e) {
+          console.log("Could not focus window");
+        }
+      }, 100);
+    } catch (e) {
+      console.error("openDietView error", e);
+      alert("Error al abrir el plan de dieta: " + e.message);
+    }
   };
 
   const downloadRoutine = async (routineDetail, format) => {
@@ -320,11 +532,12 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
             {(hasText || hasRoutineLink || routineDetail) ? <br /> : null}
             <button
               type="button"
-              onClick={() => dietKey && toggleCard(dietKey)}
+              onClick={() => sendDietByEmail(dietPlan)}
               className="message-action-button message-diet-button"
               style={{ marginTop: hasText || hasRoutineLink || routineDetail ? 6 : 0 }}
+              title="Enviar plan de dieta a tu correo electrónico"
             >
-              {isDietExpanded ? "Ocultar dieta" : "Ver plan de dieta"}
+              📧 Enviar al Correo
             </button>
             {isDietExpanded && (
               <div className="diet-card">
@@ -347,13 +560,29 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
                 )}
                 {dietMeals.length > 0 && (
                   <ol style={{ marginTop: 10, paddingLeft: 18, display: "grid", gap: 6 }}>
-                    {dietMeals.map((meal, idx) => (
-                      <li key={`diet-meal-${m.id}-${idx}`} style={{ fontSize: "0.85rem" }}>
-                        <strong>{meal?.name || `Comida ${idx + 1}`}</strong>
-                        <div>{Array.isArray(meal?.items) && meal.items.length > 0 ? meal.items.join(", ") : "Sin detalle"}</div>
-                        {meal?.notes && <div style={{ marginTop: 4, fontSize: "0.78rem", color: "#374151" }}>Nota: {meal.notes}</div>}
-                      </li>
-                    ))}
+                    {dietMeals.map((meal, idx) => {
+                      // Handle both string arrays (old format) and object arrays (catalog format)
+                      const items = meal?.items;
+                      let itemsDisplay = "Sin detalle";
+                      if (Array.isArray(items) && items.length > 0) {
+                        if (typeof items[0] === 'string') {
+                          // Old format: array of strings
+                          itemsDisplay = items.join(", ");
+                        } else if (typeof items[0] === 'object' && items[0]?.name) {
+                          // Catalog format: array of {name, qty, kcal}
+                          itemsDisplay = items.map(it => 
+                            `${it.name} (${it.qty || '100g'}${it.kcal ? `, ${it.kcal} kcal` : ''})`
+                          ).join(", ");
+                        }
+                      }
+                      return (
+                        <li key={`diet-meal-${m.id}-${idx}`} style={{ fontSize: "0.85rem" }}>
+                          <strong>{meal?.name || `Comida ${idx + 1}`}</strong>
+                          <div>{itemsDisplay}</div>
+                          {meal?.notes && <div style={{ marginTop: 4, fontSize: "0.78rem", color: "#374151" }}>Nota: {meal.notes}</div>}
+                        </li>
+                      );
+                    })}
                   </ol>
                 )}
                 {allergenHits.length > 0 && (
@@ -461,6 +690,87 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
     }
   };
 
+  const sendDietByEmail = async (dietPlan) => {
+    try {
+      if (!dietPlan) {
+        alert("No hay datos de dieta para enviar");
+        return;
+      }
+
+      console.log("=== SEND DIET BY EMAIL ===");
+      console.log("Diet plan:", dietPlan);
+      console.log("Meals:", dietPlan.meals);
+
+      // Construir el cuerpo del correo
+      const lines = [];
+      lines.push("Plan de Dieta - Fitter");
+      lines.push("");
+      lines.push(`Objetivo: ${dietPlan.objective || 'equilibrada'}`);
+      lines.push("");
+      
+      if (dietPlan.summary) {
+        if (dietPlan.summary.calorias) {
+          lines.push(`Calorías: ${dietPlan.summary.calorias}`);
+        }
+        if (dietPlan.summary.macros) {
+          lines.push("Macros:");
+          if (dietPlan.summary.macros.proteinas) lines.push(`- Proteínas: ${dietPlan.summary.macros.proteinas}`);
+          if (dietPlan.summary.macros.carbohidratos) lines.push(`- Carbohidratos: ${dietPlan.summary.macros.carbohidratos}`);
+          if (dietPlan.summary.macros.grasas) lines.push(`- Grasas: ${dietPlan.summary.macros.grasas}`);
+        }
+      }
+      
+      lines.push("");
+      lines.push("Comidas del día:");
+      (dietPlan.meals || []).forEach((meal, idx) => {
+        lines.push(`${idx + 1}. ${meal.name || 'Comida'}`);
+        if (Array.isArray(meal.items)) {
+          meal.items.forEach(item => {
+            // Handle both string format and object format {name, qty, kcal}
+            if (typeof item === 'string') {
+              lines.push(`   - ${item}`);
+            } else if (typeof item === 'object' && item.name) {
+              const itemText = `${item.name} (${item.qty || '100g'}${item.kcal ? `, ${item.kcal} kcal` : ''})`;
+              lines.push(`   - ${itemText}`);
+            }
+          });
+        }
+      });
+
+      const payload = {
+        body: lines.join("\n"),
+        subject: "Tu plan de dieta - Fitter",
+        attach: true,
+        format: "pdf",
+        diet_data: dietPlan,
+      };
+
+      const res = await fetch("/notifications/diet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      });
+
+      console.log("Response status:", res.status);
+      console.log("Response ok:", res.ok);
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        console.error("Error response:", err);
+        alert("No se pudo enviar la dieta por correo: " + (err.error || res.status));
+        return;
+      }
+
+      const result = await res.json();
+      console.log("Success response:", result);
+      alert("Dieta enviada por correo correctamente.");
+    } catch (e) {
+      console.error(e);
+      alert("Error al enviar la dieta por correo. Reintenta más tarde.");
+    }
+  };
+
 
   return (
     <div
@@ -468,6 +778,32 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
       role="region"
       aria-label="Chat con asistente FITTER"
     >
+      {/* Consent overlay: si no acepta, bloquea la interacción */}
+      {!consent && (
+        <div className="chatbot-consent-overlay" role="dialog" aria-label="Consentimiento chatbot">
+          <div className="chatbot-consent-panel">
+            <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <input
+                type="checkbox"
+                checked={consent}
+                onChange={(e) => onConsentChange(e.target.checked)}
+                aria-label="Aceptar condiciones de uso del chatbot"
+              />
+              <span style={{ fontSize: "0.95rem" }}>Acepto las condiciones de uso del chatbot y autorizo el procesamiento de los datos necesarios para su funcionamiento.</span>
+            </label>
+            <div style={{ marginTop: 12 }}>
+              <button
+                type="button"
+                onClick={() => onConsentChange(true)}
+                className="chatbot-send-button"
+                aria-label="Aceptar y continuar"
+              >
+                Aceptar y continuar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <div ref={scrollRef} className="chatbot-messages" aria-live="polite">
         {messages.map((m) => (
           <div key={m.id} className={`chatbot-message ${m.from === "user" ? "user-message" : "bot-message"}`}>
@@ -492,11 +828,11 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
           rows={1}
           className="chatbot-textarea"
           aria-label="Cuadro de mensaje"
-          disabled={loading}
+          disabled={loading || !consent}
         />
         <button
           onClick={sendMessage}
-          disabled={loading || input.trim().length === 0}
+          disabled={loading || input.trim().length === 0 || !consent}
           className="chatbot-send-button"
           aria-busy={loading}
           aria-label="Enviar mensaje"

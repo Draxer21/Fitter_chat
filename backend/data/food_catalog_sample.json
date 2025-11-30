@@ -1,0 +1,62 @@
+[
+  {
+    "id": "0001",
+    "name": "Pechuga de pollo asada",
+    "name_es": "Pechuga de pollo asada",
+    "categories": ["meat", "chicken"],
+    "energy_kcal_100g": 165.0,
+    "proteins_g_100g": 31.0,
+    "carbs_g_100g": 0.0,
+    "fats_g_100g": 3.6,
+    "serving_size_g": 100,
+    "allergens": [],
+    "brands": "",
+    "url": "",
+    "source": "sample"
+  },
+  {
+    "id": "0002",
+    "name": "Arroz blanco cocido",
+    "name_es": "Arroz blanco cocido",
+    "categories": ["cereals", "rice"],
+    "energy_kcal_100g": 130.0,
+    "proteins_g_100g": 2.4,
+    "carbs_g_100g": 28.0,
+    "fats_g_100g": 0.3,
+    "serving_size_g": 100,
+    "allergens": [],
+    "brands": "",
+    "url": "",
+    "source": "sample"
+  },
+  {
+    "id": "0003",
+    "name": "Pan integral",
+    "name_es": "Pan integral",
+    "categories": ["bakery", "bread"],
+    "energy_kcal_100g": 250.0,
+    "proteins_g_100g": 9.0,
+    "carbs_g_100g": 43.0,
+    "fats_g_100g": 3.5,
+    "serving_size_g": 40,
+    "allergens": ["gluten"],
+    "brands": "",
+    "url": "",
+    "source": "sample"
+  },
+  {
+    "id": "0004",
+    "name": "Almendras crudas",
+    "name_es": "Almendras crudas",
+    "categories": ["nuts"],
+    "energy_kcal_100g": 575.0,
+    "proteins_g_100g": 21.0,
+    "carbs_g_100g": 22.0,
+    "fats_g_100g": 49.0,
+    "serving_size_g": 28,
+    "allergens": ["nuts"],
+    "brands": "",
+    "url": "",
+    "source": "sample"
+  }
+]

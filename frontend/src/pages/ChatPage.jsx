@@ -173,23 +173,6 @@ export default function ChatPage() {
 
           {/* Panel principal del chat */}
           <div className="col-md-9 chat-main">
-            <div className="chat-header">
-              <div className="d-flex align-items-center">
-                <img
-                  src="/fitter_logo.png"
-                  alt="Fitter Assistant"
-                  className="chat-avatar me-3"
-                />
-                <div>
-                  <h1 className="h4 mb-0">Asistente Virtual Fitter</h1>
-                  <p className="text-muted small mb-0">
-                    <i className="fa-solid fa-circle text-success me-2" aria-hidden="true" />
-                    En línea · Siempre disponible
-                  </p>
-                </div>
-              </div>
-            </div>
-
             <div className="chat-container">
               <div className="welcome-banner mb-4">
                 <h3>
@@ -235,12 +218,18 @@ export default function ChatPage() {
                     createNewConversation();
                   }
                   
-                  // Actualizar la conversación activa
+                  // Actualizar la conversación activa con mensaje del usuario
                   updateActiveConversation({
                     text: msg,
                     timestamp: new Date().toISOString(),
                     from: "user"
                   });
+                }}
+                onBotMessage={(botMsg) => {
+                  // Guardar también las respuestas del bot
+                  if (activeConversationId) {
+                    updateActiveConversation(botMsg);
+                  }
                 }}
               />
             </div>
