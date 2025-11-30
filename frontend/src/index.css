@@ -57,14 +57,40 @@ body {
 /* Panel del chat */
 .fw-chat-panel{
   position:fixed; right:20px; bottom:86px;
-  width:380px; max-width:95vw; height:520px; max-height:85vh;
+  width:600px; min-width:380px; max-width:calc(100vw - 50px);
+  height:800px; min-height:400px; max-height:calc(100vh - 100px);
   z-index:var(--fw-z); background:var(--bg); border-radius:var(--fw-radius);
   box-shadow:0 8px 32px rgba(0,0,0,.28); overflow:hidden;
   display:flex; flex-direction:column; animation:fw-pop .18s ease-out;
 }
 @keyframes fw-pop{from{transform:translateY(12px);opacity:.0}to{transform:translateY(0);opacity:1}}
 
-.fw-chat-header{padding:10px 12px; background:var(--fw-primary); color:#fff; font-weight:600}
+.fw-chat-header{
+  padding:10px 12px; background:var(--fw-primary); color:#fff; font-weight:600;
+  display: flex; justify-content: space-between; align-items: center;
+}
+
+.fw-chat-maximize-btn{
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.fw-chat-maximize-btn:hover{
+  background: rgba(255,255,255,0.3);
+  transform: scale(1.05);
+}
+
 .fw-chat-body{flex:1; display:flex; flex-direction:column}
 
 /* Resize handle (left edge) for the floating chat panel */

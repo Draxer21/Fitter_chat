@@ -368,12 +368,20 @@ def generate_diet_pdf(diet_data: Dict[str, Any]) -> BytesIO:
             story.append(meal_title)
             story.append(Spacer(1, 0.05 * inch))
             for item in meal.get('items', []):
-                name = item.get('name') or item.get('descripcion') or 'Alimento'
-                qty = item.get('qty', '')
-                kcal = item.get('kcal')
-                line = f"- {name} {qty}"
-                if kcal:
-                    line += f" • {kcal} kcal"
+                # Handle both string format and object format
+                if isinstance(item, str):
+                    line = f"- {item}"
+                elif isinstance(item, dict):
+                    name = item.get('name') or item.get('descripcion') or 'Alimento'
+                    qty = item.get('qty', '')
+                    kcal = item.get('kcal')
+                    line = f"- {name}"
+                    if qty:
+                        line += f" {qty}"
+                    if kcal:
+                        line += f" • {kcal} kcal"
+                else:
+                    line = f"- {str(item)}"
                 story.append(Paragraph(line, normal))
             story.append(Spacer(1, 0.15 * inch))
 
@@ -407,12 +415,20 @@ def generate_diet_docx(diet_data: Dict[str, Any]) -> BytesIO:
         for meal in meals:
             doc.add_heading(meal.get('name', 'Comida'), level=2)
             for item in meal.get('items', []):
-                name = item.get('name') or item.get('descripcion') or 'Alimento'
-                qty = item.get('qty', '')
-                kcal = item.get('kcal')
-                text = f"- {name} {qty}"
-                if kcal:
-                    text += f" • {kcal} kcal"
+                # Handle both string format and object format
+                if isinstance(item, str):
+                    text = f"- {item}"
+                elif isinstance(item, dict):
+                    name = item.get('name') or item.get('descripcion') or 'Alimento'
+                    qty = item.get('qty', '')
+                    kcal = item.get('kcal')
+                    text = f"- {name}"
+                    if qty:
+                        text += f" {qty}"
+                    if kcal:
+                        text += f" • {kcal} kcal"
+                else:
+                    text = f"- {str(item)}"
                 doc.add_paragraph(text)
 
     doc.add_paragraph()

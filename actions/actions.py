@@ -1505,6 +1505,8 @@ class ActionGenerarDieta(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
+        logger.info(f"=== DIETA CONFIG === CHAT_ENABLE_DIETA_CALC={CHAT_ENABLE_DIETA_CALC}, CHAT_DIET_CATALOG={CHAT_DIET_CATALOG}")
+        
         ctx = ensure_authenticated_context(tracker)
         profile_data = fetch_user_profile(ctx)
 
@@ -1641,19 +1643,6 @@ class ActionGenerarDieta(Action):
             if perfil_bits:
                 lines.append("Datos del perfil: " + " | ".join(perfil_bits))
 
-        lines.append("Menu diario ejemplo:")
-        for meal in filtered_meals:
-            items = ", ".join(meal.get("items", []))
-            lines.append(f"- {meal.get('name', 'Comida')}: {items}")
-            note = meal.get("notes")
-            if note:
-                lines.append(f"  Nota: {note}")
-        if hydration:
-            lines.append(f"Hidratacion recomendada: {hydration}")
-
-        text_response = "\n".join(lines)
-        dispatcher.utter_message(text=text_response)
-
         diet_payload = {
             "type": "diet_plan",
             "objective": plan_label,
@@ -1680,6 +1669,7 @@ class ActionGenerarDieta(Action):
         }
 
         # If catalog integration is enabled, prefer local composer when available
+        final_meals = filtered_meals  # Default to generic meals
         if CHAT_DIET_CATALOG:
             used_composer = False
             # try local composer first (faster, offline)
@@ -1695,6 +1685,7 @@ class ActionGenerarDieta(Action):
                     n_meals = len(filtered_meals) or 3
                     # allow composer to use the project's catalog file
                     catalog_path = os.path.join(_BASE_DIR, 'backend', 'data', 'food_catalog.json')
+                    logger.info(f"=== COMPOSER ATTEMPT === target_kcal={target_kcal}, n_meals={n_meals}, catalog_path={catalog_path}")
                     # determine weight to pass to composer
                     weight_val = None
                     try:
@@ -1713,6 +1704,7 @@ class ActionGenerarDieta(Action):
                         objetivo=objetivo,
                         weight_kg=weight_val,
                     )
+                    logger.info(f"=== COMPOSE_DIET RESULT === composed type: {type(composed)}, has meals: {bool(composed and composed.get('meals'))}")
                     if composed and isinstance(composed, dict):
                         composed_meals: List[Dict[str, Any]] = []
                         for meal in composed.get('meals', []):
@@ -1724,8 +1716,11 @@ class ActionGenerarDieta(Action):
                                 items_out.append({'name': name, 'qty': f"{int(qty)} g", 'kcal': kcal})
                             composed_meals.append({'name': meal.get('name'), 'items': items_out, 'notes': None})
                         diet_payload['meals'] = composed_meals
+                        final_meals = composed_meals  # Update final_meals with catalog data
+                        logger.info(f"=== COMPOSER SUCCESS === Replaced meals with {len(composed_meals)} composed meals")
                         used_composer = True
-            except Exception:
+            except Exception as e:
+                logger.error(f"=== COMPOSER FAILED === {type(e).__name__}: {e}", exc_info=True)
                 used_composer = False
 
             # fallback to remote HTTP catalog composition if local composer not used
@@ -1770,6 +1765,28 @@ class ActionGenerarDieta(Action):
                             'notes': meal.get('notes')
                         })
                     diet_payload['meals'] = composed_meals
+                    final_meals = composed_meals  # Update final_meals with HTTP catalog data
+        
+        # Build text response AFTER catalog processing, using final_meals
+        lines.append("Menu diario ejemplo:")
+        for meal in final_meals:
+            items = meal.get("items", [])
+            # Handle both string arrays and object arrays
+            if items and isinstance(items[0], dict):
+                # Catalog format: array of {name, qty, kcal}
+                items_str = ", ".join([f"{it.get('name')} ({it.get('qty', '100g')}, {it.get('kcal', '?')} kcal)" for it in items])
+            else:
+                # Old format: array of strings
+                items_str = ", ".join(items)
+            lines.append(f"- {meal.get('name', 'Comida')}: {items_str}")
+            note = meal.get("notes")
+            if note:
+                lines.append(f"  Nota: {note}")
+        if hydration:
+            lines.append(f"Hidratacion recomendada: {hydration}")
+
+        text_response = "\n".join(lines)
+        dispatcher.utter_message(text=text_response)
         dispatcher.utter_message(json_message=diet_payload)
 
         context_payload: Dict[str, Any] = {}

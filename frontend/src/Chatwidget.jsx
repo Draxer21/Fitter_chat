@@ -2,18 +2,40 @@
 import { useEffect, useRef, useState } from "react";
 import Chatbot from "./Chatbot";
 
+const MIN_WIDTH = 380;
+const MIN_HEIGHT = 400;
+const FallbackSize = { width: 600, height: 800 };
+
+function clampSize(base) {
+  if (typeof window === "undefined") {
+    return base;
+  }
+  const horizontalMargin = 100; // leave space for margins and the launcher button
+  const verticalMargin = 110;
+  const maxWidth = Math.max(MIN_WIDTH, window.innerWidth - horizontalMargin);
+  const maxHeight = Math.max(MIN_HEIGHT, window.innerHeight - verticalMargin);
+  return {
+    width: Math.min(Math.max(MIN_WIDTH, base.width), maxWidth),
+    height: Math.min(Math.max(MIN_HEIGHT, base.height), maxHeight),
+  };
+}
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
   const panelRef = useRef(null);
   const btnRef = useRef(null);
   const panelId = "fw-chat-panel";
   const [panelSize, setPanelSize] = useState(() => {
     try {
       const raw = localStorage.getItem("fw_chat_panel_size");
-      if (raw) return JSON.parse(raw);
+      if (raw) {
+        return clampSize(JSON.parse(raw));
+      }
     } catch (e) {}
-    return { width: 380, height: 520 };
+    return clampSize(FallbackSize);
   });
+  const [savedSize, setSavedSize] = useState(null); // Guardar tamaño antes de maximizar
   // resizingRef: { active: boolean, mode: 'h'|'v'|'both' }
   const resizingRef = useRef({ active: false, mode: null });
   const resizeStartRef = useRef({ startX: 0, startY: 0, startWidth: 0, startHeight: 0 });
@@ -30,6 +52,14 @@ export default function ChatWidget() {
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
+  useEffect(() => {
+    const onResize = () => {
+      setPanelSize((size) => clampSize(size));
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
   // Resize handlers for the floating panel (horizontal, vertical, corner)
   useEffect(() => {
     const onPointerMove = (e) => {
@@ -44,11 +74,11 @@ export default function ChatWidget() {
 
       if (mode === "h" || mode === "both") {
         const deltaX = startX - clientX; // moving left increases width
-        newWidth = Math.max(260, Math.min(1400, startWidth + deltaX));
+        newWidth = Math.max(MIN_WIDTH, Math.min(window.innerWidth - 50, startWidth + deltaX));
       }
       if (mode === "v" || mode === "both") {
         const deltaY = clientY - startY; // moving down increases height
-        newHeight = Math.max(200, Math.min(1200, startHeight + deltaY));
+        newHeight = Math.max(MIN_HEIGHT, Math.min(window.innerHeight - 100, startHeight + deltaY));
       }
 
       setPanelSize((s) => ({ ...s, width: newWidth, height: newHeight }));
@@ -73,6 +103,25 @@ export default function ChatWidget() {
       window.removeEventListener("touchend", onPointerUp);
     };
   }, [panelSize]);
+
+  // Función para maximizar/restaurar el panel
+  const toggleMaximize = () => {
+    if (isMaximized) {
+      // Restaurar tamaño guardado
+      if (savedSize) {
+        setPanelSize(savedSize);
+      }
+      setIsMaximized(false);
+    } else {
+      // Guardar tamaño actual y maximizar
+      setSavedSize(panelSize);
+      setPanelSize({
+        width: window.innerWidth - 50,
+        height: window.innerHeight - 100
+      });
+      setIsMaximized(true);
+    }
+  };
 
   return (
     <>
@@ -100,6 +149,17 @@ export default function ChatWidget() {
           aria-label="Chat Fitter"
           style={{ width: panelSize.width + "px", height: panelSize.height + "px" }}
         >
+          <div className="fw-chat-header">
+            <span>Fitter · Asistente</span>
+            <button
+              className="fw-chat-maximize-btn"
+              onClick={toggleMaximize}
+              title={isMaximized ? "Restaurar tamaño" : "Maximizar"}
+              aria-label={isMaximized ? "Restaurar tamaño" : "Maximizar"}
+            >
+              {isMaximized ? "⊡" : "⊞"}
+            </button>
+          </div>
           {/* resize handle placed at left edge to allow horizontal resizing */}
           <div
             className="fw-chat-resizer"
@@ -151,7 +211,6 @@ export default function ChatWidget() {
             aria-hidden="true"
             title="Arrastra para cambiar tamaño"
           />
-          <div className="fw-chat-header">Fitter · Asistente</div>
           <div className="fw-chat-body">
             {/* El Chat usa /chat/send por defecto y UID persistente */}
             <Chatbot />

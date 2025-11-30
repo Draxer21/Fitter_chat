@@ -14,8 +14,8 @@
           horizontal space on large desktop monitors. */
         max-width: 1600px;
         margin: 0 auto;
-        padding-left: 28px;
-        padding-right: 28px;
+        padding-left: 12px;
+        padding-right: 12px;
     background: transparent;
   box-shadow: none;
   position: relative;
@@ -24,6 +24,7 @@
      without overlapping footer; input remains fixed at the bottom */
   display: flex;
   flex-direction: column;
+  height: 100%; /* ocupar toda la altura disponible */
   min-height: 0; /* allow flex children to shrink properly */
 }
 
@@ -48,10 +49,9 @@
      and ensures the footer remains visible. */
   flex: 1 1 auto;
   min-height: 0; /* necessary for proper flex overflow behavior */
-  height: auto;
-  max-height: none;
   overflow-y: auto;
-  margin-bottom: 10px;
+  overflow-x: hidden;
+  margin-bottom: 0;
     /* Slightly larger inner padding so messages don't touch the edges when
       the container is expanded laterally */
     padding: 14px 18px;
@@ -59,6 +59,21 @@
 
 .theme-dark .chatbot-messages {
   background: transparent;
+}
+
+/* Contenedores de mensajes individuales */
+.chatbot-message {
+  display: flex;
+  margin-bottom: 12px;
+  width: 100%;
+}
+
+.chatbot-message.user-message {
+  justify-content: flex-end; /* Alinear mensajes del usuario a la derecha */
+}
+
+.chatbot-message.bot-message {
+  justify-content: flex-start; /* Alinear mensajes del bot a la izquierda */
 }
 
 .message-bubble {
@@ -108,8 +123,9 @@
   background: #fee2e2;
   border: 1px solid #fecaca;
   border-radius: 8px;
-  padding: 6px 10px;
-  margin-bottom: 8px;
+  padding: 8px 12px;
+  margin: 0 18px 8px 18px;
+  flex-shrink: 0;
 }
 
 .theme-dark .chatbot-error {
@@ -121,6 +137,14 @@
 .chatbot-input-container {
   display: flex;
   gap: 8px;
+  flex-shrink: 0; /* no permitir que se encoja */
+  padding: 12px 18px;
+  background: inherit;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.theme-dark .chatbot-input-container {
+  border-top-color: rgba(255, 255, 255, 0.1);
 }
 
 .chatbot-textarea {
@@ -385,26 +409,40 @@ body .fw-chat-panel .chatbot-container {
      use !important to override other rules coming from global/chat styles. */
   max-width: none !important;
   margin: 0 !important;
-  padding: 8px !important;
-  width: auto !important;
+  padding: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
   min-height: 0 !important;
   background: transparent !important;
   border-radius: 0 !important;
   box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
 }
 
 .fw-chat-panel .chatbot-messages {
-  padding: 6px;
-  margin-bottom: 6px;
-  max-height: calc(85vh - 160px);
+  padding: 12px;
+  margin-bottom: 0;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .fw-chat-panel .message-bubble {
-  max-width: 85%;
-  padding: 6px 10px;
+  max-width: 88%;
+  padding: 8px 12px;
 }
 
-.fw-chat-panel .chatbot-input-container { gap: 6px; }
+.fw-chat-panel .chatbot-input-container { 
+  gap: 8px;
+  padding: 10px 12px;
+  flex-shrink: 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.theme-dark .fw-chat-panel .chatbot-input-container {
+  border-top-color: rgba(255, 255, 255, 0.1);
+}
 
 @media (max-width: 420px) {
   .fw-chat-panel .chatbot-messages { padding: 8px; }

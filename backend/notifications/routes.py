@@ -256,114 +256,127 @@ def get_food_catalog():
     return jsonify({'items': filtered[:limit]})
 
 
-    @bp.post("/diet")
-    def send_diet():
-        """
-        Envía una dieta por correo (similar a /daily-routine).
-        Body:
-          - user_id (opcional)
-          - body (texto del correo, opcional)
-          - diet_data (estructura de la dieta)
-          - attach: bool (adjuntar documento)
-          - format: 'pdf' o 'docx'
-        """
-        actor = _current_user()
-        has_valid_api_key = False
-        if not actor:
-            has_valid_api_key = _validate_api_key()
-            if not has_valid_api_key:
-                return jsonify({"error": "No autenticado"}), 401
+@bp.post("/diet")
+def send_diet():
+    """
+    Envía una dieta por correo (similar a /daily-routine).
+    Body:
+      - user_id (opcional)
+      - body (texto del correo, opcional)
+      - diet_data (estructura de la dieta)
+      - attach: bool (adjuntar documento)
+      - format: 'pdf' o 'docx'
+    """
+    actor = _current_user()
+    has_valid_api_key = False
+    if not actor:
+        has_valid_api_key = _validate_api_key()
+        if not has_valid_api_key:
+            return jsonify({"error": "No autenticado"}), 401
 
-        data = request.get_json(force=True, silent=True) or {}
-        user_id_raw = data.get("user_id")
-        target = None
-        if user_id_raw is None and actor:
-            target = actor
+    data = request.get_json(force=True, silent=True) or {}
+    user_id_raw = data.get("user_id")
+    target = None
+    if user_id_raw is None and actor:
+        target = actor
+    else:
+        try:
+            user_id = int(user_id_raw)
+        except (TypeError, ValueError):
+            return jsonify({"error": "user_id inválido"}), 400
+        target = User.query.get(user_id)
+        if not target:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+    if actor and not has_valid_api_key:
+        if not actor.is_admin and actor.id != target.id:
+            return jsonify({"error": "No autorizado"}), 403
+
+    body = (data.get("body") or "").strip()
+    if not body:
+        diet_data = data.get("diet_data") or {}
+        if diet_data and isinstance(diet_data, dict):
+            lines = [diet_data.get('header', 'Tu dieta Fitter'), '']
+            for meal in diet_data.get('meals', []):
+                lines.append(f"{meal.get('name','Comida')}:")
+                for it in meal.get('items', []):
+                    # Handle both string format and object format
+                    if isinstance(it, str):
+                        lines.append(f" - {it}")
+                    elif isinstance(it, dict):
+                        name = it.get('name', '')
+                        qty = it.get('qty', '')
+                        kcal = it.get('kcal', '')
+                        item_text = f" - {name}"
+                        if qty:
+                            item_text += f" ({qty}"
+                            if kcal:
+                                item_text += f", {kcal} kcal"
+                            item_text += ")"
+                        lines.append(item_text)
+            body = "\n".join(lines)
+
+    if not body:
+        return jsonify({"error": "body es obligatorio"}), 400
+
+    subject = (data.get("subject") or "Tu plan de alimentación Fitter").strip()
+    if not subject:
+        subject = "Tu plan de alimentación Fitter"
+
+    attach = bool(data.get("attach", False))
+    try:
+        if attach:
+            diet_data = data.get('diet_data') or {}
+            fmt = (data.get('format') or 'pdf').lower()
+            if fmt == 'docx':
+                buf = generate_diet_docx(diet_data)
+                filename = f"{diet_data.get('diet_id','dieta')}.docx"
+            else:
+                buf = generate_diet_pdf(diet_data)
+                filename = f"{diet_data.get('diet_id','dieta')}.pdf"
+            attachment_bytes = buf.getvalue()
         else:
-            try:
-                user_id = int(user_id_raw)
-            except (TypeError, ValueError):
-                return jsonify({"error": "user_id inválido"}), 400
-            target = User.query.get(user_id)
-            if not target:
-                return jsonify({"error": "Usuario no encontrado"}), 404
+            attachment_bytes = None
+            filename = None
 
-        if actor and not has_valid_api_key:
-            if not actor.is_admin and actor.id != target.id:
-                return jsonify({"error": "No autorizado"}), 403
+        send_email(
+            to_email=target.email,
+            subject=subject,
+            body=body,
+            from_name="Fitter",
+            attachment_bytes=attachment_bytes,
+            attachment_filename=filename,
+        )
+        db.session.commit()
+    except Exception as exc:
+        db.session.rollback()
+        return jsonify({"error": "No se pudo enviar el correo", "details": str(exc)}), 502
 
-        body = (data.get("body") or "").strip()
-        if not body:
-            diet_data = data.get("diet_data") or {}
-            if diet_data and isinstance(diet_data, dict):
-                lines = [diet_data.get('header', 'Tu dieta Fitter'), '']
-                for meal in diet_data.get('meals', []):
-                    lines.append(f"{meal.get('name','Comida')}:")
-                    for it in meal.get('items', []):
-                        lines.append(f" - {it.get('name')} {it.get('qty','')}")
-                body = "\n".join(lines)
-
-        if not body:
-            return jsonify({"error": "body es obligatorio"}), 400
-
-        subject = (data.get("subject") or "Tu plan de alimentación Fitter").strip()
-        if not subject:
-            subject = "Tu plan de alimentación Fitter"
-
-        attach = bool(data.get("attach", False))
-        try:
-            if attach:
-                diet_data = data.get('diet_data') or {}
-                fmt = (data.get('format') or 'pdf').lower()
-                if fmt == 'docx':
-                    buf = generate_diet_docx(diet_data)
-                    filename = f"{diet_data.get('diet_id','dieta')}.docx"
-                else:
-                    buf = generate_diet_pdf(diet_data)
-                    filename = f"{diet_data.get('diet_id','dieta')}.pdf"
-                attachment_bytes = buf.getvalue()
-            else:
-                attachment_bytes = None
-                filename = None
-
-            send_email(
-                to_email=target.email,
-                subject=subject,
-                body=body,
-                from_name="Fitter",
-                attachment_bytes=attachment_bytes,
-                attachment_filename=filename,
-            )
-            db.session.commit()
-        except Exception as exc:
-            db.session.rollback()
-            return jsonify({"error": "No se pudo enviar el correo", "details": str(exc)}), 502
-
-        return jsonify({"ok": True}), 200
+    return jsonify({"ok": True}), 200
 
 
-    @bp.post('/download-diet')
-    def download_diet():
-        data = request.get_json(force=True, silent=True) or {}
-        format_type = (data.get('format') or 'pdf').lower()
-        if format_type not in {'pdf', 'docx'}:
-            return jsonify({'error': "Formato inválido, usa 'pdf' o 'docx'"}), 400
-        diet_data = data.get('diet_data')
-        if not diet_data or not isinstance(diet_data, dict):
-            return jsonify({'error': 'diet_data es obligatorio y debe ser un objeto'}), 400
-        try:
-            if format_type == 'pdf':
-                buffer = generate_diet_pdf(diet_data)
-                mimetype = 'application/pdf'
-                extension = 'pdf'
-            else:
-                buffer = generate_diet_docx(diet_data)
-                mimetype = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-                extension = 'docx'
-            diet_id = diet_data.get('diet_id', 'dieta')
-            filename = f"{diet_id}.{extension}"
-            return send_file(buffer, mimetype=mimetype, as_attachment=True, download_name=filename)
-        except Exception as exc:
-            return jsonify({'error': 'No se pudo generar el documento', 'details': str(exc)}), 500
+@bp.post('/download-diet')
+def download_diet():
+    data = request.get_json(force=True, silent=True) or {}
+    format_type = (data.get('format') or 'pdf').lower()
+    if format_type not in {'pdf', 'docx'}:
+        return jsonify({'error': "Formato inválido, usa 'pdf' o 'docx'"}), 400
+    diet_data = data.get('diet_data')
+    if not diet_data or not isinstance(diet_data, dict):
+        return jsonify({'error': 'diet_data es obligatorio y debe ser un objeto'}), 400
+    try:
+        if format_type == 'pdf':
+            buffer = generate_diet_pdf(diet_data)
+            mimetype = 'application/pdf'
+            extension = 'pdf'
+        else:
+            buffer = generate_diet_docx(diet_data)
+            mimetype = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+            extension = 'docx'
+        diet_id = diet_data.get('diet_id', 'dieta')
+        filename = f"{diet_id}.{extension}"
+        return send_file(buffer, mimetype=mimetype, as_attachment=True, download_name=filename)
+    except Exception as exc:
+        return jsonify({'error': 'No se pudo generar el documento', 'details': str(exc)}), 500
 
 
