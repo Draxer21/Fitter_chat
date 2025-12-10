@@ -29,8 +29,6 @@ rules:
       - action: action_fetch_profile
       - slot_was_set:
           - perfil_completo: false
-      - action: utter_perfil_incompleto
-      - action: action_listen
 
   - rule: atender solicitud de rutina con perfil completo
     steps:
@@ -38,8 +36,6 @@ rules:
       - action: action_fetch_profile
       - slot_was_set:
           - perfil_completo: true
-      - action: utter_perfil_resumen
-      - action: action_generar_rutina
 
   - rule: atender solicitud de dieta
     steps:
@@ -54,8 +50,6 @@ rules:
       - action: action_fetch_profile
       - slot_was_set:
           - perfil_completo: false
-      - action: utter_perfil_incompleto
-      - action: action_listen
 
   - rule: atender solicitud de dieta con perfil completo
     steps:
@@ -63,8 +57,6 @@ rules:
       - action: action_fetch_profile
       - slot_was_set:
           - perfil_completo: true
-      - action: utter_perfil_resumen
-      - action: action_generar_dieta
 
   - rule: consultar perfil
     steps:
@@ -79,8 +71,6 @@ rules:
       - action: action_fetch_profile
       - slot_was_set:
           - perfil_completo: false
-      - action: utter_perfil_incompleto
-      - action: action_listen
 
   - rule: consultar perfil completo
     steps:
@@ -88,7 +78,6 @@ rules:
       - action: action_fetch_profile
       - slot_was_set:
           - perfil_completo: true
-      - action: utter_mostrar_perfil
 
   - rule: actualizar perfil
     steps:
@@ -103,14 +92,22 @@ rules:
       - action: profile_form
       - active_loop: profile_form
 
+  - rule: profile_form while active
+    condition:
+      - active_loop: profile_form
+    steps:
+      - action: profile_form
+      - active_loop: profile_form
+      - action: action_listen
+
   - rule: cancelar profile_form
     condition:
       - active_loop: profile_form
     steps:
       - intent: detener_formulario
-      - action: utter_form_cancelado
       - action: action_deactivate_loop
       - active_loop: null
+      - action: utter_form_cancelado
 
   - rule: completar profile_form
     condition:
@@ -119,8 +116,38 @@ rules:
       - action: profile_form
       - active_loop: null
       - action: action_submit_profile_form
-      - action: utter_perfil_actualizado
       - action: action_listen
+
+  - rule: iniciar hero form
+    steps:
+      - intent: solicitar_entreno_unico
+      - action: hero_form
+      - active_loop: hero_form
+
+  - rule: hero_form while active
+    condition:
+      - active_loop: hero_form
+    steps:
+      - action: hero_form
+      - active_loop: hero_form
+      - action: action_listen
+
+  - rule: cancelar hero_form
+    condition:
+      - active_loop: hero_form
+    steps:
+      - intent: detener_formulario
+      - action: action_deactivate_loop
+      - active_loop: null
+      - action: utter_hero_cancelado
+
+  - rule: completar hero_form
+    condition:
+      - active_loop: hero_form
+    steps:
+      - action: hero_form
+      - active_loop: null
+      - action: action_inscribir_entreno_unico
 
   - rule: soporte general
     steps:
@@ -151,6 +178,16 @@ rules:
     steps:
       - intent: mostrar_rutina_pantalla
       - action: action_generar_rutina
+
+  - rule: cerrar flujo rutina
+    steps:
+      - action: action_generar_rutina
+      - action: action_listen
+
+  - rule: cerrar flujo dieta
+    steps:
+      - action: action_generar_dieta
+      - action: action_listen
 
   - rule: enviar rutina por correo pedir contacto
     steps:

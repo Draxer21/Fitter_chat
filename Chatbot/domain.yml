@@ -6,6 +6,7 @@ intents:
   - informar
   - solicitar_rutina
   - solicitar_dieta
+  - solicitar_entreno_unico
   - cambiar_objetivo_rutina
   - cambiar_musculo_rutina
   - cambiar_nivel_rutina
@@ -27,6 +28,7 @@ intents:
 entities:
   - objetivo
   - musculo
+  - hero_programa
   - nivel
   - equipamiento
   - ejercicios_num
@@ -104,6 +106,35 @@ slots:
       - type: from_entity
         entity: codigo_reserva
 
+  hero_programa:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: hero_form
+            requested_slot: hero_programa
+      - type: from_entity
+        entity: hero_programa
+
+  hero_inicio:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: hero_form
+            requested_slot: hero_inicio
+
+  hero_equipo:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: hero_form
+            requested_slot: hero_equipo
+
   peso:
     type: float
     influence_conversation: true
@@ -148,6 +179,14 @@ slots:
         conditions:
           - active_loop: profile_form
             requested_slot: preferencia_dieta
+  musculo_preferido:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: profile_form
+            requested_slot: musculo_preferido
 
   resumen_perfil:
     type: text
@@ -168,6 +207,12 @@ slots:
       - type: custom
 
   ultima_rutina:
+    type: any
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  ultima_dieta:
     type: any
     influence_conversation: false
     mappings:
@@ -204,6 +249,12 @@ responses:
   utter_reserva_estado:
     - text: "Estado de la reserva {codigo_reserva}: actualizado y confirmado. ¿Algo más que quieras revisar?"
 
+  utter_faq/horarios:
+    - text: "Nuestro gimnasio abre de lunes a viernes de 6:00 a 22:00, sábados de 8:00 a 20:00 y domingos de 9:00 a 14:00. Si necesitas un horario especial, avísame."
+
+  utter_faq/pagos:
+    - text: "Puedes pagar con tarjetas de crédito y débito, transferencia o Mercado Pago. También tenemos cuotas sin interés en membresías trimestrales y anuales."
+
   utter_suscripcion_alta:
     - text: "¡Vamos con tu suscripción! Dime qué plan prefieres y el método de pago, y lo dejamos listo."
 
@@ -236,13 +287,30 @@ responses:
         - title: "Cardio"
           payload: "/solicitar_rutina{\"musculo\": \"cardio\"}"
 
-  utter_perfil_incompleto:
-    - text: "Para continuar necesito datos básicos de tu perfil. ¿Prefieres actualizarlos aquí conmigo o desde la página?"
+  utter_ask_hero_programa:
+    - text: "Tengo planes temáticos Shonen Power, Ninja Agility y Mecha Endurance. ¿Cuál te interesa?"
       buttons:
-        - title: "Actualizar con el bot"
-          payload: "/actualizar_perfil_bot"
-        - title: "Abrir pagina de perfil"
-          payload: "/navegar_perfil_web"
+        - title: "Shonen Power"
+          payload: "/solicitar_entreno_unico{\"hero_programa\": \"shonen\"}"
+        - title: "Ninja Agility"
+          payload: "/solicitar_entreno_unico{\"hero_programa\": \"ninja\"}"
+        - title: "Mecha Endurance"
+          payload: "/solicitar_entreno_unico{\"hero_programa\": \"mecha\"}"
+
+  utter_ask_hero_inicio:
+    - text: "¿Cuándo quieres comenzar el plan? Puedes indicarme una fecha (ej. 2025-01-10) o decir 'la próxima semana'."
+
+  utter_ask_hero_equipo:
+    - text: "Cuéntame con qué equipamiento cuentas (casa, gimnasio, TRX, solo peso corporal). Así adapto las recomendaciones."
+
+  utter_hero_cancelado:
+    - text: "Perfecto, dejamos pendiente la selección del Entreno Único. Si quieres retomarlo, dímelo."
+
+  utter_ask_musculo_preferido:
+    - text: "¿Hay algún grupo muscular que quieras priorizar de forma habitual (pecho, espalda, piernas, hombros, brazos, core, fullbody, cardio)?"
+
+  utter_perfil_incompleto:
+    - text: "Para continuar necesito tus datos básicos (peso, altura, objetivo, padecimientos y preferencia de dieta). Dímelos uno por uno y los vamos registrando aquí mismo."
 
   utter_mostrar_perfil:
     - text: "Aquí tienes tu perfil: {resumen_perfil}"
@@ -258,8 +326,6 @@ responses:
       buttons:
         - title: "Problemas con MFA"
           payload: "/soporte_mfa"
-        - title: "Actualizar perfil"
-          payload: "/actualizar_perfil"
         - title: "Hablar con un asesor"
           payload: "/informar{\"contacto\": \"asesor\"}"
 
@@ -295,6 +361,12 @@ forms:
       - objetivo_fitness
       - padecimientos
       - preferencia_dieta
+      - musculo_preferido
+  hero_form:
+    required_slots:
+      - hero_programa
+      - hero_inicio
+      - hero_equipo
 
 actions:
   - action_fetch_profile
@@ -302,6 +374,7 @@ actions:
   - action_generar_rutina
   - action_generar_dieta
   - action_consultar_reserva
+  - action_inscribir_entreno_unico
 
 session_config:
   session_expiration_time: 60

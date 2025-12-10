@@ -200,7 +200,6 @@ stories:
       Quiero ver mi perfil
     intent: consultar_perfil
   - action: action_fetch_profile
-  - action: utter_perfil_incompleto
   - user: |
       Actualizar con el bot
     intent: actualizar_perfil_bot
@@ -227,9 +226,9 @@ stories:
   - user: |
       Mejor cancelalo
     intent: detener_formulario
-  - action: utter_form_cancelado
   - action: action_deactivate_loop
   - active_loop: null
+  - action: utter_form_cancelado
 
 - story: generar rutina con perfil completo
   steps:
@@ -239,8 +238,6 @@ stories:
   - action: action_fetch_profile
   - slot_was_set:
       - perfil_completo: true
-  - action: utter_perfil_resumen
-  - action: action_generar_rutina
 
 - story: mostrar rutina en pantalla
   steps:
