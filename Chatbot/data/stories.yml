@@ -23,8 +23,6 @@ stories:
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: true
-    - action: utter_perfil_resumen
-    - action: action_generar_rutina
 
 - story: rutina con actualizacion guiada
   steps:
@@ -32,7 +30,6 @@ stories:
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: false
-    - action: utter_perfil_incompleto
     - intent: actualizar_perfil_bot
     - action: profile_form
     - active_loop: profile_form
@@ -40,13 +37,10 @@ stories:
         - requested_slot: null
     - active_loop: null
     - action: action_submit_profile_form
-    - action: utter_perfil_actualizado
     - intent: solicitar_rutina
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: true
-    - action: utter_perfil_resumen
-    - action: action_generar_rutina
 
 - story: dieta con perfil completo
   steps:
@@ -54,8 +48,6 @@ stories:
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: true
-    - action: utter_perfil_resumen
-    - action: action_generar_dieta
 
 - story: dieta con actualizacion guiada
   steps:
@@ -63,7 +55,6 @@ stories:
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: false
-    - action: utter_perfil_incompleto
     - intent: actualizar_perfil_bot
     - action: profile_form
     - active_loop: profile_form
@@ -71,13 +62,10 @@ stories:
         - requested_slot: null
     - active_loop: null
     - action: action_submit_profile_form
-    - action: utter_perfil_actualizado
     - intent: solicitar_dieta
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: true
-    - action: utter_perfil_resumen
-    - action: action_generar_dieta
 
 - story: consultar perfil resumen
   steps:
@@ -90,6 +78,20 @@ stories:
     - action: utter_soporte_opciones
     - intent: soporte_mfa
     - action: utter_soporte_mfa
+
+- story: flujo entreno unico completo
+  steps:
+    - intent: solicitar_entreno_unico
+    - action: hero_form
+    - active_loop: hero_form
+    - slot_was_set:
+        - hero_programa: shonen
+    - slot_was_set:
+        - hero_inicio: proxima semana
+    - slot_was_set:
+        - hero_equipo: mancuernas y banda
+    - active_loop: null
+    - action: action_inscribir_entreno_unico
 
 - story: flujo completo profile_form
   steps:
@@ -127,7 +129,12 @@ stories:
     - slot_was_set:
         - preferencia_dieta: sin lactosa
     - slot_was_set:
+        - requested_slot: musculo_preferido
+    - intent: informar
+    - action: profile_form
+    - slot_was_set:
+        - musculo_preferido: pecho
+    - slot_was_set:
         - requested_slot: null
     - active_loop: null
     - action: action_submit_profile_form
-    - action: utter_perfil_actualizado

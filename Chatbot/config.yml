@@ -24,7 +24,7 @@ pipeline:
     min_ngram: 1
     max_ngram: 4
   - name: DIETClassifier
-    epochs: 80
+    epochs: 100
     transformer_size: 128
     number_of_transformer_layers: 1
     embedding_dimension: 128
@@ -42,7 +42,7 @@ pipeline:
     batch_size: 64
     constrain_similarities: true
   - name: FallbackClassifier
-    threshold: 0.35
+    threshold: 0.25
     ambiguity_threshold: 0.05
 
 policies:

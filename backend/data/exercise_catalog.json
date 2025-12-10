@@ -1,0 +1,68 @@
+{
+  "pecho": {
+    "bandas": [
+      {"name": "Press con banda anclada al pecho", "url": "https://www.bodybuilding.com/exercises/band-chest-press", "source": "Bodybuilding"},
+      {"name": "Cruce de bandas alto", "url": "https://exrx.net/WeightExercises/PectoralSternal/CBStandingFly", "source": "ExRx"}
+    ],
+    "kettlebell": [
+      {"name": "Press pecho con kettlebell", "url": "https://www.onnit.com/academy/kettlebell-floor-press/", "source": "Onnit"},
+      {"name": "Press alterno en el suelo", "url": "https://www.onnit.com/academy/kettlebell-alternating-floor-press/", "source": "Onnit"}
+    ]
+  },
+  "espalda": {
+    "bandas": [
+      {"name": "Pull apart con banda", "url": "https://exrx.net/WeightExercises/TeresMinor/CBRearDeltRow", "source": "ExRx"},
+      {"name": "Remo con banda sentado", "url": "https://www.bodybuilding.com/exercises/band-seated-row", "source": "Bodybuilding"}
+    ],
+    "kettlebell": [
+      {"name": "Remo renegado con kettlebell", "url": "https://www.onnit.com/academy/renegade-row/", "source": "Onnit"},
+      {"name": "Peso muerto kettlebell sumo", "url": "https://www.onnit.com/academy/kettlebell-sumo-deadlift/", "source": "Onnit"}
+    ]
+  },
+  "piernas": {
+    "bandas": [
+      {"name": "Buenos días con banda", "url": "https://www.bodybuilding.com/exercises/band-good-morning", "source": "Bodybuilding"},
+      {"name": "Sentadilla con banda al frente", "url": "https://www.bodybuilding.com/exercises/band-front-squat", "source": "Bodybuilding"}
+    ],
+    "kettlebell": [
+      {"name": "Kettlebell swing", "url": "https://www.onnit.com/academy/kettlebell-single-arm-swing/", "source": "Onnit"},
+      {"name": "Sentadilla goblet con pausa", "url": "https://www.onnit.com/academy/goblet-squat/", "source": "Onnit"}
+    ],
+    "máquinas": [
+      {"name": "Prensa horizontal unilateral", "url": "https://exrx.net/WeightExercises/Quadriceps/LVLegPress", "source": "ExRx"},
+      {"name": "Extensión femoral sentado", "url": "https://exrx.net/WeightExercises/Hamstrings/LVSeatedLegCurl", "source": "ExRx"}
+    ]
+  },
+  "core": {
+    "bandas": [
+      {"name": "Pallof press", "url": "https://exrx.net/WeightExercises/Obliques/CBKneelingCrunch", "source": "ExRx"},
+      {"name": "Rotación con banda", "url": "https://exrx.net/WeightExercises/Obliques/CBStandingTwist", "source": "ExRx"}
+    ],
+    "peso_corporal": [
+      {"name": "Dead bug lento", "url": "https://www.bodybuilding.com/exercises/dead-bug", "source": "Bodybuilding"},
+      {"name": "Plancha lateral con abducción", "url": "https://exrx.net/WeightExercises/Obliques/BWSidePlankHipAbduction", "source": "ExRx"}
+    ]
+  },
+  "fullbody": {
+    "bandas": [
+      {"name": "Remo + press con banda", "url": "https://www.bodybuilding.com/exercises/band-row-and-press", "source": "Bodybuilding"}
+    ],
+    "kettlebell": [
+      {"name": "Clean and press con kettlebell", "url": "https://www.onnit.com/academy/kettlebell-clean-and-press/", "source": "Onnit"},
+      {"name": "Turkish get-up", "url": "https://www.onnit.com/academy/turkish-get-up/", "source": "Onnit"}
+    ],
+    "peso_corporal": [
+      {"name": "Burpee con salto", "url": "https://exrx.net/WeightExercises/Quadriceps/BWJumpingBurpee", "source": "ExRx"},
+      {"name": "Escaladores cruzados", "url": "https://www.bodybuilding.com/exercises/cross-body-mountain-climber", "source": "Bodybuilding"}
+    ]
+  },
+  "cardio": {
+    "bandas": [
+      {"name": "Band sprint", "url": "https://www.bodybuilding.com/exercises/band-sprint", "source": "Bodybuilding"}
+    ],
+    "peso_corporal": [
+      {"name": "Salto al cajón continuo", "url": "https://www.bodybuilding.com/exercises/box-jump", "source": "Bodybuilding"},
+      {"name": "Skaters", "url": "https://exrx.net/Aerobic/Exercises/SkaterHop", "source": "ExRx"}
+    ]
+  }
+}

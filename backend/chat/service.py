@@ -1,5 +1,6 @@
 import json
 from dataclasses import dataclass
+from threading import Lock
 from typing import Any, Dict, Mapping, MutableMapping, Optional
 
 import requests
@@ -31,6 +32,8 @@ class ChatService:
         self.app = app
         self.db = db
         self.http = http_session
+        self._inflight_requests: Dict[str, object] = {}
+        self._inflight_lock = Lock()
 
     # -------- utilidades internas --------
     def rasa_url(self, path: str) -> str:
@@ -79,6 +82,14 @@ class ChatService:
             raise ChatServiceError("El campo 'message' es obligatorio.", 400)
         if len(message) > self._max_message_len():
             raise ChatServiceError("El mensaje es demasiado largo.", 413)
+
+        inflight_token = self._acquire_sender_slot(sender)
+        if inflight_token is None:
+            # A previous request is still running for this sender; avoid piling up and tripping locks
+            return ServiceResponse(
+                [{"text": "Sigo trabajando en tu solicitud anterior, dame unos segundos y vuelve a intentarlo."}],
+                200,
+            )
 
         ctx = ChatUserContext.get_or_create(sender, session_uid(flask_session))
         manager = ChatContextManager(ctx)
@@ -175,7 +186,7 @@ class ChatService:
                     }
                     if source:
                         entry["source"] = source
-                    manager.add_history_entry(entry)
+            manager.add_history_entry(entry)
 
             if not updated_context:
                 manager.touch()
@@ -192,6 +203,8 @@ class ChatService:
         except json.JSONDecodeError:
             self.db.session.rollback()
             raise ChatServiceError("Respuesta de Rasa no es JSON valido.", 502)
+        finally:
+            self._release_sender_slot(sender, inflight_token)
 
     def get_context(
         self,
@@ -258,6 +271,23 @@ class ChatService:
             )
 
         return ServiceResponse({"sessions": sessions}, 200)
+
+    # -------- concurrency helpers --------
+    def _acquire_sender_slot(self, sender: str) -> Optional[object]:
+        token = object()
+        with self._inflight_lock:
+            if sender in self._inflight_requests:
+                return None
+            self._inflight_requests[sender] = token
+            return token
+
+    def _release_sender_slot(self, sender: str, token: Optional[object]) -> None:
+        if token is None:
+            return
+        with self._inflight_lock:
+            current = self._inflight_requests.get(sender)
+            if current is token:
+                self._inflight_requests.pop(sender, None)
 
     def update_context(
         self,

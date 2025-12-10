@@ -26406,3 +26406,10 @@ nlu:
     - Necesito suspender la membresia mensual; estoy lesionado
     - Me gustaría darme de baja de el combo de nutricion inmediatamente; me gustaria hacerlo hoy mismo
     - Necesito darme de baja de el combo de nutricion; me mudare pronto
+- intent: solicitar_rutina
+  examples: |
+    - Diseñame una rutina corta con kettlebells para trabajar todo el cuerpo en 25 minutos.
+    - Quisiera un plan de bandas elásticas para poder entrenar en la oficina sin máquinas.
+    - Dame una sesión de movilidad y core que combine TRX y peso corporal para mis mañanas.
+    - Necesito un programa dividido en tres días usando bicicleta estática y mancuernas ligeras.
+    - Arma un circuito tipo EMOM con saltos suaves y ejercicios de fuerza para retomar el cardio.

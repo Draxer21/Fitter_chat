@@ -298,6 +298,25 @@ class ValidateProfileForm(FormValidationAction):
                 return {"preferencia_dieta": canonical}
         return {"preferencia_dieta": text}
 
+    def validate_musculo_preferido(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        opciones = {"pecho", "espalda", "piernas", "hombros", "brazos", "core", "fullbody", "cardio"}
+        raw = (str(value or "")).strip().lower()
+        if not raw:
+            dispatcher.utter_message(text="Indica un grupo muscular de la lista o di 'ninguno'.")
+            return {"musculo_preferido": None}
+        if raw in {"ninguno", "ninguna", "no"}:
+            return {"musculo_preferido": None}
+        if raw not in opciones:
+            dispatcher.utter_message(text="Solo puedo guardar pecho, espalda, piernas, hombros, brazos, core, fullbody o cardio.")
+            return {"musculo_preferido": None}
+        return {"musculo_preferido": raw}
+
 
 class ActionFetchProfile(Action):
     def name(self) -> Text:
@@ -385,6 +404,7 @@ class ActionSubmitProfileForm(Action):
         goal = tracker.get_slot("objetivo_fitness")
         medical = tracker.get_slot("padecimientos")
         diet_pref = tracker.get_slot("preferencia_dieta")
+        preferred_muscle = tracker.get_slot("musculo_preferido")
 
         payload = {
             "user_id": ctx.get("user_id"),
@@ -455,6 +475,8 @@ class ActionSubmitProfileForm(Action):
                 events.append(SlotSet("padecimientos", refreshed_medical))
             if refreshed_diet:
                 events.append(SlotSet("preferencia_dieta", refreshed_diet))
+        if preferred_muscle is not None:
+            events.append(SlotSet("musculo_preferido", preferred_muscle))
         else:
             summary = build_profile_summary(payload)
             events.append(SlotSet("resumen_perfil", summary))
@@ -469,6 +491,8 @@ class ActionSubmitProfileForm(Action):
                 events.append(SlotSet("padecimientos", payload["medical_conditions"]))
             if payload["diet_preference"]:
                 events.append(SlotSet("preferencia_dieta", payload["diet_preference"]))
+        if preferred_muscle is not None:
+            events.append(SlotSet("musculo_preferido", preferred_muscle))
 
         target_action = tracker.get_slot("servicio_pendiente")
         followups: List[Any] = []
@@ -994,6 +1018,30 @@ SCHEMES: Dict[str, Dict[str, Dict[str, Any]]] = {
     }
 }
 
+HERO_PROGRAMS: Dict[str, Dict[str, str]] = {
+    "shonen": {
+        "title": "Shonen Power",
+        "duration": "8 semanas",
+        "focus": "Fuerza + hipertrofia con circuitos metabólicos",
+        "body_type": "Atlético y veloz",
+        "training": "4-5 sesiones por semana con bloques de potencia, sprints ligeros y trabajo de core avanzado.",
+    },
+    "ninja": {
+        "title": "Ninja Agility",
+        "duration": "6 semanas",
+        "focus": "Movilidad, pliometría y acondicionamiento funcional",
+        "body_type": "Ágil y definido",
+        "training": "Sesiones cortas de alta frecuencia con énfasis en balance, saltos y control corporal.",
+    },
+    "mecha": {
+        "title": "Mecha Endurance",
+        "duration": "10 semanas",
+        "focus": "Resistencia progresiva y trabajo aeróbico estructurado",
+        "body_type": "Robusto y resistente",
+        "training": "Ciclos largos con cardio guiado, fuerza básica y sesiones de recuperación activa.",
+    },
+}
+
 DIET_BASES: Dict[str, Dict[str, Any]] = {
     "hipertrofia": {
         "calorias": "Mantenimiento + 200 kcal",
@@ -1195,6 +1243,19 @@ def _fecha_es_pasada(iso_yyyy_mm_dd: str) -> bool:
 # VALIDATOR del FORM rutina_form (evita loops y normaliza)
 # =========================================================
 class ValidateRutinaForm(FormValidationAction):
+    """Normaliza respuestas y coordina el cierre del formulario de rutinas."""
+
+    REQUIRED_ORDER: Tuple[str, ...] = (
+        "objetivo",
+        "nivel",
+        "musculo",
+        "equipamiento",
+        "ejercicios_num",
+        "tiempo_disponible",
+        "condiciones_salud",
+        "alergias",
+    )
+
     def name(self) -> Text:
         return "validate_rutina_form"
 
@@ -1211,6 +1272,58 @@ class ValidateRutinaForm(FormValidationAction):
         if norm in {"ninguna", "ninguno", "ningunas", "ningunos", "no", "ningun problema"}:
             return "ninguna"
         return original
+
+    async def required_slots(
+        self,
+        domain_slots: List[Text],
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Text]:
+        """Mantiene un orden consistente sin importar como esté definido el dominio."""
+        if not domain_slots:
+            return list(self.REQUIRED_ORDER)
+        ordered = [slot for slot in self.REQUIRED_ORDER if slot in domain_slots]
+        if ordered:
+            extras = [slot for slot in domain_slots if slot not in ordered]
+            return ordered + extras
+        return domain_slots
+
+    def _values_after_validation(
+        self,
+        tracker: Tracker,
+        events: List[Any],
+    ) -> Dict[str, Any]:
+        after = dict(tracker.slots or {})
+        for event in events:
+            if isinstance(event, SlotSet):
+                after[event.key] = event.value
+        return after
+
+    def _missing_slots(self, values: Dict[str, Any]) -> List[str]:
+        missing: List[str] = []
+        for slot in self.REQUIRED_ORDER:
+            if values.get(slot) in {None, ""}:
+                missing.append(slot)
+        return missing
+
+    async def get_validation_events(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Any]:
+        events = await super().get_validation_events(dispatcher, tracker, domain)
+        missing = self._missing_slots(self._values_after_validation(tracker, events))
+        if not missing:
+            already_closed = any(
+                isinstance(ev, SlotSet) and ev.key == "requested_slot" and ev.value is None
+                for ev in events
+            )
+            if not already_closed:
+                events.append(SlotSet("requested_slot", None))
+            events.append(FollowupAction("action_generar_rutina"))
+        return events
 
     def validate_equipamiento(
         self,
@@ -1314,6 +1427,72 @@ class ValidateRutinaForm(FormValidationAction):
             return {"alergias": None}
         return {"alergias": limpio}
 
+
+class ValidateHeroForm(FormValidationAction):
+    def name(self) -> Text:
+        return "validate_hero_form"
+
+    def _norm(self, value: Any) -> str:
+        return (str(value or "")).strip().lower()
+
+    def _match_program(self, value: Any) -> Optional[str]:
+        norm = self._norm(value)
+        if not norm:
+            return None
+        for key, data in HERO_PROGRAMS.items():
+            if key in norm or self._norm(data["title"]) in norm:
+                return key
+        return None
+
+    def validate_hero_programa(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        matched = self._match_program(value)
+        if matched:
+            return {"hero_programa": matched}
+        dispatcher.utter_message(
+            text="No reconocí ese plan. Elige entre Shonen Power, Ninja Agility o Mecha Endurance."
+        )
+        return {"hero_programa": None}
+
+    def validate_hero_inicio(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        raw = (str(value or "")).strip()
+        if not raw:
+            dispatcher.utter_message(text="Necesito saber cuándo deseas comenzar para programar las fases.")
+            return {"hero_inicio": None}
+        try:
+            chosen = datetime.fromisoformat(raw).date()
+        except Exception:
+            return {"hero_inicio": raw}
+        if chosen < date.today():
+            dispatcher.utter_message(text="Esa fecha ya pasó. Indícame otra, por favor.")
+            return {"hero_inicio": None}
+        return {"hero_inicio": chosen.isoformat()}
+
+    def validate_hero_equipo(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        raw = (str(value or "")).strip()
+        if not raw:
+            dispatcher.utter_message(text="Describe con qué equipamiento cuentas (casa, gimnasio, TRX, etc.).")
+            return {"hero_equipo": None}
+        return {"hero_equipo": raw}
+
+
 # =========================================================
 # ACCIÓN: Generar rutina completa
 # =========================================================
@@ -1339,7 +1518,7 @@ class ActionGenerarRutina(Action):
         if profile_data and profile_data.get("primary_goal"):
             profile_goal = str(profile_data["primary_goal"]).replace("_", " ").strip().lower()
 
-        raw_musculo = _slot(tracker, "musculo")
+        raw_musculo = _slot(tracker, "musculo") or tracker.get_slot("musculo_preferido")
         # If the user hasn't provided a muscle group, ask explicitly and show profile summary
         if not raw_musculo:
             # show profile summary if available
@@ -1800,6 +1979,51 @@ class ActionGenerarDieta(Action):
         return [SlotSet("ultima_dieta", diet_payload)]
 
 
+
+class ActionInscribirEntrenoUnico(Action):
+    def name(self) -> Text:
+        return "action_inscribir_entreno_unico"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        raw_key = _slot(tracker, "hero_programa") or "shonen"
+        key = raw_key.lower()
+        plan = HERO_PROGRAMS.get(key, HERO_PROGRAMS["shonen"])
+        inicio = tracker.get_slot("hero_inicio") or "cuando estés listo"
+        equip = tracker.get_slot("hero_equipo") or "solo peso corporal"
+
+        header = f"Plan {plan['title']} — {plan['duration']}"
+        lines = [
+            header,
+            f"Enfoque: {plan['focus']}",
+            f"Tipo de cuerpo objetivo: {plan['body_type']}",
+            f"Inicio estimado: {inicio}",
+            f"Equipamiento declarado: {equip}",
+            plan["training"],
+            "Te enviaré recordatorios y recomendaciones adicionales si completas tu perfil.",
+        ]
+        dispatcher.utter_message(text="\n".join(lines))
+        dispatcher.utter_message(json_message={
+            "type": "hero_training_plan",
+            "plan_key": key,
+            "title": plan["title"],
+            "duration": plan["duration"],
+            "focus": plan["focus"],
+            "body_type": plan["body_type"],
+            "start": inicio,
+            "equipment": equip,
+        })
+
+        return [
+            SlotSet("hero_programa", None),
+            SlotSet("hero_inicio", None),
+            SlotSet("hero_equipo", None),
+        ]
+
 class ActionSugerirRutina(Action):
     def name(self) -> Text:
         return "action_sugerir_rutina"
@@ -1997,9 +2221,3 @@ class ActionSuscripcionCambioPlan(Action):
 
         dispatcher.utter_message(text="¿A qué plan te gustaría cambiarte? (Mensual, Trimestral, Anual)")
         return []
-
-
-
-
-
-

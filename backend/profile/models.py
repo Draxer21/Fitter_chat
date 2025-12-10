@@ -30,6 +30,7 @@ class UserProfile(db.Model):
         "sex",
         "activity_level",
         "primary_goal",
+        "musculo_preferido",
         "allergies",
         "medical_conditions",
         "notes",
@@ -121,6 +122,9 @@ class UserProfile(db.Model):
             data["activity_level"] = _clean_text("activity_level", max_len=32)
         if "primary_goal" in payload:
             data["primary_goal"] = _clean_text("primary_goal", max_len=64)
+        if "musculo_preferido" in payload:
+            text = _clean_text("musculo_preferido", max_len=32)
+            data["musculo_preferido"] = text.lower() if text else None
         if "allergies" in payload:
             data["allergies"] = _clean_text("allergies", max_len=500)
         if "medical_conditions" in payload:

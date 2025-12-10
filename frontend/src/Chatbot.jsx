@@ -134,17 +134,18 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
     }
   };
 
-  const sendMessage = async () => {
-    const text = input.trim();
+  const sendText = async (outgoingText, displayText) => {
+    const text = (outgoingText || "").trim();
     if (!consent) {
       setErrorText("Debes aceptar las condiciones de uso del chatbot para enviar mensajes.");
-      return;
+      return false;
     }
-    if (!text || loading) return;
+    if (!text || loading) return false;
 
     setErrorText("");
-    pushMessage({ from: "user", text });
-    setInput("");
+    if (displayText !== false) {
+      pushMessage({ from: "user", text: typeof displayText === "string" ? displayText : text });
+    }
     setLoading(true);
 
     if (onNewMessage && typeof onNewMessage === "function") {
@@ -153,12 +154,22 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
 
     try {
       await sendToBackend(text);
+      return true;
     } catch (e) {
       const msg = e?.name === "AbortError" ? "Solicitud cancelada." : "Error de conexión con el backend.";
       setErrorText(typeof e?.message === "string" ? e.message : msg);
       pushMessage({ from: "bot", text: "Error de conexión con el backend." });
+      return false;
     } finally {
       setLoading(false);
+    }
+  };
+
+  const sendMessage = async () => {
+    const text = input.trim();
+    const sent = await sendText(text, text);
+    if (sent) {
+      setInput("");
     }
   };
 
@@ -631,8 +642,7 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
                     type="button"
                     onClick={() => {
                       if (buttonPayload) {
-                        setInput(buttonPayload);
-                        setTimeout(sendMessage, 0);
+                        sendText(buttonPayload, buttonTitle);
                       }
                     }}
                     className="quick-reply-button"

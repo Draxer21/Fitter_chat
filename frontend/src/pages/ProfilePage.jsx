@@ -11,6 +11,7 @@ const initialFormState = {
   sex: "",
   activity_level: "",
   primary_goal: "",
+  musculo_preferido: "",
   allergies: "",
   medical_conditions: "",
   notes: "",
@@ -38,6 +39,18 @@ const goalOptions = [
   { value: "rendimiento", labelKey: "profile.goal.rendimiento" },
 ];
 
+const muscleOptions = [
+  { value: "", labelKey: "profile.muscle.select" },
+  { value: "pecho", labelKey: "profile.muscle.chest" },
+  { value: "espalda", labelKey: "profile.muscle.back" },
+  { value: "piernas", labelKey: "profile.muscle.legs" },
+  { value: "hombros", labelKey: "profile.muscle.shoulders" },
+  { value: "brazos", labelKey: "profile.muscle.arms" },
+  { value: "core", labelKey: "profile.muscle.core" },
+  { value: "fullbody", labelKey: "profile.muscle.fullbody" },
+  { value: "cardio", labelKey: "profile.muscle.cardio" },
+];
+
 function normalizeProfile(profile) {
   if (!profile) return { ...initialFormState };
   return {
@@ -47,6 +60,7 @@ function normalizeProfile(profile) {
     sex: profile.sex ?? "",
     activity_level: profile.activity_level ?? "",
     primary_goal: profile.primary_goal ?? "",
+    musculo_preferido: profile.musculo_preferido ?? "",
     allergies: profile.allergies ?? "",
     medical_conditions: profile.medical_conditions ?? "",
     notes: profile.notes ?? "",
@@ -226,6 +240,25 @@ export default function ProfilePage() {
                   <select id="primary_goal" name="primary_goal" className="form-select" value={form.primary_goal} onChange={handleChange}>
                     <option value="">{t("profile.goal.select")}</option>
                     {goalOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {t(option.labelKey)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="row g-3 mt-1">
+                <div className="col-md-6">
+                  <label htmlFor="musculo_preferido" className="form-label">{t("profile.fields.preferredMuscle")}</label>
+                  <select
+                    id="musculo_preferido"
+                    name="musculo_preferido"
+                    className="form-select"
+                    value={form.musculo_preferido}
+                    onChange={handleChange}
+                  >
+                    {muscleOptions.map((option) => (
                       <option key={option.value} value={option.value}>
                         {t(option.labelKey)}
                       </option>
