@@ -63,12 +63,14 @@ def test_profile_get_and_update(client, app):
         "primary_goal": "ganar_masa",
         "allergies": "lactosa",
         "medical_conditions": "asma",
+        "experience_level": "intermedio",
     }
     resp = client.put("/profile/me", json=update_payload)
     assert resp.status_code == 200
     profile = resp.get_json()["profile"]
     assert profile["weight_kg"] == 82.5
     assert profile["primary_goal"] == "ganar_masa"
+    assert profile["experience_level"] == "intermedio"
     assert profile["weight_bmi"] is not None
 
     # Comprueba sincronización con contexto de chat

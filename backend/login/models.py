@@ -107,6 +107,7 @@ class User(db.Model):
             "age_years": None,
             "sex": None,
             "activity_level": None,
+            "experience_level": None,
             "primary_goal": None,
             "allergies": None,
             "medical_conditions": None,

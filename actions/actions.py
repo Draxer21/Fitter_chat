@@ -132,22 +132,32 @@ def fetch_user_profile(ctx: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]
 
 
 def infer_training_level(profile: Optional[Dict[str, Any]]) -> Optional[str]:
-    """Mapea la actividad declarada en el perfil a un nivel de entrenamiento."""
+    """Determina el nivel de entrenamiento usando experiencia declarada o actividad."""
     if not profile:
         return None
-    activity = str(profile.get("activity_level") or "").strip().lower()
-    if not activity:
+
+    principiante = {"principiante", "beginner", "novato", "novata", "suave", "ligero", "ligera", "sedentario", "sedentaria", "descarga"}
+    intermedio = {"intermedio", "intermedia", "moderado", "moderada", "progresivo"}
+    avanzado = {"avanzado", "avanzada", "advanced", "explosivo", "desafiante", "atleta", "intenso", "intensa"}
+
+    def _map_level(value: str) -> Optional[str]:
+        if not value:
+            return None
+        if value in principiante:
+            return "principiante"
+        if value in intermedio:
+            return "intermedio"
+        if value in avanzado:
+            return "avanzado"
         return None
-    principiante = {"sedentario", "sedentaria", "ligero", "ligera", "bajo", "baja"}
-    intermedio = {"moderado", "moderada", "intermedio", "intermedia"}
-    avanzado = {"intenso", "intensa", "atleta", "avanzado", "avanzada"}
-    if activity in principiante:
-        return "principiante"
-    if activity in intermedio:
-        return "intermedio"
-    if activity in avanzado:
-        return "avanzado"
-    return None
+
+    experience = str(profile.get("experience_level") or "").strip().lower()
+    mapped = _map_level(experience)
+    if mapped:
+        return mapped
+
+    activity = str(profile.get("activity_level") or "").strip().lower()
+    return _map_level(activity)
 
 
 def profile_is_complete(profile: Optional[Dict[str, Any]]) -> bool:
