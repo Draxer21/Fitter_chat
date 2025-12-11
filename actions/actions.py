@@ -131,6 +131,25 @@ def fetch_user_profile(ctx: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]
     return profile
 
 
+def infer_training_level(profile: Optional[Dict[str, Any]]) -> Optional[str]:
+    """Mapea la actividad declarada en el perfil a un nivel de entrenamiento."""
+    if not profile:
+        return None
+    activity = str(profile.get("activity_level") or "").strip().lower()
+    if not activity:
+        return None
+    principiante = {"sedentario", "sedentaria", "ligero", "ligera", "bajo", "baja"}
+    intermedio = {"moderado", "moderada", "intermedio", "intermedia"}
+    avanzado = {"intenso", "intensa", "atleta", "avanzado", "avanzada"}
+    if activity in principiante:
+        return "principiante"
+    if activity in intermedio:
+        return "intermedio"
+    if activity in avanzado:
+        return "avanzado"
+    return None
+
+
 def profile_is_complete(profile: Optional[Dict[str, Any]]) -> bool:
     if not profile:
         return False
@@ -1346,7 +1365,7 @@ class ValidateRutinaForm(FormValidationAction):
         if v in permitidos:
             if v == "maquinas":
                 v = "máquinas"
-            return {"equipamiento": v}
+        return {"equipamiento": v}
         # heurística débil
         for k in permitidos:
             if k in v:
@@ -1375,6 +1394,56 @@ class ValidateRutinaForm(FormValidationAction):
             dispatcher.utter_message(text="El número de ejercicios debe ser entre 6 y 8. ¿Probamos con 6, 7 u 8?")
             return {"ejercicios_num": None}
         return {"ejercicios_num": float(n)}
+
+    def validate_nivel(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        v = self._norm_text(value)
+        aliases = {
+            "principiante": "principiante",
+            "novato": "principiante",
+            "básico": "principiante",
+            "basico": "principiante",
+            "suave": "principiante",
+            "ligero": "principiante",
+            "regenerativo": "principiante",
+            "descarga": "principiante",
+            "de descarga": "principiante",
+            "intermedio": "intermedio",
+            "intermedia": "intermedio",
+            "moderado": "intermedio",
+            "moderada": "intermedio",
+            "progresivo": "intermedio",
+            "intermedio bajo": "intermedio",
+            "intermedio alto": "intermedio",
+            "avanzado": "avanzado",
+            "avanzada": "avanzado",
+            "avanzado plus": "avanzado",
+            "desafiante": "avanzado",
+            "explosivo": "avanzado",
+        }
+        if v:
+            v = aliases.get(v, v)
+            if v in {"principiante", "intermedio", "avanzado"}:
+                return {"nivel": v}
+            dispatcher.utter_message(
+                text="No reconocí ese nivel. Usa principiante, intermedio o avanzado."
+            )
+            return {"nivel": None}
+
+        # Si no hay valor, intenta usar el perfil del usuario
+        ctx = ensure_authenticated_context(tracker)
+        profile = fetch_user_profile(ctx)
+        inferred = infer_training_level(profile)
+        if inferred:
+            dispatcher.utter_message(text=f"Asumiré nivel {inferred} según tu actividad registrada.")
+            return {"nivel": inferred}
+        dispatcher.utter_message(text="No tengo tu nivel, usaré intermedio por defecto. Si quieres otro, dímelo.")
+        return {"nivel": "intermedio"}
 
     def validate_musculo(
         self,
@@ -1543,7 +1612,8 @@ class ActionGenerarRutina(Action):
             dispatcher.utter_message(response="utter_ask_musculo")
             return []
         musculo = (raw_musculo or "brazos").lower()
-        nivel = (_slot(tracker, "nivel") or "intermedio").lower()
+        inferred_level = infer_training_level(profile_data)
+        nivel = (_slot(tracker, "nivel") or inferred_level or "intermedio").lower()
         objetivo = (_slot(tracker, "objetivo") or profile_goal or "fuerza").lower()
         equip = (_slot(tracker, "equipamiento") or "mancuernas").lower()
 
@@ -1696,7 +1766,8 @@ class ActionGenerarDieta(Action):
         # prefer explicit slot, then profile, then sensible default
         objetivo_slot = _slot(tracker, "objetivo")
         objetivo = (objetivo_slot or profile_goal or "equilibrada").lower()
-        nivel = (_slot(tracker, "nivel") or "intermedio").lower()
+        inferred_level = infer_training_level(profile_data)
+        nivel = (_slot(tracker, "nivel") or inferred_level or "intermedio").lower()
         alergias = _slot(tracker, "alergias") or (profile_data.get("allergies") if profile_data else None) or "ninguna"
         condiciones = _slot(tracker, "condiciones_salud") or (profile_data.get("medical_conditions") if profile_data else None) or "ninguna"
 
@@ -2031,9 +2102,13 @@ class ActionSugerirRutina(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
+        ctx = ensure_authenticated_context(tracker)
+        profile_data = fetch_user_profile(ctx) if ctx else None
+        inferred_level = infer_training_level(profile_data)
+
         objetivo = (_slot(tracker, "objetivo") or "hipertrofia").lower()
         musculo  = (_slot(tracker, "musculo")  or "fullbody").lower()
-        nivel    = (_slot(tracker, "nivel")    or "principiante").lower()
+        nivel    = (_slot(tracker, "nivel")    or inferred_level or "principiante").lower()
         equip    = (_slot(tracker, "equipamiento") or "mancuernas").lower()
 
         ejercicios = pick_exercises(musculo, equip, 6)
@@ -2059,9 +2134,13 @@ class ActionResumenRutina(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
+        ctx = ensure_authenticated_context(tracker)
+        profile_data = fetch_user_profile(ctx) if ctx else None
+        inferred_level = infer_training_level(profile_data)
+
         objetivo = _slot(tracker, "objetivo") or "general"
         musculo  = _slot(tracker, "musculo")  or "fullbody"
-        nivel    = _slot(tracker, "nivel")    or "principiante"
+        nivel    = _slot(tracker, "nivel")    or inferred_level or "principiante"
 
         routine_id = f"{musculo}-{nivel}-{int(datetime.now().timestamp())}"
 
