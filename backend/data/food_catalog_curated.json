@@ -556,1650 +556,276 @@
     "source": "curated"
   },
   {
-    "id": "7804647960535",
-    "name": "7804647960535",
-    "name_es": "7804647960535",
+    "id": "H001",
+    "name": "Avena seca",
+    "name_es": "Avena seca",
     "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:fats",
-      "en:vegetable-fats",
-      "en:vegetable-oils",
-      "en:fruit-and-fruit-seed-oils",
-      "en:coconut-oils"
+      "grains",
+      "breakfast"
     ],
-    "energy_kcal_100g": 900.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 0.0,
-    "fats_g_100g": 100.0,
-    "serving_size_g": 100.0,
-    "allergens": [],
-    "brands": "be organics",
-    "url": "https://world.openfoodfacts.org/product/7804647960535",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "8005120211390",
-    "name": "Noci sgusciate",
-    "name_es": "Noci sgusciate",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:fruits-and-vegetables-based-foods",
-      "en:fruits-based-foods",
-      "en:nuts-and-their-products",
-      "en:dried-products",
-      "en:nuts",
-      "en:dried-plant-based-foods",
-      "en:shelled-nuts",
-      "en:dried-fruits",
-      "en:walnuts"
-    ],
-    "energy_kcal_100g": 703.0,
-    "proteins_g_100g": 15.0,
-    "carbs_g_100g": 4.4,
-    "fats_g_100g": 68.0,
-    "serving_size_g": null,
-    "allergens": [
-      "en:nuts"
-    ],
-    "brands": "Noberasco",
-    "url": "https://world.openfoodfacts.org/product/8005120211390",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802420125416",
-    "name": "Maní sin sal Marco Polo",
-    "name_es": "Maní sin sal Marco Polo",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:fruits-and-vegetables-based-foods",
-      "en:legumes-and-their-products",
-      "en:snacks",
-      "en:legumes",
-      "en:fruits-based-foods",
-      "en:nuts-and-their-products",
-      "en:dried-products",
-      "en:nuts",
-      "en:dried-plant-based-foods",
-      "en:dried-fruits",
-      "en:peanuts"
-    ],
-    "energy_kcal_100g": 605.0,
-    "proteins_g_100g": 24.0,
-    "carbs_g_100g": 8.9,
-    "fats_g_100g": 52.6,
-    "serving_size_g": 28.0,
-    "allergens": [
-      "en:peanuts",
-      "en:soybeans"
-    ],
-    "brands": "Marco Polo",
-    "url": "https://world.openfoodfacts.org/product/7802420125416",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7790580110284",
-    "name": "Cofler Block Maní con Chocolate con Leche",
-    "name_es": "Cofler Block Maní con Chocolate con Leche",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:cocoa-and-its-products",
-      "en:confectioneries",
-      "en:chocolate-candies",
-      "en:bonbons",
-      "en:chocolates",
-      "en:chocolate-covered-nuts-and-fruits",
-      "en:milk-chocolates",
-      "en:chocolate-covered-nuts",
-      "en:chocolate-coated-peanuts"
-    ],
-    "energy_kcal_100g": 572.0,
-    "proteins_g_100g": 18.0,
-    "carbs_g_100g": 31.0,
-    "fats_g_100g": 42.0,
-    "serving_size_g": 20.0,
-    "allergens": [
-      "en:milk",
-      "en:peanuts",
-      "en:soybeans"
-    ],
-    "brands": "Arcor,Cofler",
-    "url": "https://world.openfoodfacts.org/product/7790580110284",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802215101489",
-    "name": "cacao 72% naranja",
-    "name_es": "cacao 72% naranja",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:cocoa-and-its-products",
-      "en:chocolates",
-      "en:dark-chocolates",
-      "en:dark-chocolates-with-orange"
-    ],
-    "energy_kcal_100g": 552.0,
-    "proteins_g_100g": 7.4,
-    "carbs_g_100g": 39.0,
-    "fats_g_100g": 40.7,
-    "serving_size_g": 26.0,
-    "allergens": [
-      "en:eggs",
-      "en:gluten",
-      "en:milk",
-      "en:nuts",
-      "en:peanuts",
-      "en:sesame-seeds",
-      "en:soybeans",
-      "en:sulphur-dioxide-and-sulphites"
-    ],
-    "brands": "Costa",
-    "url": "https://world.openfoodfacts.org/product/7802215101489",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802215104848",
-    "name": "Vizzio",
-    "name_es": "Vizzio",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:cocoa-and-its-products",
-      "en:confectioneries",
-      "en:chocolate-candies",
-      "en:bonbons",
-      "en:chocolates",
-      "en:chocolate-covered-nuts-and-fruits",
-      "en:milk-chocolates",
-      "en:chocolate-covered-nuts",
-      "en:chocolate-coated-almonds",
-      "en:flavoured-chocolates",
-      "en:flavoured-milk-chocolates"
-    ],
-    "energy_kcal_100g": 537.0,
-    "proteins_g_100g": 7.1,
-    "carbs_g_100g": 55.0,
-    "fats_g_100g": 32.1,
-    "serving_size_g": 28.0,
-    "allergens": [
-      "en:gluten",
-      "en:milk",
-      "en:nuts",
-      "en:peanuts",
-      "en:soybeans"
-    ],
-    "brands": "Costa,Vizzio",
-    "url": "https://world.openfoodfacts.org/product/7802215104848",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802215508547",
-    "name": "Donuts naranja",
-    "name_es": "Donuts naranja",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:biscuits-and-cakes",
-      "en:cakes",
-      "en:doughnuts"
-    ],
-    "energy_kcal_100g": 528.0,
-    "proteins_g_100g": 2.78,
-    "carbs_g_100g": 66.7,
-    "fats_g_100g": 27.8,
-    "serving_size_g": 36.0,
-    "allergens": [],
-    "brands": "Costa",
-    "url": "https://world.openfoodfacts.org/product/7802215508547",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802215121098",
-    "name": "Rolls Naranja",
-    "name_es": "Rolls Naranja",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks"
-    ],
-    "energy_kcal_100g": 511.0,
-    "proteins_g_100g": 5.6,
-    "carbs_g_100g": 67.0,
-    "fats_g_100g": 24.5,
-    "serving_size_g": 27.0,
-    "allergens": [
-      "en:eggs",
-      "en:gluten",
-      "en:milk",
-      "en:nuts",
-      "en:peanuts",
-      "en:sesame-seeds",
-      "en:soybeans",
-      "en:sulphur-dioxide-and-sulphites"
-    ],
-    "brands": "Costa",
-    "url": "https://world.openfoodfacts.org/product/7802215121098",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7790263119665",
-    "name": "Molino Natural naranja",
-    "name_es": "Molino Natural naranja",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:snacks",
-      "en:cereals-and-potatoes",
-      "en:seeds",
-      "en:sweet-snacks",
-      "en:biscuits-and-cakes",
-      "en:biscuits-and-crackers",
-      "en:cereals-and-their-products",
-      "en:biscuits",
-      "en:cereal-grains",
-      "en:dry-biscuits",
-      "en:oat",
-      "en:oatmeal-cookies"
-    ],
-    "energy_kcal_100g": 464.0,
-    "proteins_g_100g": 6.9,
-    "carbs_g_100g": 66.0,
-    "fats_g_100g": 19.0,
-    "serving_size_g": 26.0,
-    "allergens": [
-      "en:gluten",
-      "en:milk",
-      "en:peanuts",
-      "en:soybeans"
-    ],
-    "brands": "Okebon",
-    "url": "https://world.openfoodfacts.org/product/7790263119665",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7804646450099",
-    "name": "Galletas de arroz integral con cobertura sabor a chocolate semiamargo y naranja",
-    "name_es": "Galletas de arroz integral con cobertura sabor a chocolate semiamargo y naranja",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:specific-products",
-      "en:biscuits-and-cakes",
-      "en:products-for-specific-diets",
-      "en:biscuits",
-      "en:products-without-gluten",
-      "en:chocolate-biscuits",
-      "en:dark-chocolate-biscuits",
-      "en:gluten-free-biscuits",
-      "es:galleta-de-arroz",
-      "es:galletas-veganas"
-    ],
-    "energy_kcal_100g": 460.0,
-    "proteins_g_100g": 5.2,
-    "carbs_g_100g": 61.6,
-    "fats_g_100g": 20.4,
-    "serving_size_g": 25.0,
-    "allergens": [],
-    "brands": "Mizos",
-    "url": "https://world.openfoodfacts.org/product/7804646450099",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "02006079",
-    "name": "Aceite de Oliva Extra Virgen",
-    "name_es": "Aceite de Oliva Extra Virgen",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:fats",
-      "en:vegetable-fats",
-      "en:olive-tree-products",
-      "en:vegetable-oils",
-      "en:olive-oils",
-      "en:virgin-olive-oils"
-    ],
-    "energy_kcal_100g": 900.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 0.0,
-    "fats_g_100g": 100.0,
-    "serving_size_g": null,
-    "allergens": [],
-    "brands": "Olivo de Plata",
-    "url": "https://world.openfoodfacts.org/product/02006079",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7790272001005",
-    "name": "Aceite de girasol",
-    "name_es": "Aceite de girasol",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:fats",
-      "en:vegetable-fats",
-      "en:vegetable-oils",
-      "en:sunflower-seeds-and-their-products",
-      "en:sunflower-oils"
-    ],
-    "energy_kcal_100g": 831.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 0.0,
-    "fats_g_100g": 92.3,
-    "serving_size_g": null,
-    "allergens": [
-      "en:soybeans"
-    ],
-    "brands": "Natura",
-    "url": "https://world.openfoodfacts.org/product/7790272001005",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7793065000377",
-    "name": "Aceite",
-    "name_es": "Aceite",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:fats",
-      "en:specific-products",
-      "en:vegetable-fats",
-      "en:products-for-specific-diets",
-      "en:vegetable-oils",
-      "en:products-without-gluten",
-      "en:mixed-vegetable-oils"
-    ],
-    "energy_kcal_100g": 831.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 0.0,
-    "fats_g_100g": 92.3,
-    "serving_size_g": null,
-    "allergens": [
-      "en:soybeans"
-    ],
-    "brands": "Índigo",
-    "url": "https://world.openfoodfacts.org/product/7793065000377",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7804608220005",
-    "name": "Aceite Vegetal",
-    "name_es": "Aceite Vegetal",
-    "categories": [
-      "es:aceite-vegetal"
-    ],
-    "energy_kcal_100g": 828.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 0.0,
-    "fats_g_100g": 92.0,
-    "serving_size_g": null,
-    "allergens": [
-      "en:soybeans"
-    ],
-    "brands": "Coliseo",
-    "url": "https://world.openfoodfacts.org/product/7804608220005",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7790272006581",
-    "name": "100% Maravilla aceite",
-    "name_es": "100% Maravilla aceite",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:fats",
-      "en:vegetable-fats",
-      "en:vegetable-oils",
-      "en:sunflower-seeds-and-their-products",
-      "en:sunflower-oils"
-    ],
-    "energy_kcal_100g": 828.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 0.0,
-    "fats_g_100g": 92.0,
-    "serving_size_g": null,
-    "allergens": [],
-    "brands": "Lider",
-    "url": "https://world.openfoodfacts.org/product/7790272006581",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7808725800003",
-    "name": "Aceite de Olive Extra Virgen",
-    "name_es": "Aceite de Olive Extra Virgen",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:fats",
-      "en:vegetable-fats",
-      "en:olive-tree-products",
-      "en:vegetable-oils",
-      "en:olive-oils",
-      "en:extra-virgin-olive-oils"
-    ],
-    "energy_kcal_100g": 828.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 0.0,
-    "fats_g_100g": 92.0,
-    "serving_size_g": null,
-    "allergens": [],
-    "brands": "Kardámili",
-    "url": "https://world.openfoodfacts.org/product/7808725800003",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802810012029",
-    "name": "Aceite Belmont",
-    "name_es": "Aceite Belmont",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:fats",
-      "en:vegetable-fats"
-    ],
-    "energy_kcal_100g": 828.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 0.0,
-    "fats_g_100g": 92.0,
-    "serving_size_g": null,
-    "allergens": [
-      "en:soybeans"
-    ],
-    "brands": "Belmont",
-    "url": "https://world.openfoodfacts.org/product/7802810012029",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7808725800010",
-    "name": "Aceite de Oliva Extra Virgen",
-    "name_es": "Aceite de Oliva Extra Virgen",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:fats",
-      "en:vegetable-fats",
-      "en:olive-tree-products",
-      "en:vegetable-oils",
-      "en:olive-oils",
-      "en:extra-virgin-olive-oils"
-    ],
-    "energy_kcal_100g": 828.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 0.0,
-    "fats_g_100g": 92.0,
-    "serving_size_g": null,
-    "allergens": [],
-    "brands": "Kardámili",
-    "url": "https://world.openfoodfacts.org/product/7808725800010",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7808743600555",
-    "name": "Aceite vegetal",
-    "name_es": "Aceite vegetal",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:fats",
-      "en:vegetable-fats"
-    ],
-    "energy_kcal_100g": 827.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": null,
-    "fats_g_100g": 92.0,
-    "serving_size_g": null,
-    "allergens": [
-      "en:soybeans"
-    ],
-    "brands": "Bonanza",
-    "url": "https://world.openfoodfacts.org/product/7808743600555",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7807910038283",
-    "name": "Aceite de oliva",
-    "name_es": "Aceite de oliva",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:fats",
-      "en:vegetable-fats",
-      "en:olive-tree-products",
-      "en:vegetable-oils",
-      "en:olive-oils",
-      "en:extra-virgin-olive-oils",
-      "en:virgin-olive-oils"
-    ],
-    "energy_kcal_100g": 825.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 0.0,
-    "fats_g_100g": 91.6,
-    "serving_size_g": null,
-    "allergens": [],
-    "brands": "Cousine & co.",
-    "url": "https://world.openfoodfacts.org/product/7807910038283",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802900001360",
-    "name": "Queso Rallado",
-    "name_es": "Queso Rallado",
-    "categories": [
-      "en:dairies",
-      "en:fermented-foods",
-      "en:fermented-milk-products",
-      "en:cheeses",
-      "en:italian-cheeses",
-      "en:parmigiano-reggiano"
-    ],
-    "energy_kcal_100g": 516.0,
-    "proteins_g_100g": 45.0,
-    "carbs_g_100g": 2.0,
-    "fats_g_100g": 36.0,
-    "serving_size_g": 10.0,
-    "allergens": [],
-    "brands": "Soprole",
-    "url": "https://world.openfoodfacts.org/product/7802900001360",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802920423814",
-    "name": "Queso fino rallado Reggianito",
-    "name_es": "Queso fino rallado Reggianito",
-    "categories": [
-      "en:dairies",
-      "en:fermented-foods",
-      "en:fermented-milk-products",
-      "en:cheeses",
-      "en:grated-cheese"
-    ],
-    "energy_kcal_100g": 466.0,
-    "proteins_g_100g": 48.7,
-    "carbs_g_100g": 0.0,
-    "fats_g_100g": 30.1,
-    "serving_size_g": 10.0,
-    "allergens": [
-      "en:milk"
-    ],
-    "brands": "Colun",
-    "url": "https://world.openfoodfacts.org/product/7802920423814",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802920116006",
-    "name": "Queso fino rallado parmesano",
-    "name_es": "Queso fino rallado parmesano",
-    "categories": [
-      "en:dairies",
-      "en:fermented-foods",
-      "en:fermented-milk-products",
-      "en:cheeses",
-      "en:grated-cheese"
-    ],
-    "energy_kcal_100g": 465.0,
-    "proteins_g_100g": 46.5,
-    "carbs_g_100g": 0.0,
-    "fats_g_100g": 31.0,
-    "serving_size_g": 10.0,
-    "allergens": [
-      "en:milk"
-    ],
-    "brands": "Colún",
-    "url": "https://world.openfoodfacts.org/product/7802920116006",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802920116013",
-    "name": "queso rallado parmesano",
-    "name_es": "queso rallado parmesano",
-    "categories": [
-      "en:dairies",
-      "en:fermented-foods",
-      "en:fermented-milk-products",
-      "en:cheeses",
-      "en:italian-cheeses",
-      "en:grated-cheese",
-      "en:parmigiano-reggiano"
-    ],
-    "energy_kcal_100g": 465.0,
-    "proteins_g_100g": 46.5,
-    "carbs_g_100g": 0.0,
-    "fats_g_100g": 31.0,
-    "serving_size_g": null,
-    "allergens": [
-      "en:milk"
-    ],
-    "brands": "colun",
-    "url": "https://world.openfoodfacts.org/product/7802920116013",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7790742127907",
-    "name": "Queso Rallado Reggianito",
-    "name_es": "Queso Rallado Reggianito",
-    "categories": [
-      "en:dairies",
-      "en:fermented-foods",
-      "en:fermented-milk-products",
-      "en:cheeses",
-      "en:specific-products",
-      "en:cow-cheeses",
-      "en:products-for-specific-diets",
-      "en:products-without-gluten",
-      "en:grated-cheese"
-    ],
-    "energy_kcal_100g": 456.0,
-    "proteins_g_100g": 40.0,
-    "carbs_g_100g": 2.0,
-    "fats_g_100g": 32.0,
-    "serving_size_g": 10.0,
-    "allergens": [
-      "en:milk"
-    ],
-    "brands": "La Serenísima",
-    "url": "https://world.openfoodfacts.org/product/7790742127907",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802910007611",
-    "name": "7802910007611",
-    "name_es": "7802910007611",
-    "categories": [],
-    "energy_kcal_100g": 365.0,
-    "proteins_g_100g": 46.0,
-    "carbs_g_100g": 67.0,
-    "fats_g_100g": 3.5,
-    "serving_size_g": 100.0,
-    "allergens": [],
-    "brands": "Lonco Leche",
-    "url": "https://world.openfoodfacts.org/product/7802910007611",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7613031916993",
-    "name": "Leche Entera",
-    "name_es": "Leche Entera",
-    "categories": [
-      "en:beverages-and-beverages-preparations",
-      "en:beverages",
-      "en:dairies",
-      "en:milks-liquid-and-powder",
-      "en:specific-products",
-      "en:dried-products",
-      "en:milks",
-      "en:products-for-specific-diets",
-      "en:dried-products-to-be-rehydrated",
-      "en:products-without-gluten",
-      "en:dehydrated-beverages",
-      "en:whole-milks",
-      "en:milk-powders",
-      "en:whole-milk-powder"
-    ],
-    "energy_kcal_100g": 496.0,
-    "proteins_g_100g": 23.0,
-    "carbs_g_100g": 42.0,
-    "fats_g_100g": 26.2,
-    "serving_size_g": null,
-    "allergens": [
-      "en:milk",
-      "en:soybeans"
-    ],
-    "brands": "Nido,Nestlé",
-    "url": "https://world.openfoodfacts.org/product/7613031916993",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802920009865",
-    "name": "Leche descremada instantánea",
-    "name_es": "Leche descremada instantánea",
-    "categories": [
-      "en:beverages",
-      "en:dairies",
-      "en:dried-products",
-      "en:milks",
-      "en:dried-products-to-be-rehydrated",
-      "en:dehydrated-beverages",
-      "en:skimmed-milks",
-      "en:lactose-free-milk",
-      "en:milk-powders",
-      "en:skimmed-milk-powder"
-    ],
-    "energy_kcal_100g": 353.0,
-    "proteins_g_100g": 35.0,
-    "carbs_g_100g": 52.0,
-    "fats_g_100g": 0.5,
-    "serving_size_g": 20.0,
-    "allergens": [],
-    "brands": "Colun",
-    "url": "https://world.openfoodfacts.org/product/7802920009865",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7804673910085",
-    "name": "Wild Protein Chocolate - Maní",
-    "name_es": "Wild Protein Chocolate - Maní",
-    "categories": [
-      "en:dietary-supplements",
-      "en:bodybuilding-supplements",
-      "en:protein-bars"
-    ],
-    "energy_kcal_100g": 652.0,
-    "proteins_g_100g": 74.1,
-    "carbs_g_100g": 79.0,
-    "fats_g_100g": 21.7,
-    "serving_size_g": 45.0,
-    "allergens": [
-      "en:peanuts"
-    ],
-    "brands": "Wild Foods",
-    "url": "https://world.openfoodfacts.org/product/7804673910085",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7804651860456",
-    "name": "MANTEQUILLA DE MANÍ",
-    "name_es": "MANTEQUILLA DE MANÍ",
-    "categories": [
-      "es:mantequilla-de-mani"
-    ],
-    "energy_kcal_100g": 606.0,
-    "proteins_g_100g": 25.0,
-    "carbs_g_100g": 14.0,
-    "fats_g_100g": 50.0,
-    "serving_size_g": 20.0,
-    "allergens": [
-      "en:peanuts"
-    ],
-    "brands": "manare.",
-    "url": "https://world.openfoodfacts.org/product/7804651860456",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7804612220763",
-    "name": "Maní sin sal",
-    "name_es": "Maní sin sal",
-    "categories": [],
-    "energy_kcal_100g": 623.0,
-    "proteins_g_100g": 22.3,
-    "carbs_g_100g": 21.5,
-    "fats_g_100g": 49.8,
-    "serving_size_g": null,
-    "allergens": [],
-    "brands": "",
-    "url": "https://world.openfoodfacts.org/product/7804612220763",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7798151952769",
-    "name": "Manteca de maní",
-    "name_es": "Manteca de maní",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:legumes-and-their-products",
-      "en:spreads",
-      "en:nuts-and-their-products",
-      "en:plant-based-spreads",
-      "en:oilseed-purees",
-      "en:legume-butters",
-      "en:nut-butters",
-      "en:peanut-butters"
-    ],
-    "energy_kcal_100g": 583.0,
-    "proteins_g_100g": 23.0,
-    "carbs_g_100g": 17.0,
-    "fats_g_100g": 47.0,
-    "serving_size_g": null,
-    "allergens": [
-      "en:soybeans",
-      "en:peanuts"
-    ],
-    "brands": "King",
-    "url": "https://world.openfoodfacts.org/product/7798151952769",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "0400006967992",
-    "name": "mantequilla de mani",
-    "name_es": "mantequilla de mani",
-    "categories": [],
-    "energy_kcal_100g": 600.0,
-    "proteins_g_100g": 20.0,
-    "carbs_g_100g": 20.0,
-    "fats_g_100g": 53.3,
-    "serving_size_g": 15.0,
-    "allergens": [],
-    "brands": "Great Value",
-    "url": "https://world.openfoodfacts.org/product/0400006967992",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7804673910030",
-    "name": "wild protein chocolate maní",
-    "name_es": "wild protein chocolate maní",
-    "categories": [
-      "en:dietary-supplements",
-      "en:bodybuilding-supplements",
-      "en:protein-bars"
-    ],
-    "energy_kcal_100g": 398.0,
-    "proteins_g_100g": 33.3,
-    "carbs_g_100g": 35.8,
-    "fats_g_100g": 13.6,
-    "serving_size_g": 45.0,
-    "allergens": [
-      "en:milk",
-      "en:nuts",
-      "en:peanuts",
-      "en:soybeans",
-      "en:sulphur-dioxide-and-sulphites"
-    ],
-    "brands": "Wild",
-    "url": "https://world.openfoodfacts.org/product/7804673910030",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7804000002087",
-    "name": "Chocolate con Almendras Nuss",
-    "name_es": "Chocolate con Almendras Nuss",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:cocoa-and-its-products",
-      "en:specific-products",
-      "en:products-for-specific-diets",
-      "en:chocolates",
-      "en:products-without-gluten",
-      "en:chocolates-with-sweeteners",
-      "en:milk-chocolates",
-      "en:chocolates-with-almonds",
-      "en:flavoured-chocolates",
-      "en:flavoured-milk-chocolates",
-      "en:milk-chocolate-bar",
-      "en:milk-chocolates-with-sweeteners"
-    ],
-    "energy_kcal_100g": 464.0,
+    "energy_kcal_100g": 389,
     "proteins_g_100g": 16.0,
-    "carbs_g_100g": 32.0,
-    "fats_g_100g": 34.0,
-    "serving_size_g": 30.0,
+    "carbs_g_100g": 66.0,
+    "fats_g_100g": 7.0,
+    "serving_size_g": 50,
     "allergens": [
-      "en:milk",
-      "en:nuts",
-      "en:soybeans"
+      "gluten"
     ],
-    "brands": "En línea",
-    "url": "https://world.openfoodfacts.org/product/7804000002087",
-    "source": "openfoodfacts_chile"
+    "brands": "",
+    "url": "",
+    "source": "curated"
   },
   {
-    "id": "7773400002259",
-    "name": "Andean Quinoa Cookies Chocolate Chips",
-    "name_es": "Andean Quinoa Cookies Chocolate Chips",
+    "id": "H002",
+    "name": "Arroz blanco cocido",
+    "name_es": "Arroz blanco cocido",
     "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:biscuits-and-cakes",
-      "en:biscuits-and-crackers",
-      "en:specific-products",
-      "en:biscuits",
-      "en:products-for-specific-diets",
-      "en:products-without-gluten",
-      "en:dry-biscuits",
-      "en:gluten-free-biscuits"
+      "grains"
     ],
-    "energy_kcal_100g": 566.3,
-    "proteins_g_100g": 4.6,
-    "carbs_g_100g": 72.3,
-    "fats_g_100g": 28.69,
-    "serving_size_g": 2.0,
-    "allergens": [],
-    "brands": "Mesonot",
-    "url": "https://world.openfoodfacts.org/product/7773400002259",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7792360091769",
-    "name": "Maní crocante",
-    "name_es": "Maní crocante",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:cocoa-and-its-products",
-      "en:confectioneries",
-      "en:festive-foods",
-      "en:chocolate-candies",
-      "en:christmas-foods-and-drinks",
-      "en:bonbons",
-      "en:christmas-sweets",
-      "en:chocolate-covered-nuts",
-      "en:chocolate-covered-peanuts"
-    ],
-    "energy_kcal_100g": 508.0,
-    "proteins_g_100g": 9.6,
-    "carbs_g_100g": 56.0,
-    "fats_g_100g": 27.2,
-    "serving_size_g": 25.0,
-    "allergens": [
-      "en:gluten",
-      "en:milk",
-      "en:peanuts",
-      "en:soybeans"
-    ],
-    "brands": "Bonafide,Vizzio",
-    "url": "https://world.openfoodfacts.org/product/7792360091769",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7750885014700",
-    "name": "Cereal Bar Nuts Almendras",
-    "name_es": "Cereal Bar Nuts Almendras",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:bars",
-      "en:cereal-bars",
-      "en:nuts-cereal-bars",
-      "en:cereal-bar-with-almonds-or-hazelnuts"
-    ],
-    "energy_kcal_100g": 486.0,
-    "proteins_g_100g": 9.9,
-    "carbs_g_100g": 51.5,
-    "fats_g_100g": 26.7,
-    "serving_size_g": null,
-    "allergens": [
-      "en:eggs",
-      "en:gluten",
-      "en:milk",
-      "en:peanuts",
-      "en:soybeans"
-    ],
-    "brands": "Costa",
-    "url": "https://world.openfoodfacts.org/product/7750885014700",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7790263119658",
-    "name": "10 Semillas",
-    "name_es": "10 Semillas",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:biscuits-and-cakes",
-      "en:biscuits",
-      "en:dry-biscuits",
-      "en:oatmeal-cookies"
-    ],
-    "energy_kcal_100g": 463.0,
-    "proteins_g_100g": 7.5,
-    "carbs_g_100g": 65.0,
-    "fats_g_100g": 19.0,
-    "serving_size_g": 26.5,
-    "allergens": [
-      "en:gluten",
-      "en:milk",
-      "en:sesame-seeds",
-      "en:soybeans",
-      "es:avena"
-    ],
-    "brands": "Molino Natural, Okebon",
-    "url": "https://world.openfoodfacts.org/product/7790263119658",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7790045000570",
-    "name": "Granola Avellanas, avena & cacao",
-    "name_es": "Granola Avellanas, avena & cacao",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:biscuits-and-cakes",
-      "en:biscuits",
-      "en:dry-biscuits",
-      "en:oatmeal-cookies"
-    ],
-    "energy_kcal_100g": 452.0,
-    "proteins_g_100g": 7.4,
-    "carbs_g_100g": 65.0,
-    "fats_g_100g": 18.0,
-    "serving_size_g": 3.0,
-    "allergens": [
-      "en:gluten",
-      "en:nuts",
-      "en:sulphur-dioxide-and-sulphites",
-      "es:avena"
-    ],
-    "brands": "Granix, Granola",
-    "url": "https://world.openfoodfacts.org/product/7790045000570",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7790045825395",
-    "name": "Frutigran Avena, Chía y Lino",
-    "name_es": "Frutigran Avena, Chía y Lino",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:biscuits-and-cakes",
-      "en:biscuits-and-crackers",
-      "en:biscuits",
-      "en:dry-biscuits",
-      "en:oatmeal-biscuits"
-    ],
-    "energy_kcal_100g": 447.0,
-    "proteins_g_100g": 7.7,
-    "carbs_g_100g": 68.0,
-    "fats_g_100g": 16.0,
-    "serving_size_g": 2.0,
-    "allergens": [
-      "en:gluten",
-      "en:sulphur-dioxide-and-sulphites",
-      "es:avena"
-    ],
-    "brands": "Granix,Frutigran",
-    "url": "https://world.openfoodfacts.org/product/7790045825395",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7790045000587",
-    "name": "Granola Almendras, avena & coco",
-    "name_es": "Granola Almendras, avena & coco",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:biscuits-and-cakes",
-      "en:biscuits",
-      "en:dry-biscuits",
-      "en:oatmeal-cookies"
-    ],
-    "energy_kcal_100g": 442.0,
-    "proteins_g_100g": 7.5,
-    "carbs_g_100g": 58.0,
-    "fats_g_100g": 20.0,
-    "serving_size_g": 3.0,
-    "allergens": [
-      "en:gluten",
-      "en:nuts",
-      "en:sulphur-dioxide-and-sulphites",
-      "es:avena"
-    ],
-    "brands": "Granix,Granola",
-    "url": "https://world.openfoodfacts.org/product/7790045000587",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7804000001905",
-    "name": "chocolate 85÷cacao",
-    "name_es": "chocolate 85÷cacao",
-    "categories": [
-      "es:chocolate-sin-azucar"
-    ],
-    "energy_kcal_100g": 1670.0,
-    "proteins_g_100g": 34.4,
-    "carbs_g_100g": 111.0,
-    "fats_g_100g": 144.0,
-    "serving_size_g": 30.0,
-    "allergens": [
-      "en:soybeans"
-    ],
-    "brands": "Enlinea",
-    "url": "https://world.openfoodfacts.org/product/7804000001905",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802215502514",
-    "name": "DINDON",
-    "name_es": "DINDON",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:biscuits-and-cakes",
-      "en:biscuits-and-crackers",
-      "en:biscuits",
-      "en:chocolate-biscuits",
-      "en:filled-biscuits",
-      "en:milk-chocolate-biscuits",
-      "en:sandwich-biscuits",
-      "en:chocolate-sandwich-cookies"
-    ],
-    "energy_kcal_100g": 509.0,
+    "energy_kcal_100g": 130,
     "proteins_g_100g": 2.7,
-    "carbs_g_100g": 72.0,
-    "fats_g_100g": 23.4,
-    "serving_size_g": 36.0,
-    "allergens": [
-      "en:eggs",
-      "en:gluten",
-      "en:milk",
-      "en:soybeans"
-    ],
-    "brands": "Costa,Dindon",
-    "url": "https://world.openfoodfacts.org/product/7802215502514",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802215121241",
-    "name": "Rolls Blanco Crocante",
-    "name_es": "Rolls Blanco Crocante",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:cocoa-and-its-products",
-      "en:confectioneries",
-      "en:chocolate-candies",
-      "en:bonbons",
-      "en:chocolates",
-      "en:white-chocolates",
-      "en:filled-chocolates",
-      "en:filled-white-chocolates",
-      "en:flavoured-chocolates",
-      "en:flavoured-white-chocolates"
-    ],
-    "energy_kcal_100g": 524.0,
-    "proteins_g_100g": 4.6,
-    "carbs_g_100g": 69.0,
-    "fats_g_100g": 25.5,
-    "serving_size_g": 25.6,
-    "allergens": [
-      "en:gluten",
-      "en:milk",
-      "en:soybeans"
-    ],
-    "brands": "Carozzi,Costa,Rolls",
-    "url": "https://world.openfoodfacts.org/product/7802215121241",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "78040267",
-    "name": "Krapulito",
-    "name_es": "Krapulito",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:snacks",
-      "en:breakfasts",
-      "en:cereals-and-potatoes",
-      "en:sweet-snacks",
-      "en:cereals-and-their-products",
-      "en:cocoa-and-its-products",
-      "en:breakfast-cereals",
-      "en:chocolates",
-      "en:extruded-cereals",
-      "en:milk-chocolates",
-      "en:cereal-chocolates",
-      "en:puffed-cereal-milk-chocolates"
-    ],
-    "energy_kcal_100g": 477.0,
-    "proteins_g_100g": 4.0,
-    "carbs_g_100g": 78.0,
-    "fats_g_100g": 17.0,
-    "serving_size_g": 13.0,
-    "allergens": [
-      "en:soybeans",
-      "es:tartrazina"
-    ],
-    "brands": "Inco,Krapulito",
-    "url": "https://world.openfoodfacts.org/product/78040267",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7613032464042",
-    "name": "Galletas Triton",
-    "name_es": "Galletas Triton",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:biscuits-and-cakes",
-      "en:biscuits-and-crackers",
-      "en:biscuits",
-      "en:filled-biscuits",
-      "en:chocolate-sandwich-cookies"
-    ],
-    "energy_kcal_100g": 705.0,
-    "proteins_g_100g": 5.5,
-    "carbs_g_100g": 32.25,
-    "fats_g_100g": 21.75,
-    "serving_size_g": 40.0,
-    "allergens": [],
-    "brands": "McKay",
-    "url": "https://world.openfoodfacts.org/product/7613032464042",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802215515019",
-    "name": "Gretel Chocolate",
-    "name_es": "Gretel Chocolate",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:biscuits-and-cakes",
-      "en:biscuits-and-crackers",
-      "en:biscuits",
-      "en:filled-biscuits",
-      "en:biscuit-cookie-snack-w-chocolate-filling"
-    ],
-    "energy_kcal_100g": 525.0,
-    "proteins_g_100g": 5.0,
-    "carbs_g_100g": 67.2,
-    "fats_g_100g": 26.3,
-    "serving_size_g": 30.0,
-    "allergens": [
-      "en:eggs",
-      "en:gluten",
-      "en:milk",
-      "en:none",
-      "en:soybeans",
-      "en:sulphur-dioxide-and-sulphites"
-    ],
-    "brands": "Costa",
-    "url": "https://world.openfoodfacts.org/product/7802215515019",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7801620005160",
-    "name": "7801620005160",
-    "name_es": "7801620005160",
-    "categories": [
-      "en:5"
-    ],
-    "energy_kcal_100g": 24.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 6.0,
-    "fats_g_100g": 0.0,
-    "serving_size_g": null,
-    "allergens": [],
-    "brands": "GATORADE",
-    "url": "https://world.openfoodfacts.org/product/7801620005160",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7801620005191",
-    "name": "Gatorade cool blue",
-    "name_es": "Gatorade cool blue",
-    "categories": [],
-    "energy_kcal_100g": 24.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 6.0,
-    "fats_g_100g": 0.0,
-    "serving_size_g": null,
+    "carbs_g_100g": 28.0,
+    "fats_g_100g": 0.3,
+    "serving_size_g": 120,
     "allergens": [],
     "brands": "",
-    "url": "https://world.openfoodfacts.org/product/7801620005191",
-    "source": "openfoodfacts_chile"
+    "url": "",
+    "source": "curated"
   },
   {
-    "id": "7801620005153",
-    "name": "Gatorade 1 litro",
-    "name_es": "Gatorade 1 litro",
+    "id": "H003",
+    "name": "Pasta integral cocida",
+    "name_es": "Pasta integral cocida",
     "categories": [
-      "en:beverages"
+      "grains"
     ],
-    "energy_kcal_100g": 24.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 5.9,
-    "fats_g_100g": 0.0,
-    "serving_size_g": null,
-    "allergens": [],
-    "brands": "Gatorade",
-    "url": "https://world.openfoodfacts.org/product/7801620005153",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802820851052",
-    "name": "Powerade naranja",
-    "name_es": "Powerade naranja",
-    "categories": [],
-    "energy_kcal_100g": 21.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 4.9,
-    "fats_g_100g": 0.0,
-    "serving_size_g": null,
-    "allergens": [],
-    "brands": "Powerade",
-    "url": "https://world.openfoodfacts.org/product/7802820851052",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7803468002523",
-    "name": "Pan Pita Integral",
-    "name_es": "Pan Pita Integral",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:cereals-and-potatoes",
-      "en:cereals-and-their-products",
-      "en:breads",
-      "en:flatbreads",
-      "en:special-breads",
-      "en:pitas"
-    ],
-    "energy_kcal_100g": 630.0,
-    "proteins_g_100g": 27.0,
-    "carbs_g_100g": 312.0,
-    "fats_g_100g": 5.54,
-    "serving_size_g": 38.0,
-    "allergens": [],
-    "brands": "Castaño",
-    "url": "https://world.openfoodfacts.org/product/7803468002523",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802615006551",
-    "name": "Arroz Largo Ancho grado 1",
-    "name_es": "Arroz Largo Ancho grado 1",
-    "categories": [],
-    "energy_kcal_100g": 672.0,
-    "proteins_g_100g": 13.6,
-    "carbs_g_100g": 148.0,
-    "fats_g_100g": 2.8,
-    "serving_size_g": 50.0,
-    "allergens": [],
-    "brands": "Miraflores",
-    "url": "https://world.openfoodfacts.org/product/7802615006551",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "8853969000046",
-    "name": "arroz con aroma jazmin",
-    "name_es": "arroz con aroma jazmin",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:cereals-and-potatoes",
-      "en:seeds",
-      "en:cereals-and-their-products",
-      "en:cereal-grains",
-      "en:rices"
-    ],
-    "energy_kcal_100g": 720.0,
-    "proteins_g_100g": 12.0,
-    "carbs_g_100g": null,
-    "fats_g_100g": 1.4,
-    "serving_size_g": 50.0,
-    "allergens": [],
-    "brands": "yang's brand",
-    "url": "https://world.openfoodfacts.org/product/8853969000046",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802000017131",
-    "name": "Pasar corte Americano",
-    "name_es": "Pasar corte Americano",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:snacks",
-      "en:cereals-and-potatoes",
-      "en:salty-snacks",
-      "en:appetizers",
-      "en:chips-and-fries",
-      "en:crisps",
-      "en:potato-crisps",
-      "en:potato-crisps-in-sunflower-oil"
-    ],
-    "energy_kcal_100g": 550.0,
-    "proteins_g_100g": 6.48,
-    "carbs_g_100g": 55.4,
-    "fats_g_100g": 33.6,
-    "serving_size_g": null,
+    "energy_kcal_100g": 150,
+    "proteins_g_100g": 5.5,
+    "carbs_g_100g": 30.0,
+    "fats_g_100g": 2.0,
+    "serving_size_g": 140,
     "allergens": [
-      "en:gluten",
-      "en:soybeans"
+      "gluten"
     ],
-    "brands": "Lay's",
-    "url": "https://world.openfoodfacts.org/product/7802000017131",
-    "source": "openfoodfacts_chile"
+    "brands": "",
+    "url": "",
+    "source": "curated"
   },
   {
-    "id": "7802800535569",
-    "name": "Kryzpo Sabor Original",
-    "name_es": "Kryzpo Sabor Original",
+    "id": "H004",
+    "name": "Papa cocida",
+    "name_es": "Papa cocida",
     "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:snacks",
-      "en:cereals-and-potatoes",
-      "en:salty-snacks",
-      "en:appetizers",
-      "en:chips-and-fries",
-      "en:crisps",
-      "en:potato-crisps"
+      "carb"
     ],
-    "energy_kcal_100g": 548.0,
-    "proteins_g_100g": 5.7,
-    "carbs_g_100g": 56.7,
-    "fats_g_100g": 33.0,
-    "serving_size_g": 40.0,
-    "allergens": [
-      "en:sulphur-dioxide-and-sulphites"
-    ],
-    "brands": "Kryzpo",
-    "url": "https://world.openfoodfacts.org/product/7802800535569",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "78020757",
-    "name": "Sapito Rellenos con Leche y Cereales",
-    "name_es": "Sapito Rellenos con Leche y Cereales",
-    "categories": [
-      "en:snacks",
-      "en:sweet-snacks",
-      "en:cocoa-and-its-products",
-      "en:chocolates",
-      "en:milk-chocolates",
-      "en:filled-chocolates",
-      "en:filled-milk-chocolates",
-      "en:flavoured-chocolates",
-      "en:flavoured-milk-chocolates"
-    ],
-    "energy_kcal_100g": 531.0,
-    "proteins_g_100g": 5.8,
-    "carbs_g_100g": 60.0,
-    "fats_g_100g": 30.0,
-    "serving_size_g": 20.0,
-    "allergens": [
-      "en:gluten",
-      "en:milk",
-      "en:soybeans"
-    ],
-    "brands": "Arcor,Sapito",
-    "url": "https://world.openfoodfacts.org/product/78020757",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802420150104",
-    "name": "Papas fritas",
-    "name_es": "Papas fritas",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:snacks",
-      "en:cereals-and-potatoes",
-      "en:salty-snacks",
-      "en:appetizers",
-      "en:chips-and-fries",
-      "en:crisps",
-      "en:potato-crisps",
-      "es:alimentos-procesados"
-    ],
-    "energy_kcal_100g": 582.0,
-    "proteins_g_100g": 6.0,
-    "carbs_g_100g": null,
-    "fats_g_100g": 15.0,
-    "serving_size_g": 100.0,
-    "allergens": [
-      "en:milk",
-      "en:peanuts"
-    ],
-    "brands": "Marco Polo",
-    "url": "https://world.openfoodfacts.org/product/7802420150104",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "0038000185069",
-    "name": "Pringles Barbacoa",
-    "name_es": "Pringles Barbacoa",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:plant-based-foods",
-      "en:snacks",
-      "en:cereals-and-potatoes",
-      "en:salty-snacks",
-      "en:appetizers",
-      "en:chips-and-fries",
-      "en:crisps",
-      "en:potato-crisps",
-      "en:flavoured-potato-crisps",
-      "en:barbecue-crisps",
-      "en:salty-snacks-made-from-potato"
-    ],
-    "energy_kcal_100g": 518.0,
-    "proteins_g_100g": 5.0,
-    "carbs_g_100g": 57.0,
-    "fats_g_100g": 30.0,
-    "serving_size_g": 25.0,
-    "allergens": [
-      "en:gluten",
-      "en:milk",
-      "en:soybeans"
-    ],
-    "brands": "Pringles",
-    "url": "https://world.openfoodfacts.org/product/0038000185069",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802800576418",
-    "name": "Jugo en Polvo Sabor Naranja",
-    "name_es": "Jugo en Polvo Sabor Naranja",
-    "categories": [
-      "es:bebida-instantanea-en-polvo"
-    ],
-    "energy_kcal_100g": 274.0,
-    "proteins_g_100g": 3.6,
-    "carbs_g_100g": 23.0,
-    "fats_g_100g": 0.0,
-    "serving_size_g": null,
-    "allergens": [],
-    "brands": "Livean",
-    "url": "https://world.openfoodfacts.org/product/7802800576418",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7802800576456",
-    "name": "Livean",
-    "name_es": "Livean",
-    "categories": [
-      "en:beverages-and-beverages-preparations",
-      "en:plant-based-foods-and-beverages",
-      "en:beverages",
-      "en:plant-based-beverages",
-      "en:fruit-based-beverages",
-      "en:juices-and-nectars",
-      "en:fruit-juices"
-    ],
-    "energy_kcal_100g": 15.0,
-    "proteins_g_100g": 30.0,
-    "carbs_g_100g": 47.0,
-    "fats_g_100g": null,
-    "serving_size_g": null,
-    "allergens": [],
-    "brands": "Livean",
-    "url": "https://world.openfoodfacts.org/product/7802800576456",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "0082592194152",
-    "name": "100% Juice Smoothie Strawberry Banana",
-    "name_es": "100% Juice Smoothie Strawberry Banana",
-    "categories": [
-      "en:beverages-and-beverages-preparations",
-      "en:plant-based-foods-and-beverages",
-      "en:beverages",
-      "en:plant-based-beverages",
-      "en:fruit-based-beverages",
-      "en:juices-and-nectars",
-      "en:fruit-juices",
-      "en:smoothies",
-      "en:fruit-smoothies"
-    ],
-    "energy_kcal_100g": 55.6,
-    "proteins_g_100g": 0.444,
-    "carbs_g_100g": 14.0,
-    "fats_g_100g": 0.0,
-    "serving_size_g": null,
-    "allergens": [],
-    "brands": "Naked",
-    "url": "https://world.openfoodfacts.org/product/0082592194152",
-    "source": "openfoodfacts_chile"
-  },
-  {
-    "id": "7804658020396",
-    "name": "PURA MANZANA DURAZNO",
-    "name_es": "PURA MANZANA DURAZNO",
-    "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:beverages",
-      "en:plant-based-beverages",
-      "en:fruit-based-beverages",
-      "en:juices-and-nectars",
-      "en:fruit-juices"
-    ],
-    "energy_kcal_100g": 53.3,
-    "proteins_g_100g": 0.5,
-    "carbs_g_100g": 13.1,
+    "energy_kcal_100g": 87,
+    "proteins_g_100g": 2.0,
+    "carbs_g_100g": 20.0,
     "fats_g_100g": 0.1,
-    "serving_size_g": null,
+    "serving_size_g": 180,
     "allergens": [],
-    "brands": "AMA",
-    "url": "https://world.openfoodfacts.org/product/7804658020396",
-    "source": "openfoodfacts_chile"
+    "brands": "",
+    "url": "",
+    "source": "curated"
   },
   {
-    "id": "7802820700435",
-    "name": "Nectar manzana",
-    "name_es": "Nectar manzana",
+    "id": "H005",
+    "name": "Proteina whey (batido)",
+    "name_es": "Proteina whey (batido)",
     "categories": [
-      "en:plant-based-foods-and-beverages",
-      "en:beverages",
-      "en:plant-based-beverages",
-      "en:fruit-based-beverages",
-      "en:juices-and-nectars",
-      "en:fruit-nectars",
-      "en:apple-nectars"
+      "protein",
+      "snack"
     ],
-    "energy_kcal_100g": 52.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 13.0,
-    "fats_g_100g": 0.0,
-    "serving_size_g": null,
-    "allergens": [],
-    "brands": "Del Valle",
-    "url": "https://world.openfoodfacts.org/product/7802820700435",
-    "source": "openfoodfacts_chile"
+    "energy_kcal_100g": 400,
+    "proteins_g_100g": 80.0,
+    "carbs_g_100g": 5.0,
+    "fats_g_100g": 7.0,
+    "serving_size_g": 30,
+    "allergens": [
+      "lactose"
+    ],
+    "brands": "",
+    "url": "",
+    "source": "curated"
   },
   {
-    "id": "7501013118056",
-    "name": "Néctar de Durazno",
-    "name_es": "Néctar de Durazno",
+    "id": "H006",
+    "name": "Pechuga de pavo",
+    "name_es": "Pechuga de pavo",
     "categories": [
-      "en:beverages-and-beverages-preparations",
-      "en:plant-based-foods-and-beverages",
-      "en:beverages",
-      "en:plant-based-beverages",
-      "en:fruit-based-beverages",
-      "en:juices-and-nectars",
-      "en:fruit-nectars"
+      "protein"
     ],
-    "energy_kcal_100g": 52.0,
-    "proteins_g_100g": 0.0,
-    "carbs_g_100g": 13.0,
-    "fats_g_100g": 0.0,
-    "serving_size_g": null,
+    "energy_kcal_100g": 120,
+    "proteins_g_100g": 24.0,
+    "carbs_g_100g": 0.0,
+    "fats_g_100g": 2.5,
+    "serving_size_g": 110,
     "allergens": [],
-    "brands": "JUMEX",
-    "url": "https://world.openfoodfacts.org/product/7501013118056",
-    "source": "openfoodfacts_chile"
+    "brands": "",
+    "url": "",
+    "source": "curated"
+  },
+  {
+    "id": "H007",
+    "name": "Carne magra a la plancha",
+    "name_es": "Carne magra a la plancha",
+    "categories": [
+      "protein"
+    ],
+    "energy_kcal_100g": 180,
+    "proteins_g_100g": 26.0,
+    "carbs_g_100g": 0.0,
+    "fats_g_100g": 8.0,
+    "serving_size_g": 120,
+    "allergens": [],
+    "brands": "",
+    "url": "",
+    "source": "curated"
+  },
+  {
+    "id": "H008",
+    "name": "Aceite de oliva extra virgen",
+    "name_es": "Aceite de oliva extra virgen",
+    "categories": [
+      "fat"
+    ],
+    "energy_kcal_100g": 900,
+    "proteins_g_100g": 0.0,
+    "carbs_g_100g": 0.0,
+    "fats_g_100g": 100.0,
+    "serving_size_g": 10,
+    "allergens": [],
+    "brands": "",
+    "url": "",
+    "source": "curated"
+  },
+  {
+    "id": "H009",
+    "name": "Mantequilla de mani natural",
+    "name_es": "Mantequilla de mani natural",
+    "categories": [
+      "fat",
+      "snack"
+    ],
+    "energy_kcal_100g": 588,
+    "proteins_g_100g": 25.0,
+    "carbs_g_100g": 20.0,
+    "fats_g_100g": 50.0,
+    "serving_size_g": 16,
+    "allergens": [
+      "nuts"
+    ],
+    "brands": "",
+    "url": "",
+    "source": "curated"
+  },
+  {
+    "id": "H010",
+    "name": "Granola",
+    "name_es": "Granola",
+    "categories": [
+      "breakfast"
+    ],
+    "energy_kcal_100g": 450,
+    "proteins_g_100g": 10.0,
+    "carbs_g_100g": 64.0,
+    "fats_g_100g": 15.0,
+    "serving_size_g": 45,
+    "allergens": [
+      "gluten"
+    ],
+    "brands": "",
+    "url": "",
+    "source": "curated"
+  },
+  {
+    "id": "H011",
+    "name": "Yogur griego light",
+    "name_es": "Yogur griego light",
+    "categories": [
+      "dairy",
+      "snack"
+    ],
+    "energy_kcal_100g": 59,
+    "proteins_g_100g": 10.0,
+    "carbs_g_100g": 3.6,
+    "fats_g_100g": 0.4,
+    "serving_size_g": 150,
+    "allergens": [
+      "lactose"
+    ],
+    "brands": "",
+    "url": "",
+    "source": "curated"
+  },
+  {
+    "id": "H012",
+    "name": "Queso fresco bajo en grasa",
+    "name_es": "Queso fresco bajo en grasa",
+    "categories": [
+      "dairy"
+    ],
+    "energy_kcal_100g": 98,
+    "proteins_g_100g": 11.0,
+    "carbs_g_100g": 3.0,
+    "fats_g_100g": 4.0,
+    "serving_size_g": 60,
+    "allergens": [
+      "lactose"
+    ],
+    "brands": "",
+    "url": "",
+    "source": "curated"
+  },
+  {
+    "id": "H013",
+    "name": "Espinaca salteada",
+    "name_es": "Espinaca salteada",
+    "categories": [
+      "vegetable"
+    ],
+    "energy_kcal_100g": 50,
+    "proteins_g_100g": 3.0,
+    "carbs_g_100g": 7.0,
+    "fats_g_100g": 1.0,
+    "serving_size_g": 120,
+    "allergens": [],
+    "brands": "",
+    "url": "",
+    "source": "curated"
+  },
+  {
+    "id": "H014",
+    "name": "Zanahoria cruda",
+    "name_es": "Zanahoria cruda",
+    "categories": [
+      "vegetable"
+    ],
+    "energy_kcal_100g": 41,
+    "proteins_g_100g": 0.9,
+    "carbs_g_100g": 10.0,
+    "fats_g_100g": 0.2,
+    "serving_size_g": 80,
+    "allergens": [],
+    "brands": "",
+    "url": "",
+    "source": "curated"
+  },
+  {
+    "id": "H015",
+    "name": "Mix de frutas (manzana + berries)",
+    "name_es": "Mix de frutas",
+    "categories": [
+      "fruit"
+    ],
+    "energy_kcal_100g": 55,
+    "proteins_g_100g": 0.6,
+    "carbs_g_100g": 14.0,
+    "fats_g_100g": 0.2,
+    "serving_size_g": 150,
+    "allergens": [],
+    "brands": "",
+    "url": "",
+    "source": "curated"
   }
 ]
