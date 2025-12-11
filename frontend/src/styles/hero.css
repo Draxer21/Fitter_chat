@@ -39,8 +39,12 @@
 .hero-features { position: relative; z-index: 2; margin-top: 2.5rem; }
 .hero-features .row { gap: 0.5rem; }
 .hero-features .feature { padding: 1rem; background: transparent; border-radius: 12px; color: #f6f6f6; margin-bottom: 0; flex: 1; min-width: 0; }
-.hero-features h5 { font-weight: 700; margin-bottom: 0.5rem; color: #ffffff; text-shadow: 0 2px 6px rgba(0,0,0,0.6); letter-spacing: 0.5px; font-size: 0.95rem; }
-.hero-features p { margin: 0; font-size: 0.85rem; opacity: 0.96; color: rgba(245, 247, 250, 0.92); text-shadow: 0 1px 4px rgba(0,0,0,0.45); line-height: 1.4; }
+.hero-features h5 { font-weight: 700; margin-bottom: 0.5rem; color: #0f172a; text-shadow: none; letter-spacing: 0.5px; font-size: 0.95rem; }
+.theme-dark .hero-features h5 { color: #ffffff; text-shadow: 0 2px 6px rgba(0,0,0,0.6); }
+
+.hero-features p { margin: 0; font-size: 0.85rem; color: rgba(15, 23, 42, 0.85); text-shadow: none; line-height: 1.4; }
+.theme-dark .hero-features p { color: rgba(245, 247, 250, 0.92); text-shadow: 0 1px 4px rgba(0,0,0,0.45); }
+
 
 @media (max-width: 767px) {
   .home-hero { min-height: 56vh; padding: 3rem 0; }

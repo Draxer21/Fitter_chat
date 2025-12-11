@@ -17,7 +17,15 @@ function getOrCreateSenderId(forceNew = false) {
   return v;
 }
 
-export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessage, onBotMessage, initialMessages = [] }) {
+export default function Chatbot(props = {}) {
+  const {
+    endpoint = "/chat/send",
+    senderId,
+    onNewMessage,
+    onBotMessage,
+    initialMessages: incomingInitialMessages,
+  } = props;
+  const initialMessages = Array.isArray(incomingInitialMessages) ? incomingInitialMessages : [];
   const uidRef = useRef(senderId || getOrCreateSenderId());
 
   const CONSENT_KEY = "fitter_chat_consent";
@@ -427,6 +435,24 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
     const isDietExpanded = dietKey ? !!expandedCards[dietKey] : false;
     const hasText = typeof m.text === "string" && m.text.length > 0;
 
+    const routineSummary = routineDetail?.summary || {};
+    const routineExplainParts = [];
+    if (routineSummary.objetivo) routineExplainParts.push(`objetivo ${routineSummary.objetivo}`);
+    if (routineSummary.nivel) routineExplainParts.push(`nivel ${routineSummary.nivel}`);
+    if (routineSummary.equipamiento) routineExplainParts.push(`equipo ${routineSummary.equipamiento}`);
+    if (routineSummary.tiempo_min) routineExplainParts.push(`${routineSummary.tiempo_min} min disponibles`);
+    if (Array.isArray(routineSummary.health_notes) && routineSummary.health_notes.length > 0) routineExplainParts.push("precauciones registradas");
+    if (Array.isArray(routineSummary.allergies) && routineSummary.allergies.length > 0) routineExplainParts.push(`alergias: ${routineSummary.allergies.join(", ")}`);
+    const routineExplanation = routineExplainParts.length ? `Se generó usando ${routineExplainParts.join(" · ")}.` : null;
+
+    const dietExplainParts = [];
+    if (dietPlan?.objective) dietExplainParts.push(`objetivo ${dietPlan.objective}`);
+    if (dietSummary.calorias) dietExplainParts.push(`meta calórica ${dietSummary.calorias}`);
+    if (dietAdjustments.length > 0) dietExplainParts.push("ajustes de salud personalizados");
+    if (Array.isArray(dietSummary.allergies) && dietSummary.allergies.length > 0) dietExplainParts.push(`alergias: ${dietSummary.allergies.join(", ")}`);
+    if (dietSummary.hydration) dietExplainParts.push("recordatorio de hidratación");
+    const dietExplanation = dietExplainParts.length ? `Plan calculado con ${dietExplainParts.join(" · ")}.` : null;
+
     return (
       <>
         {hasText && <span>{m.text}</span>}
@@ -465,6 +491,12 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
                   <span><strong>Objetivo:</strong> {routineDetail.summary?.objetivo ?? "-"}</span>
                   <span><strong>Nivel:</strong> {routineDetail.summary?.nivel ?? "-"}</span>
                 </div>
+                {routineExplanation && (
+                  <div className="explain-box">
+                    <strong>¿Cómo se armó?</strong>
+                    <p>{routineExplanation}</p>
+                  </div>
+                )}
                 
                 {/* Botones de descarga */}
                 <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -541,15 +573,23 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
         {dietPlan && (
           <>
             {(hasText || hasRoutineLink || routineDetail) ? <br /> : null}
-            <button
-              type="button"
-              onClick={() => sendDietByEmail(dietPlan)}
-              className="message-action-button message-diet-button"
-              style={{ marginTop: hasText || hasRoutineLink || routineDetail ? 6 : 0 }}
-              title="Enviar plan de dieta a tu correo electrónico"
-            >
-              📧 Enviar al Correo
-            </button>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: hasText || hasRoutineLink || routineDetail ? 6 : 0 }}>
+              <button
+                type="button"
+                onClick={() => dietKey && toggleCard(dietKey)}
+                className="message-action-button message-diet-button"
+              >
+                {isDietExpanded ? "Ocultar dieta" : "Ver dieta aqui"}
+              </button>
+              <button
+                type="button"
+                onClick={() => sendDietByEmail(dietPlan)}
+                className="message-action-button message-email-button"
+                title="Enviar plan de dieta a tu correo electrónico"
+              >
+                📧 Enviar al Correo
+              </button>
+            </div>
             {isDietExpanded && (
               <div className="diet-card">
                 <p style={{ margin: 0, fontWeight: 600 }}>Objetivo: {dietPlan.objective || "equilibrada"}</p>
@@ -559,6 +599,12 @@ export default function Chatbot({ endpoint = "/chat/send", senderId, onNewMessag
                   {dietSummary.macros?.carbohidratos && <span><strong>Carbohidratos:</strong> {dietSummary.macros.carbohidratos}</span>}
                   {dietSummary.macros?.grasas && <span><strong>Grasas:</strong> {dietSummary.macros.grasas}</span>}
                 </div>
+                {dietExplanation && (
+                  <div className="explain-box">
+                    <strong>¿Cómo se generó?</strong>
+                    <p>{dietExplanation}</p>
+                  </div>
+                )}
                 {dietAdjustments.length > 0 && (
                   <div className="health-warning">
                     <strong>Ajustes de salud:</strong>

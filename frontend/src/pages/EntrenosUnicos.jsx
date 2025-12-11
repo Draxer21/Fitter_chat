@@ -13,6 +13,11 @@ export default function EntrenosUnicos() {
       description: 'Enfocado en fuerza e hipertrofia con circuitos metabólicos.',
       img: '/flash.jpg',
       bodyType: 'Atlético y veloz',
+      exclusiveNotes: [
+        'Incluye complejos de potencia y circuitos metabólicos que solo se habilitan con la inscripción al programa.',
+        'En rutinas generales se puede rescatar 1-2 movimientos (ej. contrastes o sprints) pero no el bloque completo.',
+        'Pensado para quienes buscan el físico atlético con alto volumen de potencia.'
+      ],
     },
     {
       key: "ninja",
@@ -21,6 +26,11 @@ export default function EntrenosUnicos() {
       description: 'Enfocado en movilidad, plyometrics y acondicionamiento.',
       img: '/shazam.jpg',
       bodyType: 'Ágil y definido',
+      exclusiveNotes: [
+        'Acceso a módulos de parkour-lite, pliometría avanzada y sesiones de agilidad que no se publican fuera del programa.',
+        'Para rutinas estándar solo se permite tomar 1-2 drills como complemento; la progresión completa es exclusiva.',
+        'Ideal para trabajar coordinación, core reactivo y definición con enfoque ninja.'
+      ],
     },
     {
       key: "mecha",
@@ -29,6 +39,11 @@ export default function EntrenosUnicos() {
       description: 'Enfocado en resistencia y trabajo aeróbico progresivo.',
       img: '/bane.jpg',
       bodyType: 'Robusto y resistente',
+      exclusiveNotes: [
+        'Integra bloques de strongman, sled drags y hero WODs diseñados solo para quienes se inscriben en el plan.',
+        'Las rutinas generales solo pueden reutilizar 1-2 ejercicios pesados como inspiración, no la estructura completa.',
+        'Construye la base robusta y resistente que ves en el render del plan.'
+      ],
     },
   ];
 
@@ -46,6 +61,32 @@ export default function EntrenosUnicos() {
           una propuesta de alimentación orientativa, lista de equipamiento para casa o gimnasio y recomendaciones para principiantes y
           avanzados. Antes de iniciar, revisa la <strong>Evaluación médica</strong> para saber si puedes realizarlos de forma segura.
         </p>
+      </section>
+
+      <section className="mb-4">
+        <h2>Acceso exclusivo a estos planes</h2>
+        <p>
+          Estos estilos se diseñaron para replicar el físico mostrado en la vista previa. Solo puedes acceder a las progresiones completas
+          desde esta página o al inscribirte en el programa. Para rutinas normales de Fitter se permite reutilizar a lo sumo uno o dos
+          ejercicios como inspiración, pero el resto del contenido se mantiene exclusivo para conservar la identidad de cada estilo.
+        </p>
+        <div className="row">
+          {plans.map((p) => (
+            <div className="col-md-4 mb-3" key={`exclusive-${p.key}`}>
+              <div className="card h-100">
+                <div className="card-body">
+                  <h4 className="card-title">{p.title}</h4>
+                  <p className="text-muted mb-2">{p.duration} · {p.bodyType}</p>
+                  <ul className="small mb-0">
+                    {(p.exclusiveNotes || []).map((note, idx) => (
+                      <li key={`${p.key}-note-${idx}`}>{note}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="mb-4">

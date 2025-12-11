@@ -1,16 +1,65 @@
 export default function TermsPage() {
   return (
     <main className="container py-5 legal-page">
-      <div className="legal-hero mb-4">
+      <div className="legal-hero mb-4 terms-hero">
         <p className="legal-meta text-uppercase fw-semibold small mb-2">Última actualización: 22 de noviembre de 2025</p>
         <h1 className="legal-title mb-2">Términos y Condiciones de Uso de Fitter</h1>
-        <p className="mb-0">
-          Estos Términos se rigen por la legislación chilena, en particular por la Ley N° 19.496 sobre Protección de los Derechos de los Consumidores y la Ley N° 21.719 sobre Protección de Datos Personales, además de otras normas aplicables.
+        <p className="terms-subtitle">
+          Estos Términos se rigen por la legislación chilena, especialmente por la Ley N° 19.496 y la Ley N° 21.719, además de normas sectoriales aplicables.
         </p>
+        <div className="terms-badges">
+          <span>Ley 19.496</span>
+          <span>Ley 21.719</span>
+          <span>Resolución temprana</span>
+        </div>
       </div>
 
+      <section className="terms-highlight-grid">
+        <article>
+          <h3>¿Quiénes somos?</h3>
+          <p>Fitter SpA provee servicios digitales de entrenamiento, e-commerce y gestión de usuarios con soporte técnico 24/7.</p>
+        </article>
+        <article>
+          <h3>¿Cómo usamos tus datos?</h3>
+          <p>Solo para personalizar rutinas, procesar pagos y mejorar la plataforma, respetando estrictos criterios de seguridad.</p>
+        </article>
+        <article>
+          <h3>¿Qué debes cumplir?</h3>
+          <p>Mantener información veraz, proteger tus credenciales y respetar la normativa vigente y estos Términos.</p>
+        </article>
+      </section>
+
+      <section className="terms-anchor-nav" aria-label="Navegación rápida de términos">
+        <p className="mb-2">Ir directo a:</p>
+        <div className="terms-anchor-links">
+          <a href="#aceptacion">Aceptación</a>
+          <a href="#servicio">Servicio</a>
+          <a href="#registro">Registro</a>
+          <a href="#privacidad">Privacidad</a>
+          <a href="#uso">Uso aceptable</a>
+          <a href="#propiedad">Propiedad</a>
+          <a href="#pagos">Pagos</a>
+          <a href="#descargos">Descargos</a>
+          <a href="#terminacion">Terminación</a>
+          <a href="#modificaciones">Cambios</a>
+          <a href="#ley">Ley aplicable</a>
+          <a href="#contacto">Contacto</a>
+        </div>
+      </section>
+
+      <section className="terms-callouts">
+        <article>
+          <h3>Soporte contractual</h3>
+          <p>Solicitudes de cambios, reembolsos y soporte legal se gestionan vía soporte@fitter.cl con respuesta promedio de 48h.</p>
+        </article>
+        <article>
+          <h3>Derechos del consumidor</h3>
+          <p>Aplicamos la Ley del Consumidor en compras físicas y digitales, con boletas electrónicas y trazabilidad de pedidos.</p>
+        </article>
+      </section>
+
       <div className="legal-grid">
-        <section className="legal-card">
+        <section className="legal-card" id="aceptacion">
           <h2 className="legal-section-title">1. Aceptación de los Términos</h2>
           <p>
             Al registrarte, acceder o utilizar cualquiera de los servicios de Fitter, confirmas que has leído, comprendido y aceptas estos Términos en su
@@ -22,7 +71,7 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section className="legal-card">
+        <section className="legal-card" id="servicio">
           <h2 className="legal-section-title">2. Descripción del Servicio</h2>
           <p>
             Fitter es una aplicación full-stack que ofrece rutinas de ejercicio personalizadas, recomendaciones de estilo de vida, un chatbot asistido por IA,
@@ -34,7 +83,7 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section className="legal-card">
+        <section className="legal-card" id="registro">
           <h2 className="legal-section-title">3. Registro y Cuentas de Usuario</h2>
           <h3>3.1 Creación de Cuenta</h3>
           <p>
@@ -55,7 +104,7 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section className="legal-card">
+        <section className="legal-card" id="privacidad">
           <h2 className="legal-section-title">4. Privacidad y Protección de Datos</h2>
           <p>
             Fitter se compromete a proteger la privacidad conforme a la normativa aplicable. Consulte la Política de Privacidad y Política de Seguridad para
@@ -71,7 +120,7 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section className="legal-card">
+        <section className="legal-card" id="uso">
           <h2 className="legal-section-title">5. Uso Aceptable</h2>
           <p>Al utilizar Fitter, te comprometes a:</p>
           <ul className="ps-4">
@@ -82,7 +131,7 @@ export default function TermsPage() {
           </ul>
         </section>
 
-        <section className="legal-card">
+        <section className="legal-card" id="propiedad">
           <h2 className="legal-section-title">6. Propiedad Intelectual</h2>
           <p>
             Todo el contenido de Fitter (código, diseños, logos, textos, imágenes, algoritmos y bases de datos) es propiedad exclusiva de Fitter SpA o sus
@@ -94,7 +143,7 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section className="legal-card">
+        <section className="legal-card" id="pagos">
           <h2 className="legal-section-title">7. Pagos y Compras</h2>
           <h3>7.1 Tienda en Línea</h3>
           <p>La tienda permite comprar productos con carrito, pagos seguros y boletas electrónicas. Los precios incluyen IVA y pueden variar.</p>
@@ -107,7 +156,7 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section className="legal-card">
+        <section className="legal-card" id="descargos">
           <h2 className="legal-section-title">8. Descargos de Responsabilidad</h2>
           <p>
             Las rutinas y recomendaciones son generales y no constituyen asesoramiento médico. Fitter no asume responsabilidad por lesiones o daños.
@@ -115,7 +164,7 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section className="legal-card">
+        <section className="legal-card" id="terminacion">
           <h2 className="legal-section-title">9. Terminación</h2>
           <p>
             Los Términos permanecen vigentes mientras uses la plataforma. Puedes terminar eliminando tu cuenta. Fitter puede terminar por incumplimiento,
@@ -123,7 +172,7 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section className="legal-card">
+        <section className="legal-card" id="modificaciones">
           <h2 className="legal-section-title">10. Modificaciones</h2>
           <p>
             Fitter puede actualizar estos Términos por cambios normativos, técnicos o de servicio. Avisaremos con 15 días de antelación. El uso continuado
@@ -131,7 +180,7 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section className="legal-card">
+        <section className="legal-card" id="ley">
           <h2 className="legal-section-title">11. Ley Aplicable y Resolución de Disputas</h2>
           <p>
             Estos Términos se rigen por la legislación de la República de Chile. En particular, la relación entre los usuarios y Fitter se ajusta a la Ley N° 19.496 sobre Protección de los Derechos de los Consumidores y a la Ley N° 21.719 sobre Protección de Datos Personales, junto con otras normas sectoriales y de protección de datos aplicables.
@@ -141,7 +190,7 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <section className="legal-card">
+        <section className="legal-card" id="contacto">
           <h2 className="legal-section-title">12. Contacto</h2>
           <p>
             Para consultas o ejercer derechos, contacta a soporte@fitter.cl o privacidad@fitter.cl.

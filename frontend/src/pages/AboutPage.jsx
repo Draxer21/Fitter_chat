@@ -1,4 +1,11 @@
 export default function AboutPage() {
+  const mapStats = [
+    { label: 'Usuarios activos', value: '12K+' },
+    { label: 'Centros conectados', value: '34' },
+    { label: 'Integraciones API', value: '18' },
+    { label: 'SLA anual', value: '99.7%' },
+  ];
+
   return (
     <main className="container py-5 about-page">
       <header className="mb-5 about-header">
@@ -7,7 +14,42 @@ export default function AboutPage() {
         <p className="about-subtitle">
           Conoce lo que nos mueve, hacia dónde vamos y cómo trabajamos para entregar un servicio de excelencia.
         </p>
+        <div className="about-badges">
+          <span>AI + Fitness</span>
+          <span>Infraestructura Cloud</span>
+          <span>Equipo MX / CL</span>
+        </div>
       </header>
+
+      <section className="about-stats-grid">
+        <article>
+          <h3>Presencia</h3>
+          <ul>
+            <li>Operamos 100% remoto con hubs en Santiago y Ciudad de México.</li>
+            <li>Soportamos integraciones con clubes, centros y programas corporativos.</li>
+            <li>Trabajamos bajo metodologías ágiles con actualizaciones semanales.</li>
+          </ul>
+        </article>
+        <article>
+          <h3>Impacto</h3>
+          <ul>
+            <li>Asesoramos rutinas, dietas y seguimiento de métricas en un único panel.</li>
+            <li>Ofrecemos soporte 24/7 para administradores y entrenadores.</li>
+            <li>Habilitamos análisis de datos en tiempo real para equipos médicos.</li>
+          </ul>
+        </article>
+        <article>
+          <h3>Distribución</h3>
+          <div className="about-stats-list">
+            {mapStats.map((item) => (
+              <div key={item.label}>
+                <strong>{item.value}</strong>
+                <span>{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </article>
+      </section>
 
       <section className="about-block">
         <div className="about-text">
@@ -84,6 +126,29 @@ export default function AboutPage() {
             y con la entrega de soluciones tecnológicas de excelencia.
           </p>
         </div>
+      </section>
+
+      <section className="about-values-grid">
+        <article>
+          <h3>Valores</h3>
+          <ul>
+            <li>Ética digital y transparencia</li>
+            <li>Aprendizaje continuo</li>
+            <li>Respeto y diversidad</li>
+          </ul>
+        </article>
+        <article>
+          <h3>Relación con clientes</h3>
+          <p>
+            Trabajamos colaborativamente con cada gimnasio, clínica o corporativo, acompañándolos en despliegues, capacitación y soporte post implementación.
+          </p>
+        </article>
+        <article>
+          <h3>Hoja de ruta</h3>
+          <p>
+            Para 2026, lanzaremos módulos de telemedicina deportiva, asistentes multilingües y analítica avanzada de hábitos.
+          </p>
+        </article>
       </section>
     </main>
   );

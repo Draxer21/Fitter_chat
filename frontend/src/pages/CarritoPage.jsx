@@ -80,61 +80,127 @@ export default function CarritoPage() {
   const errorMessage = actionError || generalError;
   const rows = Array.isArray(items) ? items : [];
   const totalValue = Number(total) || 0;
+  const hasItems = rows.length > 0;
+  const totalUnits = rows.reduce((acc, v) => acc + (v.cantidad || 0), 0);
 
   return (
-    <div className="cart-container">
-      <h1 className="cart-title">CARRITO</h1>
+    <div className="cart-page">
+      <section className="cart-hero">
+        <div className="cart-hero-text">
+          <p className="cart-hero-meta text-uppercase">Resumen de compra</p>
+          <h1 className="cart-title">Carrito</h1>
+          <p className="cart-hero-description">
+            {hasItems
+              ? "Verifica los productos agregados antes de finalizar tu pedido. Todos los pagos se procesan de forma segura."
+              : "Aún no agregas productos. Explora nuestro catálogo y vuelve para completar tu compra."}
+          </p>
+          <div className="cart-hero-actions">
+            <button className="cart-ghost-btn" onClick={() => (window.location.href = "/catalogo")}>
+              Seguir explorando
+            </button>
+            {hasItems && (
+              <button className="cart-primary-btn" onClick={buy} disabled={isUpdating}>
+                Finalizar compra
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="cart-hero-stats">
+          <div>
+            <p className="label">Total estimado</p>
+            <h3>{formatearPrecio(totalValue)}</h3>
+          </div>
+          <div>
+            <p className="label">Productos</p>
+            <h4>{totalUnits}</h4>
+          </div>
+        </div>
+      </section>
+
+      <section className="cart-benefits-grid">
+        <article>
+          <strong>Pagos protegidos</strong>
+          <p>Integración con pasarelas certificadas PCI-DSS, incluida MercadoPago.</p>
+        </article>
+        <article>
+          <strong>Soporte 24/7</strong>
+          <p>Chat y correo para resolver dudas antes y después de tu compra.</p>
+        </article>
+        <article>
+          <strong>Facturación transparente</strong>
+          <p>Boleta electrónica y seguimiento del pedido en todo momento.</p>
+        </article>
+      </section>
 
       {isLoading && <div className="loading-cart" role="status" aria-live="polite">Cargando...</div>}
 
       {errorMessage && <div className="error-cart" role="alert" aria-live="assertive">{errorMessage}</div>}
 
-      {!isLoading && !errorMessage && rows.length === 0 && (
-        <div className="empty-cart" role="status" aria-live="polite">Sin Productos</div>
+      {!isLoading && !errorMessage && !hasItems && (
+        <div className="empty-cart" role="status" aria-live="polite">
+          <div className="empty-cart-icon" aria-hidden="true">🛒</div>
+          <p>Sin productos en el carrito</p>
+          <button className="cart-primary-btn" onClick={() => (window.location.href = "/catalogo")}>
+            Ir al catálogo
+          </button>
+        </div>
       )}
 
-      {!isLoading && !errorMessage && rows.length > 0 && (
-        <>
-          {rows.map((v) => (
-            <div key={v.producto_id} className="cart-item">
-              <img
-                src={v.imagen || "/placeholder.jpg"}
-                alt={v.nombre}
-                className="cart-item-image"
-              />
-              <div className="cart-item-details">
-                <div className="cart-item-name">{v.nombre}</div>
-                <div className="cart-item-price">
-                  Precio unitario: {formatearPrecio(v.precio_unitario)} | Total: {formatearPrecio(v.acumulado)}
-                </div>
-                <div className="cart-item-controls">
-                  <button onClick={() => handleDec(v.producto_id)} className="quantity-btn" disabled={isUpdating}>
-                    -
-                  </button>
-                  <span className="quantity-display">{v.cantidad}</span>
-                  <button onClick={() => handleInc(v.producto_id)} className="quantity-btn" disabled={isUpdating}>
-                    +
-                  </button>
-                  <button onClick={() => handleRemove(v.producto_id)} className="remove-btn" disabled={isUpdating}>
-                    Eliminar
-                  </button>
+      {!isLoading && !errorMessage && hasItems && (
+        <div className="cart-body">
+          <div className="cart-list">
+            {rows.map((v) => (
+              <div key={v.producto_id} className="cart-item">
+                <img
+                  src={v.imagen || "/placeholder.jpg"}
+                  alt={v.nombre}
+                  className="cart-item-image"
+                />
+                <div className="cart-item-details">
+                  <div className="cart-item-name">{v.nombre}</div>
+                  <div className="cart-item-price">
+                    Precio unitario: {formatearPrecio(v.precio_unitario)} | Total: {formatearPrecio(v.acumulado)}
+                  </div>
+                  <div className="cart-item-controls">
+                    <button onClick={() => handleDec(v.producto_id)} className="quantity-btn" disabled={isUpdating}>
+                      -
+                    </button>
+                    <span className="quantity-display">{v.cantidad}</span>
+                    <button onClick={() => handleInc(v.producto_id)} className="quantity-btn" disabled={isUpdating}>
+                      +
+                    </button>
+                    <button onClick={() => handleRemove(v.producto_id)} className="remove-btn" disabled={isUpdating}>
+                      Eliminar
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-
-          <div className="cart-summary">
-            <div className="cart-total">Total: {formatearPrecio(totalValue)}</div>
-            <div className="cart-actions">
-              <button onClick={handleClear} className="action-btn clear-btn" disabled={isUpdating}>
-                Limpiar
-              </button>
-              <button onClick={buy} className="action-btn checkout-btn" disabled={isUpdating}>
-                Hacer Compra
-              </button>
-            </div>
+            ))}
           </div>
-        </>
+
+          <aside className="cart-summary-card">
+            <h3>Resumen del pedido</h3>
+            <p className="cart-summary-note">Incluye impuestos y cargos según tu método de pago.</p>
+            <dl>
+              <div>
+                <dt>Productos</dt>
+                <dd>{totalUnits}</dd>
+              </div>
+              <div>
+                <dt>Total estimado</dt>
+                <dd>{formatearPrecio(totalValue)}</dd>
+              </div>
+            </dl>
+            <div className="cart-summary-actions">
+              <button onClick={handleClear} className="ghost-btn" disabled={isUpdating}>
+                Limpiar carrito
+              </button>
+              <button onClick={buy} className="primary-btn" disabled={isUpdating}>
+                Pagar ahora
+              </button>
+            </div>
+          </aside>
+        </div>
       )}
 
       {showLoginPrompt && (

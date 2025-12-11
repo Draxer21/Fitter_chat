@@ -51,6 +51,13 @@ const muscleOptions = [
   { value: "cardio", labelKey: "profile.muscle.cardio" },
 ];
 
+const BMI_CATEGORIES = [
+  { id: "underweight", min: 0, max: 18.5, labelKey: "profile.bmi.category.underweight", rangeKey: "profile.bmi.range.underweight" },
+  { id: "healthy", min: 18.5, max: 25, labelKey: "profile.bmi.category.healthy", rangeKey: "profile.bmi.range.healthy" },
+  { id: "overweight", min: 25, max: 30, labelKey: "profile.bmi.category.overweight", rangeKey: "profile.bmi.range.overweight" },
+  { id: "obesity", min: 30, max: Number.POSITIVE_INFINITY, labelKey: "profile.bmi.category.obesity", rangeKey: "profile.bmi.range.obesity" },
+];
+
 function normalizeProfile(profile) {
   if (!profile) return { ...initialFormState };
   return {
@@ -95,6 +102,11 @@ export default function ProfilePage() {
     if (!Number.isFinite(value)) return null;
     return Math.round(value * 100) / 100;
   }, [form.weight_kg, form.height_cm]);
+
+  const bmiCategory = useMemo(() => {
+    if (!bmi) return null;
+    return BMI_CATEGORIES.find((category) => bmi >= category.min && bmi < category.max) ?? null;
+  }, [bmi]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -311,9 +323,47 @@ export default function ProfilePage() {
                   <div className="card-body d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
                     <div>
                       <p className="mb-1 text-muted text-uppercase small">{t("profile.stats.bmiLabel")}</p>
-                      <p className="display-6 fw-bold mb-0">{bmi}</p>
+                      <p className="display-6 fw-bold mb-2">{bmi}</p>
+                      {bmiCategory && (
+                        <span className="profile-bmi-badge badge text-uppercase fw-semibold">
+                          {t(bmiCategory.labelKey)}
+                        </span>
+                      )}
                     </div>
                     <p className="mb-0 text-muted">{t("profile.stats.bmiNote")}</p>
+                  </div>
+                  <div className="profile-bmi-table card border-0 mt-3">
+                    <div className="card-body">
+                      <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                        <div>
+                          <h3 className="profile-bmi-table-title mb-1">{t("profile.bmi.table.title")}</h3>
+                          <p className="profile-bmi-table-subtitle mb-3 mb-md-0">{t("profile.bmi.table.subtitle")}</p>
+                        </div>
+                      </div>
+                      <div className="table-responsive">
+                        <table className="table align-middle mb-0 profile-bmi-table-grid">
+                          <thead>
+                            <tr>
+                              <th scope="col">{t("profile.bmi.table.status")}</th>
+                              <th scope="col">{t("profile.bmi.table.range")}</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {BMI_CATEGORIES.map((category) => {
+                              const isActive = bmiCategory?.id === category.id;
+                              return (
+                                <tr key={category.id} className={isActive ? "profile-bmi-row is-active" : "profile-bmi-row"}>
+                                  <td>
+                                    <span className="fw-semibold">{t(category.labelKey)}</span>
+                                  </td>
+                                  <td>{t(category.rangeKey)}</td>
+                                </tr>
+                              );
+                            })}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}

@@ -8,7 +8,6 @@ import "./styles/theme-overrides.css";
 import "./styles/theme-final-override.css";
 import "./styles/accessibility.css";
 
-import ChatWidget from "./Chatwidget";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import SideControls from "./components/SideControls";
@@ -55,14 +54,6 @@ function NotFound() {
       <a href="/">Volver al inicio</a>
     </div>
   );
-}
-
-const HIDDEN_CHAT_ROUTES = ["/login", "/registro", "/pago", "/boleta", "/chat"];
-
-function ChatWidgetToggle() {
-  const { pathname } = useLocation();
-  const shouldShow = !HIDDEN_CHAT_ROUTES.includes(pathname) && !pathname.startsWith("/admin");
-  return shouldShow ? <ChatWidget /> : null;
 }
 
 export default function App() {
@@ -112,7 +103,6 @@ export default function App() {
                 <Footer />
 
                 <SideControls />
-                <ChatWidgetToggle />
               </BrowserRouter>
             </CartProvider>
           </AuthProvider>
