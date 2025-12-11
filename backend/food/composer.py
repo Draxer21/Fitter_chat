@@ -101,6 +101,40 @@ TAG_KEYWORDS: Dict[str, List[str]] = {
         "quinoa",
         "hummus",
     ],
+    "cheese": [
+        "queso",
+        "cheese",
+        "parmesano",
+        "mozarella",
+        "mozzarella",
+        "ricotta",
+        "cottage",
+        "feta",
+        "rallado",
+    ],
+    "oil": [
+        "aceite",
+        "oil",
+        "oliva",
+        "olive",
+        "ghee",
+        "mantequilla",
+        "butter",
+    ],
+    "carb": [
+        "arroz",
+        "rice",
+        "pasta",
+        "quinoa",
+        "avena",
+        "oat",
+        "pan",
+        "bread",
+        "papa",
+        "patata",
+        "batata",
+        "tortilla",
+    ],
 }
 
 TAG_DIVERSITY_TARGETS: Dict[str, int] = {
@@ -140,6 +174,7 @@ MEAL_TEMPLATES = [
         "allow_sweets": False,
         "note": "Energía ligera para partir el día.",
         "required_tags": ["fruit"],
+        "meal_tag_limits": {"nut_or_seed": 1, "cheese": 1, "oil": 0},
     },
     {
         "name": "Almuerzo",
@@ -177,6 +212,7 @@ MEAL_TEMPLATES = [
         "allow_sweets": False,
         "note": "Plato principal equilibrado.",
         "required_tags": ["vegetable"],
+        "meal_tag_limits": {"nut_or_seed": 1, "cheese": 1, "oil": 1},
     },
     {
         "name": "Merienda",
@@ -202,7 +238,7 @@ MEAL_TEMPLATES = [
         "allow_sweets": True,
         "note": "Colación ligera para mantener energía estable.",
         "required_tags": ["fruit"],
-        "meal_tag_limits": {"nut_or_seed": 1},
+        "meal_tag_limits": {"nut_or_seed": 1, "cheese": 1, "oil": 0},
     },
     {
         "name": "Cena",
@@ -230,6 +266,7 @@ MEAL_TEMPLATES = [
         "allow_sweets": False,
         "note": "Preparaciones ligeras para apoyar el descanso.",
         "required_tags": ["vegetable", "animal_protein", "plant_protein"],
+        "meal_tag_limits": {"nut_or_seed": 1, "cheese": 1, "oil": 1},
     },
 ]
 
@@ -252,6 +289,19 @@ SWEET_KEYWORDS = {
 
 MAX_DUPLICATES_PER_ITEM = 1
 MIN_MEAL_KCAL = 60.0
+
+# Targets aproximados por kg para una dieta equilibrada
+MACRO_TARGETS_PER_KG = {"protein": 1.6, "carbs": 4.0, "fats": 0.9}
+
+# Fallbacks limpios por grupo para reforzar tags/macros cuando el catálogo no alcanza
+FALLBACK_ITEMS: Dict[str, Dict[str, Any]] = {
+    "fruit": {"id": "FB_FRUTA", "name": "Fruta (manzana/banana)", "energy_kcal_100g": 60, "proteins_g_100g": 0.5, "carbs_g_100g": 15, "fats_g_100g": 0.2},
+    "vegetable": {"id": "FB_VERDURA", "name": "Verduras mixtas", "energy_kcal_100g": 35, "proteins_g_100g": 2, "carbs_g_100g": 7, "fats_g_100g": 0.3},
+    "animal_protein": {"id": "FB_POLLO", "name": "Pechuga de pollo", "energy_kcal_100g": 165, "proteins_g_100g": 31, "carbs_g_100g": 0, "fats_g_100g": 3.6},
+    "plant_protein": {"id": "FB_LEGUMBRE", "name": "Lentejas cocidas", "energy_kcal_100g": 116, "proteins_g_100g": 9, "carbs_g_100g": 20, "fats_g_100g": 0.4},
+    "carb": {"id": "FB_ARROZ", "name": "Arroz integral cocido", "energy_kcal_100g": 130, "proteins_g_100g": 2.7, "carbs_g_100g": 28, "fats_g_100g": 1},
+    "fat": {"id": "FB_ACEITE", "name": "Aceite de oliva", "energy_kcal_100g": 900, "proteins_g_100g": 0, "carbs_g_100g": 0, "fats_g_100g": 100},
+}
 
 
 def _normalized_text(item: Dict[str, Any], cache: Dict[str, str]) -> str:
@@ -287,6 +337,82 @@ def _tags_for_text(text: str) -> Set[str]:
         if any(k in text for k in kws):
             tags.add(tag)
     return tags
+
+
+def _compute_macros(meals: List[Dict[str, Any]]) -> Dict[str, float]:
+    totals = {"protein": 0.0, "carbs": 0.0, "fats": 0.0, "kcal": 0.0}
+    for meal in meals:
+        for it in meal.get("items", []):
+            qty = it.get("qty_g") or 0
+            totals["kcal"] += (it.get("energy_kcal_100g") or 0) * qty / 100.0
+            totals["protein"] += (it.get("proteins_g_100g") or 0) * qty / 100.0
+            totals["carbs"] += (it.get("carbs_g_100g") or 0) * qty / 100.0
+            totals["fats"] += (it.get("fats_g_100g") or 0) * qty / 100.0
+    return totals
+
+
+def _add_item_to_meal(meal: Dict[str, Any], item: Dict[str, Any], qty_g: int) -> None:
+    kcal_added = (item.get("energy_kcal_100g") or 0) * qty_g / 100.0
+    meal.setdefault("items", []).append({
+        "id": item.get("id"),
+        "name": item.get("name"),
+        "qty_g": int(qty_g),
+        "kcal": round(kcal_added, 1),
+        "energy_kcal_100g": item.get("energy_kcal_100g"),
+        "proteins_g_100g": item.get("proteins_g_100g"),
+        "carbs_g_100g": item.get("carbs_g_100g"),
+        "fats_g_100g": item.get("fats_g_100g"),
+    })
+    meal["kcal"] = round(meal.get("kcal", 0) + kcal_added, 1)
+
+
+def _fill_missing_tags(meals: List[Dict[str, Any]]) -> None:
+    """Add fallback items when a meal is missing required tags."""
+    for meal in meals:
+        pending = set(meal.get("pending_tags") or [])
+        if not pending:
+            continue
+        for tag in list(pending):
+            fallback = FALLBACK_ITEMS.get(tag)
+            if not fallback:
+                continue
+            qty = 120 if tag in {"fruit", "vegetable"} else 100
+            _add_item_to_meal(meal, fallback, qty)
+            pending.discard(tag)
+        meal["pending_tags"] = list(pending)
+
+
+def _rebalance_macros(meals: List[Dict[str, Any]], weight_kg: Optional[float]) -> None:
+    """Top-up macros toward g/kg targets with clean fallback items."""
+    if not meals:
+        return
+    if not weight_kg:
+        return
+    targets = {
+        "protein": MACRO_TARGETS_PER_KG["protein"] * weight_kg,
+        "carbs": MACRO_TARGETS_PER_KG["carbs"] * weight_kg,
+        "fats": MACRO_TARGETS_PER_KG["fats"] * weight_kg,
+    }
+    totals = _compute_macros(meals)
+
+    protein_gap = targets["protein"] - totals["protein"]
+    if protein_gap > 15:  # add poultry boost
+        fb = FALLBACK_ITEMS["animal_protein"]
+        qty = min(200, int((protein_gap / (fb["proteins_g_100g"] or 1)) * 100))
+        _add_item_to_meal(meals[-1], fb, max(80, qty))
+
+    carb_gap = targets["carbs"] - totals["carbs"]
+    if carb_gap > 25:
+        fb = FALLBACK_ITEMS["carb"]
+        qty = min(250, int((carb_gap / (fb["carbs_g_100g"] or 1)) * 100))
+        target_meal = meals[-2] if len(meals) > 1 else meals[-1]
+        _add_item_to_meal(target_meal, fb, max(100, qty))
+
+    fat_gap = targets["fats"] - totals["fats"]
+    if fat_gap > 15:
+        fb = FALLBACK_ITEMS["fat"]
+        qty = min(25, int((fat_gap / (fb["fats_g_100g"] or 1)) * 100))
+        _add_item_to_meal(meals[0], fb, max(5, qty))
 
 
 def _pick_candidate(
@@ -479,6 +605,9 @@ def compose_diet(target_kcal: int, n_meals: int = 3, catalog_path: Optional[str]
                 'qty_g': int(qty),
                 'kcal': round(kcal_added, 1),
                 'energy_kcal_100g': ek,
+                'proteins_g_100g': candidate.get('proteins_g_100g'),
+                'carbs_g_100g': candidate.get('carbs_g_100g'),
+                'fats_g_100g': candidate.get('fats_g_100g'),
             })
             tags = _tags_for_text(_normalized_text(candidate, text_cache))
             for tag in tags:
@@ -503,15 +632,68 @@ def compose_diet(target_kcal: int, n_meals: int = 3, catalog_path: Optional[str]
             'items': meal_items,
             'kcal': meal_kcal,
             'notes': template.get('note'),
+            'pending_tags': list(pending_tags),
+            'meal_tag_counts': dict(meal_tag_counts),
         })
 
-    total_kcal = sum(m['kcal'] for m in meals)
+    # Completa tags faltantes con fallbacks limpios y refuerza macros según peso.
+    _fill_missing_tags(meals)
+    _rebalance_macros(meals, weight_kg)
+
+    # Sanitiza campos auxiliares y verifica si sigue faltando variedad/macros
+    for meal in meals:
+        meal.pop("meal_tag_counts", None)
+
+    # Re-check pending tags; si quedan sin cubrir, usa menú manual
+    remaining_pending = [m for m in meals if m.get("pending_tags")]
+    weight_ref = weight_kg or 70.0
+    macro_targets = {
+        "protein": MACRO_TARGETS_PER_KG["protein"] * weight_ref,
+        "carbs": MACRO_TARGETS_PER_KG["carbs"] * weight_ref,
+        "fats": MACRO_TARGETS_PER_KG["fats"] * weight_ref,
+    }
+    totals = _compute_macros(meals)
+    if remaining_pending or totals["protein"] < macro_targets["protein"] * 0.8 or totals["carbs"] < macro_targets["carbs"] * 0.7:
+        return _manual_balanced_menu(weight_ref, target_kcal)
+    for meal in meals:
+        meal.pop("pending_tags", None)
+
+    total_kcal = round(totals["kcal"], 1)
 
     return {
         'diet_id': str(uuid.uuid4()),
         'header': 'Dieta generada heurísticamente',
         'summary': {'target_kcal': target_kcal, 'approx_kcal': round(total_kcal, 1)},
         'meals': meals,
+    }
+
+
+def _manual_balanced_menu(weight_kg: float, target_kcal: int) -> Dict[str, Any]:
+    """Fallback simple y limpio cuando el catálogo no puede cubrir variedad/macros."""
+    scale = min(1.3, max(0.7, (target_kcal or 2000) / 2000.0))
+
+    def meal(name: str, parts: List[Tuple[str, int]], note: Optional[str]) -> Dict[str, Any]:
+        m = {"name": name, "items": [], "kcal": 0.0, "notes": note}
+        for tag, base_qty in parts:
+            fb = FALLBACK_ITEMS.get(tag)
+            if not fb:
+                continue
+            qty = int(base_qty * scale)
+            _add_item_to_meal(m, fb, qty)
+        return m
+
+    meals = [
+        meal("Desayuno", [("carb", 80), ("fruit", 120), ("animal_protein", 80)], "Energía y proteína al iniciar."),
+        meal("Almuerzo", [("carb", 120), ("vegetable", 150), ("animal_protein", 140)], "Plato principal equilibrado."),
+        meal("Merienda", [("fruit", 120), ("plant_protein", 120), ("fat", 10)], "Colación saciante."),
+        meal("Cena", [("vegetable", 200), ("animal_protein", 120), ("carb", 100)], "Ligera y con fibra."),
+    ]
+    total_kcal = sum(m["kcal"] for m in meals)
+    return {
+        "diet_id": str(uuid.uuid4()),
+        "header": "Dieta generada (fallback balanceado)",
+        "summary": {"target_kcal": target_kcal, "approx_kcal": round(total_kcal, 1)},
+        "meals": meals,
     }
 
 
