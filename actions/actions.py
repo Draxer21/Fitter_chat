@@ -1863,7 +1863,7 @@ class ActionGenerarDieta(Action):
                         target_kcal = 2000
                     n_meals = len(filtered_meals) or 3
                     # allow composer to use the project's catalog file
-                    catalog_path = os.path.join(_BASE_DIR, 'backend', 'data', 'food_catalog.json')
+                    catalog_path = os.path.join(_BASE_DIR, 'backend', 'data', 'food_catalog_curated.json')
                     logger.info(f"=== COMPOSER ATTEMPT === target_kcal={target_kcal}, n_meals={n_meals}, catalog_path={catalog_path}")
                     # determine weight to pass to composer
                     weight_val = None
