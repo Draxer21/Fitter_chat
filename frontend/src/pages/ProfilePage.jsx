@@ -10,6 +10,7 @@ const initialFormState = {
   age_years: "",
   sex: "",
   activity_level: "",
+  experience_level: "",
   primary_goal: "",
   musculo_preferido: "",
   allergies: "",
@@ -30,6 +31,12 @@ const activityOptions = [
   { value: "moderado", labelKey: "profile.activity.moderado" },
   { value: "intenso", labelKey: "profile.activity.intenso" },
   { value: "atleta", labelKey: "profile.activity.atleta" },
+];
+
+const experienceOptions = [
+  { value: "principiante", labelKey: "profile.experience.beginner" },
+  { value: "intermedio", labelKey: "profile.experience.intermediate" },
+  { value: "avanzado", labelKey: "profile.experience.advanced" },
 ];
 
 const goalOptions = [
@@ -66,6 +73,7 @@ function normalizeProfile(profile) {
     age_years: profile.age_years ?? "",
     sex: profile.sex ?? "",
     activity_level: profile.activity_level ?? "",
+    experience_level: profile.experience_level ?? "",
     primary_goal: profile.primary_goal ?? "",
     musculo_preferido: profile.musculo_preferido ?? "",
     allergies: profile.allergies ?? "",
@@ -138,15 +146,17 @@ export default function ProfilePage() {
 
   if (!isAuthenticated) {
     return (
-      <main className="profile-page container py-5">
-        <div className="row justify-content-center">
-          <div className="col-lg-6">
-            <div className="alert alert-warning">
-              {t("profile.messages.authRequired")}
-              <div className="mt-3">
-                <Link className="btn btn-dark" to="/login">
-                  {t("profile.messages.authButton")}
-                </Link>
+      <main className="profile-page py-5">
+        <div className="profile-shell">
+          <div className="row justify-content-center">
+            <div className="col-lg-6">
+              <div className="alert alert-warning">
+                {t("profile.messages.authRequired")}
+                <div className="mt-3">
+                  <Link className="btn btn-dark" to="/login">
+                    {t("profile.messages.authButton")}
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -156,24 +166,26 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="profile-page container py-5">
-      <div className="row justify-content-center">
-        <div className="col-xl-9 col-lg-10">
-          <header className="profile-header text-center mb-4">
-            <p className="profile-eyebrow">{t("profile.highlight.eyebrow")}</p>
-            <h1 className="profile-title">{t("profile.title")}</h1>
-            <p className="profile-subtitle">{t("profile.subtitle")}</p>
-          </header>
+    <main className="profile-page py-5">
+      <div className="profile-shell">
+        <header className="profile-header text-center mb-4">
+          <p className="profile-eyebrow">{t("profile.highlight.eyebrow")}</p>
+          <h1 className="profile-title">{t("profile.title")}</h1>
+          <p className="profile-subtitle">{t("profile.subtitle")}</p>
+        </header>
 
-          <div className="profile-highlight shadow-sm mb-4">
-            <div>
-              <h2 className="profile-highlight-title">{t("profile.highlight.title")}</h2>
-              <p className="mb-0">{t("profile.highlight.subtitle")}</p>
-            </div>
-            <div className="profile-highlight-icon" aria-hidden="true">
-              <span className="bi bi-activity" />
-            </div>
+        <div className="profile-highlight shadow-sm mb-4">
+          <div>
+            <h2 className="profile-highlight-title">{t("profile.highlight.title")}</h2>
+            <p className="mb-0">{t("profile.highlight.subtitle")}</p>
           </div>
+          <div className="profile-highlight-icon" aria-hidden="true">
+            <span className="bi bi-activity" />
+          </div>
+        </div>
+
+        <div className="profile-content-grid">
+          <div className="profile-form-wrapper">
 
           {message && <div className="alert alert-success">{message}</div>}
           {error && <div className="alert alert-danger">{error}</div>}
@@ -241,6 +253,23 @@ export default function ProfilePage() {
                   <select id="activity_level" name="activity_level" className="form-select" value={form.activity_level} onChange={handleChange}>
                     <option value="">{t("profile.activity.select")}</option>
                     {activityOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {t(option.labelKey)}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="col-md-4">
+                  <label htmlFor="experience_level" className="form-label">{t("profile.fields.experience")}</label>
+                  <select
+                    id="experience_level"
+                    name="experience_level"
+                    className="form-select"
+                    value={form.experience_level}
+                    onChange={handleChange}
+                  >
+                    <option value="">{t("profile.experience.select")}</option>
+                    {experienceOptions.map((option) => (
                       <option key={option.value} value={option.value}>
                         {t(option.labelKey)}
                       </option>
@@ -317,56 +346,6 @@ export default function ProfilePage() {
                   placeholder={t("profile.placeholders.notes")}
                 />
               </div>
-
-              {bmi && (
-                <div className="profile-bmi card border-0 shadow-sm mt-3">
-                  <div className="card-body d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
-                    <div>
-                      <p className="mb-1 text-muted text-uppercase small">{t("profile.stats.bmiLabel")}</p>
-                      <p className="display-6 fw-bold mb-2">{bmi}</p>
-                      {bmiCategory && (
-                        <span className="profile-bmi-badge badge text-uppercase fw-semibold">
-                          {t(bmiCategory.labelKey)}
-                        </span>
-                      )}
-                    </div>
-                    <p className="mb-0 text-muted">{t("profile.stats.bmiNote")}</p>
-                  </div>
-                  <div className="profile-bmi-table card border-0 mt-3">
-                    <div className="card-body">
-                      <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                        <div>
-                          <h3 className="profile-bmi-table-title mb-1">{t("profile.bmi.table.title")}</h3>
-                          <p className="profile-bmi-table-subtitle mb-3 mb-md-0">{t("profile.bmi.table.subtitle")}</p>
-                        </div>
-                      </div>
-                      <div className="table-responsive">
-                        <table className="table align-middle mb-0 profile-bmi-table-grid">
-                          <thead>
-                            <tr>
-                              <th scope="col">{t("profile.bmi.table.status")}</th>
-                              <th scope="col">{t("profile.bmi.table.range")}</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {BMI_CATEGORIES.map((category) => {
-                              const isActive = bmiCategory?.id === category.id;
-                              return (
-                                <tr key={category.id} className={isActive ? "profile-bmi-row is-active" : "profile-bmi-row"}>
-                                  <td>
-                                    <span className="fw-semibold">{t(category.labelKey)}</span>
-                                  </td>
-                                  <td>{t(category.rangeKey)}</td>
-                                </tr>
-                              );
-                            })}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="card-footer d-flex justify-content-between align-items-center">
@@ -381,7 +360,59 @@ export default function ProfilePage() {
             </div>
           </form>
         </div>
+        {bmi && (
+          <aside className="profile-aside">
+            <div className="profile-bmi card border-0 shadow-sm">
+              <div className="card-body d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                <div>
+                  <p className="mb-1 text-muted text-uppercase small">{t("profile.stats.bmiLabel")}</p>
+                  <p className="display-6 fw-bold mb-2">{bmi}</p>
+                  {bmiCategory && (
+                    <span className="profile-bmi-badge badge text-uppercase fw-semibold">
+                      {t(bmiCategory.labelKey)}
+                    </span>
+                  )}
+                </div>
+                <p className="mb-0 text-muted">{t("profile.stats.bmiNote")}</p>
+              </div>
+              <div className="profile-bmi-table card border-0 mt-3">
+                <div className="card-body">
+                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                    <div>
+                      <h3 className="profile-bmi-table-title mb-1">{t("profile.bmi.table.title")}</h3>
+                      <p className="profile-bmi-table-subtitle mb-3 mb-md-0">{t("profile.bmi.table.subtitle")}</p>
+                    </div>
+                  </div>
+                  <div className="table-responsive">
+                    <table className="table align-middle mb-0 profile-bmi-table-grid">
+                      <thead>
+                        <tr>
+                          <th scope="col">{t("profile.bmi.table.status")}</th>
+                          <th scope="col">{t("profile.bmi.table.range")}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {BMI_CATEGORIES.map((category) => {
+                          const isActive = bmiCategory?.id === category.id;
+                          return (
+                            <tr key={category.id} className={isActive ? "profile-bmi-row is-active" : "profile-bmi-row"}>
+                              <td>
+                                <span className="fw-semibold">{t(category.labelKey)}</span>
+                              </td>
+                              <td>{t(category.rangeKey)}</td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        )}
       </div>
-    </main>
+    </div>
+  </main>
   );
 }
