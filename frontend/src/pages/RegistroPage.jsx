@@ -1,10 +1,13 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import Alert from '../components/Alert';
 import { API } from '../services/apijs';
 import { useLocale } from '../contexts/LocaleContext';
+import { useAuth } from '../contexts/AuthContext';
+import GoogleAuthButton from '../components/GoogleAuthButton';
+import NicknamePrompt from '../components/NicknamePrompt';
 
 import '../assets/css/style_login.css';
 import '../assets/css/registro_usuario.css';
@@ -15,6 +18,7 @@ const usernamePattern = /^[a-zA-Z0-9_-]{3,32}$/;
 
 export default function RegisterPage() {
   const { t } = useLocale();
+  const { loginWithGoogle, user, isAuthenticated } = useAuth();
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -22,6 +26,8 @@ export default function RegisterPage() {
   const [password2, setPassword2] = useState('');
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showNicknamePrompt, setShowNicknamePrompt] = useState(false);
+  const [pendingRedirect, setPendingRedirect] = useState(null);
   const navigate = useNavigate();
 
   const showMessage = (type, text) => setMessages([{ type, text }]);
@@ -55,6 +61,46 @@ export default function RegisterPage() {
     }
     return { full_name: name, username: user, email: mail, password: pass };
   };
+
+  useEffect(() => {
+    if (isAuthenticated && user?.needs_username) {
+      setShowNicknamePrompt(true);
+    }
+  }, [isAuthenticated, user]);
+
+  const resolveRedirect = useCallback(() => pendingRedirect || '/admin/productos', [pendingRedirect]);
+
+  const handleNicknameComplete = useCallback(() => {
+    const destination = resolveRedirect();
+    setPendingRedirect(null);
+    setShowNicknamePrompt(false);
+    navigate(destination, { replace: true });
+  }, [navigate, resolveRedirect]);
+
+  const handleGoogleCredential = useCallback(
+    async (credential) => {
+      if (!credential) {
+        showMessage('danger', t('login.error'));
+        return;
+      }
+      try {
+        setLoading(true);
+        const result = await loginWithGoogle(credential);
+        setMessages([]);
+        if (result?.user?.needs_username) {
+          setShowNicknamePrompt(true);
+          setPendingRedirect('/admin/productos');
+          return;
+        }
+        navigate('/admin/productos', { replace: true });
+      } catch (error) {
+        showMessage('danger', error?.message || t('login.error'));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [loginWithGoogle, navigate, showMessage, t]
+  );
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -156,10 +202,29 @@ export default function RegisterPage() {
             </button>
           </form>
 
+          <div className='mt-4'>
+            <p className='text-center text-uppercase text-muted small mb-2'>{t('login.or')}</p>
+            <GoogleAuthButton onCredential={handleGoogleCredential} mode='signup' className='d-flex flex-column align-items-center' />
+            <p className='text-center small text-muted mt-2 mb-0'>{t('login.googleCta')}</p>
+          </div>
+
           <div className='text-center mt-4'>
             <p className='text-dark mb-0'>{t('register.haveAccount')}</p>
             <Link to='/login' className='text-primary text-decoration-none fw-medium'>{t('register.gotoLogin')}</Link>
           </div>
+
+          <NicknamePrompt
+            visible={showNicknamePrompt}
+            title={t('login.nickname.title')}
+            description={t('login.nickname.description')}
+            placeholder={t('login.nickname.placeholder')}
+            submitLabel={t('login.nickname.submit')}
+            skipLabel={t('login.nickname.skip')}
+            validationMessage={t('login.nickname.error')}
+            errorMessage={t('login.nickname.error')}
+            onSuccess={handleNicknameComplete}
+            onSkip={handleNicknameComplete}
+          />
         </div>
       </main>
 

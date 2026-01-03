@@ -41,7 +41,7 @@ const MercadoPagoCheckout = ({ orderId, userInfo }) => {
 
       // Redirigir a MercadoPago
       // En producción usar init_point, en desarrollo usar sandbox_init_point
-      const checkoutUrl = process.env.NODE_ENV === 'production' 
+      const checkoutUrl = import.meta.env.PROD
         ? data.init_point 
         : data.sandbox_init_point;
 

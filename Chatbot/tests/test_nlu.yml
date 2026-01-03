@@ -21,6 +21,8 @@ nlu:
     - el codigo es [FT-2025](codigo_reserva)
     - usa [pantalla](formato)
     - mi correo es [cliente@fitter.com](email)
+    - no me gusta la [palta](no_gusta)
+    - prepara opciones sin [pepino](alimentos_no_gustan)
 
 - intent: solicitar_rutina
   examples: |

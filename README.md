@@ -15,6 +15,7 @@ Fitter es una **plataforma integral para gimnasios y centros deportivos** con ch
 - Gestionar órdenes y perfiles de usuario.
 - Recibir notificaciones por email.
 - Autenticación segura con MFA.
+- Inicio de sesión y registro con Google con apodos personalizables.
 
 El sistema cumple con la normativa chilena (Ley 21.719) sobre protección de datos.
 
@@ -265,10 +266,14 @@ El script activa el virtualenv `.venv`, establece `PYTHONPATH` al directorio del
    # Windows (PowerShell):
    $env:PROFILE_ENCRYPTION_KEY="<clave-Fernet>"
    $env:CHAT_CONTEXT_API_KEY="<token-opcional>"
+   $env:GOOGLE_CLIENT_IDS="tu-client-id.apps.googleusercontent.com"
+   $env:REACT_APP_GOOGLE_CLIENT_ID="tu-client-id.apps.googleusercontent.com"
    
    # Linux/Mac:
    export PROFILE_ENCRYPTION_KEY="<clave-Fernet>"
    export CHAT_CONTEXT_API_KEY="<token-opcional>"
+   export GOOGLE_CLIENT_IDS="tu-client-id.apps.googleusercontent.com"
+   export REACT_APP_GOOGLE_CLIENT_ID="tu-client-id.apps.googleusercontent.com"
    ```
 3. **Inicia los servicios desde la terminal integrada de VS Code**:
    ```bat
@@ -280,6 +285,12 @@ El script activa el virtualenv `.venv`, establece `PYTHONPATH` al directorio del
    - Servidor de acciones Rasa SDK en `http://localhost:5055`
 
 Cuando termines la sesión, presiona `Ctrl+C` en la terminal para cerrar todos los servicios de forma ordenada.
+
+### 🔐 Login con Google y apodos
+
+- `GOOGLE_CLIENT_IDS` acepta uno o varios **Client ID** (separados por comas) configurados en Google Cloud y el backend valida que el `aud` del `id_token` pertenezca a esa lista.
+- `REACT_APP_GOOGLE_CLIENT_ID` debe apuntar al Client ID que usará el botón de Google Identity Services en el frontend.
+- Los usuarios que ingresan con Google reciben un nombre temporal para efectos internos y se les ofrece, inmediatamente después, un formulario accesible para definir su apodo dentro de la app (pueden omitirlo y volver cuando quieran).
 
 ## 📁 Estructura del proyecto
 
@@ -336,9 +347,9 @@ Incluye tests para:
 - **Propósito general**: El repositorio contiene migraciones Alembic y scripts auxiliares para facilitar la creación y actualización del esquema de la base de datos. Debido a cambios históricos en diferentes carpetas de migraciones, se incluye una migración "squash" idempotente y scripts seguros para instalar el esquema en una base de datos nueva o existente sin sobrescribir el historial de Alembic del servidor.
 
 - **Archivos importantes**:
-   - `backend/migrations/versions/20251129_squash_schema.py`: migración "squash" idempotente que crea las tablas y columnas principales si no existen (diseñada para instalaciones limpias). `down_revision = None` para facilitar instalaciones nuevas.
-   - `backend/migrations/versions/20251129_merge_squash_heads.py`: merge no-op que ayuda a reconciliar múltiples "heads" locales de Alembic sin ejecutar DDL.
-   - `backend/migrations/versions/20251129_add_chat_id_to_chat_user_context.py`: migración puntual que añade `chat_id` a `chat_user_context` (ya presente en el historial del proyecto).
+   - `migrations/versions/20251129_squash_schema.py`: migración "squash" idempotente que crea las tablas y columnas principales si no existen (diseñada para instalaciones limpias). Ahora depende de `20251129_add_chat_id_to_chat_user_context` para que el árbol de revisiones sea lineal.
+   - `migrations/versions/20251129_add_chat_id_to_chat_user_context.py`: migración puntual que añade `chat_id` a `chat_user_context` (ya presente en el historial del proyecto).
+   - `migrations/legacy_versions/`: carpeta donde dejamos migraciones antiguas que ya no forman parte del flujo activo. El backend únicamente recorre `migrations/versions`.
    - `scripts/apply_schema_sql.py`: script ejecutado por el mantenedor para aplicar SQL idempotente directamente a la base de datos (usa `ALTER TABLE IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`, etc.). Útil cuando la base de datos de destino tiene un historial Alembic distinto y se desea garantizar que las columnas/índices estén presentes sin tocar `alembic_version`.
    - `scripts/apply_migrations.py`: helper para ejecutar Alembic desde el contexto de la aplicación Flask (útil si quieres que Alembic use la URL y engine configurados por Flask-SQLAlchemy).
    - `scripts/inspect_migrations.py`: script de inspección que muestra el contenido de `alembic_version` en la BD y lista los archivos de migración disponibles (útil para diagnóstico).

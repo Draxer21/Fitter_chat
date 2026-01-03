@@ -15,8 +15,11 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False, index=True)
     username = db.Column(db.String(80), unique=True, nullable=False, index=True)
     full_name = db.Column(db.String(120), nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
+    password_hash = db.Column(db.String(255), nullable=True)
     is_admin = db.Column(db.Boolean, nullable=False, default=False)
+    auth_provider = db.Column(db.String(32), nullable=False, default="local", server_default="local")
+    google_sub = db.Column(db.String(64), unique=True, nullable=True, index=True)
+    username_confirmed = db.Column(db.Boolean, nullable=False, default=True, server_default="true")
     weight_kg = db.Column(db.Float, nullable=True)
     height_cm = db.Column(db.Float, nullable=True)
     body_fat_percent = db.Column(db.Float, nullable=True)
@@ -32,6 +35,7 @@ class User(db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     profile = db.relationship("UserProfile", back_populates="user", uselist=False, cascade="all, delete-orphan")
+    hero_plans = db.relationship("UserHeroPlan", back_populates="user", cascade="all, delete-orphan")
 
     def set_password(self, raw_password: str) -> None:
         if not raw_password or not raw_password.strip():
@@ -40,6 +44,8 @@ class User(db.Model):
 
     def check_password(self, raw_password: str) -> bool:
         if not raw_password:
+            return False
+        if not self.password_hash:
             return False
         return check_password_hash(self.password_hash, raw_password)
 
@@ -139,6 +145,9 @@ class User(db.Model):
             "username": self.username,
             "full_name": self.full_name,
             "is_admin": self.is_admin,
+            "auth_provider": self.auth_provider or "local",
+            "has_password": bool(self.password_hash),
+            "needs_username": not bool(self.username_confirmed),
             "weight_kg": (profile_data or {}).get("weight_kg", self.weight_kg),
             "height_cm": (profile_data or {}).get("height_cm", self.height_cm),
             "body_fat_percent": (profile_data or {}).get("body_fat_percent", self.body_fat_percent),
@@ -169,7 +178,33 @@ class User(db.Model):
             username=username.strip().lower(),
             full_name=full_name.strip(),
             is_admin=is_admin,
+            auth_provider="local",
+            username_confirmed=True,
         )
         user.set_password(password)
+        db.session.add(user)
+        return user
+
+    @classmethod
+    def create_from_google(
+        cls,
+        *,
+        email: str,
+        username: str,
+        full_name: str,
+        google_sub: str,
+        is_admin: bool = False,
+        username_confirmed: bool = False,
+    ) -> "User":
+        user = cls(
+            email=email.lower().strip(),
+            username=username.strip().lower(),
+            full_name=(full_name or email).strip(),
+            is_admin=is_admin,
+            auth_provider="google",
+            google_sub=google_sub,
+            username_confirmed=username_confirmed,
+            password_hash=None,
+        )
         db.session.add(user)
         return user

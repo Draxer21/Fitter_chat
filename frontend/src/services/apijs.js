@@ -1,9 +1,10 @@
 // src/services/apijs.js
-const rawBase = process.env.REACT_APP_API_BASE_URL || "";
+const rawBase = import.meta.env.VITE_API_BASE_URL || "";
+const CHAT_CONTEXT_KEY = import.meta.env.VITE_CHAT_CONTEXT_KEY || "";
 const BASE =
   rawBase && rawBase !== "/"
     ? rawBase.replace(/\/+$/, "")
-    : process.env.NODE_ENV === "development"
+    : import.meta.env.DEV
       ? ""
       : "";
 const parseBody = async (resp) => {
@@ -113,6 +114,17 @@ export const API = {
         ...(opts && opts.backupCode ? { backup_code: opts.backupCode, recovery_code: opts.backupCode } : {})
       })
     }).then(j),
+    googleLogin: async (credential, opts = {}) => fetch(`${BASE}/auth/google`, {
+      method: "POST",
+      headers: await csrfHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
+      body: JSON.stringify({
+        credential,
+        token: credential,
+        id_token: credential,
+        ...(opts && opts.username ? { username: opts.username, preferred_username: opts.username } : {})
+      })
+    }).then(j),
     logout: async () => {
       const response = await fetch(`${BASE}/auth/logout`, {
         method: "POST",
@@ -128,6 +140,28 @@ export const API = {
       headers: await csrfHeaders({ "Content-Type":"application/json" }),
       credentials:"include",
       body: JSON.stringify(payload)
+    }).then(j),
+    updateUsername: async (username) => fetch(`${BASE}/auth/username`, {
+      method: "PUT",
+      headers: await csrfHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
+      body: JSON.stringify({ username })
+    }).then(j),
+    updateEmail: async (email) => fetch(`${BASE}/auth/email`, {
+      method: "PUT",
+      headers: await csrfHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
+      body: JSON.stringify({ email })
+    }).then(j),
+    updatePassword: async ({ currentPassword, newPassword, confirmPassword } = {}) => fetch(`${BASE}/auth/password`, {
+      method: "PUT",
+      headers: await csrfHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
+      body: JSON.stringify({
+        current_password: currentPassword,
+        new_password: newPassword,
+        confirm_password: confirmPassword,
+      }),
     }).then(j),
     mfa: {
       status: () => fetch(`${BASE}/auth/mfa/status`, { credentials:"include" }).then(j),
@@ -157,6 +191,15 @@ export const API = {
       credentials:"include",
       body: JSON.stringify(payload)
     }).then(j),
+    heroPlans: {
+      list: () => fetch(`${BASE}/profile/hero-plans`, { credentials:"include" }).then(j),
+      create: (payload) => fetch(`${BASE}/profile/hero-plans`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+      }).then(j),
+    },
   },
   orders: {
     get: (id) => fetch(`${BASE}/orders/${id}`, { credentials:"include" }).then(j),
@@ -165,8 +208,19 @@ export const API = {
     receiptPdf: (id) => fetch(`${BASE}/orders/${id}/receipt.pdf`, { credentials:"include" }),
   },
   chat: {
-    send:  (sender,message)=> fetch(`${BASE}/chat/send`, { method:"POST", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify({ sender, message }) }).then(j),
-  }
+    send: (sender, message) => {
+      const headers = { "Content-Type": "application/json" };
+      if (CHAT_CONTEXT_KEY) {
+        headers["X-Context-Key"] = CHAT_CONTEXT_KEY;
+      }
+      return fetch(`${BASE}/chat/send`, {
+        method: "POST",
+        headers,
+        credentials: "include",
+        body: JSON.stringify({ sender, message }),
+      }).then(j);
+    },
+  },
 };
 
 

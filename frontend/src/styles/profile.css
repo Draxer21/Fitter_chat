@@ -2,7 +2,9 @@
   min-height: 100vh;
   padding-top: 130px;
   padding-bottom: 60px;
-  background: var(--bg);
+  background: radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--surface) 70%, transparent), transparent 55%),
+    radial-gradient(circle at 85% 0, color-mix(in srgb, var(--primary) 25%, transparent), transparent 45%),
+    linear-gradient(135deg, color-mix(in srgb, var(--bg) 92%, var(--surface) 8%) 0%, var(--bg) 70%, var(--surface) 100%);
   color: var(--text);
   transition: background-color 200ms ease, color 200ms ease;
 }
@@ -42,6 +44,7 @@
   border-radius: 20px;
   padding: 2rem;
   border: 1px solid var(--border);
+  box-shadow: var(--shadow);
   color: var(--text);
   display: flex;
   align-items: center;
@@ -64,6 +67,39 @@
   display: grid;
   place-items: center;
   font-size: 1.5rem;
+}
+
+.profile-section-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.35rem;
+  border-radius: 16px 16px 0 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  margin-bottom: 1.5rem;
+  justify-content: flex-end;
+}
+
+.profile-section-tab {
+  text-decoration: none;
+  padding: 0.55rem 1rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: border-color 200ms ease, color 200ms ease, background-color 200ms ease;
+}
+
+.profile-section-tab.is-active {
+  border-color: var(--border);
+  color: var(--text);
+  background: var(--bg);
+  box-shadow: var(--shadow);
 }
 
 .profile-content-grid {
@@ -94,13 +130,21 @@
   }
 }
 
+@media (max-width: 991px) {
+  .profile-section-tabs {
+    justify-content: center;
+  }
+}
+
 .profile-form {
   border-radius: 18px;
   overflow: hidden;
+  background: var(--surface);
+  box-shadow: var(--shadow);
 }
 
 .profile-form .card-body {
-  background: var(--bg);
+  background: transparent;
   padding: 2.5rem;
 }
 
@@ -124,9 +168,42 @@
   box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--primary) 15%, transparent);
 }
 
+.profile-account .card-body {
+  background: var(--surface);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+}
+
+.profile-account-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.profile-account .form-label {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.profile-account .form-control {
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 0.65rem 0.9rem;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.profile-account .form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--primary) 15%, transparent);
+}
+
 .profile-bmi .card-body {
   background: var(--surface);
   border-radius: 16px;
+  box-shadow: var(--shadow);
 }
 
 .profile-bmi .display-6 {

@@ -20,6 +20,7 @@ def init_extensions(app: Flask) -> None:
 
 _MODEL_MODULES: Iterable[Tuple[str, str]] = (
     ("gestor_inventario", "backend.gestor_inventario.models"),
+    ("classes", "backend.classes.models"),
     ("login", "backend.login.models"),
     ("profile", "backend.profile.models"),
     ("metrics", "backend.metrics"),

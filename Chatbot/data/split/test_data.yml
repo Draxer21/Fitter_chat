@@ -7128,608 +7128,6 @@ nlu:
     - Me envías resumida de la rutina cada lunes al mi email alternativo? Es para seguirla mientras viajo.
     - Me envías en PDF de la rutina al final de la semana al el correo de mi entrenador? Necesito compartirla con mi fisio.
     - Me envías en PDF de la rutina solo hoy al mi bandeja de Gmail? La revisare desde el telefono.
-- intent: informar
-  examples: |
-    - Para que tengas contexto: tengo 67 anios, 102 kilos, 1.65 metros, tengo sindrome metabolico, entreno en la noche
-    - Para que tengas contexto: tengo 67 anios, 85 kilos, 1.90 m, tengo escoliosis moderada, entreno en la hora de almuerzo
-    - Mis datos: tengo 25 anios, 102 kilos, tengo antecedente de hernia lumbar, cuando mis hijos duermen
-    - Para que tengas contexto: tengo 30 anios, 85 kilos, 1.78 metros, soy celiaco y cuido mi dieta, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 48, 63 kilos, 1.58 m, soy intolerante a la lactosa, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 30 anios, 72 kg, 1.70 m, tengo hipertension controlada, entreno cuatro veces por semana
-    - Peso 85 kilos y mido 1.80 metros; ademas convivo con asma leve
-    - Para que tengas contexto: tengo 42, 95 kg, 1.72 m, tengo escoliosis moderada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 42, 72 kg, 1.65 metros, tengo escoliosis moderada, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 67 anios, 78 kilos, 1.80 metros, recien sali de covid prolongado, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 30 anios, 55 kg, 1.80 metros, convivo con asma leve, entreno dos veces por semana
-    - Para que tengas contexto: tengo 42, 63 kilos, 1.65 metros, estoy recuperandome de una lesion de rodilla, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 25 anios, 90 kg, 1.72 m, tengo escoliosis moderada, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 48, 78 kilos, 1.78 metros, mi medico recomendo bajo impacto, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 42, 85 kilos, 1.65 metros, tengo antecedente de hernia lumbar, entreno dos veces por semana
-    - Para que tengas contexto: tengo 34 anios, 90 kg, 1.78 metros, soy vegetariano desde hace anios, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 48, 90 kg, 1.80 metros, convivo con asma leve, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 25 anios, 63 kilos, 1.80 metros, soy intolerante a la lactosa, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 30 anios, 63 kilos, 1.65 metros, recien sali de covid prolongado, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 61, 63 kilos, 1.80 metros, estoy recuperandome de una lesion de rodilla, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 48, 63 kilos, 1.70 m, tengo escoliosis moderada, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 67 anios, 102 kilos, 1.62 metros, mi medico recomendo bajo impacto, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 55 anios, 95 kg, 1.65 metros, tengo sindrome metabolico, entreno cuatro veces por semana
-    - Peso 95 kg y mido 1.80 metros; ademas estoy recuperandome de una lesion de rodilla
-    - Para que tengas contexto: tengo 55 anios, 72 kg, 1.72 m, soy vegetariano desde hace anios, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 61, 85 kilos, 1.78 metros, tengo hipertension controlada, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 25 anios, 95 kg, 1.65 metros, tengo escoliosis moderada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 61, 95 kg, 1.90 m, soy intolerante a la lactosa, entreno cuando mis hijos duermen
-    - Mis datos: tengo 30 anios, 72 kg, tengo escoliosis moderada, en la noche
-    - Para que tengas contexto: tengo 61, 95 kg, 1.78 metros, mi medico recomendo bajo impacto, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 25 anios, 63 kilos, 1.78 metros, estoy recuperandome de una lesion de rodilla, entreno lunes miercoles y viernes
-    - Te cuento que tengo hipertension controlada; trabajo con kettlebells en casa y actualmente peso 90 kg
-    - Para que tengas contexto: tengo 34 anios, 55 kg, 1.70 m, tengo lupus en remision, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 67 anios, 78 kilos, 1.80 metros, soy vegetariano desde hace anios, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 30 anios, 78 kilos, 1.70 m, tengo lupus en remision, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 25 anios, 95 kg, 1.62 metros, mi medico recomendo bajo impacto, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 61, 55 kg, 1.70 m, estoy recuperandome de una lesion de rodilla, entreno dos veces por semana
-    - Para que tengas contexto: tengo 30 anios, 95 kg, 1.62 metros, tengo antecedente de hernia lumbar, entreno en la noche
-    - Para que tengas contexto: tengo 25 anios, 90 kg, 1.80 metros, tengo escoliosis moderada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 48, 72 kg, 1.72 m, recien sali de covid prolongado, entreno solo los fines de semana
-    - Mis datos: tengo 48, 55 kg, tengo antecedente de hernia lumbar, cuatro veces por semana
-    - Para que tengas contexto: tengo 55 anios, 90 kg, 1.70 m, tengo escoliosis moderada, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 34 anios, 90 kg, 1.72 m, estoy recuperandome de una lesion de rodilla, entreno dos veces por semana
-    - Para que tengas contexto: tengo 48, 55 kg, 1.58 m, convivo con asma leve, entreno dos veces por semana
-    - Para que tengas contexto: tengo 55 anios, 55 kg, 1.78 metros, soy vegetariano desde hace anios, entreno en la noche
-    - Para que tengas contexto: tengo 61, 78 kilos, 1.58 m, soy intolerante a la lactosa, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 34 anios, 72 kg, 1.78 metros, tengo lupus en remision, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 42, 90 kg, 1.58 m, mi medico recomendo bajo impacto, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 67 anios, 102 kilos, 1.78 metros, soy vegetariano desde hace anios, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 25 anios, 63 kilos, 1.90 m, soy vegetariano desde hace anios, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 61, 55 kg, 1.72 m, tengo escoliosis moderada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 34 anios, 95 kg, 1.58 m, soy intolerante a la lactosa, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 34 anios, 55 kg, 1.80 metros, soy celiaco y cuido mi dieta, entreno en la hora de almuerzo
-    - Mis datos: tengo 67 anios, 55 kg, tengo antecedente de hernia lumbar, cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 48, 95 kg, 1.90 m, convivo con asma leve, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 30 anios, 95 kg, 1.65 metros, recien sali de covid prolongado, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 34 anios, 55 kg, 1.70 m, recien sali de covid prolongado, entreno cuatro veces por semana
-    - Mis datos: tengo 42, 63 kilos, mi medico recomendo bajo impacto, cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 61, 95 kg, 1.78 metros, tengo antecedente de hernia lumbar, entreno dos veces por semana
-    - Para que tengas contexto: tengo 30 anios, 78 kilos, 1.65 metros, tengo hipertension controlada, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 25 anios, 90 kg, 1.80 metros, tengo hipertension controlada, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 55 anios, 90 kg, 1.62 metros, convivo con asma leve, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 55 anios, 63 kilos, 1.72 m, soy vegetariano desde hace anios, entreno en la noche
-    - Para que tengas contexto: tengo 30 anios, 90 kg, 1.70 m, tengo escoliosis moderada, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 42, 95 kg, 1.62 metros, tengo escoliosis moderada, entreno en la noche
-    - Mis datos: tengo 30 anios, 55 kg, mi medico recomendo bajo impacto, cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 25 anios, 78 kilos, 1.78 metros, tengo antecedente de hernia lumbar, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 67 anios, 72 kg, 1.72 m, mi medico recomendo bajo impacto, entreno dos veces por semana
-    - Para que tengas contexto: tengo 30 anios, 90 kg, 1.80 metros, recien sali de covid prolongado, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 67 anios, 78 kilos, 1.65 metros, mi medico recomendo bajo impacto, entreno en la noche
-    - Para que tengas contexto: tengo 34 anios, 63 kilos, 1.62 metros, soy celiaco y cuido mi dieta, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 67 anios, 63 kilos, 1.78 metros, convivo con asma leve, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 61, 102 kilos, 1.90 m, tengo lupus en remision, entreno lunes miercoles y viernes
-    - Mis datos: tengo 42, 85 kilos, soy celiaco y cuido mi dieta, en la hora de almuerzo
-    - Para que tengas contexto: tengo 25 anios, 55 kg, 1.62 metros, tengo escoliosis moderada, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 48, 55 kg, 1.65 metros, tengo sindrome metabolico, entreno en la noche
-    - Para que tengas contexto: tengo 61, 95 kg, 1.70 m, recien sali de covid prolongado, entreno en la noche
-    - Para que tengas contexto: tengo 61, 63 kilos, 1.80 metros, recien sali de covid prolongado, entreno cada maniana antes del trabajo
-    - Peso 95 kg y mido 1.58 m; ademas tengo lupus en remision
-    - Te cuento que tengo lupus en remision; entreno con mi pareja los fines y actualmente peso 55 kg
-    - Para que tengas contexto: tengo 30 anios, 85 kilos, 1.90 m, tengo antecedente de hernia lumbar, entreno dos veces por semana
-    - Para que tengas contexto: tengo 67 anios, 95 kg, 1.90 m, convivo con asma leve, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 30 anios, 78 kilos, 1.65 metros, mi medico recomendo bajo impacto, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 34 anios, 55 kg, 1.70 m, tengo hipertension controlada, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 61, 63 kilos, 1.70 m, soy vegetariano desde hace anios, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 55 anios, 102 kilos, 1.70 m, convivo con asma leve, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 25 anios, 90 kg, 1.90 m, estoy recuperandome de una lesion de rodilla, entreno cuatro veces por semana
-    - Mis datos: tengo 34 anios, 90 kg, tengo sindrome metabolico, cuatro veces por semana
-    - Para que tengas contexto: tengo 42, 72 kg, 1.58 m, soy vegetariano desde hace anios, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 61, 78 kilos, 1.58 m, tengo hipertension controlada, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 55 anios, 63 kilos, 1.78 metros, soy vegetariano desde hace anios, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 25 anios, 78 kilos, 1.62 metros, soy celiaco y cuido mi dieta, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 61, 95 kg, 1.80 metros, estoy recuperandome de una lesion de rodilla, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 67 anios, 102 kilos, 1.70 m, tengo antecedente de hernia lumbar, entreno dos veces por semana
-    - Mis datos: tengo 42, 95 kg, tengo antecedente de hernia lumbar, lunes miercoles y viernes
-    - Para que tengas contexto: tengo 30 anios, 78 kilos, 1.80 metros, tengo hipertension controlada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 34 anios, 90 kg, 1.72 m, soy vegetariano desde hace anios, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 48, 63 kilos, 1.65 metros, tengo sindrome metabolico, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 42, 55 kg, 1.58 m, soy intolerante a la lactosa, entreno solo los fines de semana
-    - Mis datos: tengo 67 anios, 78 kilos, soy intolerante a la lactosa, en la hora de almuerzo
-    - Para que tengas contexto: tengo 42, 85 kilos, 1.78 metros, soy vegetariano desde hace anios, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 55 anios, 90 kg, 1.70 m, estoy recuperandome de una lesion de rodilla, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 30 anios, 102 kilos, 1.78 metros, soy intolerante a la lactosa, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 34 anios, 90 kg, 1.80 metros, soy vegetariano desde hace anios, entreno en la hora de almuerzo
-    - Te cuento que tengo hipertension controlada; entreno con mi pareja los fines y actualmente peso 102 kilos
-    - Para que tengas contexto: tengo 30 anios, 63 kilos, 1.78 metros, soy celiaco y cuido mi dieta, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 25 anios, 95 kg, 1.70 m, soy celiaco y cuido mi dieta, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 61, 63 kilos, 1.62 metros, tengo lupus en remision, entreno en la noche
-    - Mis datos: tengo 55 anios, 102 kilos, estoy recuperandome de una lesion de rodilla, lunes miercoles y viernes
-    - Para que tengas contexto: tengo 30 anios, 90 kg, 1.58 m, convivo con asma leve, entreno dos veces por semana
-    - Mis datos: tengo 42, 55 kg, tengo antecedente de hernia lumbar, cuando mis hijos duermen
-    - Para que tengas contexto: tengo 67 anios, 63 kilos, 1.65 metros, tengo lupus en remision, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 61, 95 kg, 1.90 m, tengo hipertension controlada, entreno en la hora de almuerzo
-    - Peso 55 kg y mido 1.62 metros; ademas soy celiaco y cuido mi dieta
-    - Para que tengas contexto: tengo 42, 95 kg, 1.78 metros, soy celiaco y cuido mi dieta, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 48, 85 kilos, 1.78 metros, tengo hipertension controlada, entreno en la noche
-    - Mis datos: tengo 61, 85 kilos, estoy recuperandome de una lesion de rodilla, lunes miercoles y viernes
-    - Para que tengas contexto: tengo 34 anios, 102 kilos, 1.70 m, tengo sindrome metabolico, entreno dos veces por semana
-    - Para que tengas contexto: tengo 61, 95 kg, 1.58 m, convivo con asma leve, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 42, 95 kg, 1.70 m, tengo sindrome metabolico, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 55 anios, 55 kg, 1.80 metros, mi medico recomendo bajo impacto, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 42, 55 kg, 1.65 metros, mi medico recomendo bajo impacto, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 42, 55 kg, 1.72 m, estoy recuperandome de una lesion de rodilla, entreno dos veces por semana
-    - Mis datos: tengo 55 anios, 72 kg, soy celiaco y cuido mi dieta, cuando mis hijos duermen
-    - Para que tengas contexto: tengo 55 anios, 55 kg, 1.58 m, estoy recuperandome de una lesion de rodilla, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 61, 55 kg, 1.90 m, soy vegetariano desde hace anios, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 25 anios, 72 kg, 1.65 metros, tengo antecedente de hernia lumbar, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 25 anios, 90 kg, 1.90 m, soy celiaco y cuido mi dieta, entreno cuatro veces por semana
-    - Mis datos: tengo 48, 72 kg, soy vegetariano desde hace anios, dos veces por semana
-    - Para que tengas contexto: tengo 48, 72 kg, 1.65 metros, tengo antecedente de hernia lumbar, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 34 anios, 102 kilos, 1.70 m, mi medico recomendo bajo impacto, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 30 anios, 72 kg, 1.62 metros, estoy recuperandome de una lesion de rodilla, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 42, 90 kg, 1.58 m, soy vegetariano desde hace anios, entreno cuatro veces por semana
-    - Mis datos: tengo 42, 55 kg, tengo hipertension controlada, dos veces por semana
-    - Te cuento que estoy recuperandome de una lesion de rodilla; trabajo con kettlebells en casa y actualmente peso 55 kg
-    - Para que tengas contexto: tengo 42, 55 kg, 1.80 metros, soy celiaco y cuido mi dieta, entreno dos veces por semana
-    - Para que tengas contexto: tengo 67 anios, 55 kg, 1.90 m, tengo lupus en remision, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 30 anios, 90 kg, 1.80 metros, tengo antecedente de hernia lumbar, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 48, 78 kilos, 1.70 m, soy intolerante a la lactosa, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 55 anios, 90 kg, 1.70 m, soy celiaco y cuido mi dieta, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 42, 55 kg, 1.90 m, soy celiaco y cuido mi dieta, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 61, 63 kilos, 1.62 metros, tengo sindrome metabolico, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 42, 90 kg, 1.80 metros, convivo con asma leve, entreno solo los fines de semana
-    - Mis datos: tengo 25 anios, 78 kilos, soy intolerante a la lactosa, cuando mis hijos duermen
-    - Para que tengas contexto: tengo 67 anios, 63 kilos, 1.78 metros, tengo lupus en remision, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 67 anios, 95 kg, 1.78 metros, soy intolerante a la lactosa, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 61, 95 kg, 1.58 m, tengo lupus en remision, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 25 anios, 63 kilos, 1.90 m, soy intolerante a la lactosa, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 42, 72 kg, 1.90 m, tengo antecedente de hernia lumbar, entreno dos veces por semana
-    - Para que tengas contexto: tengo 42, 85 kilos, 1.72 m, soy intolerante a la lactosa, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 55 anios, 102 kilos, 1.78 metros, tengo lupus en remision, entreno dos veces por semana
-    - Mis datos: tengo 34 anios, 72 kg, convivo con asma leve, dos veces por semana
-    - Para que tengas contexto: tengo 61, 72 kg, 1.72 m, tengo sindrome metabolico, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 67 anios, 78 kilos, 1.65 metros, tengo sindrome metabolico, entreno dos veces por semana
-    - Para que tengas contexto: tengo 61, 78 kilos, 1.78 metros, tengo hipertension controlada, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 48, 95 kg, 1.80 metros, convivo con asma leve, entreno en la noche
-    - Peso 72 kg y mido 1.78 metros; ademas soy intolerante a la lactosa
-    - Mis datos: tengo 25 anios, 78 kilos, soy celiaco y cuido mi dieta, en la noche
-    - Para que tengas contexto: tengo 42, 90 kg, 1.90 m, tengo lupus en remision, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 67 anios, 72 kg, 1.78 metros, tengo hipertension controlada, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 42, 78 kilos, 1.72 m, tengo hipertension controlada, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 42, 55 kg, 1.70 m, tengo antecedente de hernia lumbar, entreno en la noche
-    - Para que tengas contexto: tengo 67 anios, 85 kilos, 1.65 metros, soy vegetariano desde hace anios, entreno en la noche
-    - Para que tengas contexto: tengo 67 anios, 95 kg, 1.80 metros, tengo hipertension controlada, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 55 anios, 55 kg, 1.72 m, tengo sindrome metabolico, entreno en la noche
-    - Para que tengas contexto: tengo 34 anios, 63 kilos, 1.78 metros, soy celiaco y cuido mi dieta, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 30 anios, 78 kilos, 1.90 m, mi medico recomendo bajo impacto, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 30 anios, 72 kg, 1.70 m, soy intolerante a la lactosa, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 34 anios, 95 kg, 1.72 m, recien sali de covid prolongado, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 25 anios, 78 kilos, 1.90 m, recien sali de covid prolongado, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 61, 85 kilos, 1.78 metros, recien sali de covid prolongado, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 48, 102 kilos, 1.90 m, convivo con asma leve, entreno lunes miercoles y viernes
-    - Mis datos: tengo 55 anios, 102 kilos, convivo con asma leve, lunes miercoles y viernes
-    - Para que tengas contexto: tengo 67 anios, 63 kilos, 1.72 m, soy celiaco y cuido mi dieta, entreno dos veces por semana
-    - Para que tengas contexto: tengo 30 anios, 102 kilos, 1.58 m, mi medico recomendo bajo impacto, entreno dos veces por semana
-    - Mis datos: tengo 30 anios, 72 kg, soy vegetariano desde hace anios, lunes miercoles y viernes
-    - Mis datos: tengo 34 anios, 90 kg, tengo sindrome metabolico, cuando mis hijos duermen
-    - Para que tengas contexto: tengo 55 anios, 78 kilos, 1.62 metros, tengo antecedente de hernia lumbar, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 67 anios, 85 kilos, 1.70 m, tengo hipertension controlada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 48, 95 kg, 1.80 metros, estoy recuperandome de una lesion de rodilla, entreno dos veces por semana
-    - Para que tengas contexto: tengo 61, 63 kilos, 1.62 metros, mi medico recomendo bajo impacto, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 48, 78 kilos, 1.78 metros, tengo lupus en remision, entreno cuando mis hijos duermen
-    - Te cuento que estoy recuperandome de una lesion de rodilla; prefiero rutinas sin saltos y actualmente peso 85 kilos
-    - Para que tengas contexto: tengo 55 anios, 102 kilos, 1.70 m, soy celiaco y cuido mi dieta, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 34 anios, 90 kg, 1.58 m, tengo lupus en remision, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 34 anios, 90 kg, 1.90 m, estoy recuperandome de una lesion de rodilla, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 25 anios, 63 kilos, 1.78 metros, mi medico recomendo bajo impacto, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 67 anios, 63 kilos, 1.80 metros, mi medico recomendo bajo impacto, entreno dos veces por semana
-    - Para que tengas contexto: tengo 67 anios, 55 kg, 1.80 metros, tengo antecedente de hernia lumbar, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 48, 72 kg, 1.65 metros, tengo hipertension controlada, entreno lunes miercoles y viernes
-    - Mis datos: tengo 30 anios, 90 kg, tengo escoliosis moderada, cuando mis hijos duermen
-    - Para que tengas contexto: tengo 42, 85 kilos, 1.70 m, soy celiaco y cuido mi dieta, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 48, 90 kg, 1.72 m, soy celiaco y cuido mi dieta, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 67 anios, 85 kilos, 1.62 metros, tengo hipertension controlada, entreno dos veces por semana
-    - Para que tengas contexto: tengo 42, 78 kilos, 1.72 m, tengo sindrome metabolico, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 48, 95 kg, 1.72 m, tengo escoliosis moderada, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 67 anios, 55 kg, 1.65 metros, tengo escoliosis moderada, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 42, 102 kilos, 1.80 metros, recien sali de covid prolongado, entreno dos veces por semana
-    - Para que tengas contexto: tengo 61, 95 kg, 1.72 m, tengo hipertension controlada, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 67 anios, 102 kilos, 1.78 metros, tengo escoliosis moderada, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 55 anios, 95 kg, 1.90 m, estoy recuperandome de una lesion de rodilla, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 55 anios, 95 kg, 1.62 metros, soy intolerante a la lactosa, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 61, 55 kg, 1.72 m, recien sali de covid prolongado, entreno en la noche
-    - Para que tengas contexto: tengo 42, 55 kg, 1.72 m, tengo sindrome metabolico, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 30 anios, 102 kilos, 1.70 m, soy vegetariano desde hace anios, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 30 anios, 102 kilos, 1.90 m, tengo hipertension controlada, entreno en la hora de almuerzo
-    - Peso 63 kilos y mido 1.78 metros; ademas convivo con asma leve
-    - Para que tengas contexto: tengo 25 anios, 55 kg, 1.62 metros, tengo hipertension controlada, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 55 anios, 95 kg, 1.90 m, mi medico recomendo bajo impacto, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 30 anios, 90 kg, 1.58 m, convivo con asma leve, entreno en la noche
-    - Para que tengas contexto: tengo 55 anios, 78 kilos, 1.58 m, mi medico recomendo bajo impacto, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 55 anios, 55 kg, 1.80 metros, mi medico recomendo bajo impacto, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 30 anios, 78 kilos, 1.80 metros, estoy recuperandome de una lesion de rodilla, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 42, 72 kg, 1.78 metros, soy intolerante a la lactosa, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 25 anios, 63 kilos, 1.65 metros, tengo lupus en remision, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 48, 63 kilos, 1.72 m, estoy recuperandome de una lesion de rodilla, entreno dos veces por semana
-    - Para que tengas contexto: tengo 61, 85 kilos, 1.90 m, soy intolerante a la lactosa, entreno dos veces por semana
-    - Para que tengas contexto: tengo 67 anios, 55 kg, 1.78 metros, tengo hipertension controlada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 34 anios, 78 kilos, 1.72 m, tengo lupus en remision, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 67 anios, 85 kilos, 1.62 metros, soy intolerante a la lactosa, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 67 anios, 95 kg, 1.90 m, soy vegetariano desde hace anios, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 61, 63 kilos, 1.58 m, mi medico recomendo bajo impacto, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 42, 72 kg, 1.90 m, convivo con asma leve, entreno cuando mis hijos duermen
-    - Mis datos: tengo 55 anios, 63 kilos, estoy recuperandome de una lesion de rodilla, solo los fines de semana
-    - Para que tengas contexto: tengo 48, 72 kg, 1.65 metros, soy celiaco y cuido mi dieta, entreno lunes miercoles y viernes
-    - Te cuento que recien sali de covid prolongado; trabajo con kettlebells en casa y actualmente peso 63 kilos
-    - Para que tengas contexto: tengo 34 anios, 85 kilos, 1.80 metros, tengo lupus en remision, entreno cuando mis hijos duermen
-    - Te cuento que mi medico recomendo bajo impacto; prefiero rutinas sin saltos y actualmente peso 85 kilos
-    - Para que tengas contexto: tengo 42, 78 kilos, 1.90 m, tengo escoliosis moderada, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 55 anios, 102 kilos, 1.62 metros, soy celiaco y cuido mi dieta, entreno en la noche
-    - Para que tengas contexto: tengo 48, 78 kilos, 1.72 m, recien sali de covid prolongado, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 55 anios, 72 kg, 1.62 metros, tengo sindrome metabolico, entreno dos veces por semana
-    - Para que tengas contexto: tengo 34 anios, 72 kg, 1.58 m, estoy recuperandome de una lesion de rodilla, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 48, 78 kilos, 1.70 m, soy vegetariano desde hace anios, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 67 anios, 90 kg, 1.58 m, tengo antecedente de hernia lumbar, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 25 anios, 78 kilos, 1.62 metros, tengo antecedente de hernia lumbar, entreno cada maniana antes del trabajo
-    - Mis datos: tengo 34 anios, 102 kilos, tengo escoliosis moderada, cuatro veces por semana
-    - Para que tengas contexto: tengo 48, 78 kilos, 1.65 metros, tengo antecedente de hernia lumbar, entreno dos veces por semana
-    - Para que tengas contexto: tengo 48, 55 kg, 1.90 m, soy vegetariano desde hace anios, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 55 anios, 85 kilos, 1.90 m, recien sali de covid prolongado, entreno en la hora de almuerzo
-    - Peso 90 kg y mido 1.70 m; ademas soy celiaco y cuido mi dieta
-    - Para que tengas contexto: tengo 25 anios, 72 kg, 1.78 metros, recien sali de covid prolongado, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 25 anios, 55 kg, 1.80 metros, mi medico recomendo bajo impacto, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 25 anios, 90 kg, 1.78 metros, tengo lupus en remision, entreno en la noche
-    - Para que tengas contexto: tengo 55 anios, 95 kg, 1.58 m, estoy recuperandome de una lesion de rodilla, entreno en la noche
-    - Para que tengas contexto: tengo 61, 95 kg, 1.58 m, tengo hipertension controlada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 34 anios, 63 kilos, 1.90 m, recien sali de covid prolongado, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 67 anios, 102 kilos, 1.70 m, tengo escoliosis moderada, entreno cuando mis hijos duermen
-    - Mis datos: tengo 30 anios, 55 kg, tengo hipertension controlada, cuatro veces por semana
-    - Para que tengas contexto: tengo 34 anios, 85 kilos, 1.78 metros, tengo antecedente de hernia lumbar, entreno en la noche
-    - Para que tengas contexto: tengo 48, 55 kg, 1.78 metros, soy celiaco y cuido mi dieta, entreno en la noche
-    - Mis datos: tengo 42, 78 kilos, convivo con asma leve, en la noche
-    - Para que tengas contexto: tengo 61, 95 kg, 1.58 m, recien sali de covid prolongado, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 25 anios, 63 kilos, 1.72 m, convivo con asma leve, entreno en la noche
-    - Para que tengas contexto: tengo 30 anios, 78 kilos, 1.70 m, tengo escoliosis moderada, entreno cuando mis hijos duermen
-    - Mis datos: tengo 34 anios, 102 kilos, soy intolerante a la lactosa, cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 42, 102 kilos, 1.72 m, estoy recuperandome de una lesion de rodilla, entreno dos veces por semana
-    - Para que tengas contexto: tengo 34 anios, 90 kg, 1.90 m, tengo antecedente de hernia lumbar, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 67 anios, 102 kilos, 1.58 m, mi medico recomendo bajo impacto, entreno dos veces por semana
-    - Mis datos: tengo 48, 55 kg, soy intolerante a la lactosa, en la noche
-    - Para que tengas contexto: tengo 55 anios, 78 kilos, 1.62 metros, soy intolerante a la lactosa, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 48, 63 kilos, 1.58 m, tengo sindrome metabolico, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 48, 72 kg, 1.78 metros, tengo sindrome metabolico, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 48, 72 kg, 1.70 m, recien sali de covid prolongado, entreno cada maniana antes del trabajo
-    - Mis datos: tengo 30 anios, 85 kilos, mi medico recomendo bajo impacto, dos veces por semana
-    - Para que tengas contexto: tengo 61, 95 kg, 1.65 metros, estoy recuperandome de una lesion de rodilla, entreno dos veces por semana
-    - Mis datos: tengo 48, 63 kilos, soy intolerante a la lactosa, cuatro veces por semana
-    - Mis datos: tengo 30 anios, 78 kilos, tengo lupus en remision, dos veces por semana
-    - Mis datos: tengo 61, 63 kilos, tengo sindrome metabolico, en la hora de almuerzo
-    - Para que tengas contexto: tengo 67 anios, 78 kilos, 1.58 m, tengo antecedente de hernia lumbar, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 55 anios, 102 kilos, 1.90 m, soy vegetariano desde hace anios, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 34 anios, 95 kg, 1.58 m, convivo con asma leve, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 34 anios, 55 kg, 1.72 m, tengo lupus en remision, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 61, 102 kilos, 1.62 metros, soy vegetariano desde hace anios, entreno en la noche
-    - Para que tengas contexto: tengo 67 anios, 72 kg, 1.62 metros, tengo escoliosis moderada, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 25 anios, 90 kg, 1.70 m, soy vegetariano desde hace anios, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 42, 78 kilos, 1.90 m, tengo escoliosis moderada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 30 anios, 85 kilos, 1.72 m, tengo hipertension controlada, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 55 anios, 55 kg, 1.80 metros, recien sali de covid prolongado, entreno cuando mis hijos duermen
-    - Mis datos: tengo 34 anios, 78 kilos, convivo con asma leve, solo los fines de semana
-    - Para que tengas contexto: tengo 42, 90 kg, 1.65 metros, tengo lupus en remision, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 48, 78 kilos, 1.70 m, tengo escoliosis moderada, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 25 anios, 78 kilos, 1.80 metros, recien sali de covid prolongado, entreno en la noche
-    - Para que tengas contexto: tengo 48, 63 kilos, 1.58 m, estoy recuperandome de una lesion de rodilla, entreno en la noche
-    - Mis datos: tengo 55 anios, 55 kg, soy vegetariano desde hace anios, solo los fines de semana
-    - Para que tengas contexto: tengo 61, 55 kg, 1.58 m, recien sali de covid prolongado, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 30 anios, 90 kg, 1.72 m, recien sali de covid prolongado, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 25 anios, 63 kilos, 1.58 m, soy celiaco y cuido mi dieta, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 67 anios, 55 kg, 1.65 metros, soy celiaco y cuido mi dieta, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 42, 55 kg, 1.78 metros, tengo antecedente de hernia lumbar, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 67 anios, 95 kg, 1.80 metros, convivo con asma leve, entreno en la noche
-    - Mis datos: tengo 42, 78 kilos, mi medico recomendo bajo impacto, en la hora de almuerzo
-    - Para que tengas contexto: tengo 42, 55 kg, 1.78 metros, estoy recuperandome de una lesion de rodilla, entreno en la noche
-    - Para que tengas contexto: tengo 30 anios, 78 kilos, 1.58 m, tengo sindrome metabolico, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 30 anios, 90 kg, 1.65 metros, soy celiaco y cuido mi dieta, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 30 anios, 55 kg, 1.70 m, soy intolerante a la lactosa, entreno dos veces por semana
-    - Para que tengas contexto: tengo 61, 102 kilos, 1.78 metros, convivo con asma leve, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 42, 63 kilos, 1.58 m, tengo lupus en remision, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 48, 78 kilos, 1.80 metros, recien sali de covid prolongado, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 42, 85 kilos, 1.80 metros, tengo hipertension controlada, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 48, 55 kg, 1.90 m, convivo con asma leve, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 61, 78 kilos, 1.78 metros, soy intolerante a la lactosa, entreno dos veces por semana
-    - Para que tengas contexto: tengo 55 anios, 102 kilos, 1.65 metros, mi medico recomendo bajo impacto, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 55 anios, 102 kilos, 1.62 metros, tengo lupus en remision, entreno dos veces por semana
-    - Mis datos: tengo 55 anios, 78 kilos, soy intolerante a la lactosa, cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 34 anios, 102 kilos, 1.70 m, convivo con asma leve, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 67 anios, 85 kilos, 1.80 metros, soy intolerante a la lactosa, entreno dos veces por semana
-    - Para que tengas contexto: tengo 34 anios, 90 kg, 1.62 metros, soy intolerante a la lactosa, entreno dos veces por semana
-    - Para que tengas contexto: tengo 48, 85 kilos, 1.70 m, recien sali de covid prolongado, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 55 anios, 63 kilos, 1.58 m, recien sali de covid prolongado, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 48, 55 kg, 1.90 m, tengo hipertension controlada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 42, 72 kg, 1.80 metros, soy celiaco y cuido mi dieta, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 25 anios, 78 kilos, 1.65 metros, tengo sindrome metabolico, entreno dos veces por semana
-    - Mis datos: tengo 30 anios, 72 kg, recien sali de covid prolongado, cuando mis hijos duermen
-    - Mis datos: tengo 55 anios, 72 kg, tengo antecedente de hernia lumbar, en la noche
-    - Para que tengas contexto: tengo 42, 85 kilos, 1.78 metros, recien sali de covid prolongado, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 34 anios, 90 kg, 1.90 m, tengo escoliosis moderada, entreno dos veces por semana
-    - Para que tengas contexto: tengo 55 anios, 55 kg, 1.62 metros, estoy recuperandome de una lesion de rodilla, entreno dos veces por semana
-    - Para que tengas contexto: tengo 25 anios, 55 kg, 1.65 metros, tengo lupus en remision, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 48, 72 kg, 1.62 metros, tengo antecedente de hernia lumbar, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 25 anios, 78 kilos, 1.80 metros, tengo antecedente de hernia lumbar, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 48, 63 kilos, 1.65 metros, recien sali de covid prolongado, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 67 anios, 95 kg, 1.80 metros, convivo con asma leve, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 55 anios, 102 kilos, 1.72 m, soy celiaco y cuido mi dieta, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 25 anios, 72 kg, 1.90 m, soy vegetariano desde hace anios, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 42, 63 kilos, 1.80 metros, tengo hipertension controlada, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 61, 72 kg, 1.78 metros, mi medico recomendo bajo impacto, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 67 anios, 102 kilos, 1.65 metros, convivo con asma leve, entreno cada maniana antes del trabajo
-    - Te cuento que estoy recuperandome de una lesion de rodilla; entreno mejor por la maniana y actualmente peso 63 kilos
-    - Para que tengas contexto: tengo 30 anios, 85 kilos, 1.58 m, tengo escoliosis moderada, entreno dos veces por semana
-    - Para que tengas contexto: tengo 30 anios, 78 kilos, 1.65 metros, soy celiaco y cuido mi dieta, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 61, 90 kg, 1.72 m, soy vegetariano desde hace anios, entreno dos veces por semana
-    - Para que tengas contexto: tengo 48, 85 kilos, 1.70 m, soy vegetariano desde hace anios, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 48, 85 kilos, 1.90 m, convivo con asma leve, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 55 anios, 95 kg, 1.72 m, recien sali de covid prolongado, entreno cuando mis hijos duermen
-    - Quiero que sepas que mi medico recomendo bajo impacto; entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 55 anios, 63 kilos, 1.78 metros, mi medico recomendo bajo impacto, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 67 anios, 78 kilos, 1.72 m, tengo antecedente de hernia lumbar, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 42, 78 kilos, 1.90 m, soy intolerante a la lactosa, entreno solo los fines de semana
-    - Peso 90 kg y mido 1.65 metros; ademas tengo escoliosis moderada
-    - Para que tengas contexto: tengo 30 anios, 102 kilos, 1.72 m, tengo lupus en remision, entreno cuatro veces por semana
-    - Mis datos: tengo 34 anios, 63 kilos, soy intolerante a la lactosa, cuando mis hijos duermen
-    - Para que tengas contexto: tengo 61, 55 kg, 1.62 metros, recien sali de covid prolongado, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 30 anios, 78 kilos, 1.80 metros, convivo con asma leve, entreno lunes miercoles y viernes
-    - Mis datos: tengo 42, 102 kilos, estoy recuperandome de una lesion de rodilla, en la hora de almuerzo
-    - Para que tengas contexto: tengo 42, 90 kg, 1.58 m, tengo sindrome metabolico, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 48, 63 kilos, 1.58 m, soy vegetariano desde hace anios, entreno en la noche
-    - Para que tengas contexto: tengo 55 anios, 90 kg, 1.62 metros, estoy recuperandome de una lesion de rodilla, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 48, 78 kilos, 1.72 m, tengo escoliosis moderada, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 34 anios, 95 kg, 1.80 metros, mi medico recomendo bajo impacto, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 55 anios, 85 kilos, 1.90 m, soy vegetariano desde hace anios, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 25 anios, 102 kilos, 1.72 m, soy intolerante a la lactosa, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 55 anios, 78 kilos, 1.78 metros, tengo sindrome metabolico, entreno cuatro veces por semana
-    - Mis datos: tengo 67 anios, 95 kg, tengo hipertension controlada, solo los fines de semana
-    - Para que tengas contexto: tengo 67 anios, 85 kilos, 1.72 m, tengo sindrome metabolico, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 42, 78 kilos, 1.78 metros, convivo con asma leve, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 67 anios, 78 kilos, 1.80 metros, convivo con asma leve, entreno dos veces por semana
-    - Para que tengas contexto: tengo 67 anios, 72 kg, 1.72 m, soy intolerante a la lactosa, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 30 anios, 102 kilos, 1.72 m, tengo lupus en remision, entreno en la noche
-    - Para que tengas contexto: tengo 55 anios, 90 kg, 1.80 metros, soy vegetariano desde hace anios, entreno dos veces por semana
-    - Para que tengas contexto: tengo 55 anios, 78 kilos, 1.65 metros, soy intolerante a la lactosa, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 55 anios, 78 kilos, 1.58 m, soy vegetariano desde hace anios, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 67 anios, 85 kilos, 1.78 metros, mi medico recomendo bajo impacto, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 55 anios, 72 kg, 1.78 metros, estoy recuperandome de una lesion de rodilla, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 42, 55 kg, 1.72 m, soy intolerante a la lactosa, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 42, 85 kilos, 1.58 m, mi medico recomendo bajo impacto, entreno en la noche
-    - Mis datos: tengo 25 anios, 95 kg, convivo con asma leve, en la hora de almuerzo
-    - Peso 85 kilos y mido 1.65 metros; ademas soy celiaco y cuido mi dieta
-    - Mis datos: tengo 34 anios, 90 kg, soy celiaco y cuido mi dieta, en la hora de almuerzo
-    - Para que tengas contexto: tengo 67 anios, 78 kilos, 1.65 metros, tengo antecedente de hernia lumbar, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 34 anios, 95 kg, 1.72 m, convivo con asma leve, entreno en la noche
-    - Para que tengas contexto: tengo 42, 102 kilos, 1.62 metros, recien sali de covid prolongado, entreno lunes miercoles y viernes
-    - Mis datos: tengo 42, 63 kilos, tengo sindrome metabolico, en la hora de almuerzo
-    - Para que tengas contexto: tengo 30 anios, 85 kilos, 1.62 metros, tengo lupus en remision, entreno en la noche
-    - Para que tengas contexto: tengo 34 anios, 72 kg, 1.65 metros, tengo sindrome metabolico, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 30 anios, 85 kilos, 1.65 metros, tengo sindrome metabolico, entreno dos veces por semana
-    - Para que tengas contexto: tengo 42, 55 kg, 1.62 metros, soy vegetariano desde hace anios, entreno dos veces por semana
-    - Para que tengas contexto: tengo 25 anios, 78 kilos, 1.65 metros, tengo escoliosis moderada, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 25 anios, 95 kg, 1.90 m, tengo sindrome metabolico, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 61, 90 kg, 1.78 metros, soy celiaco y cuido mi dieta, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 61, 63 kilos, 1.65 metros, mi medico recomendo bajo impacto, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 30 anios, 90 kg, 1.80 metros, soy celiaco y cuido mi dieta, entreno en la noche
-    - Mis datos: tengo 55 anios, 90 kg, tengo lupus en remision, dos veces por semana
-    - Para que tengas contexto: tengo 34 anios, 78 kilos, 1.62 metros, tengo lupus en remision, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 55 anios, 85 kilos, 1.80 metros, tengo escoliosis moderada, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 42, 63 kilos, 1.70 m, estoy recuperandome de una lesion de rodilla, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 34 anios, 63 kilos, 1.80 metros, soy intolerante a la lactosa, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 55 anios, 55 kg, 1.78 metros, tengo lupus en remision, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 34 anios, 85 kilos, 1.65 metros, tengo lupus en remision, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 48, 85 kilos, 1.58 m, estoy recuperandome de una lesion de rodilla, entreno dos veces por semana
-    - Para que tengas contexto: tengo 67 anios, 55 kg, 1.62 metros, tengo lupus en remision, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 30 anios, 78 kilos, 1.62 metros, mi medico recomendo bajo impacto, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 25 anios, 63 kilos, 1.80 metros, recien sali de covid prolongado, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 48, 55 kg, 1.70 m, tengo lupus en remision, entreno dos veces por semana
-    - Para que tengas contexto: tengo 48, 95 kg, 1.80 metros, recien sali de covid prolongado, entreno cada maniana antes del trabajo
-    - Mis datos: tengo 67 anios, 55 kg, convivo con asma leve, dos veces por semana
-    - Mis datos: tengo 61, 78 kilos, soy vegetariano desde hace anios, cuatro veces por semana
-    - Para que tengas contexto: tengo 48, 63 kilos, 1.58 m, estoy recuperandome de una lesion de rodilla, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 25 anios, 95 kg, 1.72 m, soy vegetariano desde hace anios, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 55 anios, 85 kilos, 1.72 m, tengo lupus en remision, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 34 anios, 90 kg, 1.90 m, soy intolerante a la lactosa, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 34 anios, 102 kilos, 1.78 metros, tengo escoliosis moderada, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 34 anios, 95 kg, 1.72 m, tengo hipertension controlada, entreno dos veces por semana
-    - Tengo tengo antecedente de hernia lumbar y entreno con mi pareja los fines, te sirve?
-    - Para que tengas contexto: tengo 42, 78 kilos, 1.78 metros, tengo hipertension controlada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 42, 55 kg, 1.62 metros, tengo sindrome metabolico, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 67 anios, 78 kilos, 1.72 m, soy celiaco y cuido mi dieta, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 42, 63 kilos, 1.70 m, recien sali de covid prolongado, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 67 anios, 55 kg, 1.70 m, tengo sindrome metabolico, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 55 anios, 55 kg, 1.58 m, convivo con asma leve, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 42, 78 kilos, 1.65 metros, tengo sindrome metabolico, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 48, 55 kg, 1.90 m, soy vegetariano desde hace anios, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 34 anios, 55 kg, 1.65 metros, soy vegetariano desde hace anios, entreno en la noche
-    - Para que tengas contexto: tengo 48, 72 kg, 1.80 metros, tengo lupus en remision, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 67 anios, 85 kilos, 1.58 m, tengo escoliosis moderada, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 48, 90 kg, 1.80 metros, mi medico recomendo bajo impacto, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 48, 90 kg, 1.62 metros, soy vegetariano desde hace anios, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 34 anios, 95 kg, 1.80 metros, tengo lupus en remision, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 55 anios, 72 kg, 1.78 metros, soy vegetariano desde hace anios, entreno solo los fines de semana
-    - Mis datos: tengo 67 anios, 85 kilos, tengo hipertension controlada, cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 61, 102 kilos, 1.72 m, estoy recuperandome de una lesion de rodilla, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 48, 102 kilos, 1.80 metros, tengo escoliosis moderada, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 67 anios, 95 kg, 1.58 m, tengo hipertension controlada, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 48, 95 kg, 1.90 m, soy vegetariano desde hace anios, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 25 anios, 78 kilos, 1.80 metros, mi medico recomendo bajo impacto, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 61, 78 kilos, 1.58 m, tengo antecedente de hernia lumbar, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 42, 102 kilos, 1.58 m, tengo antecedente de hernia lumbar, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 48, 90 kg, 1.58 m, tengo sindrome metabolico, entreno en la noche
-    - Para que tengas contexto: tengo 42, 95 kg, 1.90 m, tengo antecedente de hernia lumbar, entreno dos veces por semana
-    - Para que tengas contexto: tengo 34 anios, 63 kilos, 1.65 metros, estoy recuperandome de una lesion de rodilla, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 42, 72 kg, 1.58 m, tengo antecedente de hernia lumbar, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 55 anios, 95 kg, 1.62 metros, tengo hipertension controlada, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 25 anios, 55 kg, 1.62 metros, tengo escoliosis moderada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 48, 95 kg, 1.72 m, tengo lupus en remision, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 34 anios, 102 kilos, 1.62 metros, tengo lupus en remision, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 25 anios, 78 kilos, 1.90 m, soy intolerante a la lactosa, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 42, 63 kilos, 1.78 metros, recien sali de covid prolongado, entreno dos veces por semana
-    - Para que tengas contexto: tengo 34 anios, 72 kg, 1.72 m, soy vegetariano desde hace anios, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 30 anios, 95 kg, 1.78 metros, soy vegetariano desde hace anios, entreno en la noche
-    - Para que tengas contexto: tengo 48, 95 kg, 1.62 metros, recien sali de covid prolongado, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 55 anios, 63 kilos, 1.78 metros, convivo con asma leve, entreno solo los fines de semana
-    - Mis datos: tengo 61, 78 kilos, soy vegetariano desde hace anios, cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 48, 95 kg, 1.65 metros, tengo escoliosis moderada, entreno en la noche
-    - Para que tengas contexto: tengo 34 anios, 95 kg, 1.78 metros, soy intolerante a la lactosa, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 34 anios, 78 kilos, 1.80 metros, tengo sindrome metabolico, entreno cuando mis hijos duermen
-    - Mis datos: tengo 48, 78 kilos, tengo lupus en remision, cuatro veces por semana
-    - Para que tengas contexto: tengo 67 anios, 55 kg, 1.65 metros, soy vegetariano desde hace anios, entreno dos veces por semana
-    - Para que tengas contexto: tengo 34 anios, 72 kg, 1.78 metros, tengo antecedente de hernia lumbar, entreno en la noche
-    - Para que tengas contexto: tengo 42, 95 kg, 1.90 m, soy vegetariano desde hace anios, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 30 anios, 78 kilos, 1.78 metros, tengo hipertension controlada, entreno lunes miercoles y viernes
-    - Mis datos: tengo 25 anios, 63 kilos, soy celiaco y cuido mi dieta, lunes miercoles y viernes
-    - Para que tengas contexto: tengo 48, 85 kilos, 1.78 metros, soy vegetariano desde hace anios, entreno dos veces por semana
-    - Para que tengas contexto: tengo 34 anios, 63 kilos, 1.78 metros, estoy recuperandome de una lesion de rodilla, entreno dos veces por semana
-    - Para que tengas contexto: tengo 61, 95 kg, 1.58 m, convivo con asma leve, entreno en la noche
-    - Para que tengas contexto: tengo 34 anios, 102 kilos, 1.58 m, tengo sindrome metabolico, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 55 anios, 102 kilos, 1.72 m, recien sali de covid prolongado, entreno en la hora de almuerzo
-    - Mis datos: tengo 67 anios, 95 kg, soy vegetariano desde hace anios, cuatro veces por semana
-    - Para que tengas contexto: tengo 34 anios, 55 kg, 1.80 metros, soy vegetariano desde hace anios, entreno dos veces por semana
-    - Para que tengas contexto: tengo 30 anios, 72 kg, 1.62 metros, tengo hipertension controlada, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 67 anios, 63 kilos, 1.90 m, soy celiaco y cuido mi dieta, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 61, 90 kg, 1.78 metros, tengo hipertension controlada, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 48, 55 kg, 1.90 m, soy celiaco y cuido mi dieta, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 30 anios, 55 kg, 1.72 m, soy intolerante a la lactosa, entreno dos veces por semana
-    - Mis datos: tengo 42, 55 kg, soy intolerante a la lactosa, cada maniana antes del trabajo
-    - Mis datos: tengo 34 anios, 102 kilos, mi medico recomendo bajo impacto, cuatro veces por semana
-    - Mis datos: tengo 61, 78 kilos, tengo lupus en remision, lunes miercoles y viernes
-    - Para que tengas contexto: tengo 34 anios, 78 kilos, 1.65 metros, estoy recuperandome de una lesion de rodilla, entreno cuando mis hijos duermen
-    - Peso 85 kilos y mido 1.72 m; ademas mi medico recomendo bajo impacto
-    - Para que tengas contexto: tengo 42, 63 kilos, 1.78 metros, soy intolerante a la lactosa, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 55 anios, 85 kilos, 1.72 m, tengo hipertension controlada, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 30 anios, 102 kilos, 1.72 m, mi medico recomendo bajo impacto, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 25 anios, 78 kilos, 1.58 m, tengo escoliosis moderada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 48, 95 kg, 1.72 m, tengo lupus en remision, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 25 anios, 95 kg, 1.90 m, soy vegetariano desde hace anios, entreno en la noche
-    - Para que tengas contexto: tengo 25 anios, 85 kilos, 1.62 metros, soy vegetariano desde hace anios, entreno cada maniana antes del trabajo
-    - Mis datos: tengo 67 anios, 102 kilos, tengo antecedente de hernia lumbar, cuando mis hijos duermen
-    - Mis datos: tengo 25 anios, 90 kg, estoy recuperandome de una lesion de rodilla, cuando mis hijos duermen
-    - Mis datos: tengo 55 anios, 90 kg, mi medico recomendo bajo impacto, en la hora de almuerzo
-    - Para que tengas contexto: tengo 30 anios, 95 kg, 1.65 metros, tengo escoliosis moderada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 48, 55 kg, 1.90 m, recien sali de covid prolongado, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 34 anios, 63 kilos, 1.90 m, tengo escoliosis moderada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 48, 63 kilos, 1.70 m, soy intolerante a la lactosa, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 42, 55 kg, 1.62 metros, soy vegetariano desde hace anios, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 55 anios, 72 kg, 1.80 metros, convivo con asma leve, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 30 anios, 90 kg, 1.72 m, estoy recuperandome de una lesion de rodilla, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 30 anios, 55 kg, 1.62 metros, mi medico recomendo bajo impacto, entreno solo los fines de semana
-    - Mis datos: tengo 25 anios, 55 kg, recien sali de covid prolongado, en la hora de almuerzo
-    - Para que tengas contexto: tengo 30 anios, 55 kg, 1.72 m, convivo con asma leve, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 34 anios, 63 kilos, 1.62 metros, recien sali de covid prolongado, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 48, 90 kg, 1.62 metros, convivo con asma leve, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 67 anios, 85 kilos, 1.65 metros, tengo lupus en remision, entreno en la hora de almuerzo
-    - Mis datos: tengo 48, 63 kilos, tengo sindrome metabolico, cuando mis hijos duermen
-    - Para que tengas contexto: tengo 30 anios, 55 kg, 1.72 m, estoy recuperandome de una lesion de rodilla, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 30 anios, 72 kg, 1.62 metros, recien sali de covid prolongado, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 42, 63 kilos, 1.65 metros, mi medico recomendo bajo impacto, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 30 anios, 102 kilos, 1.65 metros, tengo sindrome metabolico, entreno en la noche
-    - Para que tengas contexto: tengo 30 anios, 85 kilos, 1.65 metros, tengo lupus en remision, entreno solo los fines de semana
-    - Te cuento que mi medico recomendo bajo impacto; prefiero rutinas sin saltos y actualmente peso 95 kg
-    - Para que tengas contexto: tengo 34 anios, 55 kg, 1.80 metros, tengo hipertension controlada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 34 anios, 72 kg, 1.65 metros, tengo antecedente de hernia lumbar, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 30 anios, 63 kilos, 1.78 metros, soy intolerante a la lactosa, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 48, 102 kilos, 1.65 metros, soy intolerante a la lactosa, entreno en la noche
-    - Para que tengas contexto: tengo 30 anios, 55 kg, 1.78 metros, estoy recuperandome de una lesion de rodilla, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 61, 85 kilos, 1.72 m, tengo escoliosis moderada, entreno dos veces por semana
-    - Para que tengas contexto: tengo 48, 63 kilos, 1.90 m, tengo antecedente de hernia lumbar, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 48, 55 kg, 1.80 metros, tengo antecedente de hernia lumbar, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 67 anios, 90 kg, 1.72 m, tengo lupus en remision, entreno dos veces por semana
-    - Para que tengas contexto: tengo 42, 63 kilos, 1.62 metros, tengo antecedente de hernia lumbar, entreno en la hora de almuerzo
-    - Mis datos: tengo 30 anios, 63 kilos, soy vegetariano desde hace anios, cuatro veces por semana
-    - Para que tengas contexto: tengo 30 anios, 102 kilos, 1.70 m, tengo escoliosis moderada, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 55 anios, 78 kilos, 1.62 metros, tengo lupus en remision, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 55 anios, 78 kilos, 1.78 metros, tengo sindrome metabolico, entreno dos veces por semana
-    - Para que tengas contexto: tengo 42, 95 kg, 1.65 metros, tengo escoliosis moderada, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 42, 102 kilos, 1.65 metros, soy intolerante a la lactosa, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 30 anios, 63 kilos, 1.78 metros, recien sali de covid prolongado, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 67 anios, 95 kg, 1.70 m, convivo con asma leve, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 42, 78 kilos, 1.65 metros, mi medico recomendo bajo impacto, entreno cuando mis hijos duermen
-    - Mis datos: tengo 67 anios, 55 kg, recien sali de covid prolongado, en la noche
-    - Para que tengas contexto: tengo 42, 85 kilos, 1.78 metros, convivo con asma leve, entreno dos veces por semana
-    - Para que tengas contexto: tengo 25 anios, 78 kilos, 1.72 m, soy intolerante a la lactosa, entreno en la noche
-    - Para que tengas contexto: tengo 55 anios, 63 kilos, 1.65 metros, tengo hipertension controlada, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 42, 78 kilos, 1.90 m, soy celiaco y cuido mi dieta, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 61, 95 kg, 1.70 m, tengo escoliosis moderada, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 42, 63 kilos, 1.70 m, tengo antecedente de hernia lumbar, entreno cuando mis hijos duermen
-    - Mis datos: tengo 67 anios, 72 kg, tengo sindrome metabolico, cuatro veces por semana
-    - Para que tengas contexto: tengo 25 anios, 90 kg, 1.78 metros, soy vegetariano desde hace anios, entreno solo los fines de semana
-    - Tengo 30 anios, mido 1.70 y entreno con ligas.
-    - Para que tengas contexto: tengo 55 anios, 78 kilos, 1.78 metros, convivo con asma leve, entreno en la noche
-    - Para que tengas contexto: tengo 30 anios, 55 kg, 1.80 metros, soy intolerante a la lactosa, entreno en la noche
-    - Para que tengas contexto: tengo 25 anios, 63 kilos, 1.90 m, tengo antecedente de hernia lumbar, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 61, 78 kilos, 1.90 m, soy intolerante a la lactosa, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 25 anios, 55 kg, 1.90 m, estoy recuperandome de una lesion de rodilla, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 34 anios, 72 kg, 1.90 m, tengo escoliosis moderada, entreno en la noche
-    - Para que tengas contexto: tengo 55 anios, 95 kg, 1.78 metros, tengo lupus en remision, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 55 anios, 95 kg, 1.78 metros, tengo antecedente de hernia lumbar, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 42, 90 kg, 1.70 m, tengo antecedente de hernia lumbar, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 67 anios, 95 kg, 1.65 metros, mi medico recomendo bajo impacto, entreno dos veces por semana
-    - Para que tengas contexto: tengo 34 anios, 63 kilos, 1.90 m, tengo sindrome metabolico, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 67 anios, 102 kilos, 1.65 metros, soy intolerante a la lactosa, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 67 anios, 95 kg, 1.80 metros, tengo lupus en remision, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 48, 55 kg, 1.58 m, tengo sindrome metabolico, entreno en la noche
-    - Mis datos: tengo 48, 78 kilos, estoy recuperandome de una lesion de rodilla, dos veces por semana
-    - Para que tengas contexto: tengo 48, 102 kilos, 1.65 metros, recien sali de covid prolongado, entreno dos veces por semana
-    - Para que tengas contexto: tengo 67 anios, 85 kilos, 1.72 m, estoy recuperandome de una lesion de rodilla, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 67 anios, 55 kg, 1.80 metros, tengo antecedente de hernia lumbar, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 67 anios, 90 kg, 1.72 m, tengo lupus en remision, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 67 anios, 90 kg, 1.70 m, estoy recuperandome de una lesion de rodilla, entreno cada maniana antes del trabajo
-    - Mis datos: tengo 25 anios, 85 kilos, convivo con asma leve, cuatro veces por semana
-    - Para que tengas contexto: tengo 55 anios, 95 kg, 1.78 metros, mi medico recomendo bajo impacto, entreno lunes miercoles y viernes
-    - Te cuento que soy celiaco y cuido mi dieta; solo tengo mancuernas ligeras y actualmente peso 90 kg
-    - Para que tengas contexto: tengo 34 anios, 55 kg, 1.78 metros, recien sali de covid prolongado, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 25 anios, 55 kg, 1.65 metros, mi medico recomendo bajo impacto, entreno cuando mis hijos duermen
-    - Mis datos: tengo 55 anios, 55 kg, tengo antecedente de hernia lumbar, lunes miercoles y viernes
-    - Para que tengas contexto: tengo 30 anios, 90 kg, 1.62 metros, tengo antecedente de hernia lumbar, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 55 anios, 72 kg, 1.70 m, tengo escoliosis moderada, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 55 anios, 72 kg, 1.72 m, recien sali de covid prolongado, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 25 anios, 55 kg, 1.90 m, tengo antecedente de hernia lumbar, entreno en la noche
-    - Mis datos: tengo 61, 90 kg, soy celiaco y cuido mi dieta, cuando mis hijos duermen
-    - Para que tengas contexto: tengo 34 anios, 102 kilos, 1.72 m, tengo hipertension controlada, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 61, 55 kg, 1.78 metros, tengo hipertension controlada, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 55 anios, 72 kg, 1.62 metros, estoy recuperandome de una lesion de rodilla, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 42, 85 kilos, 1.58 m, soy intolerante a la lactosa, entreno dos veces por semana
-    - Para que tengas contexto: tengo 34 anios, 95 kg, 1.65 metros, tengo sindrome metabolico, entreno lunes miercoles y viernes
-    - Mis datos: tengo 42, 63 kilos, tengo hipertension controlada, solo los fines de semana
-    - Para que tengas contexto: tengo 30 anios, 95 kg, 1.65 metros, estoy recuperandome de una lesion de rodilla, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 25 anios, 95 kg, 1.78 metros, tengo escoliosis moderada, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 34 anios, 85 kilos, 1.65 metros, soy celiaco y cuido mi dieta, entreno dos veces por semana
-    - Para que tengas contexto: tengo 34 anios, 102 kilos, 1.65 metros, tengo hipertension controlada, entreno lunes miercoles y viernes
-    - Mis datos: tengo 25 anios, 78 kilos, tengo sindrome metabolico, cuatro veces por semana
-    - Para que tengas contexto: tengo 55 anios, 72 kg, 1.62 metros, soy intolerante a la lactosa, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 61, 63 kilos, 1.65 metros, soy vegetariano desde hace anios, entreno solo los fines de semana
-    - Te cuento que convivo con asma leve; entreno con mi pareja los fines y actualmente peso 72 kg
-    - Para que tengas contexto: tengo 34 anios, 102 kilos, 1.70 m, mi medico recomendo bajo impacto, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 55 anios, 63 kilos, 1.90 m, tengo antecedente de hernia lumbar, entreno en la noche
-    - Para que tengas contexto: tengo 61, 63 kilos, 1.62 metros, tengo sindrome metabolico, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 25 anios, 102 kilos, 1.65 metros, estoy recuperandome de una lesion de rodilla, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 25 anios, 72 kg, 1.62 metros, soy intolerante a la lactosa, entreno cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 48, 63 kilos, 1.62 metros, tengo escoliosis moderada, entreno dos veces por semana
-    - Para que tengas contexto: tengo 30 anios, 85 kilos, 1.70 m, tengo escoliosis moderada, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 55 anios, 55 kg, 1.62 metros, tengo lupus en remision, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 30 anios, 63 kilos, 1.65 metros, estoy recuperandome de una lesion de rodilla, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 48, 85 kilos, 1.65 metros, soy intolerante a la lactosa, entreno cuatro veces por semana
-    - Mis datos: tengo 42, 95 kg, tengo lupus en remision, cuando mis hijos duermen
-    - Para que tengas contexto: tengo 34 anios, 72 kg, 1.58 m, convivo con asma leve, entreno cuatro veces por semana
-    - Para que tengas contexto: tengo 55 anios, 63 kilos, 1.65 metros, convivo con asma leve, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 61, 55 kg, 1.58 m, tengo lupus en remision, entreno dos veces por semana
-    - Para que tengas contexto: tengo 34 anios, 63 kilos, 1.90 m, soy vegetariano desde hace anios, entreno solo los fines de semana
-    - Para que tengas contexto: tengo 55 anios, 90 kg, 1.70 m, tengo antecedente de hernia lumbar, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 67 anios, 72 kg, 1.70 m, recien sali de covid prolongado, entreno lunes miercoles y viernes
-    - Mis datos: tengo 48, 85 kilos, tengo escoliosis moderada, cuatro veces por semana
-    - Para que tengas contexto: tengo 25 anios, 72 kg, 1.80 metros, tengo lupus en remision, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 67 anios, 85 kilos, 1.58 m, recien sali de covid prolongado, entreno cuando mis hijos duermen
-    - Mis datos: tengo 61, 72 kg, tengo hipertension controlada, cada maniana antes del trabajo
-    - Para que tengas contexto: tengo 55 anios, 55 kg, 1.62 metros, tengo escoliosis moderada, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 55 anios, 72 kg, 1.65 metros, tengo sindrome metabolico, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 42, 72 kg, 1.72 m, tengo hipertension controlada, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 61, 72 kg, 1.80 metros, recien sali de covid prolongado, entreno cuando mis hijos duermen
-    - Para que tengas contexto: tengo 34 anios, 72 kg, 1.72 m, tengo lupus en remision, entreno lunes miercoles y viernes
-    - Para que tengas contexto: tengo 48, 78 kilos, 1.58 m, tengo lupus en remision, entreno en la hora de almuerzo
-    - Para que tengas contexto: tengo 25 anios, 78 kilos, 1.65 metros, tengo hipertension controlada, entreno en la hora de almuerzo
 - intent: navegar_perfil_web
   examples: |
     - Buenas elegi usar el sitio del gym, quiero revisar mi informacion de seguridad
@@ -11342,3 +10740,405 @@ nlu:
     - ¿Cómo puedo cancelar mi el combo de nutricion? quiero evaluar otras opciones
     - Por favor ayúdame a congelar el plan corporativo; quiero hacerlo antes de la proxima facturacion
     - Necesito terminar mi plan premium; mi medico me indico descansar
+- intent: informar
+  examples: |
+    - puedes vetar [pimentón](no_gusta) y variantes con [mango](alimentos_no_gustan)?
+    - puedes vetar [palta](no_gusta) y variantes con [lentejas](alimentos_no_gustan)?
+    - prepara la dieta sin [garbanzos](no_gusta) ni [cebolla](alimentos_no_gustan)
+    - evita combinaciones con [piña](no_gusta) o [nueces](alimentos_no_gustan)
+    - prepara la dieta sin [mango](no_gusta) ni [palta](alimentos_no_gustan)
+    - recuerda: nada de [queso azul](no_gusta); si puedes reemplazar también [pepino](alimentos_no_gustan)
+    - recuerda: nada de [pepino](no_gusta); si puedes reemplazar también [almendras](alimentos_no_gustan)
+    - recuerda: nada de [mayonesa](no_gusta); si puedes reemplazar también [pimentón](alimentos_no_gustan)
+    - puedes vetar [lentejas](no_gusta) y variantes con [pimentón](alimentos_no_gustan)?
+    - recuerda: nada de [zanahoria](no_gusta); si puedes reemplazar también [apio](alimentos_no_gustan)
+    - puedes vetar [cebolla](no_gusta) y variantes con [mayonesa](alimentos_no_gustan)?
+    - prepara la dieta sin [maní](no_gusta) ni [almendras](alimentos_no_gustan)
+    - evita combinaciones con [pepino](no_gusta) o [pepino](alimentos_no_gustan)
+    - puedes vetar [tomate](no_gusta) y variantes con [atún](alimentos_no_gustan)?
+    - puedes vetar [tomate](no_gusta) y variantes con [nueces](alimentos_no_gustan)?
+    - asegúrate de que las sugerencias lleguen sin [nueces](alimentos_no_gustan)
+    - evita combinaciones con [garbanzos](no_gusta) o [maní](alimentos_no_gustan)
+    - puedes vetar [apio](no_gusta) y variantes con [huevo](alimentos_no_gustan)?
+    - evita combinaciones con [zanahoria](no_gusta) o [mayonesa](alimentos_no_gustan)
+    - puedes vetar [apio](no_gusta) y variantes con [mango](alimentos_no_gustan)?
+    - puedes vetar [tomate](no_gusta) y variantes con [almendras](alimentos_no_gustan)?
+    - evita combinaciones con [mayonesa](no_gusta) o [apio](alimentos_no_gustan)
+    - evita combinaciones con [mango](no_gusta) o [mayonesa](alimentos_no_gustan)
+    - puedes vetar [pepino](no_gusta) y variantes con [mango](alimentos_no_gustan)?
+    - recuerda: nada de [palta](no_gusta); si puedes reemplazar también [huevo](alimentos_no_gustan)
+    - evita combinaciones con [salmón](no_gusta) o [coliflor](alimentos_no_gustan)
+    - evita combinaciones con [salmón](no_gusta) o [piña](alimentos_no_gustan)
+    - evita combinaciones con [coliflor](no_gusta) o [brócoli](alimentos_no_gustan)
+    - evita combinaciones con [sardina](no_gusta) o [tomate](alimentos_no_gustan)
+    - prepara la dieta sin [brócoli](no_gusta) ni [atún](alimentos_no_gustan)
+    - recuerda: nada de [sardina](no_gusta); si puedes reemplazar también [zanahoria](alimentos_no_gustan)
+    - puedes vetar [maní](no_gusta) y variantes con [atún](alimentos_no_gustan)?
+    - recuerda: nada de [sardina](no_gusta); si puedes reemplazar también [berenjena](alimentos_no_gustan)
+    - puedes vetar [atún](no_gusta) y variantes con [plátano](alimentos_no_gustan)?
+    - puedes vetar [mango](no_gusta) y variantes con [champiñones](alimentos_no_gustan)?
+    - evita combinaciones con [sardina](no_gusta) o [pepino](alimentos_no_gustan)
+    - recuerda: nada de [nueces](no_gusta); si puedes reemplazar también [mayonesa](alimentos_no_gustan)
+    - evita combinaciones con [mayonesa](no_gusta) o [coliflor](alimentos_no_gustan)
+    - prepara la dieta sin [champiñones](no_gusta) ni [coliflor](alimentos_no_gustan)
+    - prepara la dieta sin [apio](no_gusta) ni [tomate](alimentos_no_gustan)
+    - evita combinaciones con [apio](no_gusta) o [coliflor](alimentos_no_gustan)
+    - por favor nada que contenga [mango](no_gusta)
+    - evita combinaciones con [berenjena](no_gusta) o [piña](alimentos_no_gustan)
+    - prefiero menús donde no aparezca [pepino](no_gusta), gracias
+    - puedes vetar [pepino](no_gusta) y variantes con [almendras](alimentos_no_gustan)?
+    - evita combinaciones con [queso azul](no_gusta) o [mayonesa](alimentos_no_gustan)
+    - recuerda: nada de [mango](no_gusta); si puedes reemplazar también [pimentón](alimentos_no_gustan)
+    - descarta cualquier cosa con [pepino](alimentos_no_gustan)
+    - prepara la dieta sin [berenjena](no_gusta) ni [nueces](alimentos_no_gustan)
+    - puedes vetar [atún](no_gusta) y variantes con [maní](alimentos_no_gustan)?
+    - puedes vetar [mayonesa](no_gusta) y variantes con [cebolla](alimentos_no_gustan)?
+    - puedes vetar [nueces](no_gusta) y variantes con [tomate](alimentos_no_gustan)?
+    - prepara la dieta sin [pepino](no_gusta) ni [pepino](alimentos_no_gustan)
+    - puedes vetar [maní](no_gusta) y variantes con [palta](alimentos_no_gustan)?
+    - prepara la dieta sin [palta](no_gusta) ni [repollo](alimentos_no_gustan)
+    - prepara la dieta sin [mayonesa](no_gusta) ni [apio](alimentos_no_gustan)
+    - recuerda: nada de [nueces](no_gusta); si puedes reemplazar también [pepino](alimentos_no_gustan)
+    - prepara la dieta sin [nueces](no_gusta) ni [pimentón](alimentos_no_gustan)
+    - prepara la dieta sin [queso azul](no_gusta) ni [garbanzos](alimentos_no_gustan)
+    - evita combinaciones con [nueces](no_gusta) o [berenjena](alimentos_no_gustan)
+    - asegúrate de que las sugerencias lleguen sin [berenjena](alimentos_no_gustan)
+    - evita combinaciones con [apio](no_gusta) o [repollo](alimentos_no_gustan)
+    - puedes vetar [berenjena](no_gusta) y variantes con [plátano](alimentos_no_gustan)?
+    - puedes vetar [sardina](no_gusta) y variantes con [garbanzos](alimentos_no_gustan)?
+    - evita combinaciones con [brócoli](no_gusta) o [tomate](alimentos_no_gustan)
+    - prepara la dieta sin [coliflor](no_gusta) ni [garbanzos](alimentos_no_gustan)
+    - puedes vetar [mayonesa](no_gusta) y variantes con [maní](alimentos_no_gustan)?
+    - evita combinaciones con [salmón](no_gusta) o [mayonesa](alimentos_no_gustan)
+    - evita combinaciones con [zanahoria](no_gusta) o [almendras](alimentos_no_gustan)
+    - evita combinaciones con [nueces](no_gusta) o [mayonesa](alimentos_no_gustan)
+    - prepara la dieta sin [huevo](no_gusta) ni [sardina](alimentos_no_gustan)
+    - recuerda: nada de [piña](no_gusta); si puedes reemplazar también [cebolla](alimentos_no_gustan)
+    - recuerda: nada de [sardina](no_gusta); si puedes reemplazar también [apio](alimentos_no_gustan)
+    - evita combinaciones con [berenjena](no_gusta) o [salmón](alimentos_no_gustan)
+    - evita combinaciones con [garbanzos](no_gusta) o [apio](alimentos_no_gustan)
+    - puedes vetar [almendras](no_gusta) y variantes con [zanahoria](alimentos_no_gustan)?
+    - evita combinaciones con [queso azul](no_gusta) o [tomate](alimentos_no_gustan)
+    - puedes vetar [berenjena](no_gusta) y variantes con [maní](alimentos_no_gustan)?
+    - recuerda: nada de [apio](no_gusta); si puedes reemplazar también [cebolla](alimentos_no_gustan)
+    - evita combinaciones con [huevo](no_gusta) o [piña](alimentos_no_gustan)
+    - puedes vetar [plátano](no_gusta) y variantes con [salmón](alimentos_no_gustan)?
+    - puedes vetar [maní](no_gusta) y variantes con [huevo](alimentos_no_gustan)?
+    - recuerda: nada de [repollo](no_gusta); si puedes reemplazar también [repollo](alimentos_no_gustan)
+    - recuerda: nada de [cebolla](no_gusta); si puedes reemplazar también [brócoli](alimentos_no_gustan)
+    - evita combinaciones con [berenjena](no_gusta) o [maní](alimentos_no_gustan)
+    - recuerda: nada de [maní](no_gusta); si puedes reemplazar también [garbanzos](alimentos_no_gustan)
+    - puedes vetar [tomate](no_gusta) y variantes con [lentejas](alimentos_no_gustan)?
+    - evita combinaciones con [almendras](no_gusta) o [coliflor](alimentos_no_gustan)
+    - puedes vetar [berenjena](no_gusta) y variantes con [almendras](alimentos_no_gustan)?
+    - evita combinaciones con [maní](no_gusta) o [pepino](alimentos_no_gustan)
+    - puedes vetar [berenjena](no_gusta) y variantes con [atún](alimentos_no_gustan)?
+    - puedes vetar [plátano](no_gusta) y variantes con [pimentón](alimentos_no_gustan)?
+    - evita combinaciones con [coliflor](no_gusta) o [mayonesa](alimentos_no_gustan)
+    - evita combinaciones con [mayonesa](no_gusta) o [salmón](alimentos_no_gustan)
+    - puedes vetar [plátano](no_gusta) y variantes con [almendras](alimentos_no_gustan)?
+    - puedes vetar [cebolla](no_gusta) y variantes con [mango](alimentos_no_gustan)?
+    - recuerda: nada de [plátano](no_gusta); si puedes reemplazar también [nueces](alimentos_no_gustan)
+    - puedes vetar [atún](no_gusta) y variantes con [mayonesa](alimentos_no_gustan)?
+    - prepara la dieta sin [nueces](no_gusta) ni [tomate](alimentos_no_gustan)
+    - evita combinaciones con [atún](no_gusta) o [plátano](alimentos_no_gustan)
+    - asegúrate de que las sugerencias lleguen sin [piña](alimentos_no_gustan)
+    - me cae pésimo [plátano](alimentos_no_gustan); deja fuera cualquier plato con eso
+    - prepara la dieta sin [berenjena](no_gusta) ni [mango](alimentos_no_gustan)
+    - me cae pésimo [cebolla](alimentos_no_gustan); deja fuera cualquier plato con eso
+    - recuerda: nada de [tomate](no_gusta); si puedes reemplazar también [huevo](alimentos_no_gustan)
+    - evita combinaciones con [piña](no_gusta) o [zanahoria](alimentos_no_gustan)
+    - evita combinaciones con [mango](no_gusta) o [sardina](alimentos_no_gustan)
+    - recuerda: nada de [apio](no_gusta); si puedes reemplazar también [queso azul](alimentos_no_gustan)
+    - evita combinaciones con [lentejas](no_gusta) o [huevo](alimentos_no_gustan)
+    - recuerda: nada de [zanahoria](no_gusta); si puedes reemplazar también [palta](alimentos_no_gustan)
+    - evita combinaciones con [apio](no_gusta) o [piña](alimentos_no_gustan)
+    - puedes vetar [mango](no_gusta) y variantes con [palta](alimentos_no_gustan)?
+    - prepara la dieta sin [zanahoria](no_gusta) ni [lentejas](alimentos_no_gustan)
+    - puedes vetar [salmón](no_gusta) y variantes con [mango](alimentos_no_gustan)?
+    - evita combinaciones con [nueces](no_gusta) o [brócoli](alimentos_no_gustan)
+    - recuerda: nada de [queso azul](no_gusta); si puedes reemplazar también [brócoli](alimentos_no_gustan)
+    - recuerda: nada de [brócoli](no_gusta); si puedes reemplazar también [maní](alimentos_no_gustan)
+    - puedes vetar [mayonesa](no_gusta) y variantes con [berenjena](alimentos_no_gustan)?
+    - puedes vetar [lentejas](no_gusta) y variantes con [huevo](alimentos_no_gustan)?
+    - no me gusta [atún](no_gusta), evita incluirlo en la dieta
+    - evita combinaciones con [piña](no_gusta) o [garbanzos](alimentos_no_gustan)
+    - evita combinaciones con [almendras](no_gusta) o [pimentón](alimentos_no_gustan)
+    - prepara la dieta sin [berenjena](no_gusta) ni [pimentón](alimentos_no_gustan)
+    - puedes vetar [champiñones](no_gusta) y variantes con [repollo](alimentos_no_gustan)?
+    - prepara la dieta sin [pimentón](no_gusta) ni [zanahoria](alimentos_no_gustan)
+    - recuerda: nada de [atún](no_gusta); si puedes reemplazar también [champiñones](alimentos_no_gustan)
+    - recuerda: nada de [nueces](no_gusta); si puedes reemplazar también [repollo](alimentos_no_gustan)
+    - evita combinaciones con [huevo](no_gusta) o [nueces](alimentos_no_gustan)
+    - puedes vetar [pimentón](no_gusta) y variantes con [cebolla](alimentos_no_gustan)?
+    - recuerda: nada de [tomate](no_gusta); si puedes reemplazar también [almendras](alimentos_no_gustan)
+    - recuerda: nada de [maní](no_gusta); si puedes reemplazar también [sardina](alimentos_no_gustan)
+    - prepara la dieta sin [champiñones](no_gusta) ni [champiñones](alimentos_no_gustan)
+    - puedes vetar [repollo](no_gusta) y variantes con [coliflor](alimentos_no_gustan)?
+    - recuerda: nada de [repollo](no_gusta); si puedes reemplazar también [piña](alimentos_no_gustan)
+    - prepara la dieta sin [repollo](no_gusta) ni [atún](alimentos_no_gustan)
+    - recuerda: nada de [atún](no_gusta); si puedes reemplazar también [nueces](alimentos_no_gustan)
+    - prepara la dieta sin [maní](no_gusta) ni [plátano](alimentos_no_gustan)
+    - puedes vetar [brócoli](no_gusta) y variantes con [queso azul](alimentos_no_gustan)?
+    - evita combinaciones con [almendras](no_gusta) o [repollo](alimentos_no_gustan)
+    - evita combinaciones con [apio](no_gusta) o [huevo](alimentos_no_gustan)
+    - evita combinaciones con [cebolla](no_gusta) o [garbanzos](alimentos_no_gustan)
+    - recuerda: nada de [palta](no_gusta); si puedes reemplazar también [queso azul](alimentos_no_gustan)
+    - prefiero menús donde no aparezca [zanahoria](no_gusta), gracias
+    - prepara la dieta sin [atún](no_gusta) ni [tomate](alimentos_no_gustan)
+    - puedes vetar [zanahoria](no_gusta) y variantes con [palta](alimentos_no_gustan)?
+    - evita combinaciones con [pepino](no_gusta) o [zanahoria](alimentos_no_gustan)
+    - evita combinaciones con [plátano](no_gusta) o [pimentón](alimentos_no_gustan)
+    - evita combinaciones con [nueces](no_gusta) o [cebolla](alimentos_no_gustan)
+    - puedes vetar [palta](no_gusta) y variantes con [maní](alimentos_no_gustan)?
+    - puedes vetar [nueces](no_gusta) y variantes con [garbanzos](alimentos_no_gustan)?
+    - puedes vetar [piña](no_gusta) y variantes con [plátano](alimentos_no_gustan)?
+    - puedes vetar [brócoli](no_gusta) y variantes con [plátano](alimentos_no_gustan)?
+    - puedes vetar [salmón](no_gusta) y variantes con [almendras](alimentos_no_gustan)?
+    - prepara la dieta sin [apio](no_gusta) ni [champiñones](alimentos_no_gustan)
+    - evita combinaciones con [tomate](no_gusta) o [salmón](alimentos_no_gustan)
+    - prepara la dieta sin [palta](no_gusta) ni [brócoli](alimentos_no_gustan)
+    - evita combinaciones con [cebolla](no_gusta) o [brócoli](alimentos_no_gustan)
+    - puedes vetar [huevo](no_gusta) y variantes con [queso azul](alimentos_no_gustan)?
+    - prepara la dieta sin [pepino](no_gusta) ni [palta](alimentos_no_gustan)
+    - puedes vetar [garbanzos](no_gusta) y variantes con [almendras](alimentos_no_gustan)?
+    - prepara la dieta sin [sardina](no_gusta) ni [maní](alimentos_no_gustan)
+    - recuerda: nada de [cebolla](no_gusta); si puedes reemplazar también [sardina](alimentos_no_gustan)
+    - prepara la dieta sin [tomate](no_gusta) ni [sardina](alimentos_no_gustan)
+    - recuerda: nada de [plátano](no_gusta); si puedes reemplazar también [brócoli](alimentos_no_gustan)
+    - prepara la dieta sin [queso azul](no_gusta) ni [piña](alimentos_no_gustan)
+    - prepara la dieta sin [pimentón](no_gusta) ni [almendras](alimentos_no_gustan)
+    - recuerda: nada de [atún](no_gusta); si puedes reemplazar también [sardina](alimentos_no_gustan)
+    - prepara la dieta sin [brócoli](no_gusta) ni [maní](alimentos_no_gustan)
+    - puedes vetar [salmón](no_gusta) y variantes con [repollo](alimentos_no_gustan)?
+    - puedes vetar [repollo](no_gusta) y variantes con [almendras](alimentos_no_gustan)?
+    - puedes vetar [champiñones](no_gusta) y variantes con [palta](alimentos_no_gustan)?
+    - recuerda: nada de [atún](no_gusta); si puedes reemplazar también [berenjena](alimentos_no_gustan)
+    - evita combinaciones con [garbanzos](no_gusta) o [champiñones](alimentos_no_gustan)
+    - puedes vetar [zanahoria](no_gusta) y variantes con [lentejas](alimentos_no_gustan)?
+    - agrega que no quiero [pepino](no_gusta) en las comidas
+    - puedes vetar [apio](no_gusta) y variantes con [cebolla](alimentos_no_gustan)?
+    - evita combinaciones con [tomate](no_gusta) o [apio](alimentos_no_gustan)
+    - prepara la dieta sin [champiñones](no_gusta) ni [palta](alimentos_no_gustan)
+    - evita combinaciones con [brócoli](no_gusta) o [zanahoria](alimentos_no_gustan)
+    - evita combinaciones con [queso azul](no_gusta) o [huevo](alimentos_no_gustan)
+    - evita combinaciones con [champiñones](no_gusta) o [coliflor](alimentos_no_gustan)
+    - evita combinaciones con [lentejas](no_gusta) o [maní](alimentos_no_gustan)
+    - puedes vetar [palta](no_gusta) y variantes con [brócoli](alimentos_no_gustan)?
+    - recuerda: nada de [queso azul](no_gusta); si puedes reemplazar también [plátano](alimentos_no_gustan)
+    - evita combinaciones con [zanahoria](no_gusta) o [palta](alimentos_no_gustan)
+    - puedes vetar [sardina](no_gusta) y variantes con [sardina](alimentos_no_gustan)?
+    - recuerda: nada de [lentejas](no_gusta); si puedes reemplazar también [tomate](alimentos_no_gustan)
+    - puedes vetar [mayonesa](no_gusta) y variantes con [piña](alimentos_no_gustan)?
+    - puedes vetar [berenjena](no_gusta) y variantes con [berenjena](alimentos_no_gustan)?
+    - asegúrate de que las sugerencias lleguen sin [maní](alimentos_no_gustan)
+    - prepara la dieta sin [apio](no_gusta) ni [pimentón](alimentos_no_gustan)
+    - puedes vetar [berenjena](no_gusta) y variantes con [cebolla](alimentos_no_gustan)?
+    - prepara la dieta sin [tomate](no_gusta) ni [piña](alimentos_no_gustan)
+    - evita combinaciones con [zanahoria](no_gusta) o [atún](alimentos_no_gustan)
+    - prepara la dieta sin [mayonesa](no_gusta) ni [mayonesa](alimentos_no_gustan)
+    - prepara la dieta sin [salmón](no_gusta) ni [berenjena](alimentos_no_gustan)
+    - por favor nada que contenga [champiñones](no_gusta)
+    - evita combinaciones con [palta](no_gusta) o [repollo](alimentos_no_gustan)
+    - recuerda: nada de [nueces](no_gusta); si puedes reemplazar también [piña](alimentos_no_gustan)
+    - recuerda: nada de [atún](no_gusta); si puedes reemplazar también [piña](alimentos_no_gustan)
+    - puedes vetar [salmón](no_gusta) y variantes con [sardina](alimentos_no_gustan)?
+    - recuerda: nada de [pimentón](no_gusta); si puedes reemplazar también [queso azul](alimentos_no_gustan)
+    - prepara la dieta sin [coliflor](no_gusta) ni [huevo](alimentos_no_gustan)
+    - puedes vetar [tomate](no_gusta) y variantes con [mango](alimentos_no_gustan)?
+    - puedes vetar [garbanzos](no_gusta) y variantes con [pepino](alimentos_no_gustan)?
+    - recuerda: nada de [piña](no_gusta); si puedes reemplazar también [pimentón](alimentos_no_gustan)
+    - prepara la dieta sin [champiñones](no_gusta) ni [piña](alimentos_no_gustan)
+    - recuerda: nada de [palta](no_gusta); si puedes reemplazar también [apio](alimentos_no_gustan)
+    - agrega que no quiero [tomate](no_gusta) en las comidas
+    - recuerda: nada de [mango](no_gusta); si puedes reemplazar también [palta](alimentos_no_gustan)
+    - evita combinaciones con [queso azul](no_gusta) o [repollo](alimentos_no_gustan)
+    - puedes vetar [piña](no_gusta) y variantes con [nueces](alimentos_no_gustan)?
+    - puedes vetar [coliflor](no_gusta) y variantes con [lentejas](alimentos_no_gustan)?
+    - evita combinaciones con [repollo](no_gusta) o [mango](alimentos_no_gustan)
+    - puedes vetar [mayonesa](no_gusta) y variantes con [pimentón](alimentos_no_gustan)?
+    - por favor nada que contenga [mayonesa](no_gusta)
+    - puedes vetar [atún](no_gusta) y variantes con [sardina](alimentos_no_gustan)?
+    - recuerda: nada de [pepino](no_gusta); si puedes reemplazar también [zanahoria](alimentos_no_gustan)
+    - prepara la dieta sin [maní](no_gusta) ni [champiñones](alimentos_no_gustan)
+    - prepara la dieta sin [queso azul](no_gusta) ni [repollo](alimentos_no_gustan)
+    - puedes vetar [mango](no_gusta) y variantes con [maní](alimentos_no_gustan)?
+    - puedes vetar [coliflor](no_gusta) y variantes con [mango](alimentos_no_gustan)?
+    - recuerda: nada de [champiñones](no_gusta); si puedes reemplazar también [garbanzos](alimentos_no_gustan)
+    - puedes vetar [champiñones](no_gusta) y variantes con [atún](alimentos_no_gustan)?
+    - evita combinaciones con [pepino](no_gusta) o [palta](alimentos_no_gustan)
+    - puedes vetar [sardina](no_gusta) y variantes con [piña](alimentos_no_gustan)?
+    - puedes vetar [coliflor](no_gusta) y variantes con [huevo](alimentos_no_gustan)?
+    - recuerda: nada de [piña](no_gusta); si puedes reemplazar también [berenjena](alimentos_no_gustan)
+    - prepara la dieta sin [huevo](no_gusta) ni [mayonesa](alimentos_no_gustan)
+    - puedes vetar [huevo](no_gusta) y variantes con [nueces](alimentos_no_gustan)?
+    - prepara la dieta sin [apio](no_gusta) ni [lentejas](alimentos_no_gustan)
+    - evita combinaciones con [almendras](no_gusta) o [garbanzos](alimentos_no_gustan)
+    - prepara la dieta sin [almendras](no_gusta) ni [apio](alimentos_no_gustan)
+    - prepara la dieta sin [piña](no_gusta) ni [mango](alimentos_no_gustan)
+    - prepara la dieta sin [champiñones](no_gusta) ni [mango](alimentos_no_gustan)
+    - evita combinaciones con [coliflor](no_gusta) o [almendras](alimentos_no_gustan)
+    - evita combinaciones con [salmón](no_gusta) o [champiñones](alimentos_no_gustan)
+    - prepara la dieta sin [brócoli](no_gusta) ni [champiñones](alimentos_no_gustan)
+    - recuerda: nada de [repollo](no_gusta); si puedes reemplazar también [berenjena](alimentos_no_gustan)
+    - puedes vetar [repollo](no_gusta) y variantes con [mayonesa](alimentos_no_gustan)?
+    - puedes vetar [salmón](no_gusta) y variantes con [tomate](alimentos_no_gustan)?
+    - recuerda: nada de [nueces](no_gusta); si puedes reemplazar también [almendras](alimentos_no_gustan)
+    - evita combinaciones con [apio](no_gusta) o [pimentón](alimentos_no_gustan)
+    - recuerda: nada de [almendras](no_gusta); si puedes reemplazar también [huevo](alimentos_no_gustan)
+    - recuerda: nada de [mayonesa](no_gusta); si puedes reemplazar también [maní](alimentos_no_gustan)
+    - prepara la dieta sin [pepino](no_gusta) ni [huevo](alimentos_no_gustan)
+    - evita combinaciones con [pimentón](no_gusta) o [pimentón](alimentos_no_gustan)
+    - recuerda: nada de [plátano](no_gusta); si puedes reemplazar también [mayonesa](alimentos_no_gustan)
+    - evita combinaciones con [coliflor](no_gusta) o [nueces](alimentos_no_gustan)
+    - prepara la dieta sin [zanahoria](no_gusta) ni [tomate](alimentos_no_gustan)
+    - prepara la dieta sin [tomate](no_gusta) ni [mayonesa](alimentos_no_gustan)
+    - prepara la dieta sin [champiñones](no_gusta) ni [repollo](alimentos_no_gustan)
+    - evita combinaciones con [queso azul](no_gusta) o [coliflor](alimentos_no_gustan)
+    - puedes vetar [pimentón](no_gusta) y variantes con [atún](alimentos_no_gustan)?
+    - puedes vetar [piña](no_gusta) y variantes con [palta](alimentos_no_gustan)?
+    - puedes vetar [garbanzos](no_gusta) y variantes con [mayonesa](alimentos_no_gustan)?
+    - puedes vetar [atún](no_gusta) y variantes con [brócoli](alimentos_no_gustan)?
+    - puedes vetar [pimentón](no_gusta) y variantes con [piña](alimentos_no_gustan)?
+    - recuerda: nada de [pimentón](no_gusta); si puedes reemplazar también [mayonesa](alimentos_no_gustan)
+    - evita combinaciones con [salmón](no_gusta) o [berenjena](alimentos_no_gustan)
+    - no me gusta [repollo](no_gusta), evita incluirlo en la dieta
+    - evita combinaciones con [berenjena](no_gusta) o [queso azul](alimentos_no_gustan)
+    - puedes vetar [almendras](no_gusta) y variantes con [mayonesa](alimentos_no_gustan)?
+    - puedes vetar [tomate](no_gusta) y variantes con [sardina](alimentos_no_gustan)?
+    - evita combinaciones con [salmón](no_gusta) o [repollo](alimentos_no_gustan)
+    - evita combinaciones con [palta](no_gusta) o [almendras](alimentos_no_gustan)
+    - evita combinaciones con [mayonesa](no_gusta) o [berenjena](alimentos_no_gustan)
+    - prepara la dieta sin [atún](no_gusta) ni [zanahoria](alimentos_no_gustan)
+    - evita combinaciones con [atún](no_gusta) o [garbanzos](alimentos_no_gustan)
+    - prepara la dieta sin [repollo](no_gusta) ni [piña](alimentos_no_gustan)
+    - prepara la dieta sin [repollo](no_gusta) ni [almendras](alimentos_no_gustan)
+    - prepara la dieta sin [lentejas](no_gusta) ni [mayonesa](alimentos_no_gustan)
+    - evita combinaciones con [palta](no_gusta) o [garbanzos](alimentos_no_gustan)
+    - prepara la dieta sin [cebolla](no_gusta) ni [maní](alimentos_no_gustan)
+    - evita combinaciones con [atún](no_gusta) o [palta](alimentos_no_gustan)
+    - evita combinaciones con [atún](no_gusta) o [tomate](alimentos_no_gustan)
+    - puedes vetar [pimentón](no_gusta) y variantes con [garbanzos](alimentos_no_gustan)?
+    - no me gusta [mango](no_gusta), evita incluirlo en la dieta
+    - prefiero menús donde no aparezca [champiñones](no_gusta), gracias
+    - evita combinaciones con [atún](no_gusta) o [nueces](alimentos_no_gustan)
+    - evita combinaciones con [atún](no_gusta) o [almendras](alimentos_no_gustan)
+    - evita combinaciones con [mayonesa](no_gusta) o [queso azul](alimentos_no_gustan)
+    - evita combinaciones con [lentejas](no_gusta) o [pimentón](alimentos_no_gustan)
+    - puedes vetar [champiñones](no_gusta) y variantes con [champiñones](alimentos_no_gustan)?
+    - recuerda: nada de [berenjena](no_gusta); si puedes reemplazar también [zanahoria](alimentos_no_gustan)
+    - puedes vetar [sardina](no_gusta) y variantes con [pepino](alimentos_no_gustan)?
+    - evita combinaciones con [sardina](no_gusta) o [salmón](alimentos_no_gustan)
+    - evita combinaciones con [nueces](no_gusta) o [tomate](alimentos_no_gustan)
+    - prepara la dieta sin [plátano](no_gusta) ni [mango](alimentos_no_gustan)
+    - evita combinaciones con [huevo](no_gusta) o [cebolla](alimentos_no_gustan)
+    - prepara la dieta sin [palta](no_gusta) ni [atún](alimentos_no_gustan)
+    - puedes vetar [salmón](no_gusta) y variantes con [huevo](alimentos_no_gustan)?
+    - evita combinaciones con [berenjena](no_gusta) o [champiñones](alimentos_no_gustan)
+    - prepara la dieta sin [pimentón](no_gusta) ni [berenjena](alimentos_no_gustan)
+    - evita combinaciones con [palta](no_gusta) o [sardina](alimentos_no_gustan)
+    - puedes vetar [mango](no_gusta) y variantes con [garbanzos](alimentos_no_gustan)?
+    - puedes vetar [apio](no_gusta) y variantes con [brócoli](alimentos_no_gustan)?
+    - recuerda: nada de [champiñones](no_gusta); si puedes reemplazar también [palta](alimentos_no_gustan)
+    - recuerda: nada de [lentejas](no_gusta); si puedes reemplazar también [champiñones](alimentos_no_gustan)
+    - prepara la dieta sin [almendras](no_gusta) ni [pimentón](alimentos_no_gustan)
+    - prepara la dieta sin [lentejas](no_gusta) ni [atún](alimentos_no_gustan)
+    - puedes vetar [pepino](no_gusta) y variantes con [repollo](alimentos_no_gustan)?
+    - prepara la dieta sin [queso azul](no_gusta) ni [nueces](alimentos_no_gustan)
+    - prepara la dieta sin [queso azul](no_gusta) ni [cebolla](alimentos_no_gustan)
+    - evita combinaciones con [champiñones](no_gusta) o [palta](alimentos_no_gustan)
+    - puedes vetar [palta](no_gusta) y variantes con [sardina](alimentos_no_gustan)?
+    - recuerda: nada de [huevo](no_gusta); si puedes reemplazar también [mango](alimentos_no_gustan)
+    - prepara la dieta sin [salmón](no_gusta) ni [lentejas](alimentos_no_gustan)
+    - evita combinaciones con [pimentón](no_gusta) o [piña](alimentos_no_gustan)
+    - puedes vetar [almendras](no_gusta) y variantes con [sardina](alimentos_no_gustan)?
+    - recuerda: nada de [nueces](no_gusta); si puedes reemplazar también [tomate](alimentos_no_gustan)
+    - evita combinaciones con [zanahoria](no_gusta) o [champiñones](alimentos_no_gustan)
+    - recuerda: nada de [atún](no_gusta); si puedes reemplazar también [palta](alimentos_no_gustan)
+    - puedes vetar [zanahoria](no_gusta) y variantes con [maní](alimentos_no_gustan)?
+    - prepara la dieta sin [queso azul](no_gusta) ni [mayonesa](alimentos_no_gustan)
+    - prefiero menús donde no aparezca [apio](no_gusta), gracias
+    - puedes vetar [mango](no_gusta) y variantes con [apio](alimentos_no_gustan)?
+    - recuerda: nada de [garbanzos](no_gusta); si puedes reemplazar también [apio](alimentos_no_gustan)
+    - recuerda: nada de [mango](no_gusta); si puedes reemplazar también [atún](alimentos_no_gustan)
+    - prepara la dieta sin [huevo](no_gusta) ni [huevo](alimentos_no_gustan)
+    - puedes vetar [apio](no_gusta) y variantes con [zanahoria](alimentos_no_gustan)?
+    - recuerda: nada de [palta](no_gusta); si puedes reemplazar también [mango](alimentos_no_gustan)
+    - recuerda: nada de [queso azul](no_gusta); si puedes reemplazar también [apio](alimentos_no_gustan)
+    - prepara la dieta sin [coliflor](no_gusta) ni [berenjena](alimentos_no_gustan)
+    - puedes vetar [tomate](no_gusta) y variantes con [tomate](alimentos_no_gustan)?
+    - evita combinaciones con [champiñones](no_gusta) o [zanahoria](alimentos_no_gustan)
+    - agrega que no quiero [sardina](no_gusta) en las comidas
+    - puedes vetar [palta](no_gusta) y variantes con [zanahoria](alimentos_no_gustan)?
+    - prepara la dieta sin [lentejas](no_gusta) ni [palta](alimentos_no_gustan)
+    - evita combinaciones con [berenjena](no_gusta) o [coliflor](alimentos_no_gustan)
+    - puedes vetar [zanahoria](no_gusta) y variantes con [garbanzos](alimentos_no_gustan)?
+    - recuerda: nada de [mango](no_gusta); si puedes reemplazar también [nueces](alimentos_no_gustan)
+    - prepara la dieta sin [plátano](no_gusta) ni [almendras](alimentos_no_gustan)
+    - puedes vetar [queso azul](no_gusta) y variantes con [maní](alimentos_no_gustan)?
+    - prepara la dieta sin [champiñones](no_gusta) ni [cebolla](alimentos_no_gustan)
+    - evita combinaciones con [almendras](no_gusta) o [berenjena](alimentos_no_gustan)
+    - puedes vetar [atún](no_gusta) y variantes con [palta](alimentos_no_gustan)?
+    - puedes vetar [apio](no_gusta) y variantes con [atún](alimentos_no_gustan)?
+    - recuerda: nada de [champiñones](no_gusta); si puedes reemplazar también [zanahoria](alimentos_no_gustan)
+    - evita combinaciones con [piña](no_gusta) o [huevo](alimentos_no_gustan)
+    - evita combinaciones con [tomate](no_gusta) o [queso azul](alimentos_no_gustan)
+    - puedes vetar [coliflor](no_gusta) y variantes con [sardina](alimentos_no_gustan)?
+    - evita combinaciones con [nueces](no_gusta) o [queso azul](alimentos_no_gustan)
+    - recuerda: nada de [tomate](no_gusta); si puedes reemplazar también [atún](alimentos_no_gustan)
+    - evita combinaciones con [repollo](no_gusta) o [queso azul](alimentos_no_gustan)
+    - prepara la dieta sin [tomate](no_gusta) ni [champiñones](alimentos_no_gustan)
+    - prepara la dieta sin [nueces](no_gusta) ni [plátano](alimentos_no_gustan)
+    - recuerda: nada de [almendras](no_gusta); si puedes reemplazar también [champiñones](alimentos_no_gustan)
+    - puedes vetar [zanahoria](no_gusta) y variantes con [atún](alimentos_no_gustan)?
+    - puedes vetar [palta](no_gusta) y variantes con [salmón](alimentos_no_gustan)?
+    - prepara la dieta sin [almendras](no_gusta) ni [huevo](alimentos_no_gustan)
+    - prepara la dieta sin [cebolla](no_gusta) ni [sardina](alimentos_no_gustan)
+    - evita combinaciones con [zanahoria](no_gusta) o [plátano](alimentos_no_gustan)
+    - prepara la dieta sin [mayonesa](no_gusta) ni [nueces](alimentos_no_gustan)
+    - recuerda: nada de [palta](no_gusta); si puedes reemplazar también [piña](alimentos_no_gustan)
+    - prepara la dieta sin [nueces](no_gusta) ni [atún](alimentos_no_gustan)
+    - puedes vetar [almendras](no_gusta) y variantes con [maní](alimentos_no_gustan)?
+    - recuerda: nada de [garbanzos](no_gusta); si puedes reemplazar también [pepino](alimentos_no_gustan)
+    - prepara la dieta sin [piña](no_gusta) ni [queso azul](alimentos_no_gustan)
+    - prepara la dieta sin [almendras](no_gusta) ni [almendras](alimentos_no_gustan)
+    - no me gusta [coliflor](no_gusta), evita incluirlo en la dieta
+    - recuerda: nada de [tomate](no_gusta); si puedes reemplazar también [queso azul](alimentos_no_gustan)
+    - recuerda: nada de [zanahoria](no_gusta); si puedes reemplazar también [plátano](alimentos_no_gustan)
+    - recuerda: nada de [huevo](no_gusta); si puedes reemplazar también [palta](alimentos_no_gustan)
+    - puedes vetar [cebolla](no_gusta) y variantes con [apio](alimentos_no_gustan)?
+    - recuerda: nada de [apio](no_gusta); si puedes reemplazar también [salmón](alimentos_no_gustan)
+    - puedes vetar [nueces](no_gusta) y variantes con [salmón](alimentos_no_gustan)?
+    - por favor nada que contenga [almendras](no_gusta)
+    - recuerda: nada de [repollo](no_gusta); si puedes reemplazar también [pimentón](alimentos_no_gustan)
+    - prepara la dieta sin [plátano](no_gusta) ni [salmón](alimentos_no_gustan)
+    - prepara la dieta sin [mango](no_gusta) ni [huevo](alimentos_no_gustan)
+    - recuerda: nada de [repollo](no_gusta); si puedes reemplazar también [garbanzos](alimentos_no_gustan)
+    - recuerda: nada de [coliflor](no_gusta); si puedes reemplazar también [apio](alimentos_no_gustan)
+    - evita combinaciones con [salmón](no_gusta) o [brócoli](alimentos_no_gustan)
+    - evita combinaciones con [queso azul](no_gusta) o [champiñones](alimentos_no_gustan)
+    - recuerda: nada de [champiñones](no_gusta); si puedes reemplazar también [cebolla](alimentos_no_gustan)
+    - puedes vetar [lentejas](no_gusta) y variantes con [apio](alimentos_no_gustan)?
+    - prepara la dieta sin [sardina](no_gusta) ni [lentejas](alimentos_no_gustan)
+    - recuerda: nada de [mango](no_gusta); si puedes reemplazar también [lentejas](alimentos_no_gustan)
+    - evita combinaciones con [maní](no_gusta) o [huevo](alimentos_no_gustan)
+    - prepara la dieta sin [lentejas](no_gusta) ni [pepino](alimentos_no_gustan)
+    - recuerda: nada de [nueces](no_gusta); si puedes reemplazar también [brócoli](alimentos_no_gustan)
+    - evita combinaciones con [mango](no_gusta) o [salmón](alimentos_no_gustan)
+    - puedes vetar [zanahoria](no_gusta) y variantes con [pepino](alimentos_no_gustan)?
+    - puedes vetar [pimentón](no_gusta) y variantes con [berenjena](alimentos_no_gustan)?
+    - evita combinaciones con [mango](no_gusta) o [plátano](alimentos_no_gustan)
+    - evita combinaciones con [piña](no_gusta) o [cebolla](alimentos_no_gustan)
+    - evita combinaciones con [zanahoria](no_gusta) o [pepino](alimentos_no_gustan)
+    - evita combinaciones con [repollo](no_gusta) o [almendras](alimentos_no_gustan)
+    - puedes vetar [atún](no_gusta) y variantes con [tomate](alimentos_no_gustan)?
+    - evita combinaciones con [piña](no_gusta) o [sardina](alimentos_no_gustan)
+    - sin [palta](no_gusta) por favor
+    - evita combinaciones con [cebolla](no_gusta) o [mayonesa](alimentos_no_gustan)
+    - prepara la dieta sin [tomate](no_gusta) ni [maní](alimentos_no_gustan)
+    - recuerda: nada de [zanahoria](no_gusta); si puedes reemplazar también [maní](alimentos_no_gustan)
+    - prepara la dieta sin [nueces](no_gusta) ni [queso azul](alimentos_no_gustan)
+    - recuerda: nada de [pimentón](no_gusta); si puedes reemplazar también [cebolla](alimentos_no_gustan)
+    - puedes vetar [queso azul](no_gusta) y variantes con [huevo](alimentos_no_gustan)?
+    - evita combinaciones con [queso azul](no_gusta) o [nueces](alimentos_no_gustan)
+    - prefiero menús donde no aparezca [atún](no_gusta), gracias

@@ -23,6 +23,7 @@ stories:
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: true
+    - action: action_generar_rutina
 
 - story: rutina con actualizacion guiada
   steps:
@@ -30,17 +31,13 @@ stories:
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: false
-    - intent: actualizar_perfil_bot
     - action: profile_form
     - active_loop: profile_form
     - slot_was_set:
         - requested_slot: null
     - active_loop: null
     - action: action_submit_profile_form
-    - intent: solicitar_rutina
-    - action: action_fetch_profile
-    - slot_was_set:
-        - perfil_completo: true
+    - action: action_generar_rutina
 
 - story: dieta con perfil completo
   steps:
@@ -48,6 +45,7 @@ stories:
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: true
+    - action: action_generar_dieta
 
 - story: dieta con actualizacion guiada
   steps:
@@ -55,17 +53,37 @@ stories:
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: false
-    - intent: actualizar_perfil_bot
     - action: profile_form
     - active_loop: profile_form
     - slot_was_set:
         - requested_slot: null
     - active_loop: null
     - action: action_submit_profile_form
+    - action: action_generar_dieta
+
+- story: dieta con preferencias sin palta
+  steps:
     - intent: solicitar_dieta
+      entities:
+        - no_gusta: palta
+    - slot_was_set:
+        - no_gusta: palta
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: true
+    - action: action_generar_dieta
+
+- story: dieta con veto pepino
+  steps:
+    - intent: solicitar_dieta
+      entities:
+        - alimentos_no_gustan: pepino
+    - slot_was_set:
+        - no_gusta: pepino
+    - action: action_fetch_profile
+    - slot_was_set:
+        - perfil_completo: true
+    - action: action_generar_dieta
 
 - story: consultar perfil resumen
   steps:
@@ -138,3 +156,25 @@ stories:
         - requested_slot: null
     - active_loop: null
     - action: action_submit_profile_form
+
+- story: cambio plan suscripcion
+  steps:
+    - intent: suscripcion_cambio_plan
+    - action: action_suscripcion_cambio_plan
+
+- story: crear reserva completa
+  steps:
+    - intent: crear_reserva
+    - action: reserva_form
+    - active_loop: reserva_form
+    - slot_was_set:
+        - clase: spinning
+    - slot_was_set:
+        - fecha: "2025-10-05"
+    - slot_was_set:
+        - hora: "07:00"
+    - active_loop: null
+    - action: utter_confirmar_reserva
+    - intent: afirmar
+    - action: action_crear_reserva
+    - action: utter_reserva_confirmada

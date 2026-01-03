@@ -42,6 +42,15 @@ class ChatContextManager:
         else:
             self.context.set_medical_conditions(str(raw))
 
+    def set_dislikes(self, value: Optional[Any]) -> None:
+        raw = value
+        if raw is None:
+            self.context.set_dislikes(None)
+        elif isinstance(raw, str):
+            self.context.set_dislikes(raw)
+        else:
+            self.context.set_dislikes(str(raw))
+
     def set_notes(self, value: Optional[Any]) -> None:
         note = value
         if isinstance(note, str):

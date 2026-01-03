@@ -2,7 +2,6 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:5000",
   "dependencies": {
     "@popperjs/core": "^2.11.8",
     "@testing-library/dom": "^10.4.1",
@@ -13,16 +12,15 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.9.1",
-    "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "prestart": "node scripts/ensure-logo.js",
-    "start": "react-scripts start",
+    "predev": "node scripts/ensure-logo.js",
+    "dev": "vite",
     "prebuild": "node scripts/ensure-logo.js",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest"
   },
   "eslintConfig": {
     "extends": [
@@ -41,5 +39,11 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "jsdom": "^24.1.0",
+    "vite": "^5.4.8",
+    "vitest": "^1.6.0"
   }
 }

@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useLocale } from '../contexts/LocaleContext';
 import '../styles/legacy/login/style_login.css';
+import GoogleAuthButton from '../components/GoogleAuthButton';
+import NicknamePrompt from '../components/NicknamePrompt';
 
 const normalize = (value) => (value || '').trim();
 
@@ -10,7 +12,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const [params] = useSearchParams();
   const { t } = useLocale();
-  const { user, isAuthenticated, login: loginUser, logout: logoutUser, initialized, authenticating } = useAuth();
+  const { user, isAuthenticated, login: loginUser, loginWithGoogle, logout: logoutUser, initialized, authenticating } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [totp, setTotp] = useState('');
@@ -18,6 +20,8 @@ export default function LoginPage() {
   const [needsMfa, setNeedsMfa] = useState(false);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showNicknamePrompt, setShowNicknamePrompt] = useState(false);
+  const [pendingRedirect, setPendingRedirect] = useState(null);
 
   useEffect(() => {
     if (!initialized) {
@@ -30,6 +34,34 @@ export default function LoginPage() {
       }
     }
   }, [initialized, isAuthenticated, navigate, params]);
+
+  useEffect(() => {
+    if (isAuthenticated && user?.needs_username) {
+      setShowNicknamePrompt(true);
+    }
+  }, [isAuthenticated, user]);
+
+  const resolveNext = useCallback(() => pendingRedirect || params.get('next') || '/admin/productos', [pendingRedirect, params]);
+
+  const handleNicknameComplete = useCallback(() => {
+    const destination = resolveNext();
+    setPendingRedirect(null);
+    setShowNicknamePrompt(false);
+    navigate(destination, { replace: true });
+  }, [navigate, resolveNext]);
+
+  const handlePostLogin = useCallback(
+    (result) => {
+      const destination = params.get('next') || '/admin/productos';
+      if (result?.user?.needs_username) {
+        setPendingRedirect(destination);
+        setShowNicknamePrompt(true);
+        return;
+      }
+      navigate(destination, { replace: true });
+    },
+    [navigate, params]
+  );
 
   const submit = async (event) => {
     event.preventDefault();
@@ -45,14 +77,14 @@ export default function LoginPage() {
       const options = {};
       if (totp) options.totp = totp;
       if (backupCode) options.backupCode = backupCode;
-      await loginUser(normalizedUsername, normalizedPassword, options);
+      const result = await loginUser(normalizedUsername, normalizedPassword, options);
       setUsername('');
       setPassword('');
       setTotp('');
       setBackupCode('');
       setNeedsMfa(false);
-      const next = params.get('next');
-      navigate(next || '/admin/productos', { replace: true });
+      setMessage('');
+      handlePostLogin(result);
     } catch (error) {
       if (error?.payload?.mfa_required) {
         setNeedsMfa(true);
@@ -64,6 +96,29 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  const handleGoogleCredential = useCallback(
+    async (credential) => {
+      if (!credential) {
+        setMessage(t('login.error'));
+        return;
+      }
+      try {
+        setLoading(true);
+        const result = await loginWithGoogle(credential);
+        setTotp('');
+        setBackupCode('');
+        setNeedsMfa(false);
+        setMessage('');
+        handlePostLogin(result);
+      } catch (error) {
+        setMessage(error?.message || t('login.error'));
+      } finally {
+        setLoading(false);
+      }
+    },
+    [handlePostLogin, loginWithGoogle, t]
+  );
 
   const logout = async () => {
     await logoutUser();
@@ -155,8 +210,30 @@ export default function LoginPage() {
                   {loading || authenticating ? t('login.loading') : t('login.submit')}
                 </button>
               </div>
+              <div className='mt-3'>
+                <p className='text-center text-uppercase text-muted small mb-2'>{t('login.or')}</p>
+                <GoogleAuthButton
+                  onCredential={handleGoogleCredential}
+                  mode='signin'
+                  className='d-flex flex-column align-items-center'
+                />
+                <p className='text-center small text-muted mt-2 mb-0'>{t('login.googleCta')}</p>
+              </div>
             </form>
           )}
+
+          <NicknamePrompt
+            visible={showNicknamePrompt}
+            title={t('login.nickname.title')}
+            description={t('login.nickname.description')}
+            placeholder={t('login.nickname.placeholder')}
+            submitLabel={t('login.nickname.submit')}
+            skipLabel={t('login.nickname.skip')}
+            validationMessage={t('login.nickname.error')}
+            errorMessage={t('login.nickname.error')}
+            onSuccess={handleNicknameComplete}
+            onSkip={handleNicknameComplete}
+          />
         </div>
       </div>
     </main>

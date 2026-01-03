@@ -4,6 +4,8 @@ intents:
   - saludar
   - ayuda
   - informar
+  - afirmar
+  - negar
   - solicitar_rutina
   - solicitar_dieta
   - solicitar_entreno_unico
@@ -12,10 +14,12 @@ intents:
   - cambiar_nivel_rutina
   - dolor_lesion
   - consultar_reserva
+  - crear_reserva
   - enviar_rutina_correo
   - mostrar_rutina_pantalla
   - suscripcion_alta
   - suscripcion_baja
+  - suscripcion_cambio_plan
   - consultar_perfil
   - actualizar_perfil
   - actualizar_perfil_bot
@@ -35,9 +39,15 @@ entities:
   - tiempo_disponible
   - condiciones_salud
   - alergias
+  - no_gusta
+  - alimentos_no_gustan
   - formato
   - contacto
+  - email
   - codigo_reserva
+  - clase
+  - fecha
+  - hora
 
 slots:
   objetivo:
@@ -88,6 +98,15 @@ slots:
       - type: from_entity
         entity: alergias
 
+  no_gusta:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: no_gusta
+      - type: from_entity
+        entity: alimentos_no_gustan
+
   formato:
     type: text
     mappings:
@@ -99,6 +118,38 @@ slots:
     mappings:
       - type: from_entity
         entity: contacto
+      - type: from_entity
+        entity: email
+
+  clase:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: clase
+      - type: from_text
+        conditions:
+          - active_loop: reserva_form
+            requested_slot: clase
+
+  fecha:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: fecha
+      - type: from_text
+        conditions:
+          - active_loop: reserva_form
+            requested_slot: fecha
+
+  hora:
+    type: text
+    mappings:
+      - type: from_entity
+        entity: hora
+      - type: from_text
+        conditions:
+          - active_loop: reserva_form
+            requested_slot: hora
 
   codigo_reserva:
     type: text
@@ -201,10 +252,22 @@ slots:
       - type: custom
 
   servicio_pendiente:
-    type: text
+    type: categorical
+    values:
+      - rutina
+      - dieta
     influence_conversation: true
     mappings:
-      - type: custom
+      - type: from_intent
+        intent: solicitar_rutina
+        value: rutina
+        conditions:
+          - active_loop: null
+      - type: from_intent
+        intent: solicitar_dieta
+        value: dieta
+        conditions:
+          - active_loop: null
 
   ultima_rutina:
     type: any
@@ -242,6 +305,15 @@ responses:
 
   utter_envio_rutina_correo:
     - text: "Perfecto, en unos minutos te envío la rutina a {contacto}. ¡Avísame si necesitas otro formato!"
+
+  utter_confirmar_reserva:
+    - text: "Listo, tengo la clase {clase} el {fecha} a las {hora}. ¿Confirmo la reserva?"
+
+  utter_reserva_confirmada:
+    - text: "¡Excelente! Tu cupo para {clase} el {fecha} a las {hora} quedó confirmado ✅."
+
+  utter_reserva_cancelada:
+    - text: "De acuerdo, no registré la reserva. Si quieres agendar otra, solo dime."
 
   utter_ask_codigo_reserva:
     - text: "Indícame el código de tu reserva y te cuento el estado, amigo."
@@ -288,7 +360,7 @@ responses:
           payload: "/solicitar_rutina{\"musculo\": \"cardio\"}"
 
   utter_ask_hero_programa:
-    - text: "Tengo planes temáticos Shonen Power, Ninja Agility y Mecha Endurance. ¿Cuál te interesa?"
+    - text: "Tengo planes temáticos Shonen Power, Ninja Agility, Mecha Endurance, Batman (Christian Bale), Batman (Ben Affleck), Batman (Robert Pattinson), Capitan America (Chris Evans), Superman (Henry Cavill), Superman (David Corenswet) y Wolverine (Hugh Jackman). ¿Cuál te interesa?"
       buttons:
         - title: "Shonen Power"
           payload: "/solicitar_entreno_unico{\"hero_programa\": \"shonen\"}"
@@ -296,6 +368,14 @@ responses:
           payload: "/solicitar_entreno_unico{\"hero_programa\": \"ninja\"}"
         - title: "Mecha Endurance"
           payload: "/solicitar_entreno_unico{\"hero_programa\": \"mecha\"}"
+        - title: "Batman (Christian Bale)"
+          payload: "/solicitar_entreno_unico{\"hero_programa\": \"batman_bale\"}"
+        - title: "Batman (Ben Affleck)"
+          payload: "/solicitar_entreno_unico{\"hero_programa\": \"batman_affleck\"}"
+        - title: "Batman (Robert Pattinson)"
+          payload: "/solicitar_entreno_unico{\"hero_programa\": \"batman_pattinson\"}"
+        - title: "Capitan America (Chris Evans)"
+          payload: "/solicitar_entreno_unico{\"hero_programa\": \"capitan_america_evans\"}"
 
   utter_ask_hero_inicio:
     - text: "¿Cuándo quieres comenzar el plan? Puedes indicarme una fecha (ej. 2025-01-10) o decir 'la próxima semana'."
@@ -350,10 +430,27 @@ responses:
   utter_ask_preferencia_dieta:
     - text: "Tienes alguna preferencia o restriccion alimentaria? (ejemplo: sin lactosa, vegetariana, ninguna)"
 
+  utter_ask_clase:
+    - text: "¿Qué clase quieres reservar (por ejemplo: yoga, spinning, funcional)?"
+
+  utter_ask_fecha:
+    - text: "¿Para qué fecha necesitas la clase? Puedes decirlo como AAAA-MM-DD."
+
+  utter_ask_hora:
+    - text: "¿A qué hora la quieres agendar?"
+
+  utter_resumen_rutina:
+    - text: "Perfecto, ya tengo tus preferencias. Te muestro un resumen antes de generar la rutina final."
+
   utter_form_cancelado:
     - text: "De acuerdo, no actualizare tu perfil por ahora. Si cambias de idea avisame."
 
 forms:
+  reserva_form:
+    required_slots:
+      - clase
+      - fecha
+      - hora
   profile_form:
     required_slots:
       - peso
@@ -367,6 +464,17 @@ forms:
       - hero_programa
       - hero_inicio
       - hero_equipo
+  rutina_form:
+    required_slots:
+      - objetivo
+      - nivel
+      - musculo
+      - equipamiento
+      - ejercicios_num
+      - tiempo_disponible
+      - condiciones_salud
+      - alergias
+      - formato
 
 actions:
   - action_fetch_profile
@@ -375,6 +483,11 @@ actions:
   - action_generar_dieta
   - action_consultar_reserva
   - action_inscribir_entreno_unico
+  - action_crear_reserva
+  - action_cancelar_reserva
+  - action_suscripcion_cambio_plan
+  - validate_reserva_form
+  - validate_rutina_form
 
 session_config:
   session_expiration_time: 60

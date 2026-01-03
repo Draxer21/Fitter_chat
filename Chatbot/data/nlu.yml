@@ -1,6 +1,9 @@
 version: "3.1"
 
 nlu:
+- regex: email
+  examples: |
+    - [A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}
 - intent: actualizar_perfil
   examples: |
     - quiero corregir mi peso y altura registrados
@@ -2005,6 +2008,17 @@ nlu:
     - me gustaria revisar mi perfil agregando peso y altura nuevos
 - intent: actualizar_perfil_bot
   examples: |
+    - Actualizar mi perfil completo
+    - Actualiza mi perfil por chat
+    - Quiero actualizar mi perfil aqui
+    - Actualiza mis datos aqui
+    - Quiero actualizar el perfil
+    - Actualizar con el bot
+    - Necesito actualizar mi perfil
+    - Quiero completar mi perfil aqui
+    - Quiero editar mis datos personales
+    - Ayudame a actualizar mis medidas por chat
+    - Completar perfil en este chat
     - hagamos la actualizacion aqui mismo
     - si, guia tu la actualizacion del perfil
     - mejor lo completo con el asistente
@@ -6007,6 +6021,22 @@ nlu:
     - Hola campeon, necesito ayuda con la configuracion del chatbot. me ayudas paso a paso?
     - Me pierdo cuando intento reiniciar mi progreso. Alguna sugerencia?
     - Hola equipo, necesito ayuda con el seguimiento de progreso. me ayudas paso a paso?
+    - ayuda
+    - necesito ayuda
+    - puedes ayudarme
+    - me ayudas
+    - ayudame por favor
+    - necesito asistencia
+    - tengo dudas
+    - no se que hacer
+    - que puedes hacer
+    - que opciones hay
+    - que servicios ofreces
+    - como funciona
+    - quiero orientacion
+    - me puedes guiar
+    - necesito soporte
+
 - intent: cambiar_musculo_rutina
   examples: |
     - Cambia la rutina para enfocarla en gluteos y piernas.
@@ -11056,6 +11086,10 @@ nlu:
     - Cambia mi objetivo a mejorar mi postura porque tengo una competencia pronto
 - intent: consultar_perfil
   examples: |
+    - ver mi perfil
+    - mostrar mi perfil
+    - quiero ver mi perfil
+    - mostrar perfil
     - quiero comprobar si mi perfil esta completo
     - dime si ya cargue peso y altura
     - resumeme mi informacion personal
@@ -11073,7 +11107,6 @@ nlu:
     - que tal puedes enviar un resumen de avances registrados por el portal
     - buenas necesito que la plataforma muestre progresos mensuales para planear la semana
     - Hola dime antes de continuar si mis datos perfil refleja mis reservas
-    - quiero actualizar mi propio perfil del hoy
     - hola comprobar mis datos perfil antes de continuar para ajustar mi dieta
     - cuentame que la app registro sobre datos personales durante ultimo mes
     - buenas necesito que la plataforma muestre objetivos activos para confirmar mis metas
@@ -11084,7 +11117,6 @@ nlu:
     - verifica que el sistema registro sobre objetivos activos durante el ultimo registro
     -  consultar mi perfil porque debo verificar medidas
     - podrias comprobar mis datos perfil del ultimo mes
-    - hola actualizar mi perfil hoy para ajustar mi dieta
     - que tal necesito que el portal muestre recordatorios para preparar un seguimiento
     - hola revisar el perfil de mi cuenta perfil antes de continuar para coordinar una sesion medica
     - hey validar mis datos perfil hoy para ver mis progresos
@@ -11104,8 +11136,6 @@ nlu:
     - confirma que tu registro tiene registrado sobre ultimas reservas
     - buenas validar mi perfil antes de continuar para planear la semana
     -  necesito revisar mi perfil
-    - buenas actualizar mi propio perfil antes de continuar para ajustar mi dieta
-    - buenas actualizar mis datos perfil en este momento para coordinar una sesion medica
     - buen dia consultar mis datos perfil para coordinar una sesion medica
     - oye necesito que la app muestre recordatorios para preparar un seguimiento
     - verifica porfa que la app tiene registrado sobre progresos mensuales
@@ -13045,16 +13075,13 @@ nlu:
     - quiero confirmado datos personales antes de continuar
     - verifica que la base de datos registro sobre historial de rutinas durante ultimo trimestre
     - buenas confirmar el perfil de mi cuenta perfil hoy para preparar un seguimiento
-    - bot actualizar la ficha perfil despues de entrenar para preparar un seguimiento
     - buen dia comprobar mis datos perfil hoy para confirmar mis metas
     - dime que la base de datos registro sobre restricciones medicas durante esta semana
     - hola revisar mis datos perfil antes de continuar para confirmar mis metas
-    - buen dia sincronizar mi propio perfil ahora mismo para ajustar mi dieta
     - verifica porfa que el bot registro sobre peso y altura durante hoy
     - cuentame que tu registro registro sobre notas del coach durante el ultimo registro
     - hey consultar la ficha perfil hoy para ver mis progresos
     - indagame que la plataforma registro sobre datos de contacto durante el periodo actual
-    - hey sincronizar mis datos perfil hoy para compartirlo con mi entrenador
     - cuentame que la app registro sobre notas del coach durante ultimo mes
 - intent: consultar_reserva
   examples: |
@@ -13062,6 +13089,50 @@ nlu:
     - Confírmame si tengo turno con el coach mañana.
     - ¿Sigue vigente la reserva del sábado a la tarde?
     - Necesito saber si la reserva de spinning está confirmada.
+    - quiero ver el estado de mi reserva con el código [ZX-220](codigo_reserva)
+    - consultar estado de mi reserva con código [R-445](codigo_reserva)
+    - revisar mi reserva usando el código [AB-001](codigo_reserva)
+    - ver mi reserva con el código [CL-908](codigo_reserva)
+    - estado de mi reserva para [spinning](clase)
+    - quiero ver mi reserva
+    - quiero consultar el estado de mi reserva
+    - estado de la reserva con código [QX-112](codigo_reserva)
+    - tengo el código [AB-778](codigo_reserva), revisa mi reserva
+    - consulta mi reserva con el código [RSV-102](codigo_reserva)
+    - verifica el estado de mi reserva
+    - necesito confirmar mi reserva
+    - quiero revisar mi reserva del [viernes](fecha)
+    - ver mi reserva de [yoga](clase)
+    - estado de mi reserva por favor
+    - consultar el estado de mi reserva
+    - quiero ver el estado de mi reserva
+    - necesito el estado de mi reserva con codigo ABC123
+    - revisar mi reserva con codigo AB-123
+    - ver mi reserva con el codigo [ABC123](codigo_reserva)
+    - quiero revisar el estado de mi reserva
+    - necesito el estado de mi reserva
+    - quiero consultar mi reserva
+    - necesito consultar el estado de mi reserva
+    - quiero ver el estado de la reserva con el código [ZX-555](codigo_reserva)
+    - consulta el estado de mi reserva de [pilates](clase)
+    - revisar estado de mi reserva con el código [RES-101](codigo_reserva)
+    - seguimiento de mi reserva
+    - ver seguimiento de mi reserva
+    - estado de la reserva para el [lunes](fecha)
+    - confirmar estado de mi reserva de [funcional](clase)
+    - quiero consultar el estado de la reserva del [martes](fecha)
+    - revisar reserva con código [XY-330](codigo_reserva)
+    - ver mi reserva con código [QW-111](codigo_reserva)
+    - necesito verificar mi reserva de [spinning](clase)
+    - consultar reserva del [sábado](fecha)
+    - estado de mi reserva con código [CDE-555](codigo_reserva)
+    - revisar el estado de la reserva de hoy
+    - revisar el estado de mi reserva
+    - verificar reserva con codigo [RSV-778](codigo_reserva)
+    - consultar reserva con codigo [A1B2C3](codigo_reserva)
+    - tengo un codigo [QW-909](codigo_reserva), quiero ver mi reserva
+    - ver estado de reserva de [spinning](clase)
+    - puedes confirmar el estado de mi reserva
     - Quiero revisar el estado de la reserva de mañana porque me llego una alerta y quiero confirmar
     - Quiero revisar la sede de la reserva del finde porque quiero coordinarme con mis amigos
     - Quiero revisar la sede de la reserva que reserve hace un rato porque no recuerdo el detalle exacto
@@ -13096,6 +13167,21 @@ nlu:
     - Necesito saber la duracion de la reserva del proximo lunes, y evitar confusiones
     - Quiero revisar el entrenador asignado de la reserva para la sesion de evaluacion porque me llego una alerta y quiero confirmar
     - Por favor dime la fecha de mi reserva para la sesion de evaluacion.
+    - ver el estado de mi reserva con código [AA-334](codigo_reserva)
+    - consultar mi reserva con el código [CDE-120](codigo_reserva)
+    - revisar la reserva con código [ZX-100](codigo_reserva)
+    - estado de reserva con el código [RES-889](codigo_reserva)
+    - quiero ver mi reserva con el código [PQR-777](codigo_reserva)
+    - necesito el estado de mi reserva con código [AB-123](codigo_reserva)
+    - revisar el estado de mi reserva con código [RT-909](codigo_reserva)
+    - ver mi reserva del [lunes](fecha)
+    - consultar estado de mi reserva del [martes](fecha)
+    - quiero ver la reserva de [spinning](clase)
+    - estado de mi reserva de [yoga](clase)
+    - revisa el estado de mi reserva, tengo el código [MX-556](codigo_reserva)
+    - necesito confirmar el estado de la reserva
+    - quiero consultar el estado de la reserva
+    - ver mi reserva y confirmar el estado
     - ¿Puedes confirmarme la duracion de mi reserva del finde?
     - Necesito saber la fecha de la reserva de esta semana, asi organizo mi agenda
     - Necesito saber la sede de la reserva que hice ayer, por si debo cambiarla
@@ -14430,8 +14516,32 @@ nlu:
     - Necesito saber el entrenador asignado de la reserva para la sesion de evaluacion, para enviarsela a un amigo
     - Me ayudas a verificar la fecha de la reserva para la sesion de evaluacion? estoy chequeando mi agenda
     - ¿En qué el entrenador asignado quedó mi reserva del finde?
+    - quiero consultar mi reserva
+    - cual es el estado de mi reserva
+    - ver mi reserva
+    - revisar mi reserva
+    - seguimiento de mi reserva
+    - tengo un codigo de reserva
+    - consultar reserva [ABC123](codigo_reserva)
+    - revisar codigo [QWE456](codigo_reserva)
+    - ver estado de la reserva
+    - estado de la reserva [R12-3](codigo_reserva)
+    - quiero saber si esta confirmada
+    - consultar mi cupo
+    - verificar mi reserva
+    - chequear mi reserva
+    - revisar mi codigo
+    - consultar con el codigo [AA11](codigo_reserva)
+    - dame el estado de mi reserva
+    - mi reserva esta ok
+    - quiero consultar el estado
+
 - intent: detener_formulario
   examples: |
+    - mejor cancelalo
+    - cancelar formulario
+    - deja de preguntar
+    - parar formulario
     - no quiero completar mas datos
     - detener, gracias
     - prefiero terminar aqui
@@ -18092,6 +18202,8 @@ nlu:
     - la zona lumbar se resiente si realizo correr en cinta
 - intent: enviar_rutina_correo
   examples: |
+    - Mandala por mail por favor
+    - Envia la rutina por correo
     - Manda mi rutina al correo, gracias.
     - Reenviame la rutina anterior a mi email.
     - Quisiera la rutina en PDF en mi bandeja de entrada.
@@ -20094,6 +20206,89 @@ nlu:
     - Me envías con las modificaciones de la rutina al final de la semana al la casilla registrada? La revisare desde el telefono.
 - intent: informar
   examples: |
+    - Usa mi correo [cliente@fitter.com](email)
+    - Mi correo es [cliente@fitter.com](email)
+    - Usa el correo [soporte@fitter.com](email)
+    - Mi mail es [ana@gmail.com](email)
+    - Envialo a [test.user+1@dominio.cl](email)
+    - Mi correo es [diegoguzmansoto03@gmail.com](email)
+    - Correo: [draxer.gaming.info@gmail.com](email)
+    - Enviamelo a [soporte.fitter+qa@fitter.com](email)
+    - Mi mail alternativo es [cliente.pruebas@fitter.cl](email)
+    - Puedes usar [fit.user99@correo.com](email)
+    - El codigo es [ABC123](codigo_reserva)
+    - El codigo es [ZX-987](codigo_reserva)
+    - Clase de [yoga](clase)
+    - Clase de [spinning](clase)
+    - Clase de [spinning](clase).
+    - Clase de [funcional](clase)
+    - La clase es [spinning](clase)
+    - La clase es [yoga](clase)
+    - Quiero la clase de [funcional](clase)
+    - Para el [2025-10-05](fecha)
+    - El [2025-10-06](fecha)
+    - Para el [2025-11-01](fecha)
+    - A las [07:00](hora)
+    - A las [18:30](hora)
+    - A las [9:15](hora)
+    - Trabajar [pecho](musculo)
+    - Trabajar [espalda](musculo)
+    - Mi musculo es [pecho](musculo)
+    - Musculo [espalda](musculo)
+    - Soy nivel [intermedio](nivel)
+    - Soy nivel [avanzado](nivel)
+    - Nivel [principiante](nivel)
+    - Mi objetivo es [fuerza](objetivo)
+    - Mi objetivo es [hipertrofia](objetivo)
+    - Objetivo [bajar_grasa](objetivo)
+    - Solo tengo [mancuernas](equipamiento)
+    - Solo tengo [barra](equipamiento)
+    - Equipamiento [peso corporal](equipamiento)
+    - Dispongo de [45](tiempo_disponible) minutos
+    - Dispongo de [30](tiempo_disponible) minutos
+    - Tengo [60](tiempo_disponible) minutos
+    - ganar masa muscular
+    - bajar grasa
+    - mantener
+    - ninguno
+    - sin lactosa
+    - vegetariana
+    - sin condiciones de salud
+    - sin alergias
+    - formato [pantalla](formato)
+    - formato [correo](formato)
+    - [sin palta](no_gusta) por favor
+    - evita [atun](no_gusta) que me repele
+    - no me gusta [huevo](no_gusta), evita incluirlo en la dieta
+    - agrega que no quiero [palta](no_gusta) en las comidas
+    - por favor nada que contenga [queso azul](no_gusta)
+    - agrega que no quiero [lentejas](no_gusta) en las comidas
+    - no me gusta [mango](no_gusta), evita incluirlo en la dieta
+    - por favor nada que contenga [lentejas](no_gusta)
+    - agrega que no quiero [tomate](no_gusta) en las comidas
+    - agrega que no quiero [pimenton](no_gusta) en las comidas
+    - no me gusta [queso azul](no_gusta), evita incluirlo en la dieta
+    - por favor nada que contenga [almendras](no_gusta)
+    - agrega que no quiero [nueces](no_gusta) en las comidas
+    - por favor nada que contenga [pimenton](no_gusta)
+    - agrega que no quiero [huevo](no_gusta) en las comidas
+    - por favor nada que contenga [nueces](no_gusta)
+    - agrega que no quiero [coliflor](no_gusta) en las comidas
+    - agrega que no quiero [atun](no_gusta) en las comidas
+    - agrega que no quiero [zanahoria](no_gusta) en las comidas
+    - agrega que no quiero [champinones](no_gusta) en las comidas
+    - no me gusta [pina](no_gusta), evita incluirlo en la dieta
+    - por favor nada que contenga [mayonesa](no_gusta)
+    - me cae pesimo [coliflor](no_gusta); deja fuera cualquier plato con eso
+    - por favor nada que contenga [coliflor](no_gusta)
+    - agrega que no quiero [berenjena](no_gusta) en las comidas
+    - agrega que no quiero [pepino](no_gusta) en las comidas
+    - por favor nada que contenga [palta](no_gusta)
+    - no me gusta [pepino](no_gusta), evita incluirlo en la dieta
+    - agrega que no quiero [queso azul](no_gusta) en las comidas
+    - me cae pesimo [pepino](no_gusta); deja fuera cualquier plato con eso
+    - no me gusta [mayonesa](no_gusta), evita incluirlo en la dieta
+    - no me gusta [repollo](no_gusta), evita incluirlo en la dieta
     - Soy hipertenso y peso 80 kilos.
     - Tengo 30 anios, mido 1.70 y entreno con ligas.
     - Estoy operado del hombro y solo puedo hacer bajo impacto.
@@ -22094,8 +22289,32 @@ nlu:
     - Mis datos: tengo 34 anios, 85 kilos, tengo hipertension controlada, en la hora de almuerzo
     - Para que tengas contexto: tengo 67 anios, 90 kg, 1.70 m, tengo hipertension controlada, entreno dos veces por semana
     - Para que tengas contexto: tengo 55 anios, 102 kilos, 1.78 metros, mi medico recomendo bajo impacto, entreno cuatro veces por semana
+    - mi correo es [cliente@example.com](email)
+    - envialo a [test.user+1@dominio.cl](email)
+    - correo: [fitter.test@gmail.com](email)
+    - puedes escribir a [persona@correo.com](email)
+    - mail: [demo@mail.net](email)
+    - mi telefono es [987654321](contacto)
+    - contacto: [+56912345678](contacto)
+    - mi numero es [912345678](contacto)
+    - mi contacto es [56988887777](contacto)
+    - llamame al [987650000](contacto)
+    - codigo [AB12](codigo_reserva)
+    - mi codigo es [ZX9-22](codigo_reserva)
+    - reserva [QWE456](codigo_reserva)
+    - codigo reserva [AA11](codigo_reserva)
+    - tengo el codigo [R12-3](codigo_reserva)
+    - quiero trabajar [espalda](musculo)
+    - prefiero [pecho](musculo)
+    - me gusta entrenar [piernas](musculo)
+    - priorizar [hombros](musculo)
+    - entrenar [brazos](musculo)
+
 - intent: mostrar_rutina_pantalla
   examples: |
+    - Prefiero verla en pantalla
+    - verla en pantalla
+    - en pantalla
     - Ensename la rutina actual.
     - Quiero ver la rutina en pantalla con todos los ejercicios.
     - Muestra el plan del lunes aqui mismo.
@@ -25128,1427 +25347,39 @@ nlu:
     - Hey elegi usar la version web, podrias acceder al perfil de ajustes
 - intent: saludar
   examples: |
-    - ¡Hola! Necesito tu ayuda.
-    - Buenas, ¿estás disponible?
-    - ¿Qué onda, bot?
-    - Hola hola, coach. ¿arrancamos?
-    - buenas noches, asistente. ¿qué hay de nuevo?
-    - Hola hola, bot. ¿me ayudas hoy?
-    - Que tengas una linda noche, bot. vengo con ganas de entrenar
-    - ¡buenas noches! Llegué con toda la energía. ¿me ayudas hoy?
-    - Hola hola, equipo. ¿listo para entrenar?
-    - Hola, compa. ¿me das una mano?
-    - holis, asistente. ¿me ayudas hoy?
-    - buenas noches, bot. ¿listo para entrenar?
-    - buenas tardes, coach. ¿qué hay de nuevo?
-    - Hey, equipo. ¿listo para entrenar?
-    - ¡qué onda! Se siente bien volver a entrenar. ¿arrancamos?
-    - buenas noches! ¿me das una mano?
-    - Hola hola, asistente. ¿tenés un minuto?
-    - Que tengas un buen día, máquina. vengo con ganas de entrenar
-    - qué tal, máquina. ¿listo para entrenar?
-    - Buenas, compa. ¿qué hay de nuevo?
-    - ¡holis! Llegué con toda la energía. ¿cómo estás?
-    - qué onda, bot. ¿me das una mano?
-    - Hola, amigo. ¿todo bien?
-    - hey, equipo. ¿tenés un minuto?
-    - Hola, máquina. ¿qué hay de nuevo?
-    - qué onda, asistente. ¿listo para entrenar?
-    - Que tengas una buena tarde, compa. espero que estés listo para ayudarme
-    - ¡buenos días! Qué gusto encontrarte. ¿listo para entrenar?
-    - Que tengas una jornada productiva, equipo. hoy necesito motivación
-    - ¡buenas noches! Ando medio perdido. ¿qué hay de nuevo?
-    - Hola hola, bot. ¿me das una mano?
-    - ¡hey! Se siente bien volver a entrenar. ¿listo para entrenar?
-    - Que tengas un gran inicio de semana, amigo. ojalá podamos planear algo bueno
-    - Hola, amigo. ¿cómo estás?
-    - hey, fitter. ¿tenés un minuto?
-    - ¡buenas noches! Qué gusto encontrarte. ¿me das una mano?
-    - ¡hola! Qué gusto encontrarte. ¿me das una mano?
-    - Que tengas una linda noche, asistente. vengo con ganas de entrenar
-    - buenas tardes, equipo. ¿me das una mano?
-    - ¡hola! Hace rato no hablábamos. ¿arrancamos?
-    - ¡holis! Hace rato no hablábamos. ¿tenés un minuto?
-    - Qué tal, máquina. ¿me das una mano?
-    - hola, asistente. ¿listo para entrenar?
-    - Que tengas una jornada productiva, bot. espero que estés listo para ayudarme
-    - qué onda! ¿cómo estás?
-    - hola, equipo. ¿me das una mano?
-    - Que tengas un gran inicio de semana, compa. hoy necesito motivación
-    - Buenas, equipo. ¿cómo estás?
-    - holis, coach. ¿arrancamos?
-    - Hola hola, coach. ¿tenés un minuto?
-    - Hola hola, compa. ¿listo para entrenar?
-    - Hey, máquina. ¿qué hay de nuevo?
-    - Qué tal, fitter. ¿qué hay de nuevo?
-    - qué onda, equipo. ¿tenés un minuto?
-    - qué onda, coach. ¿arrancamos?
-    - ¡hola! Se siente bien volver a entrenar. ¿me ayudas hoy?
-    - holis! ¿arrancamos?
-    - holis, fitter. ¿listo para entrenar?
-    - Que tengas una jornada productiva, fitter. hoy necesito motivación
-    - ¡holis! Llegué con toda la energía. ¿me das una mano?
-    - ¡hola! Hace rato no hablábamos. ¿me das una mano?
-    - Hey, fitter. ¿cómo estás?
-    - ¡buenos días! Ando medio perdido. ¿listo para entrenar?
-    - ¡buenas tardes! Llegué con toda la energía. ¿cómo estás?
-    - ¡buenas noches! Llegué con toda la energía. ¿qué hay de nuevo?
-    - ¡buenas noches! Se siente bien volver a entrenar. ¿qué hay de nuevo?
-    - buenas noches, amigo. ¿me ayudas hoy?
-    - ¡qué onda! Qué gusto encontrarte. ¿arrancamos?
-    - qué onda, coach. ¿cómo estás?
-    - hey, amigo. ¿qué hay de nuevo?
-    - Hola hola, fitter. ¿me das una mano?
-    - qué tal, coach. ¿listo para entrenar?
-    - holis, bot. ¿todo bien?
-    - buenas tardes, asistente. ¿cómo estás?
-    - ¡buenos días! Qué gusto encontrarte. ¿me ayudas hoy?
-    - hey, asistente. ¿arrancamos?
-    - buenas noches, asistente. ¿listo para entrenar?
-    - buenas noches! ¿cómo estás?
-    - qué onda, compa. ¿tenés un minuto?
-    - ¡qué tal! Llegué con toda la energía. ¿listo para entrenar?
-    - qué onda, asistente. ¿cómo estás?
-    - qué onda, compa. ¿listo para entrenar?
-    - Que tengas una jornada productiva, bot. traigo dudas y quiero resolverlas
-    - hola! ¿qué hay de nuevo?
-    - Que tengas una linda noche, amigo. vengo con ganas de entrenar
-    - buenas tardes, máquina. ¿tenés un minuto?
-    - Buenas, coach. ¿me ayudas hoy?
-    - Que tengas una buena tarde, fitter. espero que estés listo para ayudarme
-    - Hey, asistente. ¿me das una mano?
-    - buenas tardes, compa. ¿me ayudas hoy?
-    - Qué tal, fitter. ¿cómo estás?
-    - qué onda, fitter. ¿tenés un minuto?
-    - holis, asistente. ¿arrancamos?
-    - qué tal, bot. ¿tenés un minuto?
-    - Hola, amigo. ¿tenés un minuto?
-    - ¡qué onda! Llegué con toda la energía. ¿arrancamos?
-    - ¡qué tal! Llegué con toda la energía. ¿cómo estás?
-    - Hola hola, compa. ¿arrancamos?
-    - ¡buenas noches! Se siente bien volver a entrenar. ¿cómo estás?
-    - buenas tardes, amigo. ¿me das una mano?
-    - buenas tardes, fitter. ¿arrancamos?
-    - ¡hola! Se siente bien volver a entrenar. ¿tenés un minuto?
-    - Qué tal, amigo. ¿todo bien?
-    - Hola hola, bot. ¿todo bien?
-    - buenas noches, máquina. ¿tenés un minuto?
-    - ¡buenas tardes! Hace rato no hablábamos. ¿me das una mano?
-    - qué tal! ¿todo bien?
-    - ¡qué tal! Hace rato no hablábamos. ¿arrancamos?
-    - holis, equipo. ¿me das una mano?
-    - ¡hey! Llegué con toda la energía. ¿me ayudas hoy?
-    - ¡hey! Hace rato no hablábamos. ¿arrancamos?
-    - Hey, equipo. ¿tenés un minuto?
-    - buenas tardes, bot. ¿me das una mano?
-    - qué onda! ¿todo bien?
-    - ¡buenas tardes! Se siente bien volver a entrenar. ¿qué hay de nuevo?
-    - qué tal! ¿listo para entrenar?
-    - holis, amigo. ¿listo para entrenar?
-    - buenas tardes, amigo. ¿todo bien?
-    - Hola, compa. ¿qué hay de nuevo?
-    - qué onda, asistente. ¿todo bien?
-    - ¡holis! Llegué con toda la energía. ¿arrancamos?
-    - ¡hey! Ando medio perdido. ¿qué hay de nuevo?
-    - ¡holis! Se siente bien volver a entrenar. ¿todo bien?
-    - qué onda, bot. ¿todo bien?
-    - Qué tal, fitter. ¿todo bien?
-    - Buenas, equipo. ¿me das una mano?
-    - Que tengas un gran inicio de semana, bot. vengo con ganas de entrenar
-    - Buenas, bot. ¿me ayudas hoy?
-    - ¡qué onda! Qué gusto encontrarte. ¿me das una mano?
-    - buenas noches, asistente. ¿cómo estás?
-    - hey, amigo. ¿todo bien?
-    - Qué tal, bot. ¿arrancamos?
-    - buenas tardes, bot. ¿arrancamos?
-    - hola! ¿tenés un minuto?
-    - ¡hola! Ando medio perdido. ¿me ayudas hoy?
-    - hola, fitter. ¿cómo estás?
-    - Hey, equipo. ¿todo bien?
-    - buenos días, fitter. ¿tenés un minuto?
-    - Buenas, compa. ¿arrancamos?
-    - hey, fitter. ¿qué hay de nuevo?
-    - hey, equipo. ¿listo para entrenar?
-    - Buenas, equipo. ¿me ayudas hoy?
-    - Hey, máquina. ¿me das una mano?
-    - buenas tardes, bot. ¿tenés un minuto?
-    - Hola hola, máquina. ¿me ayudas hoy?
-    - Hola, equipo. ¿listo para entrenar?
-    - hey, equipo. ¿todo bien?
-    - Que tengas una buena tarde, coach. ojalá podamos planear algo bueno
-    - hola, bot. ¿me das una mano?
-    - hey, compa. ¿cómo estás?
-    - Que tengas un buen día, compa. traigo dudas y quiero resolverlas
-    - buenas noches, fitter. ¿me das una mano?
-    - ¡buenas noches! Hace rato no hablábamos. ¿arrancamos?
-    - Que tengas un gran inicio de semana, compa. espero que estés listo para ayudarme
-    - ¡qué onda! Se siente bien volver a entrenar. ¿cómo estás?
-    - buenas noches, amigo. ¿listo para entrenar?
-    - ¡holis! Se siente bien volver a entrenar. ¿me das una mano?
-    - Hola hola, coach. ¿listo para entrenar?
-    - Buenas, asistente. ¿qué hay de nuevo?
-    - hola, compa. ¿qué hay de nuevo?
-    - ¡hola! Hace rato no hablábamos. ¿listo para entrenar?
-    - holis, equipo. ¿me ayudas hoy?
-    - ¡buenas tardes! Hace rato no hablábamos. ¿me ayudas hoy?
-    - Qué tal, máquina. ¿cómo estás?
-    - buenas tardes, máquina. ¿cómo estás?
-    - Que tengas una jornada productiva, coach. vengo con ganas de entrenar
-    - hey, fitter. ¿arrancamos?
-    - buenas tardes, amigo. ¿me ayudas hoy?
-    - buenas noches, amigo. ¿tenés un minuto?
-    - Que tengas una linda noche, amigo. ojalá podamos planear algo bueno
-    - Buenas, asistente. ¿me das una mano?
-    - hola, asistente. ¿cómo estás?
-    - hola, máquina. ¿me ayudas hoy?
-    - buenas tardes, coach. ¿me ayudas hoy?
-    - buenos días, fitter. ¿me das una mano?
-    - Hey, compa. ¿me ayudas hoy?
-    - ¡hey! Ando medio perdido. ¿listo para entrenar?
-    - ¡qué tal! Llegué con toda la energía. ¿arrancamos?
-    - hey, amigo. ¿listo para entrenar?
-    - qué tal! ¿cómo estás?
-    - ¡buenos días! Ando medio perdido. ¿me ayudas hoy?
-    - holis, compa. ¿arrancamos?
-    - buenas tardes! ¿cómo estás?
-    - ¡hola! Ando medio perdido. ¿cómo estás?
-    - Qué tal, equipo. ¿qué hay de nuevo?
-    - buenas tardes, asistente. ¿tenés un minuto?
-    - holis, máquina. ¿arrancamos?
-    - hola! ¿arrancamos?
-    - ¡hola! Hace rato no hablábamos. ¿cómo estás?
-    - ¡holis! Qué gusto encontrarte. ¿me das una mano?
-    - buenas noches, compa. ¿arrancamos?
-    - Hey, máquina. ¿todo bien?
-    - buenas noches, fitter. ¿todo bien?
-    - ¡holis! Se siente bien volver a entrenar. ¿tenés un minuto?
-    - buenas noches, asistente. ¿todo bien?
-    - ¡qué onda! Hace rato no hablábamos. ¿qué hay de nuevo?
-    - Hola, máquina. ¿arrancamos?
-    - hola, máquina. ¿listo para entrenar?
-    - buenas noches, máquina. ¿me das una mano?
-    - Que tengas una jornada productiva, equipo. vengo con ganas de entrenar
-    - qué tal, máquina. ¿cómo estás?
-    - Hola hola, equipo. ¿arrancamos?
-    - hola, compa. ¿arrancamos?
-    - qué onda, fitter. ¿qué hay de nuevo?
-    - qué onda, equipo. ¿me ayudas hoy?
-    - buenas tardes, amigo. ¿tenés un minuto?
-    - Hey, coach. ¿arrancamos?
-    - buenas tardes, compa. ¿me das una mano?
-    - Buenas, asistente. ¿tenés un minuto?
-    - Que tengas un gran inicio de semana, asistente. ojalá podamos planear algo bueno
-    - buenas noches, coach. ¿listo para entrenar?
-    - qué tal, asistente. ¿me ayudas hoy?
-    - ¡buenos días! Ando medio perdido. ¿qué hay de nuevo?
-    - buenas noches! ¿me ayudas hoy?
-    - hola, compa. ¿tenés un minuto?
-    - Hey, amigo. ¿qué hay de nuevo?
-    - buenas tardes! ¿qué hay de nuevo?
-    - ¡holis! Se siente bien volver a entrenar. ¿arrancamos?
-    - Que tengas una linda noche, amigo. hoy necesito motivación
-    - ¡hey! Hace rato no hablábamos. ¿cómo estás?
-    - ¡qué tal! Qué gusto encontrarte. ¿arrancamos?
-    - Hola hola, compa. ¿cómo estás?
-    - qué onda, máquina. ¿arrancamos?
-    - ¡qué tal! Hace rato no hablábamos. ¿listo para entrenar?
-    - qué tal, fitter. ¿tenés un minuto?
-    - buenas noches, asistente. ¿me ayudas hoy?
-    - qué tal, fitter. ¿arrancamos?
-    - Que tengas un buen día, compa. vengo con ganas de entrenar
-    - holis, bot. ¿qué hay de nuevo?
-    - buenas tardes, equipo. ¿arrancamos?
-    - ¡qué tal! Se siente bien volver a entrenar. ¿todo bien?
-    - Que tengas una buena tarde, fitter. vengo con ganas de entrenar
-    - buenas tardes! ¿tenés un minuto?
-    - Hola, equipo. ¿me ayudas hoy?
-    - ¡buenas noches! Se siente bien volver a entrenar. ¿todo bien?
-    - Que tengas una jornada productiva, coach. traigo dudas y quiero resolverlas
-    - Buenas, compa. ¿todo bien?
-    - ¡qué tal! Ando medio perdido. ¿me das una mano?
-    - ¡holis! Llegué con toda la energía. ¿listo para entrenar?
-    - Hey, equipo. ¿me das una mano?
-    - Que tengas una buena tarde, compa. traigo dudas y quiero resolverlas
-    - Que tengas una buena tarde, fitter. hoy necesito motivación
-    - holis, equipo. ¿arrancamos?
-    - buenas tardes, máquina. ¿me das una mano?
-    - ¡buenos días! Ando medio perdido. ¿tenés un minuto?
-    - ¡hey! Llegué con toda la energía. ¿todo bien?
-    - Hola hola, máquina. ¿tenés un minuto?
-    - qué onda, máquina. ¿cómo estás?
-    - buenas noches, fitter. ¿me ayudas hoy?
-    - ¡buenas tardes! Qué gusto encontrarte. ¿arrancamos?
-    - buenas noches! ¿arrancamos?
-    - Buenas, fitter. ¿tenés un minuto?
-    - qué onda! ¿qué hay de nuevo?
-    - buenas noches, fitter. ¿cómo estás?
-    - qué tal, bot. ¿todo bien?
-    - ¡buenas noches! Se siente bien volver a entrenar. ¿arrancamos?
-    - holis, máquina. ¿tenés un minuto?
-    - Buenas, compa. ¿listo para entrenar?
-    - buenas noches, compa. ¿me ayudas hoy?
-    - ¡buenas tardes! Ando medio perdido. ¿qué hay de nuevo?
-    - hola, bot. ¿me ayudas hoy?
-    - hey, asistente. ¿qué hay de nuevo?
-    - ¡buenas tardes! Qué gusto encontrarte. ¿qué hay de nuevo?
-    - Que tengas un buen día, equipo. ojalá podamos planear algo bueno
-    - ¡holis! Qué gusto encontrarte. ¿cómo estás?
-    - Qué tal, amigo. ¿me das una mano?
-    - Hola, asistente. ¿qué hay de nuevo?
-    - hola, asistente. ¿tenés un minuto?
-    - Qué tal, compa. ¿listo para entrenar?
-    - Que tengas una buena tarde, compa. hoy necesito motivación
-    - hey, máquina. ¿arrancamos?
-    - Hola, amigo. ¿arrancamos?
-    - holis, fitter. ¿cómo estás?
-    - ¡holis! Hace rato no hablábamos. ¿arrancamos?
-    - Buenas, coach. ¿cómo estás?
-    - Hola hola, amigo. ¿qué hay de nuevo?
-    - Qué tal, coach. ¿listo para entrenar?
-    - Que tengas un gran inicio de semana, coach. espero que estés listo para ayudarme
-    - Hey, máquina. ¿arrancamos?
-    - Hey, coach. ¿listo para entrenar?
-    - ¡buenas tardes! Qué gusto encontrarte. ¿me das una mano?
-    - Buenas, coach. ¿todo bien?
-    - ¡buenas tardes! Se siente bien volver a entrenar. ¿listo para entrenar?
-    - Que tengas un buen día, fitter. traigo dudas y quiero resolverlas
-    - Que tengas una buena tarde, equipo. hoy necesito motivación
-    - Que tengas un buen día, amigo. vengo con ganas de entrenar
-    - hey! ¿listo para entrenar?
-    - ¡hey! Llegué con toda la energía. ¿me das una mano?
-    - ¡buenas tardes! Qué gusto encontrarte. ¿tenés un minuto?
-    - Hola, máquina. ¿cómo estás?
-    - hey, bot. ¿listo para entrenar?
-    - Buenas, coach. ¿me das una mano?
-    - buenas tardes! ¿me ayudas hoy?
-    - Que tengas un gran inicio de semana, bot. traigo dudas y quiero resolverlas
-    - ¡buenas noches! Hace rato no hablábamos. ¿cómo estás?
-    - hola, amigo. ¿listo para entrenar?
-    - qué tal, equipo. ¿listo para entrenar?
-    - ¡hola! Hace rato no hablábamos. ¿qué hay de nuevo?
-    - Que tengas una linda noche, asistente. ojalá podamos planear algo bueno
-    - ¡buenos días! Llegué con toda la energía. ¿arrancamos?
-    - qué tal, asistente. ¿qué hay de nuevo?
-    - hey, bot. ¿me das una mano?
-    - Que tengas una linda noche, equipo. hoy necesito motivación
-    - Que tengas una linda noche, fitter. ojalá podamos planear algo bueno
-    - Hola, coach. ¿cómo estás?
-    - Hey, asistente. ¿listo para entrenar?
-    - Hey, coach. ¿me ayudas hoy?
-    - buenas noches, equipo. ¿me ayudas hoy?
-    - Que tengas una jornada productiva, asistente. traigo dudas y quiero resolverlas
-    - qué tal, máquina. ¿qué hay de nuevo?
-    - ¡hey! Hace rato no hablábamos. ¿qué hay de nuevo?
-    - Que tengas una buena tarde, máquina. vengo con ganas de entrenar
-    - buenas noches, compa. ¿cómo estás?
-    - Que tengas una jornada productiva, coach. hoy necesito motivación
-    - holis! ¿me ayudas hoy?
-    - ¡buenas tardes! Ando medio perdido. ¿me ayudas hoy?
-    - ¡buenas tardes! Ando medio perdido. ¿listo para entrenar?
-    - holis, equipo. ¿listo para entrenar?
-    - Qué tal, asistente. ¿qué hay de nuevo?
-    - Hola hola, equipo. ¿me ayudas hoy?
-    - Que tengas una buena tarde, máquina. hoy necesito motivación
-    - hola, máquina. ¿tenés un minuto?
-    - Hola hola, fitter. ¿listo para entrenar?
-    - ¡buenas tardes! Hace rato no hablábamos. ¿arrancamos?
-    - ¡hola! Se siente bien volver a entrenar. ¿qué hay de nuevo?
-    - Hey, asistente. ¿cómo estás?
-    - Que tengas un buen día, fitter. hoy necesito motivación
-    - Buenas, compa. ¿me ayudas hoy?
-    - buenos días, equipo. ¿arrancamos?
-    - qué onda, coach. ¿me das una mano?
-    - qué onda, compa. ¿arrancamos?
-    - Qué tal, asistente. ¿tenés un minuto?
-    - Hola hola, máquina. ¿qué hay de nuevo?
-    - Hola hola, asistente. ¿cómo estás?
-    - hola, amigo. ¿todo bien?
-    - holis, máquina. ¿qué hay de nuevo?
-    - Qué tal, bot. ¿listo para entrenar?
-    - buenos días, bot. ¿qué hay de nuevo?
-    - qué onda, coach. ¿listo para entrenar?
-    - Qué tal, compa. ¿tenés un minuto?
-    - ¡holis! Hace rato no hablábamos. ¿qué hay de nuevo?
-    - Que tengas una jornada productiva, amigo. traigo dudas y quiero resolverlas
-    - ¡holis! Qué gusto encontrarte. ¿arrancamos?
-    - ¡holis! Qué gusto encontrarte. ¿listo para entrenar?
-    - Qué tal, asistente. ¿listo para entrenar?
-    - buenas noches, máquina. ¿listo para entrenar?
-    - Buenas, coach. ¿tenés un minuto?
-    - ¡hola! Ando medio perdido. ¿qué hay de nuevo?
-    - Hey, asistente. ¿qué hay de nuevo?
-    - Qué tal, coach. ¿arrancamos?
-    - ¡hey! Qué gusto encontrarte. ¿todo bien?
-    - Que tengas una linda noche, compa. hoy necesito motivación
-    - Buenas, amigo. ¿qué hay de nuevo?
-    - qué tal! ¿me das una mano?
-    - hola, equipo. ¿me ayudas hoy?
-    - buenos días! ¿todo bien?
-    - ¡hola! Llegué con toda la energía. ¿todo bien?
-    - ¡buenas noches! Qué gusto encontrarte. ¿listo para entrenar?
-    - buenas noches, bot. ¿qué hay de nuevo?
-    - ¡buenas noches! Hace rato no hablábamos. ¿todo bien?
-    - Hola hola, fitter. ¿todo bien?
-    - Que tengas una buena tarde, asistente. ojalá podamos planear algo bueno
-    - Hola, equipo. ¿todo bien?
-    - qué tal, equipo. ¿me ayudas hoy?
-    - Que tengas un buen día, equipo. espero que estés listo para ayudarme
-    - ¡qué tal! Ando medio perdido. ¿qué hay de nuevo?
-    - holis, máquina. ¿listo para entrenar?
-    - Qué tal, coach. ¿qué hay de nuevo?
-    - buenos días, asistente. ¿tenés un minuto?
-    - buenos días! ¿qué hay de nuevo?
-    - buenas noches, coach. ¿arrancamos?
-    - Que tengas una jornada productiva, bot. hoy necesito motivación
-    - holis, compa. ¿me das una mano?
-    - Que tengas una buena tarde, máquina. ojalá podamos planear algo bueno
-    - ¡buenas noches! Se siente bien volver a entrenar. ¿me ayudas hoy?
-    - Que tengas un buen día, bot. traigo dudas y quiero resolverlas
-    - ¡buenas tardes! Se siente bien volver a entrenar. ¿tenés un minuto?
-    - buenas noches, coach. ¿qué hay de nuevo?
-    - Buenas, fitter. ¿qué hay de nuevo?
-    - buenas noches, fitter. ¿arrancamos?
-    - buenos días, coach. ¿arrancamos?
-    - Qué tal, bot. ¿qué hay de nuevo?
-    - Que tengas una linda noche, amigo. espero que estés listo para ayudarme
-    - ¡buenas noches! Llegué con toda la energía. ¿listo para entrenar?
-    - buenas noches, compa. ¿qué hay de nuevo?
-    - Que tengas una jornada productiva, máquina. ojalá podamos planear algo bueno
-    - ¡hey! Qué gusto encontrarte. ¿me ayudas hoy?
-    - Que tengas un gran inicio de semana, equipo. espero que estés listo para ayudarme
-    - Hey, bot. ¿cómo estás?
-    - buenas tardes, equipo. ¿listo para entrenar?
-    - buenas noches, amigo. ¿me das una mano?
-    - buenos días, máquina. ¿todo bien?
-    - holis, fitter. ¿me ayudas hoy?
-    - Hola, equipo. ¿qué hay de nuevo?
-    - hola, asistente. ¿todo bien?
-    - Que tengas un buen día, asistente. hoy necesito motivación
-    - Qué tal, equipo. ¿tenés un minuto?
-    - ¡buenos días! Se siente bien volver a entrenar. ¿listo para entrenar?
-    - ¡qué onda! Ando medio perdido. ¿me das una mano?
-    - ¡buenos días! Ando medio perdido. ¿cómo estás?
-    - Hola hola, fitter. ¿cómo estás?
-    - Que tengas un gran inicio de semana, equipo. ojalá podamos planear algo bueno
-    - Que tengas una linda noche, bot. traigo dudas y quiero resolverlas
-    - holis! ¿me das una mano?
-    - qué tal, bot. ¿arrancamos?
-    - ¡hey! Ando medio perdido. ¿me ayudas hoy?
-    - Que tengas un buen día, máquina. ojalá podamos planear algo bueno
-    - buenos días, compa. ¿me das una mano?
-    - ¡hola! Hace rato no hablábamos. ¿tenés un minuto?
-    - qué tal, máquina. ¿arrancamos?
-    - ¡hola! Se siente bien volver a entrenar. ¿me das una mano?
-    - buenos días, fitter. ¿arrancamos?
-    - buenas tardes, compa. ¿cómo estás?
-    - ¡hola! Llegué con toda la energía. ¿me ayudas hoy?
-    - Que tengas un buen día, fitter. espero que estés listo para ayudarme
-    - qué tal, coach. ¿cómo estás?
-    - ¡buenos días! Se siente bien volver a entrenar. ¿tenés un minuto?
-    - Hola, equipo. ¿tenés un minuto?
-    - holis, amigo. ¿qué hay de nuevo?
-    - buenos días, coach. ¿listo para entrenar?
-    - Que tengas un gran inicio de semana, asistente. traigo dudas y quiero resolverlas
-    - ¡qué onda! Ando medio perdido. ¿qué hay de nuevo?
-    - ¡buenas noches! Qué gusto encontrarte. ¿tenés un minuto?
-    - hey, coach. ¿cómo estás?
-    - Qué tal, amigo. ¿cómo estás?
-    - qué tal, asistente. ¿listo para entrenar?
-    - Que tengas una jornada productiva, amigo. ojalá podamos planear algo bueno
-    - buenas noches, amigo. ¿qué hay de nuevo?
-    - Qué tal, amigo. ¿listo para entrenar?
-    - Que tengas un buen día, compa. espero que estés listo para ayudarme
-    - buenas noches, bot. ¿tenés un minuto?
-    - qué tal, bot. ¿qué hay de nuevo?
-    - Hola hola, máquina. ¿cómo estás?
-    - buenas tardes, equipo. ¿me ayudas hoy?
-    - ¡qué tal! Ando medio perdido. ¿cómo estás?
-    - Que tengas un gran inicio de semana, máquina. ojalá podamos planear algo bueno
-    - buenos días! ¿tenés un minuto?
-    - Hola, máquina. ¿me das una mano?
-    - hey, equipo. ¿arrancamos?
-    - qué onda, fitter. ¿todo bien?
-    - buenos días, máquina. ¿tenés un minuto?
-    - Que tengas un gran inicio de semana, compa. traigo dudas y quiero resolverlas
-    - Buenas, bot. ¿listo para entrenar?
-    - qué tal, compa. ¿todo bien?
-    - buenos días! ¿cómo estás?
-    - qué tal, compa. ¿listo para entrenar?
-    - Qué tal, asistente. ¿cómo estás?
-    - buenos días! ¿me das una mano?
-    - ¡buenas tardes! Ando medio perdido. ¿me das una mano?
-    - qué onda, equipo. ¿qué hay de nuevo?
-    - Hey, fitter. ¿listo para entrenar?
-    - buenas tardes, equipo. ¿tenés un minuto?
-    - qué onda, coach. ¿todo bien?
-    - Que tengas un buen día, asistente. ojalá podamos planear algo bueno
-    - qué tal, equipo. ¿arrancamos?
-    - Que tengas una linda noche, amigo. traigo dudas y quiero resolverlas
-    - hey, amigo. ¿me ayudas hoy?
-    - Qué tal, fitter. ¿arrancamos?
-    - hey, equipo. ¿cómo estás?
-    - Que tengas un buen día, máquina. espero que estés listo para ayudarme
-    - ¡buenas tardes! Ando medio perdido. ¿tenés un minuto?
-    - Que tengas un gran inicio de semana, coach. hoy necesito motivación
-    - Que tengas un buen día, amigo. espero que estés listo para ayudarme
-    - buenas tardes, bot. ¿me ayudas hoy?
-    - Que tengas un gran inicio de semana, asistente. vengo con ganas de entrenar
-    - Qué tal, bot. ¿todo bien?
-    - qué tal, asistente. ¿arrancamos?
-    - Que tengas un buen día, fitter. vengo con ganas de entrenar
-    - hola, equipo. ¿qué hay de nuevo?
-    - ¡holis! Hace rato no hablábamos. ¿listo para entrenar?
-    - Hey, bot. ¿arrancamos?
-    - hola, máquina. ¿arrancamos?
-    - Hola, bot. ¿me ayudas hoy?
-    - Que tengas un gran inicio de semana, bot. espero que estés listo para ayudarme
-    - ¡qué onda! Hace rato no hablábamos. ¿todo bien?
-    - buenas tardes, asistente. ¿listo para entrenar?
-    - ¡qué onda! Hace rato no hablábamos. ¿arrancamos?
-    - Que tengas una linda noche, equipo. traigo dudas y quiero resolverlas
-    - Que tengas un buen día, coach. vengo con ganas de entrenar
-    - buenas noches, equipo. ¿listo para entrenar?
-    - Que tengas una linda noche, máquina. traigo dudas y quiero resolverlas
-    - ¡hey! Hace rato no hablábamos. ¿tenés un minuto?
-    - ¡qué onda! Se siente bien volver a entrenar. ¿me ayudas hoy?
-    - Que tengas una jornada productiva, fitter. traigo dudas y quiero resolverlas
-    - buenas tardes, fitter. ¿cómo estás?
-    - ¡qué tal! Se siente bien volver a entrenar. ¿listo para entrenar?
-    - Que tengas una buena tarde, coach. traigo dudas y quiero resolverlas
-    - buenos días, amigo. ¿todo bien?
-    - Hola, coach. ¿arrancamos?
-    - Que tengas una jornada productiva, amigo. espero que estés listo para ayudarme
-    - Hola, compa. ¿todo bien?
-    - Hey, compa. ¿tenés un minuto?
-    - hey, máquina. ¿cómo estás?
-    - buenas noches, equipo. ¿tenés un minuto?
-    - holis, coach. ¿me ayudas hoy?
-    - buenas noches, bot. ¿cómo estás?
-    - qué tal, amigo. ¿arrancamos?
-    - Qué tal, asistente. ¿me das una mano?
-    - buenas noches, coach. ¿cómo estás?
-    - Buenas, máquina. ¿listo para entrenar?
-    - ¡buenas noches! Se siente bien volver a entrenar. ¿me das una mano?
-    - qué tal, amigo. ¿cómo estás?
-    - ¡qué onda! Hace rato no hablábamos. ¿me das una mano?
-    - Hola, equipo. ¿me das una mano?
-    - buenos días, máquina. ¿qué hay de nuevo?
-    - buenos días, equipo. ¿me ayudas hoy?
-    - qué tal, equipo. ¿qué hay de nuevo?
-    - ¡qué onda! Llegué con toda la energía. ¿todo bien?
-    - Que tengas una linda noche, coach. hoy necesito motivación
-    - hola, fitter. ¿listo para entrenar?
-    - holis, bot. ¿arrancamos?
-    - Que tengas una jornada productiva, equipo. espero que estés listo para ayudarme
-    - ¡buenas tardes! Se siente bien volver a entrenar. ¿me ayudas hoy?
-    - Hey, bot. ¿me ayudas hoy?
-    - Qué tal, compa. ¿todo bien?
-    - Buenas, máquina. ¿todo bien?
-    - Buenas, coach. ¿arrancamos?
-    - Que tengas una linda noche, compa. ojalá podamos planear algo bueno
-    - ¡buenas noches! Hace rato no hablábamos. ¿qué hay de nuevo?
-    - buenos días, asistente. ¿me ayudas hoy?
-    - buenos días, coach. ¿todo bien?
-    - ¡qué onda! Se siente bien volver a entrenar. ¿me das una mano?
-    - qué onda, máquina. ¿me ayudas hoy?
-    - ¡buenas noches! Qué gusto encontrarte. ¿todo bien?
-    - buenas tardes! ¿listo para entrenar?
-    - Qué tal, amigo. ¿tenés un minuto?
-    - qué tal, amigo. ¿me ayudas hoy?
-    - Buenas, fitter. ¿cómo estás?
-    - ¡buenos días! Llegué con toda la energía. ¿cómo estás?
-    - holis, asistente. ¿tenés un minuto?
-    - ¡buenas noches! Se siente bien volver a entrenar. ¿tenés un minuto?
-    - hey, compa. ¿tenés un minuto?
-    - qué onda, bot. ¿cómo estás?
-    - Buenas, equipo. ¿qué hay de nuevo?
-    - Buenas, bot. ¿qué hay de nuevo?
-    - hey, amigo. ¿me das una mano?
-    - ¡qué onda! Qué gusto encontrarte. ¿listo para entrenar?
-    - Hola, coach. ¿todo bien?
-    - ¡buenos días! Qué gusto encontrarte. ¿arrancamos?
-    - qué onda, asistente. ¿arrancamos?
-    - hola, equipo. ¿cómo estás?
-    - Hola hola, amigo. ¿tenés un minuto?
-    - buenas noches, coach. ¿me das una mano?
-    - ¡hey! Ando medio perdido. ¿me das una mano?
-    - buenos días, equipo. ¿listo para entrenar?
-    - hey, asistente. ¿todo bien?
-    - Que tengas una jornada productiva, bot. ojalá podamos planear algo bueno
-    - ¡hola! Hace rato no hablábamos. ¿me ayudas hoy?
-    - ¡qué tal! Se siente bien volver a entrenar. ¿tenés un minuto?
-    - holis, asistente. ¿qué hay de nuevo?
-    - hey, bot. ¿tenés un minuto?
-    - Hey, bot. ¿me das una mano?
-    - hola, coach. ¿me das una mano?
-    - ¡qué onda! Se siente bien volver a entrenar. ¿todo bien?
-    - ¡hey! Se siente bien volver a entrenar. ¿arrancamos?
-    - qué onda, fitter. ¿listo para entrenar?
-    - hey, equipo. ¿me ayudas hoy?
-    - hola! ¿me ayudas hoy?
-    - Buenas, amigo. ¿listo para entrenar?
-    - ¡hey! Qué gusto encontrarte. ¿listo para entrenar?
-    - Hola hola, máquina. ¿me das una mano?
-    - qué tal! ¿qué hay de nuevo?
-    - Que tengas una jornada productiva, máquina. espero que estés listo para ayudarme
-    - Hola hola, asistente. ¿me ayudas hoy?
-    - holis, bot. ¿tenés un minuto?
-    - buenas tardes! ¿todo bien?
-    - buenos días, bot. ¿todo bien?
-    - hola! ¿todo bien?
-    - ¡buenas noches! Hace rato no hablábamos. ¿tenés un minuto?
-    - hey, bot. ¿cómo estás?
-    - holis, fitter. ¿qué hay de nuevo?
-    - qué onda, amigo. ¿tenés un minuto?
-    - Qué tal, equipo. ¿listo para entrenar?
-    - Buenas, máquina. ¿qué hay de nuevo?
-    - ¡holis! Hace rato no hablábamos. ¿me das una mano?
-    - Hola, fitter. ¿me das una mano?
-    - ¡buenas tardes! Llegué con toda la energía. ¿todo bien?
-    - Qué tal, asistente. ¿todo bien?
-    - buenas noches, coach. ¿tenés un minuto?
-    - holis, amigo. ¿arrancamos?
-    - Qué tal, fitter. ¿listo para entrenar?
-    - buenas noches, máquina. ¿me ayudas hoy?
-    - buenas tardes, fitter. ¿tenés un minuto?
-    - hola, fitter. ¿tenés un minuto?
-    - buenos días, compa. ¿cómo estás?
-    - ¡buenos días! Ando medio perdido. ¿me das una mano?
-    - Hey, equipo. ¿me ayudas hoy?
-    - Qué tal, amigo. ¿qué hay de nuevo?
-    - Que tengas un buen día, fitter. ojalá podamos planear algo bueno
-    - hey! ¿me das una mano?
-    - buenas tardes, compa. ¿tenés un minuto?
-    - buenos días, fitter. ¿qué hay de nuevo?
-    - Buenas, amigo. ¿todo bien?
-    - hey, bot. ¿me ayudas hoy?
-    - holis, equipo. ¿tenés un minuto?
-    - buenos días, bot. ¿listo para entrenar?
-    - Que tengas una linda noche, asistente. hoy necesito motivación
-    - Que tengas un gran inicio de semana, asistente. hoy necesito motivación
-    - hola, compa. ¿me das una mano?
-    - Buenas, bot. ¿cómo estás?
-    - Que tengas una buena tarde, máquina. traigo dudas y quiero resolverlas
-    - Qué tal, amigo. ¿arrancamos?
-    - hey, compa. ¿me das una mano?
-    - Que tengas una linda noche, bot. ojalá podamos planear algo bueno
-    - holis, amigo. ¿me das una mano?
-    - holis, asistente. ¿todo bien?
-    - ¡buenos días! Hace rato no hablábamos. ¿arrancamos?
-    - qué tal, fitter. ¿cómo estás?
-    - ¡qué tal! Qué gusto encontrarte. ¿todo bien?
-    - Que tengas un gran inicio de semana, máquina. hoy necesito motivación
-    - Hey, coach. ¿cómo estás?
-    - holis! ¿listo para entrenar?
-    - Hola, fitter. ¿qué hay de nuevo?
-    - buenos días, bot. ¿tenés un minuto?
-    - qué tal, asistente. ¿me das una mano?
-    - qué onda, máquina. ¿qué hay de nuevo?
-    - Qué tal, equipo. ¿todo bien?
-    - ¡qué tal! Se siente bien volver a entrenar. ¿me ayudas hoy?
-    - ¡holis! Llegué con toda la energía. ¿qué hay de nuevo?
-    - qué onda, amigo. ¿me ayudas hoy?
-    - hola, amigo. ¿me ayudas hoy?
-    - Qué tal, bot. ¿me das una mano?
-    - ¡hey! Hace rato no hablábamos. ¿me ayudas hoy?
-    - ¡holis! Qué gusto encontrarte. ¿tenés un minuto?
-    - ¡buenas noches! Se siente bien volver a entrenar. ¿listo para entrenar?
-    - ¡hey! Se siente bien volver a entrenar. ¿me ayudas hoy?
-    - Hey, fitter. ¿arrancamos?
-    - Qué tal, máquina. ¿qué hay de nuevo?
-    - Hola, fitter. ¿listo para entrenar?
-    - Que tengas un buen día, asistente. traigo dudas y quiero resolverlas
-    - ¡buenos días! Ando medio perdido. ¿todo bien?
-    - qué onda, asistente. ¿tenés un minuto?
-    - ¡buenas noches! Qué gusto encontrarte. ¿me ayudas hoy?
-    - buenas noches, asistente. ¿arrancamos?
-    - buenas noches, bot. ¿arrancamos?
-    - hola, fitter. ¿me ayudas hoy?
-    - Hola hola, amigo. ¿listo para entrenar?
-    - Qué tal, máquina. ¿arrancamos?
-    - Hola hola, coach. ¿qué hay de nuevo?
-    - Hey, coach. ¿me das una mano?
-    - buenas tardes, coach. ¿todo bien?
-    - holis, compa. ¿cómo estás?
-    - hey, fitter. ¿me ayudas hoy?
-    - Hey, amigo. ¿tenés un minuto?
-    - Hola, máquina. ¿tenés un minuto?
-    - qué onda! ¿tenés un minuto?
-    - buenas noches, equipo. ¿me das una mano?
-    - hey, fitter. ¿me das una mano?
-    - ¡qué tal! Qué gusto encontrarte. ¿qué hay de nuevo?
-    - Que tengas una buena tarde, fitter. traigo dudas y quiero resolverlas
-    - buenos días! ¿me ayudas hoy?
-    - qué tal, fitter. ¿todo bien?
-    - holis, fitter. ¿todo bien?
-    - ¡qué onda! Ando medio perdido. ¿me ayudas hoy?
-    - Hola, fitter. ¿todo bien?
-    - Hola, equipo. ¿cómo estás?
-    - ¡hey! Se siente bien volver a entrenar. ¿todo bien?
-    - Buenas, asistente. ¿todo bien?
-    - hey, fitter. ¿cómo estás?
-    - Hola hola, asistente. ¿me das una mano?
-    - qué tal, compa. ¿qué hay de nuevo?
-    - hey, coach. ¿arrancamos?
-    - qué tal, bot. ¿me ayudas hoy?
-    - Buenas, coach. ¿listo para entrenar?
-    - Hola, coach. ¿me das una mano?
-    - Que tengas una linda noche, compa. traigo dudas y quiero resolverlas
-    - ¡buenas noches! Llegué con toda la energía. ¿cómo estás?
-    - ¡qué tal! Ando medio perdido. ¿arrancamos?
-    - ¡buenos días! Llegué con toda la energía. ¿me ayudas hoy?
-    - qué tal, compa. ¿me das una mano?
-    - buenos días, equipo. ¿qué hay de nuevo?
-    - hey, fitter. ¿listo para entrenar?
-    - ¡hola! Qué gusto encontrarte. ¿todo bien?
-    - ¡holis! Hace rato no hablábamos. ¿cómo estás?
-    - Buenas, bot. ¿arrancamos?
-    - Que tengas un gran inicio de semana, compa. vengo con ganas de entrenar
-    - qué onda, bot. ¿qué hay de nuevo?
-    - Hey, compa. ¿arrancamos?
-    - hola, equipo. ¿arrancamos?
-    - Que tengas una jornada productiva, compa. espero que estés listo para ayudarme
-    - ¡buenas tardes! Hace rato no hablábamos. ¿todo bien?
-    - holis! ¿cómo estás?
-    - buenos días, coach. ¿qué hay de nuevo?
-    - Buenas, máquina. ¿me das una mano?
-    - Hey, equipo. ¿arrancamos?
-    - Qué tal, bot. ¿tenés un minuto?
-    - Buenas, compa. ¿cómo estás?
-    - ¡buenas tardes! Ando medio perdido. ¿arrancamos?
-    - hey, máquina. ¿me das una mano?
-    - buenas tardes, coach. ¿tenés un minuto?
-    - Qué tal, compa. ¿me ayudas hoy?
-    - hola, compa. ¿todo bien?
-    - Hola hola, amigo. ¿me ayudas hoy?
-    - ¡hola! Qué gusto encontrarte. ¿listo para entrenar?
-    - qué onda, máquina. ¿listo para entrenar?
-    - ¡qué onda! Ando medio perdido. ¿tenés un minuto?
-    - buenas noches, coach. ¿me ayudas hoy?
-    - hola, coach. ¿listo para entrenar?
-    - ¡holis! Llegué con toda la energía. ¿tenés un minuto?
-    - qué tal, amigo. ¿listo para entrenar?
-    - ¡buenas tardes! Qué gusto encontrarte. ¿cómo estás?
-    - qué tal, máquina. ¿me ayudas hoy?
-    - Hola hola, máquina. ¿listo para entrenar?
-    - Hey, bot. ¿listo para entrenar?
-    - qué tal, compa. ¿tenés un minuto?
-    - buenas noches, bot. ¿me ayudas hoy?
-    - Que tengas una buena tarde, compa. vengo con ganas de entrenar
-    - ¡qué onda! Hace rato no hablábamos. ¿listo para entrenar?
-    - Hola hola, amigo. ¿me das una mano?
-    - buenas noches! ¿todo bien?
-    - buenas tardes! ¿arrancamos?
-    - Que tengas un gran inicio de semana, fitter. hoy necesito motivación
-    - ¡buenas tardes! Llegué con toda la energía. ¿me das una mano?
-    - qué onda, amigo. ¿cómo estás?
-    - holis, asistente. ¿listo para entrenar?
-    - Buenas, fitter. ¿listo para entrenar?
-    - buenas tardes, bot. ¿todo bien?
-    - Hey, equipo. ¿qué hay de nuevo?
-    - Hey, compa. ¿todo bien?
-    - ¡qué tal! Llegué con toda la energía. ¿todo bien?
-    - Que tengas una jornada productiva, amigo. vengo con ganas de entrenar
-    - ¡buenas tardes! Llegué con toda la energía. ¿me ayudas hoy?
-    - ¡holis! Se siente bien volver a entrenar. ¿listo para entrenar?
-    - ¡buenas tardes! Hace rato no hablábamos. ¿listo para entrenar?
-    - buenos días, fitter. ¿listo para entrenar?
-    - buenos días, equipo. ¿cómo estás?
-    - buenas tardes, equipo. ¿qué hay de nuevo?
-    - buenas tardes, fitter. ¿qué hay de nuevo?
-    - ¡holis! Llegué con toda la energía. ¿me ayudas hoy?
-    - hey, bot. ¿qué hay de nuevo?
-    - holis, compa. ¿listo para entrenar?
-    - qué onda, equipo. ¿arrancamos?
-    - ¡holis! Llegué con toda la energía. ¿todo bien?
-    - Que tengas una jornada productiva, coach. ojalá podamos planear algo bueno
-    - hola, asistente. ¿qué hay de nuevo?
-    - ¡holis! Qué gusto encontrarte. ¿qué hay de nuevo?
-    - ¡hey! Llegué con toda la energía. ¿cómo estás?
-    - hola, máquina. ¿cómo estás?
-    - Hey, bot. ¿todo bien?
-    - buenos días, coach. ¿me ayudas hoy?
-    - qué onda, asistente. ¿me ayudas hoy?
-    - ¡hola! Se siente bien volver a entrenar. ¿arrancamos?
-    - buenas tardes, bot. ¿qué hay de nuevo?
-    - qué onda, coach. ¿me ayudas hoy?
-    - buenas tardes, fitter. ¿todo bien?
-    - Que tengas una buena tarde, equipo. vengo con ganas de entrenar
-    - Que tengas una buena tarde, equipo. traigo dudas y quiero resolverlas
-    - ¡hey! Hace rato no hablábamos. ¿listo para entrenar?
-    - Qué tal, fitter. ¿me das una mano?
-    - hey, máquina. ¿listo para entrenar?
-    - qué tal, máquina. ¿me das una mano?
-    - buenas noches, compa. ¿tenés un minuto?
-    - Que tengas una linda noche, fitter. espero que estés listo para ayudarme
-    - Que tengas una buena tarde, bot. hoy necesito motivación
-    - Hey, bot. ¿qué hay de nuevo?
-    - buenos días, fitter. ¿cómo estás?
-    - Que tengas un gran inicio de semana, máquina. vengo con ganas de entrenar
-    - buenos días, máquina. ¿cómo estás?
-    - Hey, coach. ¿tenés un minuto?
-    - qué onda, máquina. ¿tenés un minuto?
-    - Que tengas un gran inicio de semana, bot. ojalá podamos planear algo bueno
-    - qué onda, fitter. ¿arrancamos?
-    - hey, coach. ¿todo bien?
-    - ¡qué onda! Llegué con toda la energía. ¿me das una mano?
-    - hola, amigo. ¿qué hay de nuevo?
-    - ¡buenas tardes! Ando medio perdido. ¿cómo estás?
-    - Que tengas una linda noche, equipo. vengo con ganas de entrenar
-    - ¡hola! Llegué con toda la energía. ¿tenés un minuto?
-    - Que tengas una jornada productiva, compa. traigo dudas y quiero resolverlas
-    - Hola hola, amigo. ¿arrancamos?
-    - ¡hola! Se siente bien volver a entrenar. ¿todo bien?
-    - buenos días, equipo. ¿me das una mano?
-    - buenos días, equipo. ¿todo bien?
-    - Qué tal, compa. ¿me das una mano?
-    - ¡buenos días! Llegué con toda la energía. ¿me das una mano?
-    - Hola, compa. ¿listo para entrenar?
-    - ¡holis! Ando medio perdido. ¿me das una mano?
-    - ¡buenas noches! Llegué con toda la energía. ¿me das una mano?
-    - ¡qué onda! Llegué con toda la energía. ¿tenés un minuto?
-    - qué tal, máquina. ¿tenés un minuto?
-    - Que tengas una jornada productiva, coach. espero que estés listo para ayudarme
-    - qué onda, fitter. ¿me das una mano?
-    - hola! ¿me das una mano?
-    - qué tal, amigo. ¿todo bien?
-    - hola, fitter. ¿qué hay de nuevo?
-    - Que tengas un gran inicio de semana, amigo. vengo con ganas de entrenar
-    - hola, coach. ¿qué hay de nuevo?
-    - ¡hola! Qué gusto encontrarte. ¿tenés un minuto?
-    - hey, coach. ¿me ayudas hoy?
-    - Hey, asistente. ¿tenés un minuto?
-    - Qué tal, coach. ¿me ayudas hoy?
-    - Hola, asistente. ¿me das una mano?
-    - Que tengas un gran inicio de semana, máquina. traigo dudas y quiero resolverlas
-    - Que tengas un gran inicio de semana, fitter. ojalá podamos planear algo bueno
-    - ¡buenos días! Llegué con toda la energía. ¿todo bien?
-    - Que tengas una jornada productiva, fitter. ojalá podamos planear algo bueno
-    - qué tal, equipo. ¿cómo estás?
-    - ¡buenos días! Hace rato no hablábamos. ¿listo para entrenar?
-    - Hola, compa. ¿cómo estás?
-    - ¡qué onda! Hace rato no hablábamos. ¿tenés un minuto?
-    - ¡buenas tardes! Se siente bien volver a entrenar. ¿arrancamos?
-    - ¡hey! Hace rato no hablábamos. ¿todo bien?
-    - qué tal, coach. ¿qué hay de nuevo?
-    - buenas tardes, coach. ¿arrancamos?
-    - Qué tal, equipo. ¿arrancamos?
-    - Que tengas una jornada productiva, bot. vengo con ganas de entrenar
-    - qué tal, coach. ¿tenés un minuto?
-    - Que tengas un buen día, bot. vengo con ganas de entrenar
-    - Que tengas un gran inicio de semana, equipo. vengo con ganas de entrenar
-    - Hola hola, compa. ¿me das una mano?
-    - ¡qué onda! Qué gusto encontrarte. ¿todo bien?
-    - ¡hola! Se siente bien volver a entrenar. ¿cómo estás?
-    - buenos días, asistente. ¿arrancamos?
-    - ¡hey! Qué gusto encontrarte. ¿arrancamos?
-    - ¡buenos días! Se siente bien volver a entrenar. ¿arrancamos?
-    - buenos días, amigo. ¿arrancamos?
-    - ¡buenos días! Hace rato no hablábamos. ¿cómo estás?
-    - Hola, fitter. ¿me ayudas hoy?
-    - ¡buenas noches! Llegué con toda la energía. ¿arrancamos?
-    - Hola, amigo. ¿qué hay de nuevo?
-    - buenos días, asistente. ¿todo bien?
-    - holis! ¿todo bien?
-    - ¡buenas tardes! Se siente bien volver a entrenar. ¿me das una mano?
-    - Que tengas una jornada productiva, máquina. vengo con ganas de entrenar
-    - buenas noches, fitter. ¿listo para entrenar?
-    - buenas noches, máquina. ¿qué hay de nuevo?
-    - qué onda, equipo. ¿cómo estás?
-    - buenos días, amigo. ¿listo para entrenar?
-    - hola, fitter. ¿todo bien?
-    - buenos días, bot. ¿me das una mano?
-    - buenas noches, fitter. ¿qué hay de nuevo?
-    - hey, compa. ¿listo para entrenar?
-    - hola, amigo. ¿tenés un minuto?
-    - Que tengas un gran inicio de semana, fitter. traigo dudas y quiero resolverlas
-    - Qué tal, equipo. ¿me ayudas hoy?
-    - hola! ¿listo para entrenar?
-    - Que tengas una buena tarde, asistente. vengo con ganas de entrenar
-    - qué tal! ¿tenés un minuto?
-    - ¡hola! Llegué con toda la energía. ¿cómo estás?
-    - ¡hola! Qué gusto encontrarte. ¿qué hay de nuevo?
-    - ¡hey! Llegué con toda la energía. ¿arrancamos?
-    - ¡holis! Ando medio perdido. ¿arrancamos?
-    - ¡buenas tardes! Ando medio perdido. ¿todo bien?
-    - buenas tardes, amigo. ¿arrancamos?
-    - Buenas, equipo. ¿tenés un minuto?
-    - buenos días, asistente. ¿me das una mano?
-    - hola, coach. ¿cómo estás?
-    - ¡hola! Ando medio perdido. ¿tenés un minuto?
-    - holis, fitter. ¿me das una mano?
-    - Buenas, fitter. ¿me ayudas hoy?
-    - hey, equipo. ¿qué hay de nuevo?
-    - ¡buenos días! Hace rato no hablábamos. ¿tenés un minuto?
-    - Que tengas una buena tarde, asistente. traigo dudas y quiero resolverlas
-    - holis, bot. ¿me ayudas hoy?
-    - Que tengas una linda noche, coach. ojalá podamos planear algo bueno
-    - Hola, fitter. ¿tenés un minuto?
-    - ¡qué tal! Qué gusto encontrarte. ¿me das una mano?
-    - Hola hola, compa. ¿qué hay de nuevo?
-    - Buenas, coach. ¿qué hay de nuevo?
-    - ¡buenas noches! Ando medio perdido. ¿todo bien?
-    - qué tal, equipo. ¿todo bien?
-    - Hola, equipo. ¿arrancamos?
-    - buenos días, coach. ¿cómo estás?
-    - Que tengas una buena tarde, amigo. vengo con ganas de entrenar
-    - holis, coach. ¿qué hay de nuevo?
-    - Hola, amigo. ¿listo para entrenar?
-    - qué tal, equipo. ¿tenés un minuto?
-    - ¡qué onda! Llegué con toda la energía. ¿cómo estás?
-    - ¡hola! Qué gusto encontrarte. ¿cómo estás?
-    - ¡hey! Ando medio perdido. ¿tenés un minuto?
-    - holis, máquina. ¿me ayudas hoy?
-    - holis, equipo. ¿cómo estás?
-    - ¡qué tal! Se siente bien volver a entrenar. ¿me das una mano?
-    - Que tengas una jornada productiva, asistente. espero que estés listo para ayudarme
-    - Hola hola, asistente. ¿arrancamos?
-    - qué tal, asistente. ¿tenés un minuto?
-    - hey, máquina. ¿todo bien?
-    - buenas noches, coach. ¿todo bien?
-    - buenas noches! ¿qué hay de nuevo?
-    - Que tengas un buen día, coach. ojalá podamos planear algo bueno
-    - qué onda, fitter. ¿me ayudas hoy?
-    - Que tengas una jornada productiva, amigo. hoy necesito motivación
-    - Qué tal, bot. ¿cómo estás?
-    - Hey, amigo. ¿listo para entrenar?
-    - ¡qué tal! Llegué con toda la energía. ¿tenés un minuto?
-    - buenas tardes, coach. ¿cómo estás?
-    - buenos días, máquina. ¿me das una mano?
-    - Hey, coach. ¿todo bien?
-    - Que tengas una buena tarde, amigo. traigo dudas y quiero resolverlas
-    - holis, amigo. ¿todo bien?
-    - buenas tardes, asistente. ¿me das una mano?
-    - qué tal, compa. ¿me ayudas hoy?
-    - ¡hey! Qué gusto encontrarte. ¿qué hay de nuevo?
-    - hola, bot. ¿tenés un minuto?
-    - ¡buenas tardes! Llegué con toda la energía. ¿arrancamos?
-    - holis, máquina. ¿cómo estás?
-    - buenos días, compa. ¿me ayudas hoy?
-    - hey, amigo. ¿tenés un minuto?
-    - ¡qué tal! Se siente bien volver a entrenar. ¿qué hay de nuevo?
-    - ¡qué tal! Hace rato no hablábamos. ¿tenés un minuto?
-    - buenos días, coach. ¿me das una mano?
-    - Que tengas un gran inicio de semana, coach. traigo dudas y quiero resolverlas
-    - buenas tardes, asistente. ¿me ayudas hoy?
-    - holis, asistente. ¿me das una mano?
-    - Hey, compa. ¿qué hay de nuevo?
-    - buenos días, asistente. ¿qué hay de nuevo?
-    - Hola hola, coach. ¿cómo estás?
-    - qué onda, amigo. ¿me das una mano?
-    - Que tengas una linda noche, coach. espero que estés listo para ayudarme
-    - Hey, coach. ¿qué hay de nuevo?
-    - holis, máquina. ¿me das una mano?
-    - Hola, fitter. ¿arrancamos?
-    - ¡hola! Llegué con toda la energía. ¿me das una mano?
-    - ¡qué tal! Llegué con toda la energía. ¿qué hay de nuevo?
-    - Que tengas una linda noche, máquina. ojalá podamos planear algo bueno
-    - hey! ¿todo bien?
-    - hey, asistente. ¿me das una mano?
-    - ¡hola! Ando medio perdido. ¿listo para entrenar?
-    - buenos días, compa. ¿tenés un minuto?
-    - Qué tal, asistente. ¿me ayudas hoy?
-    - ¡qué tal! Llegué con toda la energía. ¿me das una mano?
-    - ¡qué onda! Ando medio perdido. ¿arrancamos?
-    - ¡hey! Ando medio perdido. ¿todo bien?
-    - Que tengas un buen día, coach. hoy necesito motivación
-    - buenas tardes, equipo. ¿todo bien?
-    - buenas noches, compa. ¿me das una mano?
-    - Hey, asistente. ¿me ayudas hoy?
-    - ¡holis! Qué gusto encontrarte. ¿todo bien?
-    - Que tengas una linda noche, coach. traigo dudas y quiero resolverlas
-    - ¡qué tal! Qué gusto encontrarte. ¿tenés un minuto?
-    - Hey, asistente. ¿arrancamos?
-    - Que tengas una linda noche, compa. vengo con ganas de entrenar
-    - ¡buenos días! Hace rato no hablábamos. ¿me ayudas hoy?
-    - ¡buenos días! Se siente bien volver a entrenar. ¿me ayudas hoy?
-    - Qué tal, coach. ¿tenés un minuto?
-    - ¡buenos días! Qué gusto encontrarte. ¿me das una mano?
-    - Hey, máquina. ¿listo para entrenar?
-    - buenas tardes, compa. ¿qué hay de nuevo?
-    - holis, coach. ¿me das una mano?
-    - ¡qué onda! Qué gusto encontrarte. ¿qué hay de nuevo?
-    - buenos días, amigo. ¿tenés un minuto?
-    - buenas noches! ¿listo para entrenar?
-    - hola, asistente. ¿me das una mano?
-    - Buenas, equipo. ¿arrancamos?
-    - hola, bot. ¿arrancamos?
-    - Hola, asistente. ¿cómo estás?
-    - Buenas, amigo. ¿me das una mano?
-    - Qué tal, máquina. ¿me ayudas hoy?
-    - Hey, compa. ¿me das una mano?
-    - ¡buenos días! Qué gusto encontrarte. ¿todo bien?
-    - hola, máquina. ¿todo bien?
-    - Hey, fitter. ¿tenés un minuto?
-    - qué tal, fitter. ¿qué hay de nuevo?
-    - Hola, bot. ¿arrancamos?
-    - ¡holis! Ando medio perdido. ¿tenés un minuto?
-    - buenas noches, equipo. ¿cómo estás?
-    - qué onda, equipo. ¿me das una mano?
-    - Buenas, asistente. ¿cómo estás?
-    - Buenas, máquina. ¿cómo estás?
-    - Hola hola, amigo. ¿todo bien?
-    - ¡hey! Llegué con toda la energía. ¿listo para entrenar?
-    - Que tengas una buena tarde, amigo. espero que estés listo para ayudarme
-    - buenas noches, amigo. ¿cómo estás?
-    - Que tengas un buen día, compa. hoy necesito motivación
-    - holis, coach. ¿tenés un minuto?
-    - qué onda, compa. ¿me das una mano?
-    - ¡buenas noches! Ando medio perdido. ¿me das una mano?
-    - ¡hola! Ando medio perdido. ¿arrancamos?
-    - Hola, asistente. ¿todo bien?
-    - buenas noches, bot. ¿me das una mano?
-    - Hey, fitter. ¿me das una mano?
-    - qué onda, máquina. ¿me das una mano?
-    - qué onda, asistente. ¿me das una mano?
-    - Que tengas una jornada productiva, compa. vengo con ganas de entrenar
-    - hola, amigo. ¿me das una mano?
-    - Buenas, bot. ¿me das una mano?
-    - Que tengas un buen día, coach. traigo dudas y quiero resolverlas
-    - Buenas, máquina. ¿me ayudas hoy?
-    - ¡hola! Hace rato no hablábamos. ¿todo bien?
-    - hey, máquina. ¿tenés un minuto?
-    - Hey, amigo. ¿me ayudas hoy?
-    - ¡qué tal! Hace rato no hablábamos. ¿qué hay de nuevo?
-    - Que tengas una jornada productiva, compa. hoy necesito motivación
-    - buenos días, asistente. ¿cómo estás?
-    - ¡hey! Ando medio perdido. ¿cómo estás?
-    - ¡buenos días! Se siente bien volver a entrenar. ¿todo bien?
-    - Hola, coach. ¿listo para entrenar?
-    - ¡buenas noches! Hace rato no hablábamos. ¿me das una mano?
-    - Que tengas una buena tarde, asistente. espero que estés listo para ayudarme
-    - ¡holis! Ando medio perdido. ¿qué hay de nuevo?
-    - Hey, asistente. ¿todo bien?
-    - Que tengas un gran inicio de semana, equipo. traigo dudas y quiero resolverlas
-    - Que tengas una jornada productiva, máquina. traigo dudas y quiero resolverlas
-    - Qué tal, equipo. ¿cómo estás?
-    - hola, máquina. ¿me das una mano?
-    - ¡hey! Qué gusto encontrarte. ¿cómo estás?
-    - qué onda, equipo. ¿todo bien?
-    - qué onda, bot. ¿me ayudas hoy?
-    - qué tal, fitter. ¿me das una mano?
-    - Hey, fitter. ¿qué hay de nuevo?
-    - qué onda, fitter. ¿cómo estás?
-    - Que tengas un gran inicio de semana, equipo. hoy necesito motivación
-    - Buenas, asistente. ¿arrancamos?
-    - qué tal, asistente. ¿cómo estás?
-    - ¡buenas tardes! Llegué con toda la energía. ¿qué hay de nuevo?
-    - Buenas, fitter. ¿arrancamos?
-    - Hola, bot. ¿tenés un minuto?
-    - hey, máquina. ¿qué hay de nuevo?
-    - hey, coach. ¿tenés un minuto?
-    - qué onda, amigo. ¿todo bien?
-    - hey, asistente. ¿me ayudas hoy?
-    - Hola, máquina. ¿listo para entrenar?
-    - Hola, fitter. ¿cómo estás?
-    - ¡qué tal! Hace rato no hablábamos. ¿me das una mano?
-    - ¡hey! Qué gusto encontrarte. ¿me das una mano?
-    - Que tengas un gran inicio de semana, fitter. espero que estés listo para ayudarme
-    - buenas noches, fitter. ¿tenés un minuto?
-    - ¡hola! Qué gusto encontrarte. ¿me ayudas hoy?
-    - Buenas, amigo. ¿tenés un minuto?
-    - buenas tardes, coach. ¿me das una mano?
-    - hey! ¿cómo estás?
-    - holis, coach. ¿todo bien?
-    - hey, coach. ¿qué hay de nuevo?
-    - hola, equipo. ¿tenés un minuto?
-    - hola, compa. ¿cómo estás?
-    - Hola, compa. ¿tenés un minuto?
-    - Hola hola, fitter. ¿qué hay de nuevo?
-    - Buenas, fitter. ¿todo bien?
-    - holis, compa. ¿me ayudas hoy?
-    - buenas noches, equipo. ¿qué hay de nuevo?
-    - buenas noches, asistente. ¿tenés un minuto?
-    - buenos días, amigo. ¿me ayudas hoy?
-    - buenos días, amigo. ¿qué hay de nuevo?
-    - ¡qué onda! Qué gusto encontrarte. ¿tenés un minuto?
-    - qué tal, coach. ¿me ayudas hoy?
-    - hola, coach. ¿tenés un minuto?
-    - ¡hey! Qué gusto encontrarte. ¿tenés un minuto?
-    - buenas tardes, amigo. ¿qué hay de nuevo?
-    - Hola hola, bot. ¿arrancamos?
-    - buenos días! ¿listo para entrenar?
-    - Que tengas una jornada productiva, asistente. vengo con ganas de entrenar
-    - qué tal, equipo. ¿me das una mano?
-    - Buenas, bot. ¿todo bien?
-    - Que tengas un buen día, amigo. ojalá podamos planear algo bueno
-    - Qué tal, coach. ¿todo bien?
-    - Hola, coach. ¿qué hay de nuevo?
-    - ¡buenos días! Llegué con toda la energía. ¿qué hay de nuevo?
-    - Que tengas una linda noche, máquina. vengo con ganas de entrenar
-    - ¡buenos días! Qué gusto encontrarte. ¿tenés un minuto?
-    - qué tal, compa. ¿cómo estás?
-    - Que tengas un buen día, equipo. traigo dudas y quiero resolverlas
-    - qué onda, amigo. ¿qué hay de nuevo?
-    - Que tengas una jornada productiva, equipo. ojalá podamos planear algo bueno
-    - Buenas, bot. ¿tenés un minuto?
-    - qué tal! ¿arrancamos?
-    - holis, fitter. ¿arrancamos?
-    - hola, coach. ¿arrancamos?
-    - Que tengas una buena tarde, coach. hoy necesito motivación
-    - holis! ¿qué hay de nuevo?
-    - Hola, máquina. ¿todo bien?
-    - qué tal, coach. ¿todo bien?
-    - Hey, compa. ¿listo para entrenar?
-    - buenos días, bot. ¿arrancamos?
-    - hola, fitter. ¿arrancamos?
-    - hey, compa. ¿qué hay de nuevo?
-    - ¡buenas tardes! Se siente bien volver a entrenar. ¿todo bien?
-    - Que tengas una jornada productiva, fitter. vengo con ganas de entrenar
-    - qué tal, amigo. ¿qué hay de nuevo?
-    - Que tengas una buena tarde, amigo. hoy necesito motivación
-    - qué onda, amigo. ¿arrancamos?
-    - buenas tardes, asistente. ¿todo bien?
-    - buenos días, amigo. ¿me das una mano?
-    - Que tengas un gran inicio de semana, máquina. espero que estés listo para ayudarme
-    - Hola hola, coach. ¿todo bien?
-    - Que tengas una buena tarde, amigo. ojalá podamos planear algo bueno
-    - Hola, asistente. ¿me ayudas hoy?
-    - Hola hola, fitter. ¿me ayudas hoy?
-    - Buenas, equipo. ¿listo para entrenar?
-    - Qué tal, bot. ¿me ayudas hoy?
-    - hola, amigo. ¿cómo estás?
-    - ¡qué onda! Se siente bien volver a entrenar. ¿tenés un minuto?
-    - Que tengas una linda noche, asistente. espero que estés listo para ayudarme
-    - Que tengas un gran inicio de semana, amigo. hoy necesito motivación
-    - ¡qué tal! Se siente bien volver a entrenar. ¿cómo estás?
-    - qué onda, compa. ¿qué hay de nuevo?
-    - Que tengas un buen día, bot. espero que estés listo para ayudarme
-    - Hey, amigo. ¿cómo estás?
-    - qué onda, bot. ¿arrancamos?
-    - qué onda, asistente. ¿qué hay de nuevo?
-    - ¡buenas tardes! Hace rato no hablábamos. ¿qué hay de nuevo?
-    - Hola hola, equipo. ¿me das una mano?
-    - Que tengas un gran inicio de semana, compa. ojalá podamos planear algo bueno
-    - qué onda, bot. ¿listo para entrenar?
-    - ¡hola! Se siente bien volver a entrenar. ¿listo para entrenar?
-    - Hola, bot. ¿me das una mano?
-    - holis, coach. ¿cómo estás?
-    - Que tengas una jornada productiva, asistente. ojalá podamos planear algo bueno
-    - Hola hola, bot. ¿qué hay de nuevo?
-    - qué onda! ¿me ayudas hoy?
-    - ¡buenas tardes! Qué gusto encontrarte. ¿listo para entrenar?
-    - ¡qué tal! Qué gusto encontrarte. ¿listo para entrenar?
-    - buenas tardes, fitter. ¿me ayudas hoy?
-    - ¡hola! Ando medio perdido. ¿me das una mano?
-    - ¡holis! Ando medio perdido. ¿todo bien?
-    - Hola hola, compa. ¿me ayudas hoy?
-    - Que tengas una linda noche, equipo. ojalá podamos planear algo bueno
-    - qué tal! ¿me ayudas hoy?
-    - Que tengas una jornada productiva, equipo. traigo dudas y quiero resolverlas
-    - Qué tal, máquina. ¿listo para entrenar?
-    - Hola hola, asistente. ¿qué hay de nuevo?
-    - Que tengas un buen día, bot. hoy necesito motivación
-    - holis, máquina. ¿todo bien?
-    - buenos días, máquina. ¿arrancamos?
-    - ¡holis! Hace rato no hablábamos. ¿me ayudas hoy?
-    - holis, compa. ¿qué hay de nuevo?
-    - Que tengas una jornada productiva, máquina. hoy necesito motivación
-    - ¡qué tal! Hace rato no hablábamos. ¿me ayudas hoy?
-    - Hola hola, coach. ¿me das una mano?
-    - Hey, bot. ¿tenés un minuto?
-    - buenos días, fitter. ¿todo bien?
-    - buenos días, coach. ¿tenés un minuto?
-    - Hola hola, máquina. ¿todo bien?
-    - qué onda, coach. ¿tenés un minuto?
-    - Que tengas una buena tarde, fitter. ojalá podamos planear algo bueno
-    - buenas tardes, máquina. ¿qué hay de nuevo?
-    - hey, amigo. ¿arrancamos?
-    - ¡buenos días! Ando medio perdido. ¿arrancamos?
-    - qué tal, amigo. ¿tenés un minuto?
-    - hey, coach. ¿me das una mano?
-    - hey, bot. ¿arrancamos?
-    - holis, fitter. ¿tenés un minuto?
-    - hola, bot. ¿qué hay de nuevo?
-    - holis, amigo. ¿cómo estás?
-    - qué tal, coach. ¿me das una mano?
-    - ¡buenas noches! Ando medio perdido. ¿arrancamos?
-    - ¡buenas tardes! Hace rato no hablábamos. ¿cómo estás?
-    - qué onda, equipo. ¿listo para entrenar?
-    - Que tengas una linda noche, bot. hoy necesito motivación
-    - ¡buenas noches! Llegué con toda la energía. ¿todo bien?
-    - buenas noches, máquina. ¿arrancamos?
-    - ¡buenas noches! Qué gusto encontrarte. ¿qué hay de nuevo?
-    - ¡qué onda! Llegué con toda la energía. ¿me ayudas hoy?
-    - Hey, fitter. ¿todo bien?
-    - qué tal, amigo. ¿me das una mano?
-    - hey! ¿arrancamos?
-    - ¡buenas noches! Ando medio perdido. ¿me ayudas hoy?
-    - ¡hola! Llegué con toda la energía. ¿arrancamos?
-    - buenas noches, máquina. ¿todo bien?
-    - Hola hola, equipo. ¿qué hay de nuevo?
-    - ¡buenas noches! Ando medio perdido. ¿listo para entrenar?
-    - ¡buenas tardes! Qué gusto encontrarte. ¿me ayudas hoy?
-    - Que tengas un buen día, coach. espero que estés listo para ayudarme
-    - Hola hola, bot. ¿listo para entrenar?
-    - holis, compa. ¿tenés un minuto?
-    - holis, bot. ¿listo para entrenar?
-    - ¡qué tal! Ando medio perdido. ¿listo para entrenar?
-    - qué onda! ¿me das una mano?
-    - ¡buenas noches! Qué gusto encontrarte. ¿cómo estás?
-    - ¡qué onda! Llegué con toda la energía. ¿qué hay de nuevo?
-    - hey, equipo. ¿me das una mano?
-    - Buenas, equipo. ¿todo bien?
-    - qué tal, bot. ¿cómo estás?
-    - Que tengas un buen día, máquina. hoy necesito motivación
-    - Hola hola, compa. ¿tenés un minuto?
-    - Que tengas un buen día, bot. ojalá podamos planear algo bueno
-    - Que tengas una buena tarde, compa. ojalá podamos planear algo bueno
-    - holis, coach. ¿listo para entrenar?
-    - buenos días, compa. ¿todo bien?
-    - ¡holis! Hace rato no hablábamos. ¿todo bien?
-    - buenas tardes, máquina. ¿todo bien?
-    - qué onda, bot. ¿tenés un minuto?
-    - Que tengas un gran inicio de semana, amigo. traigo dudas y quiero resolverlas
-    - Hey, amigo. ¿todo bien?
-    - hey! ¿tenés un minuto?
-    - Hola hola, fitter. ¿arrancamos?
-    - hey, compa. ¿todo bien?
-    - ¡qué onda! Qué gusto encontrarte. ¿cómo estás?
-    - Hey, amigo. ¿me das una mano?
-    - ¡qué onda! Qué gusto encontrarte. ¿me ayudas hoy?
-    - ¡buenos días! Se siente bien volver a entrenar. ¿me das una mano?
-    - Que tengas un gran inicio de semana, coach. vengo con ganas de entrenar
-    - Que tengas una linda noche, máquina. espero que estés listo para ayudarme
-    - ¡buenos días! Se siente bien volver a entrenar. ¿qué hay de nuevo?
-    - ¡qué onda! Hace rato no hablábamos. ¿cómo estás?
-    - buenas tardes, compa. ¿listo para entrenar?
-    - hola, bot. ¿cómo estás?
-    - ¡buenas noches! Hace rato no hablábamos. ¿listo para entrenar?
-    - ¡hey! Se siente bien volver a entrenar. ¿tenés un minuto?
-    - Hola hola, amigo. ¿cómo estás?
-    - buenas tardes, máquina. ¿arrancamos?
-    - Que tengas una linda noche, bot. espero que estés listo para ayudarme
-    - Que tengas una buena tarde, bot. traigo dudas y quiero resolverlas
-    - ¡buenas tardes! Llegué con toda la energía. ¿listo para entrenar?
-    - ¡qué tal! Ando medio perdido. ¿me ayudas hoy?
-    - Buenas, amigo. ¿me ayudas hoy?
-    - buenos días, bot. ¿cómo estás?
-    - holis, amigo. ¿me ayudas hoy?
-    - Hola, compa. ¿me ayudas hoy?
-    - buenas tardes! ¿me das una mano?
-    - hey, amigo. ¿cómo estás?
-    - qué onda, compa. ¿todo bien?
-    - ¡buenos días! Llegué con toda la energía. ¿listo para entrenar?
-    - ¡holis! Ando medio perdido. ¿listo para entrenar?
-    - ¡qué tal! Qué gusto encontrarte. ¿cómo estás?
-    - Que tengas un buen día, compa. ojalá podamos planear algo bueno
-    - Qué tal, amigo. ¿me ayudas hoy?
-    - ¡hola! Llegué con toda la energía. ¿listo para entrenar?
-    - Hey, máquina. ¿cómo estás?
-    - hola, coach. ¿todo bien?
-    - Que tengas una jornada productiva, asistente. hoy necesito motivación
-    - holis, equipo. ¿todo bien?
-    - Hola, amigo. ¿me das una mano?
-    - buenos días, asistente. ¿listo para entrenar?
-    - buenas tardes, fitter. ¿me das una mano?
-    - buenas noches, equipo. ¿arrancamos?
-    - hey! ¿me ayudas hoy?
-    - Que tengas una buena tarde, bot. espero que estés listo para ayudarme
-    - Hola hola, equipo. ¿todo bien?
-    - buenas tardes, bot. ¿cómo estás?
-    - holis, equipo. ¿qué hay de nuevo?
-    - Hola hola, coach. ¿me ayudas hoy?
-    - buenos días, fitter. ¿me ayudas hoy?
-    - ¡buenas noches! Llegué con toda la energía. ¿tenés un minuto?
-    - Hey, amigo. ¿arrancamos?
-    - buenos días, equipo. ¿tenés un minuto?
-    - buenas noches, asistente. ¿me das una mano?
-    - qué onda, compa. ¿cómo estás?
-    - Qué tal, coach. ¿me das una mano?
-    - buenas noches, amigo. ¿todo bien?
-    - ¡qué tal! Hace rato no hablábamos. ¿cómo estás?
-    - buenas tardes, equipo. ¿cómo estás?
-    - Qué tal, equipo. ¿me das una mano?
-    - Que tengas un buen día, equipo. vengo con ganas de entrenar
-    - buenos días, amigo. ¿cómo estás?
-    - ¡holis! Ando medio perdido. ¿me ayudas hoy?
-    - ¡qué tal! Ando medio perdido. ¿todo bien?
-    - Hola, máquina. ¿me ayudas hoy?
-    - ¡qué onda! Llegué con toda la energía. ¿listo para entrenar?
-    - Buenas, fitter. ¿me das una mano?
-    - buenos días, máquina. ¿me ayudas hoy?
-    - hey, asistente. ¿tenés un minuto?
-    - buenas tardes, máquina. ¿me ayudas hoy?
-    - qué onda, coach. ¿qué hay de nuevo?
-    - buenos días, bot. ¿me ayudas hoy?
-    - Hola, bot. ¿todo bien?
-    - holis, asistente. ¿cómo estás?
-    - Hola, asistente. ¿listo para entrenar?
-    - Qué tal, compa. ¿arrancamos?
-    - Que tengas un gran inicio de semana, bot. hoy necesito motivación
-    - ¡buenos días! Se siente bien volver a entrenar. ¿cómo estás?
-    - holis! ¿tenés un minuto?
-    - ¡buenos días! Hace rato no hablábamos. ¿me das una mano?
-    - ¡qué tal! Qué gusto encontrarte. ¿me ayudas hoy?
-    - buenas tardes, asistente. ¿arrancamos?
-    - Buenas, compa. ¿me das una mano?
-    - ¡hey! Hace rato no hablábamos. ¿me das una mano?
-    - Buenas, máquina. ¿tenés un minuto?
-    - Hola, coach. ¿me ayudas hoy?
-    - Hey, compa. ¿cómo estás?
-    - hola, fitter. ¿me das una mano?
-    - ¡hey! Se siente bien volver a entrenar. ¿me das una mano?
-    - qué tal, asistente. ¿todo bien?
-    - Que tengas una buena tarde, asistente. hoy necesito motivación
-    - ¡holis! Se siente bien volver a entrenar. ¿cómo estás?
-    - ¡holis! Ando medio perdido. ¿cómo estás?
-    - Qué tal, compa. ¿cómo estás?
-    - buenas noches! ¿tenés un minuto?
-    - buenas tardes, compa. ¿todo bien?
-    - ¡hey! Llegué con toda la energía. ¿qué hay de nuevo?
-    - Que tengas una jornada productiva, fitter. espero que estés listo para ayudarme
-    - buenas noches, bot. ¿todo bien?
-    - buenas noches, equipo. ¿todo bien?
-    - ¡qué tal! Hace rato no hablábamos. ¿todo bien?
-    - buenas tardes, asistente. ¿qué hay de nuevo?
-    - ¡qué tal! Ando medio perdido. ¿tenés un minuto?
-    - ¡hey! Ando medio perdido. ¿arrancamos?
-    - Que tengas un buen día, asistente. espero que estés listo para ayudarme
-    - Que tengas un gran inicio de semana, amigo. espero que estés listo para ayudarme
-    - Que tengas un buen día, amigo. traigo dudas y quiero resolverlas
-    - Buenas, amigo. ¿cómo estás?
-    - ¡hola! Llegué con toda la energía. ¿qué hay de nuevo?
-    - ¡buenas tardes! Hace rato no hablábamos. ¿tenés un minuto?
-    - buenas tardes, bot. ¿listo para entrenar?
-    - Qué tal, compa. ¿qué hay de nuevo?
-    - ¡qué onda! Se siente bien volver a entrenar. ¿qué hay de nuevo?
-    - buenas tardes, amigo. ¿cómo estás?
-    - Hola hola, bot. ¿tenés un minuto?
-    - qué tal, compa. ¿arrancamos?
-    - Hola, asistente. ¿arrancamos?
-    - ¡buenos días! Llegué con toda la energía. ¿tenés un minuto?
-    - qué onda, compa. ¿me ayudas hoy?
-    - Que tengas un gran inicio de semana, asistente. espero que estés listo para ayudarme
-    - Hola hola, fitter. ¿tenés un minuto?
-    - Hola hola, equipo. ¿tenés un minuto?
-    - hola, bot. ¿todo bien?
-    - Que tengas una buena tarde, máquina. espero que estés listo para ayudarme
-    - Que tengas una buena tarde, bot. ojalá podamos planear algo bueno
-    - hola, compa. ¿me ayudas hoy?
-    - hola, bot. ¿listo para entrenar?
-    - holis, amigo. ¿tenés un minuto?
-    - buenas noches, amigo. ¿arrancamos?
-    - Qué tal, máquina. ¿tenés un minuto?
-    - ¡hola! Ando medio perdido. ¿todo bien?
-    - ¡buenas noches! Ando medio perdido. ¿cómo estás?
-    - holis, bot. ¿me das una mano?
-    - Que tengas una buena tarde, coach. espero que estés listo para ayudarme
-    - hey, asistente. ¿cómo estás?
-    - Que tengas una buena tarde, equipo. espero que estés listo para ayudarme
-    - Que tengas una linda noche, equipo. espero que estés listo para ayudarme
-    - Que tengas una linda noche, fitter. traigo dudas y quiero resolverlas
-    - hey, bot. ¿todo bien?
-    - ¡buenas tardes! Llegué con toda la energía. ¿tenés un minuto?
-    - Qué tal, asistente. ¿arrancamos?
-    - hey! ¿qué hay de nuevo?
-    - ¡holis! Se siente bien volver a entrenar. ¿me ayudas hoy?
-    - Hola, asistente. ¿tenés un minuto?
-    - ¡qué tal! Se siente bien volver a entrenar. ¿arrancamos?
-    - ¡buenas noches! Hace rato no hablábamos. ¿me ayudas hoy?
-    - buenos días, compa. ¿arrancamos?
-    - ¡buenas tardes! Se siente bien volver a entrenar. ¿cómo estás?
-    - Que tengas una buena tarde, equipo. ojalá podamos planear algo bueno
-    - hey, coach. ¿listo para entrenar?
-    - qué tal, máquina. ¿todo bien?
-    - hola, compa. ¿listo para entrenar?
-    - Qué tal, fitter. ¿tenés un minuto?
-    - Qué tal, máquina. ¿todo bien?
-    - Que tengas un gran inicio de semana, coach. ojalá podamos planear algo bueno
-    - Que tengas una linda noche, máquina. hoy necesito motivación
-    - Que tengas una linda noche, fitter. vengo con ganas de entrenar
-    - qué tal, bot. ¿listo para entrenar?
-    - hola! ¿cómo estás?
-    - Buenas, asistente. ¿listo para entrenar?
-    - Hola hola, equipo. ¿cómo estás?
-    - hola, máquina. ¿qué hay de nuevo?
-    - Que tengas un gran inicio de semana, fitter. vengo con ganas de entrenar
-    - buenos días, máquina. ¿listo para entrenar?
-    - Que tengas una jornada productiva, compa. ojalá podamos planear algo bueno
-    - buenos días, compa. ¿qué hay de nuevo?
-    - Que tengas un buen día, amigo. hoy necesito motivación
-    - hola, asistente. ¿me ayudas hoy?
-    - hola, equipo. ¿listo para entrenar?
-    - Que tengas una buena tarde, coach. vengo con ganas de entrenar
-    - buenas tardes, máquina. ¿listo para entrenar?
-    - holis, bot. ¿cómo estás?
-    - ¡buenos días! Qué gusto encontrarte. ¿qué hay de nuevo?
-    - ¡qué onda! Ando medio perdido. ¿todo bien?
-    - Que tengas una linda noche, fitter. hoy necesito motivación
-    - hey, compa. ¿me ayudas hoy?
-    - hey, compa. ¿arrancamos?
-    - qué onda, máquina. ¿todo bien?
-    - buenas noches, compa. ¿listo para entrenar?
-    - buenas noches, máquina. ¿cómo estás?
-    - Hola, coach. ¿tenés un minuto?
-    - ¡qué onda! Ando medio perdido. ¿listo para entrenar?
-    - buenas tardes, coach. ¿listo para entrenar?
-    - Que tengas una linda noche, coach. vengo con ganas de entrenar
-    - ¡qué tal! Llegué con toda la energía. ¿me ayudas hoy?
-    - Que tengas una linda noche, asistente. traigo dudas y quiero resolverlas
-    - Hola, amigo. ¿me ayudas hoy?
-    - qué tal, fitter. ¿me ayudas hoy?
-    - ¡holis! Qué gusto encontrarte. ¿me ayudas hoy?
-    - buenos días, compa. ¿listo para entrenar?
-    - Hey, máquina. ¿tenés un minuto?
-    - ¡holis! Se siente bien volver a entrenar. ¿qué hay de nuevo?
-    - hey, fitter. ¿todo bien?
-    - Hola, bot. ¿cómo estás?
-    - ¡hey! Llegué con toda la energía. ¿tenés un minuto?
-    - Hola hola, bot. ¿cómo estás?
-    - Hola hola, compa. ¿todo bien?
-    - buenas tardes, compa. ¿arrancamos?
-    - ¡buenos días! Hace rato no hablábamos. ¿todo bien?
-    - Que tengas un buen día, máquina. traigo dudas y quiero resolverlas
-    - ¡buenas noches! Ando medio perdido. ¿tenés un minuto?
-    - ¡hey! Se siente bien volver a entrenar. ¿cómo estás?
-    - qué tal, fitter. ¿listo para entrenar?
-    - ¡qué onda! Hace rato no hablábamos. ¿me ayudas hoy?
-    - Hola hola, asistente. ¿todo bien?
-    - Hola, bot. ¿listo para entrenar?
-    - Que tengas una linda noche, compa. espero que estés listo para ayudarme
-    - Buenas, compa. ¿tenés un minuto?
-    - qué onda! ¿listo para entrenar?
-    - Hola, bot. ¿qué hay de nuevo?
-    - qué onda! ¿arrancamos?
-    - hola, asistente. ¿arrancamos?
-    - holis, compa. ¿todo bien?
-    - Buenas, máquina. ¿arrancamos?
-    - ¡hey! Se siente bien volver a entrenar. ¿qué hay de nuevo?
-    - Buenas, asistente. ¿me ayudas hoy?
-    - Que tengas una buena tarde, bot. vengo con ganas de entrenar
-    - hola, amigo. ¿arrancamos?
-    - ¡buenas noches! Qué gusto encontrarte. ¿arrancamos?
-    - buenas tardes, fitter. ¿listo para entrenar?
-    - Hola hola, máquina. ¿arrancamos?
-    - Que tengas un buen día, asistente. vengo con ganas de entrenar
-    - qué tal, bot. ¿me das una mano?
-    - Hola hola, asistente. ¿listo para entrenar?
-    - hola, coach. ¿me ayudas hoy?
-    - hey, máquina. ¿me ayudas hoy?
-    - Buenas, amigo. ¿arrancamos?
-    - Qué tal, fitter. ¿me ayudas hoy?
-    - ¡buenas tardes! Qué gusto encontrarte. ¿todo bien?
-    - Hey, fitter. ¿me ayudas hoy?
-    - buenos días! ¿arrancamos?
-    - hola, equipo. ¿todo bien?
-    - ¡buenos días! Qué gusto encontrarte. ¿cómo estás?
-    - qué tal, coach. ¿arrancamos?
-    - Hey, máquina. ¿me ayudas hoy?
-    - buenas tardes, amigo. ¿listo para entrenar?
-    - ¡hola! Qué gusto encontrarte. ¿arrancamos?
-    - buenas noches, compa. ¿todo bien?
-    - hey, asistente. ¿listo para entrenar?
-    - ¡buenos días! Hace rato no hablábamos. ¿qué hay de nuevo?
-    - Que tengas un buen día, equipo. hoy necesito motivación
-    - Qué tal, coach. ¿cómo estás?
-    - ¡qué onda! Se siente bien volver a entrenar. ¿listo para entrenar?
-    - ¡qué onda! Ando medio perdido. ¿cómo estás?
-    - Hey, equipo. ¿cómo estás?
-    - qué onda, amigo. ¿listo para entrenar?
-    - Hola, compa. ¿arrancamos?
+    - hola
+    - buenas
+    - buenas tardes
+    - buenos dias
+    - buenas noches
+    - que tal
+    - que onda
+    - hola hola
+    - hey
+    - holi
+    - wenas
+    - saludos
+    - hola, que tal
+    - hola, como estas
+    - hola, buen dia
+    - holaa
+    - hola!!!
+
 - intent: solicitar_dieta
   examples: |
+    - sugiereme una dieta
+    - sugerir dieta
+    - quiero dieta
+    - dieta para hoy
+    - sugiere una dieta
+    - dame una dieta
+    - quiero una dieta
+    - necesito una dieta
+    - armame una dieta
+    - plan alimenticio
+    - plan nutricional
+    - menu de comidas
+    - dieta
     - Arma una dieta para acompanar mi rutina.
     - Quiero un menu semanal para bajar de peso.
     - Necesito recomendaciones alimenticias para hipertension.
@@ -26621,6 +25452,14 @@ nlu:
 
 - intent: solicitar_rutina
   examples: |
+    - rutina
+    - quiero rutina
+    - necesito rutina
+    - plan de entrenamiento
+    - Necesito una nueva rutina
+    - Genera una rutina nueva
+    - Quiero una rutina nueva
+    - Necesito una rutina personalizada
     - Puedes armarme una rutina personalizada para ganar fuerza sin impacto?
     - Quiero una rutina que combine cardio ligero y ejercicios de core porque soy hipertenso.
     - Necesito un entrenamiento semanal que respete mi lesion de espalda y ayude a bajar de peso.
@@ -28629,6 +27468,22 @@ nlu:
     - Busco un programa de fuerza de con doble sesion en fin de semana orientado a retomar el ritmo despues de una lesion porque vengo del sedentarismo
     - Busco un programa completa de dividido en bloques de 20 minutos orientado a aumentar mi potencia en sprints porque padezco sindrome metabolico
     - Quiero un plan personalizada que combine bandas y mancuernas ligeras y me ayude a bajar grasa pese a que viajo mucho y entreno en hoteles
+    - quiero una rutina nueva
+    - necesito una nueva rutina
+    - rutina personalizada
+    - quiero un plan de entrenamiento
+    - quiero entrenar
+    - armame una rutina
+    - necesito plan de entrenamiento
+    - quiero una rutina de gimnasio
+    - rutina para ganar masa
+    - rutina para bajar grasa
+    - quiero una rutina para casa
+    - plan de entrenamiento personalizado
+    - quiero una rutina completa
+    - necesito una rutina personalizada
+    - ayudame con una rutina
+
 - intent: soporte_general
   examples: |
     - quiero ver las opciones de soporte
@@ -30631,6 +29486,22 @@ nlu:
     -  puedes derivarme a soporte para el acceso al portal
     - hey por favor que contactar soporte humano por soporte onboarding
     - que tal por favor que contactar un especialista por mi cuenta bloqueada
+    - soporte
+    - hablar con soporte
+    - necesito soporte tecnico
+    - problema con la app
+    - no funciona
+    - tengo un problema
+    - ayuda con pagos
+    - problemas con mi cuenta
+    - quiero contactar soporte
+    - soporte general
+    - tengo un error
+    - fallo al pagar
+    - no puedo acceder
+    - necesito asistencia tecnica
+    - tengo inconvenientes
+
 - intent: soporte_mfa
   examples: |
     - ayudame con la autenticacion de dos factores
@@ -34637,6 +33508,13 @@ nlu:
     - Necesito darme de alta en el paquete anual completo antes de que termine el mes
 - intent: suscripcion_baja
   examples: |
+    - darme de baja
+    - darme de baja del plan
+    - cancelar plan
+    - baja de suscripcion
+    - Quiero darme de baja
+    - Quiero darme de baja del plan
+    - Quiero cancelar la suscripcion
     - Cancela mi suscripcion actual, por favor.
     - Dame de baja porque no podre continuar.
     - Quiero suspender el plan sin multas.
@@ -36637,6 +35515,21 @@ nlu:
     - Necesito desactivar mi plan premium; quiero evaluar otras opciones
     - ¿Podrías terminar el paquete anual? quiero evitar la renovacion automatica
     - Me gustaría pausar la membresia con nutricionista inmediatamente; quiero detenerlo hasta nuevo aviso
+    - quiero darme de baja
+    - cancelar mi suscripcion
+    - dar de baja mi cuenta
+    - terminar mi plan
+    - baja del plan
+    - baja de la membresia
+    - anular mi suscripcion
+    - quiero cancelar el servicio
+    - darme de baja del servicio
+    - quiero dar de baja mi plan
+    - cancelar el plan de suscripcion
+    - terminar la suscripcion
+    - cancelar mi membresia
+    - baja de mi plan
+    - quiero cerrar mi suscripcion
 
 - intent: solicitar_entreno_unico
   examples: |
@@ -36644,12 +35537,65 @@ nlu:
     - Inscríbeme al plan [Shonen Power](hero_programa) porque quiero ganar fuerza.
     - Me interesa el programa [Ninja Agility](hero_programa) para mejorar mi agilidad.
     - Deseo probar [Mecha Endurance](hero_programa) la próxima semana.
+    - Quiero el plan [Batman Christian Bale](hero_programa) para ganar fuerza.
+    - Anótame en el [Batman Ben Affleck](hero_programa) con enfoque de volumen.
+    - Me gustaría el [Batman Robert Pattinson](hero_programa) para estar más definido.
+    - Inscríbeme en [Capitan America Chris Evans](hero_programa) para subir masa.
+    - Quiero el plan [Superman Henry Cavill](hero_programa) con volumen alto.
+    - Anótame en [Superman David Corenswet](hero_programa) con sobrecarga progresiva.
+    - Inscríbeme al plan [Wolverine Hugh Jackman](hero_programa) con fuerza y definición.
     - Quiero un plan temático estilo anime para prepararme.
     - ¿Cuáles son los entrenos únicos disponibles?
     - Dame acceso a un entreno único, algo como shonen power.
     - Necesito un programa exclusivo inspirado en héroes.
     - Regístrame al entreno único ninja con equipo de casa.
     - Me gustaría un programa especial tipo superhéroe.
+    - Quiero un entreno unico personalizado tipo superheroe.
+    - Necesito un entreno unico estilo shonen para comenzar.
+    - Inscribeme al entreno unico [Ninja Agility](hero_programa).
+    - Me interesa el entreno unico [Shonen Power](hero_programa).
+    - Quiero probar un entreno unico por una semana.
+    - Dame un entreno unico para fuerza y resistencia.
+    - Quiero un plan exclusivo de superheroe.
+    - Anotame en un programa heroico unico.
+    - Quiero el entreno unico [Mecha Endurance](hero_programa).
+    - Busco un entreno unico inspirado en anime.
+    - Registrame al entreno unico para volumen.
+    - Quiero un entreno especial tipo heroico.
+    - Que opciones de entreno unico hay?
+    - Necesito un entreno unico con peso corporal.
+    - Inscribeme en un entreno unico de agilidad.
+    - Quiero un entreno unico estilo shonen.
+    - Anotame en un entreno unico tipo mecha.
+    - Inscribeme al entreno unico de superheroe.
+    - Quiero un plan heroico unico para fuerza.
+    - Dame acceso a un entreno unico de resistencia.
+    - Necesito un entreno unico con enfoque de volumen.
+    - Busco un entreno unico para definicion.
+    - Quiero un programa unico de heroes para comenzar.
+    - Me interesa un entreno unico de casa.
+    - Anotame en el entreno unico ninja.
+    - Quiero un entreno unico inspirado en anime.
+    - Me puedes registrar a un entreno unico.
+    - Quiero probar un entreno unico por un mes.
+    - Necesito un entreno unico personalizado.
+    - Quiero un entreno unico para ganar fuerza.
+    - quiero un entreno unico
+    - quiero un entrenamiento unico
+    - modo heroe
+    - entreno de superheroe
+    - workout estilo superheroe
+    - plan de superheroe
+    - entrenamiento tipo batman
+    - rutina estilo superman
+    - entreno unico tipo shonen
+    - quiero shonen power
+    - quiero ninja agility
+    - quiero mecha endurance
+    - entreno unico de anime
+    - entrenamiento de actor
+    - workout de pelicula
+
 - intent: faq/horarios
   examples: |
     - ¿Cuál es el horario de atención?
@@ -36665,3 +35611,329 @@ nlu:
     - aceptan débito o transferencia
     - ¿hay cuotas sin interés?
     - ¿cómo pago la membresía?
+
+- intent: crear_reserva
+  examples: |
+    - reservar clase
+    - quiero reservar
+    - hacer una reserva
+    - agendar clase
+    - Quiero reservar una clase de yoga
+    - Necesito reservar una clase
+    - Quiero agendar una clase
+    - Quiero reservar una clase ahora
+    - Quiero reservar una clase
+    - Necesito crear una reserva para mañana
+    - Me ayudas a agendar una clase funcional
+    - Deseo apartar un cupo para spinning
+    - quiero reservar un cupo en spinning
+    - quiero reservar un cupo en funcional
+    - quiero inscribirme a una clase
+    - agendar una clase para manana
+    - reservar una clase para el viernes
+    - quiero agendar una hora para [spinning](clase)
+    - necesito reservar hora con un coach
+    - quiero tomar hora para [yoga](clase)
+    - agendar un cupo para [funcional](clase)
+    - quiero crear una reserva para el [lunes](fecha)
+    - reservar hora para el [viernes](fecha)
+    - necesito agendar una clase el [sabado](fecha)
+    - quiero reservar una hora a las [18:00](hora)
+    - me puedes agendar una clase
+    - quiero apartar un cupo para [spinning](clase) a las [19:00](hora)
+    - necesito crear una reserva para hoy
+    - quiero agendar una reserva esta semana
+    - reservar una clase para hoy
+    - quiero reservar hora mañana
+    - deseo agendar una clase de [pilates](clase)
+    - quiero agendar una hora
+    - necesito reservar una hora
+    - quiero crear una reserva para el [martes](fecha)
+    - agendar una clase el [jueves](fecha)
+    - reservar hora a las [07:00](hora)
+    - quiero agendar una clase de [spinning](clase)
+    - necesito reservar un cupo para [yoga](clase)
+    - quiero tomar hora para el [miércoles](fecha)
+    - agendar una reserva para mañana
+    - reservar una hora con un coach
+    - quiero crear una reserva ahora
+    - necesito agendar un cupo hoy
+    - quiero agendar una hora con un coach
+    - necesito reservar hora para mañana
+    - quiero crear una reserva para esta tarde
+    - agendar una reserva para la clase de [yoga](clase)
+    - reservar una hora para [spinning](clase)
+    - necesito agendar un cupo para [funcional](clase)
+    - quiero tomar hora con el entrenador
+    - quiero reservar una hora para hoy
+    - quiero agendar una hora para mañana
+    - necesito reservar una hora con el coach
+    - quiero crear una reserva para el [viernes](fecha)
+    - reservar un cupo para [spinning](clase) el [jueves](fecha)
+    - agendar una clase de [yoga](clase) a las [08:00](hora)
+    - quiero reservar una clase a las [19:00](hora)
+    - necesito agendar una reserva para [pilates](clase)
+    - quiero reservar una hora esta tarde
+    - agéndame un cupo para [funcional](clase)
+    - deseo agendar una clase para el [sábado](fecha)
+    - quiero agendar una sesión con entrenador
+    - reservar un turno para [spinning](clase)
+    - quiero tomar hora con un coach mañana
+    - necesito crear una reserva para el [miércoles](fecha)
+    - quiero agendar una hora con el entrenador el [martes](fecha)
+    - quiero agendar una clase
+    - quiero reservar una hora
+    - agendar clase de yoga
+    - reservar cupo
+    - crear una reserva
+    - programar una clase
+    - tomar hora
+    - agendame una clase
+    - inscribirme a una clase
+    - hacer una reserva para manana
+    - reservar una clase de spinning
+    - agendar para el lunes
+    - quiero registrar una reserva
+    - quiero hacer una reserva
+    - agendar mi cupo
+    - reservar un cupo
+    - programar mi reserva
+    - quiero tomar una hora
+    - agendarme una hora
+    - crear reserva para hoy
+    - quiero reservar a las 18:00
+
+- intent: suscripcion_cambio_plan
+  examples: |
+    - cambiar plan
+    - cambiar mi plan
+    - quiero otro plan
+    - Quiero cambiarme al plan anual
+    - Necesito modificar mi suscripción al plan trimestral
+    - Cambiemos al plan premium por favor
+    - Actualiza mi plan a la modalidad mensual
+    - quiero cambiar mi suscripcion al plan anual
+    - necesito cambiar de plan
+    - cambiar al plan trimestral
+    - actualizar mi plan al premium
+    - deseo cambiar al plan mensual
+    - quiero modificar mi plan actual
+    - pasarme al plan familiar
+    - cambiarme al plan ilimitado
+    - quiero cambiar mi plan a uno mas barato
+    - quiero subir de plan
+    - necesito pasarme a otro plan
+    - cambiar plan de suscripcion
+    - ajustar mi plan a la modalidad anual
+    - cambiar al plan con nutricion
+    - quiero actualizar mi suscripcion a otro plan
+    - quiero cambiarme de plan
+    - pasarme al plan anual
+    - actualizar mi plan al familiar
+    - cambiar del plan mensual al anual
+    - quiero modificar mi plan al trimestral
+    - deseo cambiar mi plan al premium
+    - necesito ajustar mi suscripcion al plan mensual
+    - quiero moverme al plan con nutricion
+    - cambiarme al plan corporativo
+    - quiero subir al plan ilimitado
+    - deseo bajar al plan mensual
+    - cambiar mi suscripcion al plan familiar
+    - ajustar mi plan al anual con asesorias
+    - pasarme al plan trimestral con nutricion
+    - quiero actualizar mi plan actual
+    - quiero cambiar de plan a uno superior
+    - cambiar mi suscripcion al plan anual
+    - quiero pasarme al plan premium
+    - deseo actualizar mi plan al anual
+    - necesito cambiar mi plan al mensual
+    - quiero modificar mi suscripcion al plan corporativo
+    - ajustar mi plan al trimestral
+    - cambiar mi plan al plan con nutricion
+    - quiero actualizar mi plan al ilimitado
+    - pasar al plan mensual
+    - cambiar mi plan a uno mas completo
+    - quiero cambiar mi plan al familiar
+    - necesito actualizar mi plan al premium
+    - deseo pasarme al plan anual
+    - quiero ajustar mi plan al plan mensual
+    - quiero cambiar mi plan
+    - cambiar de plan
+    - pasarme al plan anual
+    - quiero el plan anual
+    - upgrade de plan
+    - subir de plan
+    - modificar mi suscripcion
+    - actualizar mi plan
+    - migrar de plan
+    - cambiar mi membresia
+    - quiero cambiar al plan premium
+    - cambiar al plan mensual
+    - pasarme al plan mensual
+    - quiero el plan premium
+    - cambiar plan de suscripcion
+
+- intent: afirmar
+  examples: |
+    - si, confirma por favor
+    - si confirma
+    - sí
+    - claro que sí
+    - por supuesto
+    - afirmativo
+    - ok
+    - dale
+    - correcto
+    - confirmo
+    - si, confirmar
+    - si, de acuerdo
+    - confirmado
+    - si
+    - claro
+    - de acuerdo
+    - perfecto
+    - listo
+    - adelante
+    - ok, confirmar
+    - si, adelante
+    - si, perfecto
+    - sí, listo
+    - confirmo la reserva
+    - estoy de acuerdo
+    - vale
+    - ok, dale
+    - si por favor
+    - si, ok
+    - okey
+    - ok listo
+    - de una
+    - claro, confirmo
+    - si, hagamoslo
+    - dale nomas
+    - acepto
+    - si, adelante
+    - si, genial
+    - perfecto, confirmo
+    - si, por favor
+    - esta bien
+    - confirmado, gracias
+    - ok, confirmado
+    - si, continuar
+    - sí, confirmar ahora
+    - ok, hagámoslo
+    - sí, por supuesto
+    - listo, confirmo
+    - de acuerdo, confirmar
+    - claro, adelante
+    - sí, está bien
+    - ok, continúa
+    - perfecto, adelante
+    - si, todo bien
+    - va, confirmo
+    - sí, dale nomás
+    - ok, confirmo la reserva
+    - sí, acepto
+    - afirmo
+    - correcto, confirmar
+    - ok, perfecto
+    - sí, vamos
+    - ok
+    - okay
+    - dale
+    - listo
+    - perfecto
+    - claro
+    - de acuerdo
+    - confirmo
+    - confirmado
+    - si por favor
+    - si, confirmar
+    - va
+    - genial
+    - acepto
+    - continuemos
+
+- intent: negar
+  examples: |
+    - no, mejor cancela
+    - no
+    - mejor no
+    - prefiero cancelarlo
+    - negativo
+    - no gracias
+    - cancelar
+    - no, cancelar
+    - no, no confirmes
+    - mejor cancela la reserva
+    - no, cancelar la reserva
+    - no quiero
+    - mejor no ahora
+    - no, deja asi
+    - no, por favor
+    - no, no lo hagas
+    - prefiero que no
+    - no, detener
+    - no, cancelalo
+    - no, cancela por favor
+    - paso
+    - mejor lo dejamos
+    - no, gracias
+    - no, no
+    - no, cancelar
+    - no, cancela
+    - no quiero eso
+    - mejor despues
+    - no hoy
+    - no, mejor no
+    - no, gracias igual
+    - no, mejor lo dejamos
+    - no, cancelar eso
+    - prefiero que no continúe
+    - no, detener el proceso
+    - no, por ahora no
+    - no quiero confirmar
+    - no, cancelar la solicitud
+    - no, no continuar
+    - no, no confirmo
+    - no, mejor después
+    - cancela por favor
+    - no, detén eso
+    - no, gracias
+    - no, no acepto
+    - paso por ahora
+    - no, dejémoslo
+    - no, cancelalo ahora
+    - negativo, no
+    - prefiero que no
+    - no, detente
+    - negativo, cancela
+    - paso por ahora
+    - no, ya no
+    - cancela la reserva
+    - no quiero reservar
+    - mejor no confirmes
+    - no, gracias igual
+    - cancelalo
+    - no, dejalo asi
+    - no
+    - nop
+    - no gracias
+    - mejor no
+    - no, cancela
+    - no, cancelar la reserva
+    - prefiero que no
+    - negativo
+    - para nada
+    - no confirmo
+    - rechazo
+    - no quiero
+    - cancelalo
+    - no por ahora
+    - mejor cancelar
+
+- intent: nlu_fallback
+  examples: |
+    - me sirve para volar al espacio?
+    - quiero viajar al espacio
+    - puedes hackear la nasa por mi
+    - dime el numero ganador del loto

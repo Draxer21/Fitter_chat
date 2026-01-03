@@ -4,12 +4,12 @@ stories:
 - story: crear reserva confirmada
   steps:
   - user: |
-      Quiero reservar una clase.
+      /crear_reserva
     intent: crear_reserva
   - action: reserva_form
   - active_loop: reserva_form
   - user: |
-      Clase de spinning.
+      /informar{"clase":"spinning"}
     intent: informar
     entities:
       - clase: spinning
@@ -17,7 +17,7 @@ stories:
       - clase: spinning
   - action: reserva_form
   - user: |
-      Para el 2025-10-05.
+      /informar{"fecha":"2025-10-05"}
     intent: informar
     entities:
       - fecha: "2025-10-05"
@@ -25,7 +25,7 @@ stories:
       - fecha: "2025-10-05"
   - action: reserva_form
   - user: |
-      A las 07:00.
+      /informar{"hora":"07:00"}
     intent: informar
     entities:
       - hora: "07:00"
@@ -35,7 +35,7 @@ stories:
   - active_loop: null
   - action: utter_confirmar_reserva
   - user: |
-      Si, confirma por favor.
+      /afirmar
     intent: afirmar
   - action: action_crear_reserva
   - action: utter_reserva_confirmada
@@ -43,12 +43,12 @@ stories:
 - story: crear reserva cancelada por cliente
   steps:
   - user: |
-      Necesito crear una reserva.
+      /crear_reserva
     intent: crear_reserva
   - action: reserva_form
   - active_loop: reserva_form
   - user: |
-      Clase de yoga.
+      /informar{"clase":"yoga"}
     intent: informar
     entities:
       - clase: yoga
@@ -56,7 +56,7 @@ stories:
       - clase: yoga
   - action: reserva_form
   - user: |
-      El 2025-10-06.
+      /informar{"fecha":"2025-10-06"}
     intent: informar
     entities:
       - fecha: "2025-10-06"
@@ -64,7 +64,7 @@ stories:
       - fecha: "2025-10-06"
   - action: reserva_form
   - user: |
-      A las 18:30.
+      /informar{"hora":"18:30"}
     intent: informar
     entities:
       - hora: "18:30"
@@ -74,18 +74,18 @@ stories:
   - active_loop: null
   - action: utter_confirmar_reserva
   - user: |
-      No, mejor cancela.
+      /negar
     intent: negar
   - action: utter_reserva_cancelada
 
 - story: consultar estado reserva
   steps:
   - user: |
-      Quiero saber el estado de mi reserva.
+      /consultar_reserva
     intent: consultar_reserva
   - action: utter_ask_codigo_reserva
   - user: |
-      El codigo es ABC123.
+      /informar{"codigo_reserva":"ABC123"}
     intent: informar
     entities:
       - codigo_reserva: ABC123
@@ -97,90 +97,41 @@ stories:
 - story: rutina personalizada completada
   steps:
   - user: |
-      Necesito una nueva rutina.
+      /solicitar_rutina
     intent: solicitar_rutina
-  - action: rutina_form
-  - active_loop: rutina_form
-  - user: |
-      Trabajar pecho.
-    intent: informar
-    entities:
-      - musculo: pecho
+  - action: action_fetch_profile
   - slot_was_set:
-      - musculo: pecho
-  - action: rutina_form
-  - user: |
-      Soy nivel intermedio.
-    intent: informar
-    entities:
-      - nivel: intermedio
-  - slot_was_set:
-      - nivel: intermedio
-  - action: rutina_form
-  - user: |
-      Mi objetivo es fuerza.
-    intent: informar
-    entities:
-      - objetivo: fuerza
-  - slot_was_set:
-      - objetivo: fuerza
-  - action: rutina_form
-  - user: |
-      Solo tengo mancuernas.
-    intent: informar
-    entities:
-      - equipamiento: mancuernas
-  - slot_was_set:
-      - equipamiento: mancuernas
-  - action: rutina_form
-  - user: |
-      Hagamos siete ejercicios.
-    intent: informar
-    entities:
-      - ejercicios_num: "7"
-  - slot_was_set:
-      - ejercicios_num: 7
-  - action: rutina_form
-  - user: |
-      Dispongo de 45 minutos.
-    intent: informar
-    entities:
-      - tiempo_disponible: "45"
-  - slot_was_set:
-      - tiempo_disponible: 45
-  - action: rutina_form
-  - user: |
-      ninguna
-    intent: informar
-  - slot_was_set:
-      - condiciones_salud: ninguna
-  - action: rutina_form
-  - user: |
-      ninguna
-    intent: informar
-  - slot_was_set:
-      - alergias: ninguna
-  - action: rutina_form
-  - user: |
-      Prefiero verla en pantalla.
-    intent: informar
-    entities:
-      - formato: pantalla
-  - slot_was_set:
-      - formato: pantalla
-  - action: rutina_form
-  - active_loop: null
-  - action: utter_resumen_rutina
+      - perfil_completo: true
   - action: action_generar_rutina
+  - slot_was_set:
+      - servicio_pendiente: null
+
+- story: flujo entreno unico batman bale
+  steps:
+  - user: |
+      /solicitar_entreno_unico{"hero_programa":"batman_bale"}
+    intent: solicitar_entreno_unico
+    entities:
+      - hero_programa: batman_bale
+  - action: hero_form
+  - active_loop: hero_form
+  - slot_was_set:
+      - hero_programa: batman_bale
+  - slot_was_set:
+      - hero_inicio: proxima semana
+  - slot_was_set:
+      - hero_equipo: gimnasio
+  - active_loop: null
+  - action: action_inscribir_entreno_unico
 
 - story: enviar rutina por correo
   steps:
   - user: |
-      Envia la rutina por correo.
+      /enviar_rutina_correo
     intent: enviar_rutina_correo
   - action: utter_pedir_contacto
   - user: |
-      Mi correo es cliente@fitter.com
+      /informar{"email":"cliente@fitter.com"}
     intent: informar
     entities:
       - email: cliente@fitter.com
@@ -191,27 +142,55 @@ stories:
 - story: cambio de plan suscripcion
   steps:
   - user: |
-      Quiero cambiar al plan anual.
+      /suscripcion_cambio_plan
     intent: suscripcion_cambio_plan
   - action: action_suscripcion_cambio_plan
 - story: test perfil completo
   steps:
   - user: |
-      Quiero ver mi perfil
+      /consultar_perfil
     intent: consultar_perfil
   - action: action_fetch_profile
   - user: |
-      Actualizar con el bot
+      /actualizar_perfil_bot
     intent: actualizar_perfil_bot
   - action: profile_form
   - active_loop: profile_form
   - user: |
       75
     intent: informar
+  - slot_was_set:
+      - peso: 75
   - action: profile_form
   - user: |
       180
     intent: informar
+  - slot_was_set:
+      - altura: 180
+  - action: profile_form
+  - user: |
+      ganar masa muscular
+    intent: informar
+  - slot_was_set:
+      - objetivo_fitness: ganar masa muscular
+  - action: profile_form
+  - user: |
+      ninguno
+    intent: informar
+  - slot_was_set:
+      - padecimientos: ninguno
+  - action: profile_form
+  - user: |
+      sin lactosa
+    intent: informar
+  - slot_was_set:
+      - preferencia_dieta: sin lactosa
+  - action: profile_form
+  - user: |
+      pecho
+    intent: informar
+  - slot_was_set:
+      - musculo_preferido: pecho
   - action: profile_form
   - active_loop: null
   - action: action_submit_profile_form
@@ -219,12 +198,12 @@ stories:
 - story: cancelar profile_form
   steps:
   - user: |
-      Necesito actualizar mi perfil
+      /actualizar_perfil_bot
     intent: actualizar_perfil_bot
   - action: profile_form
   - active_loop: profile_form
   - user: |
-      Mejor cancelalo
+      /detener_formulario
     intent: detener_formulario
   - action: action_deactivate_loop
   - active_loop: null
@@ -233,41 +212,46 @@ stories:
 - story: generar rutina con perfil completo
   steps:
   - user: |
-      Genera una rutina nueva
+      /solicitar_rutina
     intent: solicitar_rutina
   - action: action_fetch_profile
   - slot_was_set:
       - perfil_completo: true
+  - action: action_generar_rutina
+  - slot_was_set:
+      - servicio_pendiente: null
 
 - story: mostrar rutina en pantalla
   steps:
   - user: |
-      Prefiero verla en pantalla
+      /mostrar_rutina_pantalla
     intent: mostrar_rutina_pantalla
   - action: action_generar_rutina
+  - slot_was_set:
+      - servicio_pendiente: null
 
 - story: suscripcion alta
   steps:
   - user: |
-      Quiero suscribirme al plan premium
+      /suscripcion_alta
     intent: suscripcion_alta
   - action: utter_suscripcion_alta
 
 - story: suscripcion baja
   steps:
   - user: |
-      Quiero darme de baja
+      /suscripcion_baja
     intent: suscripcion_baja
   - action: utter_suscripcion_baja
 
 - story: enviar rutina alternativo
   steps:
   - user: |
-      Mandala por mail por favor
+      /enviar_rutina_correo
     intent: enviar_rutina_correo
   - action: utter_pedir_contacto
   - user: |
-      Usa mi correo altenativo@fitter.com
+      /informar{"email":"altenativo@fitter.com"}
     intent: informar
     entities:
       - email: altenativo@fitter.com
@@ -278,88 +262,140 @@ stories:
 - story: fallback fuera de alcance
   steps:
   - user: |
-      me sirve para volar al espacio?
+      /nlu_fallback
     intent: nlu_fallback
   - action: utter_fuera_de_alcance
 
 - story: perfil form completo A
   steps:
-    - user: |
-        Actualizar mi perfil completo
-      intent: actualizar_perfil_bot
-    - action: profile_form
-    - active_loop: profile_form
-    - user: |
-        80
-      intent: informar
-    - slot_was_set:
-        - peso: 80
-    - action: profile_form
-    - user: |
-        178
-      intent: informar
-    - slot_was_set:
-        - altura: 178
-    - action: profile_form
-    - user: |
-        ganar masa muscular
-      intent: informar
-    - slot_was_set:
-        - objetivo_fitness: ganar masa muscular
-    - action: profile_form
-    - user: |
-        ninguno
-      intent: informar
-    - slot_was_set:
-        - padecimientos: ninguno
-    - action: profile_form
-    - user: |
-        sin lactosa
-      intent: informar
-    - slot_was_set:
-        - preferencia_dieta: sin lactosa
-    - action: profile_form
-    - active_loop: null
-    - action: action_submit_profile_form
-    - action: utter_perfil_actualizado
+  - user: |
+      /actualizar_perfil_bot
+    intent: actualizar_perfil_bot
+  - action: profile_form
+  - active_loop: profile_form
+  - user: |
+      80
+    intent: informar
+  - slot_was_set:
+      - peso: 80
+  - action: profile_form
+  - user: |
+      178
+    intent: informar
+  - slot_was_set:
+      - altura: 178
+  - action: profile_form
+  - user: |
+      ganar masa muscular
+    intent: informar
+  - slot_was_set:
+      - objetivo_fitness: ganar masa muscular
+  - action: profile_form
+  - user: |
+      ninguno
+    intent: informar
+  - slot_was_set:
+      - padecimientos: ninguno
+  - action: profile_form
+  - user: |
+      sin lactosa
+    intent: informar
+  - slot_was_set:
+      - preferencia_dieta: sin lactosa
+  - action: profile_form
+  - user: |
+      pecho
+    intent: informar
+  - slot_was_set:
+      - musculo_preferido: pecho
+  - action: profile_form
+  - active_loop: null
+  - action: action_submit_profile_form
 
 - story: perfil form completo B
   steps:
-    - user: |
-        Quiero actualizar el perfil
-      intent: actualizar_perfil_bot
-    - action: profile_form
-    - active_loop: profile_form
-    - user: |
-        65
-      intent: informar
-    - slot_was_set:
-        - peso: 65
-    - action: profile_form
-    - user: |
-        165
-      intent: informar
-    - slot_was_set:
-        - altura: 165
-    - action: profile_form
-    - user: |
-        mejorar resistencia
-      intent: informar
-    - slot_was_set:
-        - objetivo_fitness: mejorar resistencia
-    - action: profile_form
-    - user: |
-        tengo asma leve
-      intent: informar
-    - slot_was_set:
-        - padecimientos: tengo asma leve
-    - action: profile_form
-    - user: |
-        vegetariana
-      intent: informar
-    - slot_was_set:
-        - preferencia_dieta: vegetariana
-    - action: profile_form
-    - active_loop: null
-    - action: action_submit_profile_form
-    - action: utter_perfil_actualizado
+  - user: |
+      /actualizar_perfil_bot
+    intent: actualizar_perfil_bot
+  - action: profile_form
+  - active_loop: profile_form
+  - user: |
+      65
+    intent: informar
+  - slot_was_set:
+      - peso: 65
+  - action: profile_form
+  - user: |
+      165
+    intent: informar
+  - slot_was_set:
+      - altura: 165
+  - action: profile_form
+  - user: |
+      mejorar resistencia
+    intent: informar
+  - slot_was_set:
+      - objetivo_fitness: mejorar resistencia
+  - action: profile_form
+  - user: |
+      tengo asma leve
+    intent: informar
+  - slot_was_set:
+      - padecimientos: tengo asma leve
+  - action: profile_form
+  - user: |
+      vegetariana
+    intent: informar
+  - slot_was_set:
+      - preferencia_dieta: vegetariana
+  - action: profile_form
+  - user: |
+      espalda
+    intent: informar
+  - slot_was_set:
+      - musculo_preferido: espalda
+  - action: profile_form
+  - active_loop: null
+  - action: action_submit_profile_form
+
+- story: rutina y luego dieta en la misma sesion
+  steps:
+  - user: |
+      /solicitar_rutina
+    intent: solicitar_rutina
+  - action: action_fetch_profile
+  - slot_was_set:
+      - perfil_completo: true
+  - action: action_generar_rutina
+  - slot_was_set:
+      - servicio_pendiente: null
+  - user: |
+      /solicitar_dieta
+    intent: solicitar_dieta
+  - action: action_fetch_profile
+  - slot_was_set:
+      - perfil_completo: true
+  - action: action_generar_dieta
+  - slot_was_set:
+      - servicio_pendiente: null
+
+- story: dieta y luego rutina en la misma sesion
+  steps:
+  - user: |
+      /solicitar_dieta
+    intent: solicitar_dieta
+  - action: action_fetch_profile
+  - slot_was_set:
+      - perfil_completo: true
+  - action: action_generar_dieta
+  - slot_was_set:
+      - servicio_pendiente: null
+  - user: |
+      /solicitar_rutina
+    intent: solicitar_rutina
+  - action: action_fetch_profile
+  - slot_was_set:
+      - perfil_completo: true
+  - action: action_generar_rutina
+  - slot_was_set:
+      - servicio_pendiente: null

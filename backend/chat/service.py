@@ -1,22 +1,15 @@
 import json
 from dataclasses import dataclass
 from threading import Lock
-from typing import Any, Dict, Mapping, MutableMapping, Optional
+from typing import Any, Dict, List, Mapping, MutableMapping, Optional, Tuple
 
 import requests
 from flask import Flask
 from .models import ChatUserContext
 from .context_manager import ChatContextManager
+from .errors import ChatServiceError
+from .orchestrator import ChatOrchestrator, format_explanation_block
 from ..security.session import context_api_key_valid, session_uid
-
-
-class ChatServiceError(Exception):
-    """Errores controlados que deben convertise en respuestas JSON."""
-
-    def __init__(self, message: str, status_code: int = 400) -> None:
-        super().__init__(message)
-        self.message = message
-        self.status_code = status_code
 
 
 @dataclass
@@ -34,6 +27,7 @@ class ChatService:
         self.http = http_session
         self._inflight_requests: Dict[str, object] = {}
         self._inflight_lock = Lock()
+        self.orchestrator = ChatOrchestrator(app, app.logger)
 
     # -------- utilidades internas --------
     def rasa_url(self, path: str) -> str:
@@ -133,66 +127,31 @@ class ChatService:
 
         try:
             self._ensure_context_access(ctx, headers, flask_session)
-            resp = self.http.post(
-                self.rasa_url(self.app.config["RASA_REST_WEBHOOK"]),
-                json=rasa_payload,
-                timeout=self.app.config["RASA_TIMEOUT_SEND"],
-            )
-            resp.raise_for_status()
-            payload = resp.json()
-            if not isinstance(payload, (list, tuple)):
-                payload = [payload]
 
-            updated_context = False
-            for item in payload:
-                if not isinstance(item, dict):
-                    continue
-                # record bot textual reply if present
-                bot_text = item.get("text")
-                if isinstance(bot_text, str) and bot_text.strip():
-                    try:
-                        manager.add_history_entry({"type": "bot_message", "text": bot_text.strip()})
-                    except Exception:
-                        pass
-                custom_payload = item.get("custom")
-                if not custom_payload and isinstance(item.get("json_message"), dict):
-                    custom_payload = item["json_message"]
-                if not isinstance(custom_payload, dict):
-                    continue
-                # record full custom payload as a bot_custom entry for traceability
+            payload = None
+            if self.orchestrator and self.orchestrator.enabled:
                 try:
-                    manager.add_history_entry({"type": "bot_custom", "data": custom_payload})
+                    payload = self.orchestrator.respond(
+                        message=message,
+                        manager=manager,
+                        parsed_intent=parsed_intent,
+                        parsed_entities=parsed_entities,
+                    )
+                except ChatServiceError:
+                    raise
                 except Exception:
-                    pass
-                msg_type = str(custom_payload.get("type") or "").strip().lower()
-                explanation = None
-                for key in ("explanation", "reason", "why"):
-                    raw_exp = custom_payload.get(key)
-                    if isinstance(raw_exp, str) and raw_exp.strip():
-                        explanation = raw_exp.strip()
-                        break
-                source = custom_payload.get("source") if isinstance(custom_payload.get("source"), str) else None
+                    self.app.logger.exception("LLM orchestrator fallo; se usa Rasa como respaldo")
 
-                if msg_type == "routine_detail":
-                    manager.set_last_routine(custom_payload)
-                    updated_context = True
-                elif msg_type == "diet_plan":
-                    manager.set_last_diet(custom_payload)
-                    updated_context = True
-                if explanation:
-                    entry = {
-                        "type": f"{msg_type}_explanation" if msg_type else "explanation",
-                        "explanation": explanation,
-                    }
-                    if source:
-                        entry["source"] = source
-            manager.add_history_entry(entry)
+            if payload is None:
+                payload = self._call_rasa(rasa_payload)
+
+            processed_payload, updated_context = self._process_bot_payload(payload, manager)
 
             if not updated_context:
                 manager.touch()
 
             self.db.session.commit()
-            return ServiceResponse(list(payload), 200)
+            return ServiceResponse(processed_payload, 200)
         except ChatServiceError:
             self.db.session.rollback()
             raise
@@ -203,6 +162,10 @@ class ChatService:
         except json.JSONDecodeError:
             self.db.session.rollback()
             raise ChatServiceError("Respuesta de Rasa no es JSON valido.", 502)
+        except Exception as exc:
+            self.db.session.rollback()
+            self.app.logger.exception("Error inesperado en /chat/send")
+            raise ChatServiceError("No se pudo completar la solicitud.", 500) from exc
         finally:
             self._release_sender_slot(sender, inflight_token)
 
@@ -311,6 +274,9 @@ class ChatService:
             if "allergies" in data:
                 manager.set_allergies(data.get("allergies"))
                 updated = True
+            if "dislikes" in data:
+                manager.set_dislikes(data.get("dislikes"))
+                updated = True
             if "medical_conditions" in data:
                 manager.set_medical_conditions(data.get("medical_conditions"))
                 updated = True
@@ -336,3 +302,102 @@ class ChatService:
         except ChatServiceError:
             self.db.session.rollback()
             raise
+
+    # -------- internal helpers --------
+    def _call_rasa(self, rasa_payload: Dict[str, Any]) -> List[Dict[str, Any]]:
+        resp = self.http.post(
+            self.rasa_url(self.app.config["RASA_REST_WEBHOOK"]),
+            json=rasa_payload,
+            timeout=self.app.config["RASA_TIMEOUT_SEND"],
+        )
+        resp.raise_for_status()
+        payload = resp.json()
+        if not isinstance(payload, (list, tuple)):
+            payload = [payload]
+        return list(payload)
+
+    def _process_bot_payload(self, payload: Any, manager: ChatContextManager) -> Tuple[List[Dict[str, Any]], bool]:
+        items: List[Dict[str, Any]] = []
+        updated_context = False
+        if isinstance(payload, (list, tuple)):
+            items = [p for p in payload if isinstance(p, dict)]
+        elif isinstance(payload, dict):
+            items = [payload]
+
+        for item in items:
+            bot_text = item.get("text") if isinstance(item, dict) else None
+            if isinstance(bot_text, str) and bot_text.strip():
+                try:
+                    manager.add_history_entry({"type": "bot_message", "text": bot_text.strip()})
+                except Exception:
+                    pass
+
+            custom_payload = None
+            if isinstance(item, dict):
+                custom_payload = item.get("custom")
+                if not custom_payload and isinstance(item.get("json_message"), dict):
+                    custom_payload = item.get("json_message")
+            if not isinstance(custom_payload, dict):
+                continue
+
+            try:
+                manager.add_history_entry({"type": "bot_custom", "data": custom_payload})
+            except Exception:
+                pass
+
+            self._apply_context_updates(custom_payload.get("context_payload"), manager)
+
+            msg_type = str(custom_payload.get("type") or "").strip().lower()
+            if msg_type == "routine_detail":
+                manager.set_last_routine(custom_payload)
+                updated_context = True
+            elif msg_type == "diet_plan":
+                manager.set_last_diet(custom_payload)
+                updated_context = True
+
+            explanation = self._normalize_explanation(
+                custom_payload.get("explanation")
+                or custom_payload.get("explanation_text")
+                or custom_payload.get("reason")
+                or custom_payload.get("why")
+            )
+            source = custom_payload.get("source") if isinstance(custom_payload.get("source"), str) else None
+            if explanation:
+                history_entry: Dict[str, Any] = {
+                    "type": f"{msg_type}_explanation" if msg_type else "explanation",
+                    "explanation": explanation,
+                }
+                if source:
+                    history_entry["source"] = source
+                try:
+                    manager.add_history_entry(history_entry)
+                except Exception:
+                    pass
+
+        fallback_items: List[Dict[str, Any]] = []
+        if not items:
+            if isinstance(payload, list):
+                fallback_items = [p for p in payload if isinstance(p, dict)]
+            elif isinstance(payload, dict):
+                fallback_items = [payload]
+        return items or fallback_items, updated_context
+
+    def _normalize_explanation(self, raw: Any) -> Optional[str]:
+        if isinstance(raw, str) and raw.strip():
+            return raw.strip()
+        if isinstance(raw, dict):
+            try:
+                return format_explanation_block(raw)
+            except Exception:
+                return None
+        return None
+
+    def _apply_context_updates(self, payload: Any, manager: ChatContextManager) -> None:
+        if not isinstance(payload, dict):
+            return
+        if payload.get("allergies"):
+            manager.set_allergies(payload.get("allergies"))
+        if payload.get("dislikes"):
+            manager.set_dislikes(payload.get("dislikes"))
+        if payload.get("medical_conditions"):
+            manager.set_medical_conditions(payload.get("medical_conditions"))

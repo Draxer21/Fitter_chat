@@ -2,6 +2,8 @@
 from datetime import datetime
 from typing import Any, Dict, Optional
 
+from sqlalchemy.dialects.postgresql import JSONB
+
 from ..extensions import db
 from ..security.profile_crypto import (
     ProfileCipherError,
@@ -145,4 +147,29 @@ class UserProfile(db.Model):
             data["additional_notes"] = _clean_text("additional_notes", max_len=2000)
 
         self._persist_payload(data)
+
+
+class UserHeroPlan(db.Model):
+    __tablename__ = "user_hero_plan"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
+    plan_key = db.Column(db.String(64), nullable=False, index=True)
+    title = db.Column(db.String(140), nullable=False)
+    payload = db.Column(JSONB().with_variant(db.JSON, "sqlite"), nullable=False)
+    source = db.Column(db.String(32), nullable=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    user = db.relationship("User", back_populates="hero_plans", uselist=False)
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "plan_key": self.plan_key,
+            "title": self.title,
+            "payload": self.payload,
+            "source": self.source,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
 

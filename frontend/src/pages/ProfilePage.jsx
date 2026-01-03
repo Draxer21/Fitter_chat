@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useLocale } from "../contexts/LocaleContext";
+import ProfileSectionNav from "../components/ProfileSectionNav";
 import "../styles/profile.css";
 
 const initialFormState = {
@@ -120,7 +121,6 @@ export default function ProfilePage() {
     const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (!isAuthenticated) {
@@ -184,9 +184,9 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="profile-content-grid">
-          <div className="profile-form-wrapper">
+        <ProfileSectionNav />
 
+        <div className="profile-content-grid">
           {message && <div className="alert alert-success">{message}</div>}
           {error && <div className="alert alert-danger">{error}</div>}
           {profileState.error && !error && (
@@ -359,60 +359,59 @@ export default function ProfilePage() {
               </button>
             </div>
           </form>
-        </div>
-        {bmi && (
-          <aside className="profile-aside">
-            <div className="profile-bmi card border-0 shadow-sm">
-              <div className="card-body d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
-                <div>
-                  <p className="mb-1 text-muted text-uppercase small">{t("profile.stats.bmiLabel")}</p>
-                  <p className="display-6 fw-bold mb-2">{bmi}</p>
-                  {bmiCategory && (
-                    <span className="profile-bmi-badge badge text-uppercase fw-semibold">
-                      {t(bmiCategory.labelKey)}
-                    </span>
-                  )}
+          {bmi && (
+            <aside className="profile-aside">
+              <div className="profile-bmi card border-0 shadow-sm">
+                <div className="card-body d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+                  <div>
+                    <p className="mb-1 text-muted text-uppercase small">{t("profile.stats.bmiLabel")}</p>
+                    <p className="display-6 fw-bold mb-2">{bmi}</p>
+                    {bmiCategory && (
+                      <span className="profile-bmi-badge badge text-uppercase fw-semibold">
+                        {t(bmiCategory.labelKey)}
+                      </span>
+                    )}
+                  </div>
+                  <p className="mb-0 text-muted">{t("profile.stats.bmiNote")}</p>
                 </div>
-                <p className="mb-0 text-muted">{t("profile.stats.bmiNote")}</p>
-              </div>
-              <div className="profile-bmi-table card border-0 mt-3">
-                <div className="card-body">
-                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
-                    <div>
-                      <h3 className="profile-bmi-table-title mb-1">{t("profile.bmi.table.title")}</h3>
-                      <p className="profile-bmi-table-subtitle mb-3 mb-md-0">{t("profile.bmi.table.subtitle")}</p>
+                <div className="profile-bmi-table card border-0 mt-3">
+                  <div className="card-body">
+                    <div className="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
+                      <div>
+                        <h3 className="profile-bmi-table-title mb-1">{t("profile.bmi.table.title")}</h3>
+                        <p className="profile-bmi-table-subtitle mb-3 mb-md-0">{t("profile.bmi.table.subtitle")}</p>
+                      </div>
+                    </div>
+                    <div className="table-responsive">
+                      <table className="table align-middle mb-0 profile-bmi-table-grid">
+                        <thead>
+                          <tr>
+                            <th scope="col">{t("profile.bmi.table.status")}</th>
+                            <th scope="col">{t("profile.bmi.table.range")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {BMI_CATEGORIES.map((category) => {
+                            const isActive = bmiCategory?.id === category.id;
+                            return (
+                              <tr key={category.id} className={isActive ? "profile-bmi-row is-active" : "profile-bmi-row"}>
+                                <td>
+                                  <span className="fw-semibold">{t(category.labelKey)}</span>
+                                </td>
+                                <td>{t(category.rangeKey)}</td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
                     </div>
                   </div>
-                  <div className="table-responsive">
-                    <table className="table align-middle mb-0 profile-bmi-table-grid">
-                      <thead>
-                        <tr>
-                          <th scope="col">{t("profile.bmi.table.status")}</th>
-                          <th scope="col">{t("profile.bmi.table.range")}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {BMI_CATEGORIES.map((category) => {
-                          const isActive = bmiCategory?.id === category.id;
-                          return (
-                            <tr key={category.id} className={isActive ? "profile-bmi-row is-active" : "profile-bmi-row"}>
-                              <td>
-                                <span className="fw-semibold">{t(category.labelKey)}</span>
-                              </td>
-                              <td>{t(category.rangeKey)}</td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
-                  </div>
                 </div>
               </div>
-            </div>
-          </aside>
-        )}
+            </aside>
+          )}
+        </div>
       </div>
-    </div>
-  </main>
+    </main>
   );
 }

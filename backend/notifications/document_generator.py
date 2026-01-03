@@ -190,6 +190,118 @@ def generate_routine_pdf(routine_data: Dict[str, Any]) -> BytesIO:
     return buffer
 
 
+def generate_hero_plan_pdf(plan_data: Dict[str, Any]) -> BytesIO:
+    """Genera un PDF para un entreno unico (hero plan)."""
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=letter,
+        rightMargin=0.75 * inch,
+        leftMargin=0.75 * inch,
+        topMargin=0.75 * inch,
+        bottomMargin=0.75 * inch,
+    )
+
+    story = []
+    styles = getSampleStyleSheet()
+
+    title_style = ParagraphStyle(
+        "HeroTitle",
+        parent=styles["Heading1"],
+        fontSize=18,
+        textColor=colors.HexColor("#1e293b"),
+        spaceAfter=12,
+        alignment=TA_CENTER,
+        fontName="Helvetica-Bold",
+    )
+    subtitle_style = ParagraphStyle(
+        "HeroSubtitle",
+        parent=styles["Heading2"],
+        fontSize=12,
+        textColor=colors.HexColor("#334155"),
+        spaceAfter=8,
+        fontName="Helvetica-Bold",
+    )
+    normal_style = ParagraphStyle(
+        "HeroNormal",
+        parent=styles["Normal"],
+        fontSize=10,
+        spaceAfter=6,
+    )
+
+    plan_title = plan_data.get("title") or "Entreno unico"
+    payload = plan_data.get("payload") or {}
+
+    story.append(Paragraph(plan_title, title_style))
+    story.append(Spacer(1, 0.2 * inch))
+
+    meta_data = [
+        ["Duracion:", payload.get("duration", "-")],
+        ["Enfoque:", payload.get("focus", "-")],
+        ["Tipo de cuerpo:", payload.get("body_type", "-")],
+        ["Inicio:", payload.get("start", "-")],
+        ["Equipamiento:", payload.get("equipment", "-")],
+    ]
+    meta_table = Table(meta_data, colWidths=[1.6 * inch, 4.4 * inch])
+    meta_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (0, -1), colors.HexColor("#f1f5f9")),
+        ("TEXTCOLOR", (0, 0), (-1, -1), colors.HexColor("#111827")),
+        ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+        ("FONTNAME", (0, 0), (0, -1), "Helvetica-Bold"),
+        ("FONTNAME", (1, 0), (1, -1), "Helvetica"),
+        ("FONTSIZE", (0, 0), (-1, -1), 10),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#cbd5f5")),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+    ]))
+    story.append(meta_table)
+    story.append(Spacer(1, 0.2 * inch))
+
+    training = payload.get("training")
+    if training:
+        story.append(Paragraph("Entrenamiento", subtitle_style))
+        story.append(Paragraph(str(training), normal_style))
+
+    diet = payload.get("diet")
+    if diet:
+        story.append(Paragraph("Enfoque dietario", subtitle_style))
+        story.append(Paragraph(str(diet), normal_style))
+
+    calories = payload.get("calories")
+    macros = payload.get("macros")
+    if calories or macros:
+        story.append(Paragraph("Macros y calorias", subtitle_style))
+        if calories:
+            story.append(Paragraph(f"Calorias: {calories}", normal_style))
+        if macros:
+            story.append(Paragraph(f"Macros: {macros}", normal_style))
+
+    meals = payload.get("meals") or []
+    if meals:
+        story.append(Paragraph("Ejemplos de comidas", subtitle_style))
+        for meal in meals:
+            story.append(Paragraph(f"• {meal}", normal_style))
+
+    sources = payload.get("sources") or []
+    if sources:
+        story.append(Paragraph("Fuentes", subtitle_style))
+        for src in sources:
+            story.append(Paragraph(str(src), normal_style))
+
+    footer_style = ParagraphStyle(
+        "HeroFooter",
+        parent=styles["Normal"],
+        fontSize=8,
+        textColor=colors.HexColor("#94a3b8"),
+        alignment=TA_CENTER,
+    )
+    story.append(Spacer(1, 0.3 * inch))
+    story.append(Paragraph(f"Generado por Fitter • {datetime.now().strftime('%d/%m/%Y %H:%M')}", footer_style))
+
+    doc.build(story)
+    buffer.seek(0)
+    return buffer
+
+
 def generate_routine_docx(routine_data: Dict[str, Any]) -> BytesIO:
     """
     Genera un documento Word de la rutina de entrenamiento.

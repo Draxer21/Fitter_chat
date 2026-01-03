@@ -63,6 +63,11 @@ _BLUEPRINTS: Iterable[BlueprintSpec] = (
         label="metrics",
         import_path="backend.metrics.routes",
     ),
+    BlueprintSpec(
+        label="classes",
+        import_path="backend.classes.routes",
+        url_prefix="/classes",
+    ),
 )
 
 

@@ -12,6 +12,10 @@ import requests
 from dotenv import load_dotenv
 import threading
 
+from backend.planner.common import build_health_notes, parse_allergy_list, parse_health_flags
+from backend.planner.workouts import generate_workout_plan, pick_exercises
+from backend.planner.diets import generate_diet_plan, calc_target_kcal_and_macros, DIET_BASES
+
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.forms import FormValidationAction  # <- Validador de formularios
@@ -129,6 +133,32 @@ def fetch_user_profile(ctx: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]
         except (TypeError, ValueError):
             pass
     return profile
+
+
+def save_hero_plan(ctx: Optional[Dict[str, Any]], payload: Dict[str, Any]) -> bool:
+    if not ctx or not ctx.get("user_id") or not BACKEND_BASE_URL:
+        return False
+    headers: Dict[str, str] = {"Content-Type": "application/json"}
+    if CONTEXT_API_KEY:
+        headers["X-Context-Key"] = CONTEXT_API_KEY
+    body = {
+        "user_id": ctx.get("user_id"),
+        "plan_key": payload.get("plan_key"),
+        "title": payload.get("title"),
+        "payload": payload,
+        "source": "chat",
+    }
+    try:
+        resp = requests.post(
+            f"{BACKEND_BASE_URL.rstrip('/')}/profile/hero-plans",
+            json=body,
+            headers=headers,
+            timeout=CONTEXT_TIMEOUT,
+        )
+    except requests.RequestException as exc:
+        logger.warning("No se pudo guardar el entreno unico: %s", exc)
+        return False
+    return resp.status_code in {200, 201}
 
 
 def infer_training_level(profile: Optional[Dict[str, Any]]) -> Optional[str]:
@@ -357,15 +387,7 @@ class ActionFetchProfile(Action):
         tracker: Tracker,
         domain: Dict[Text, Any],
     ) -> List[Dict[Text, Any]]:
-        latest_intent = tracker.latest_message.get("intent", {}).get("name") or ""
-        target_map = {
-            "solicitar_rutina": "action_generar_rutina",
-            "solicitar_dieta": "action_generar_dieta",
-        }
-        target_action = target_map.get(latest_intent)
         events: List[Dict[Text, Any]] = []
-        if target_action:
-            events.append(SlotSet("servicio_pendiente", target_action))
 
         ctx = ensure_authenticated_context(tracker)
         if not ctx:
@@ -375,7 +397,11 @@ class ActionFetchProfile(Action):
             events.append(SlotSet("perfil_completo", False))
             return events
 
-        profile = fetch_user_profile(ctx)
+        try:
+            profile = fetch_user_profile(ctx)
+        except Exception as exc:
+            logger.warning("No se pudo obtener el perfil: %s", exc)
+            profile = None
         complete = profile_is_complete(profile)
 
         if profile:
@@ -402,12 +428,25 @@ class ActionFetchProfile(Action):
         dispatcher.utter_message(response="utter_perfil_resumen", resumen_perfil=summary)
 
         events.append(SlotSet("perfil_completo", complete))
+        pending_service = tracker.get_slot("servicio_pendiente")
+        if not pending_service:
+            latest_intent = tracker.latest_message.get("intent", {}).get("name")
+            if latest_intent == "solicitar_rutina":
+                pending_service = "rutina"
+                events.append(SlotSet("servicio_pendiente", "rutina"))
+            elif latest_intent == "solicitar_dieta":
+                pending_service = "dieta"
+                events.append(SlotSet("servicio_pendiente", "dieta"))
+
         if not complete:
             dispatcher.utter_message(response="utter_perfil_incompleto")
-            return events
+            return events + [FollowupAction("profile_form")]
 
-        if target_action:
-            return events + [FollowupAction(target_action)]
+        if pending_service == "rutina":
+            return events + [FollowupAction("action_generar_rutina")]
+        if pending_service == "dieta":
+            return events + [FollowupAction("action_generar_dieta")]
+
         return events
 
 
@@ -525,8 +564,10 @@ class ActionSubmitProfileForm(Action):
 
         target_action = tracker.get_slot("servicio_pendiente")
         followups: List[Any] = []
-        if target_action in {"action_generar_rutina", "action_generar_dieta"}:
-            followups.append(FollowupAction(str(target_action)))
+        if target_action == "rutina":
+            followups.append(FollowupAction("action_generar_rutina"))
+        elif target_action == "dieta":
+            followups.append(FollowupAction("action_generar_dieta"))
 
         events.append(SlotSet("servicio_pendiente", None))
 
@@ -617,141 +658,9 @@ def maybe_send_routine_email(
     return {"status": "ok"}
 
 
-def parse_health_flags(text: Optional[str]) -> Dict[str, bool]:
-    raw = (text or "").strip().lower()
-    if not raw or raw in {"ninguna", "ninguno", "ningunas", "ningunos", "sin", "no"}:
-        return {}
-    flags = {
-        "hipertension": any(k in raw for k in ("hipertension", "hipertensión", "presion alta", "tension alta")),
-        "cardiaco": any(k in raw for k in ("cardi", "corazon", "cardiopatia", "arritmia", "infarto")),
-        "diabetes": "diabet" in raw,
-        "asma": "asma" in raw or "respir" in raw,
-    }
-    return {k: v for k, v in flags.items() if v}
-
-
-def build_health_notes(flags: Dict[str, bool]) -> List[str]:
-    notes: List[str] = []
-    if flags.get("hipertension") or flags.get("cardiaco"):
-        notes.append("Manten intensidad moderada (RPE ≤ 7) y evita bloqueos de respiración.")
-    if flags.get("diabetes"):
-        notes.append("Controla glucosa antes/después y prioriza carbohidratos complejos.")
-    if flags.get("asma"):
-        notes.append("Incluye calentamientos largos y ten el inhalador disponible.")
-    return notes
-
-
-def parse_allergy_list(text: Optional[str]) -> List[str]:
-    raw = (text or "").strip().lower()
-    if not raw or raw in {"ninguna", "ninguno", "ningunas", "ningunos", "no"}:
-        return []
-    normalized = raw.replace(" y ", ",").replace("/", ",")
-    return [
-        item.strip()
-        for item in re.split(r"[;,]", normalized)
-        if item.strip()
-    ]
-
-
 # =====================
 # Dieta: cálculos opt-in
 # =====================
-def mifflin_st_jeor(weight_kg: float, height_cm: float, age: int, sex: Optional[str]) -> float:
-    """Calcula BMR usando Mifflin-St Jeor. sex: 'f' o 'm' (insensible a mayúsculas)."""
-    s = -161 if (str(sex or "").strip().lower().startswith("f")) else 5
-    try:
-        return 10.0 * float(weight_kg) + 6.25 * float(height_cm) - 5.0 * float(age) + s
-    except Exception:
-        return 0.0
-
-
-ACTIVITY_MULTIPLIERS: Dict[str, float] = {
-    "sedentario": 1.2,
-    "ligero": 1.375,
-    "moderado": 1.55,
-    "activo": 1.725,
-    "muy_activo": 1.9,
-}
-
-
-def calc_target_kcal_and_macros(
-    weight_kg: Optional[float],
-    height_cm: Optional[float],
-    age: Optional[int],
-    sex: Optional[str],
-    activity_level: Optional[str],
-    objetivo: str,
-) -> Dict[str, Any]:
-    """Retorna dict con bmr, maintenance_kcal, target_kcal y macros en gramos.
-    Esta función es opt-in y no altera el flujo por defecto si faltan datos.
-    """
-    result: Dict[str, Any] = {
-        "bmr": None,
-        "maintenance_kcal": None,
-        "target_kcal": None,
-        "proteinas_g": None,
-        "carbs_g": None,
-        "fats_g": None,
-        "note": None,
-    }
-
-    if not weight_kg or not height_cm:
-        result["note"] = "Insuficientes datos para cálculo (falta peso o altura)."
-        return result
-
-    # defaults
-    age_val = int(age) if (age is not None) else 30
-    sex_val = (sex or "m").strip().lower()
-    activity_key = (activity_level or "moderado").strip().lower()
-    mult = ACTIVITY_MULTIPLIERS.get(activity_key, ACTIVITY_MULTIPLIERS["moderado"])
-
-    bmr = mifflin_st_jeor(weight_kg, height_cm, age_val, sex_val)
-    maintenance = bmr * mult
-
-    # objective adjustment
-    objetivo_norm = (objetivo or "").strip().lower()
-    if objetivo_norm in {"bajar_grasa", "perder_grasa", "bajar grasa", "perder peso"}:
-        target = maintenance - 300
-    elif objetivo_norm in {"hipertrofia", "ganar masa", "ganar masa muscular"}:
-        target = maintenance + 200
-    else:
-        target = maintenance
-
-    # Proteínas: g/kg según objetivo
-    if objetivo_norm in {"hipertrofia", "ganar masa"}:
-        prot_per_kg = 1.8
-    elif objetivo_norm in {"bajar_grasa", "bajar grasa"}:
-        prot_per_kg = 2.0
-    else:
-        prot_per_kg = 1.6
-
-    proteinas_g = round(prot_per_kg * weight_kg)
-    proteinas_kcal = proteinas_g * 4
-
-    # distribuir resto: 25% kcal a grasas, resto a carbs
-    remaining_kcal = max(0, target - proteinas_kcal)
-    fats_kcal = remaining_kcal * 0.25
-    carbs_kcal = remaining_kcal - fats_kcal
-
-    fats_g = round(fats_kcal / 9)
-    carbs_g = round(carbs_kcal / 4)
-
-    result.update({
-        "bmr": round(bmr),
-        "maintenance_kcal": round(maintenance),
-        "target_kcal": round(target),
-        "proteinas_g": int(proteinas_g),
-        "carbs_g": int(carbs_g),
-        "fats_g": int(fats_g),
-    })
-
-    if age is None or sex is None:
-        result["note"] = "Algunos datos (edad/sexo) faltan; resultados aproximados."
-
-    return result
-
-
-
 def _slot(tracker: Tracker, name: str) -> Optional[str]:
     v = tracker.get_slot(name)
     return str(v).strip() if v is not None else None
@@ -1026,34 +935,15 @@ CATALOGO: Dict[str, Dict[str, List[Tuple[str, str, str]]]] = {
 }
 
 # Esquemas de series/reps/RPE por objetivo-nivel
-SCHEMES: Dict[str, Dict[str, Dict[str, Any]]] = {
-    "fuerza": {
-        "principiante": {"series": (3, 4), "reps": (4, 6), "rires": "RIR 2", "rpe": "RPE 8"},
-        "intermedio":   {"series": (4, 5), "reps": (3, 5), "rires": "RIR 1-2", "rpe": "RPE 8-9"},
-        "avanzado":     {"series": (5, 6), "reps": (2, 4), "rires": "RIR 0-1", "rpe": "RPE 9-9.5"}
-    },
-    "hipertrofia": {
-        "principiante": {"series": (3, 4), "reps": (8, 12), "rires": "RIR 2", "rpe": "RPE 7–8"},
-        "intermedio":   {"series": (3, 5), "reps": (6, 12), "rires": "RIR 1–2", "rpe": "RPE 7–9"},
-        "avanzado":     {"series": (4, 6), "reps": (6, 10), "rires": "RIR 0–1", "rpe": "RPE 8–9"}
-    },
-    "bajar_grasa": {
-        "principiante": {"series": (3, 4), "reps": (10, 15), "rires": "RIR 2–3", "rpe": "RPE 6–7"},
-        "intermedio":   {"series": (3, 4), "reps": (12, 15), "rires": "RIR 2–3", "rpe": "RPE 6–7"}
-    },
-    "resistencia": {
-        "principiante": {"series": (3, 4), "reps": (12, 20), "rires": "RIR 2–3", "rpe": "RPE 6–7"},
-        "intermedio":   {"series": (3, 4), "reps": (12, 20), "rires": "RIR 2-3", "rpe": "RPE 6-7"}
-    }
-}
 
-HERO_PROGRAMS: Dict[str, Dict[str, str]] = {
+HERO_PROGRAMS: Dict[str, Dict[str, Any]] = {
     "shonen": {
         "title": "Shonen Power",
         "duration": "8 semanas",
         "focus": "Fuerza + hipertrofia con circuitos metabólicos",
         "body_type": "Atlético y veloz",
         "training": "4-5 sesiones por semana con bloques de potencia, sprints ligeros y trabajo de core avanzado.",
+        "aliases": ["shonen power", "shonen"],
     },
     "ninja": {
         "title": "Ninja Agility",
@@ -1061,6 +951,7 @@ HERO_PROGRAMS: Dict[str, Dict[str, str]] = {
         "focus": "Movilidad, pliometría y acondicionamiento funcional",
         "body_type": "Ágil y definido",
         "training": "Sesiones cortas de alta frecuencia con énfasis en balance, saltos y control corporal.",
+        "aliases": ["ninja agility", "ninja"],
     },
     "mecha": {
         "title": "Mecha Endurance",
@@ -1068,194 +959,169 @@ HERO_PROGRAMS: Dict[str, Dict[str, str]] = {
         "focus": "Resistencia progresiva y trabajo aeróbico estructurado",
         "body_type": "Robusto y resistente",
         "training": "Ciclos largos con cardio guiado, fuerza básica y sesiones de recuperación activa.",
+        "aliases": ["mecha endurance", "mecha"],
     },
-}
-
-DIET_BASES: Dict[str, Dict[str, Any]] = {
-    "hipertrofia": {
-        "calorias": "Mantenimiento + 200 kcal",
-        "macros": {"proteinas": "2.0 g/kg", "carbohidratos": "5 g/kg", "grasas": "0.9 g/kg"},
+    "batman_bale": {
+        "title": "Batman (Christian Bale)",
+        "duration": "12 semanas",
+        "focus": "Fuerza + volumen con base en compuestos y acondicionamiento",
+        "body_type": "Atlético, hombros y espalda marcados",
+        "training": "Compuestos tipo press banca, sentadilla, peso muerto y trabajo funcional, con artes marciales.",
+        "diet": "Fase de aumento agresivo y luego dieta limpia hipercalorica con proteina magra y carbos complejos.",
+        "calories": "No especificadas; aumento agresivo al inicio y luego hipercalorica limpia.",
+        "macros": "No especificadas; prioridad a proteina magra y carbohidratos complejos.",
         "meals": [
-            {
-                "name": "Desayuno",
-                "items": ["Avena con leche descremada y frutos rojos", "Tortilla de 2 huevos + 2 claras"],
-                "notes": "Agrega una fruta extra si entrenas en la manana."
-            },
-            {
-                "name": "Almuerzo",
-                "items": ["Pechuga de pollo a la plancha", "Arroz integral", "Ensalada con aceite de oliva"],
-                "notes": "Incluye verduras de colores para micronutrientes."
-            },
-            {
-                "name": "Merienda",
-                "items": ["Yogur griego natural", "Nueces o mani sin sal"],
-                "notes": "Ideal 90 min antes del entrenamiento."
-            },
-            {
-                "name": "Cena",
-                "items": ["Salmón u otra proteina grasa", "Batata asada", "Verduras al vapor"],
-                "notes": "Añade semillas de chia o lino para omega 3."
-            }
+            "Avena con batido de proteina",
+            "Salmon con arroz y batata",
+            "Pasta o pan integral con proteina magra",
+            "Batido de proteina post-entreno",
         ],
-        "hydration": "2.5 L de agua con un vaso adicional por cada 20 min de entrenamiento intenso."
+        "sources": [
+            "https://www.gq.com.mx/entretenimiento/articulo/christian-bale-rutinas-de-ejercicio-en-su-carrera",
+            "https://steelsupplements.com/blogs/steel-blog/christian-bales-batman-workout-routine-and-diet-plan",
+            "https://forums.superherohype.com/threads/bales-diet-and-training-for-bb.311673/",
+        ],
+        "aliases": ["batman bale", "batman christian bale", "christian bale", "batman"],
     },
-    "fuerza": {
-        "calorias": "Mantenimiento ± 0-100 kcal",
-        "macros": {"proteinas": "1.8 g/kg", "carbohidratos": "4 g/kg", "grasas": "1 g/kg"},
+    "batman_affleck": {
+        "title": "Batman (Ben Affleck)",
+        "duration": "12 semanas",
+        "focus": "Hipertrofia con enfasis en fuerza maxima",
+        "body_type": "Masivo y denso",
+        "training": "5 sesiones/semana con cargas altas, bajo volumen de cardio y enfoque en espalda, pecho y hombro.",
+        "diet": "Dieta six-pack, sin lacteos, 6 comidas diarias y control de sodio.",
+        "calories": "3500-4000 kcal/dia",
+        "macros": "Proteina alta, carbohidratos complejos moderados, grasas saludables; sodio 1500-2000 mg.",
         "meals": [
-            {
-                "name": "Desayuno",
-                "items": ["Pan integral con palta", "Huevos revueltos", "Cafe sin azucar"],
-                "notes": "Añade sal y potasio moderados para rendimiento."
-            },
-            {
-                "name": "Almuerzo",
-                "items": ["Carne magra", "Quinoa", "Brocoli al vapor"],
-                "notes": "Utiliza hierbas en vez de salsas altas en sodio."
-            },
-            {
-                "name": "Snack post entrenamiento",
-                "items": ["Batido de proteina", "Banana"],
-                "notes": "Consumir dentro de 45 min tras entrenar."
-            },
-            {
-                "name": "Cena",
-                "items": ["Pavo o tofu", "Pure de papas", "Verduras salteadas"],
-                "notes": "Prioriza grasas saludables como aceite de oliva."
-            }
+            "Claras con avena y banana",
+            "Pechuga de pollo con camote",
+            "Salmon con brocoli",
+            "Batido de proteina con frutos secos",
         ],
-        "hydration": "2.2 L de agua + 500 ml durante la sesion con electrolitos ligeros."
+        "sources": [
+            "https://manofmany.com/culture/fitness/ben-affleck-batman-workout-diet-plan",
+        ],
+        "aliases": ["batman affleck", "batman ben affleck", "ben affleck"],
     },
-    "bajar_grasa": {
-        "calorias": "Déficit aproximado -300 kcal",
-        "macros": {"proteinas": "2.0 g/kg", "carbohidratos": "3 g/kg", "grasas": "0.8 g/kg"},
+    "batman_pattinson": {
+        "title": "Batman (Robert Pattinson)",
+        "duration": "8 semanas",
+        "focus": "Fuerza relativa, movilidad y acondicionamiento funcional",
+        "body_type": "Fibroso y agil",
+        "training": "4 sesiones/semana con calistenia, circuitos y trabajo tipo box/HIIT.",
+        "diet": "Mantenimiento o ligero deficit, proteina alta, carbos fibrosos y alcohol casi nulo.",
+        "calories": "~2800 kcal/dia",
+        "macros": "Proteina ~200-220 g/dia; carbos fibrosos; grasas moderadas.",
         "meals": [
-            {
-                "name": "Desayuno",
-                "items": ["Smoothie verde (espinaca, pepino, manzana)", "Yogur alto en proteina"],
-                "notes": "Añade semillas para saciedad."
-            },
-            {
-                "name": "Almuerzo",
-                "items": ["Filete de pescado blanco", "Ensalada grande con legumbres"],
-                "notes": "Evita aderezos con azúcar."
-            },
-            {
-                "name": "Colacion",
-                "items": ["Hummus con zanahoria y apio"],
-                "notes": "Buena opcion baja en calorias y alta en fibra."
-            },
-            {
-                "name": "Cena",
-                "items": ["Wok de tofu o pollo", "Verduras salteadas", "Arroz de coliflor"],
-                "notes": "Mantén las porciones controladas."
-            }
+            "Avena con huevo cocido, jugo de naranja y te verde",
+            "Atun con tortitas de arroz y mantequilla de mani",
+            "Pollo a la plancha con papa al horno pre-entreno",
+            "Requeson con fruta",
+            "Filete magro con arroz y vegetales",
+            "Batido de proteina con banana y moras",
         ],
-        "hydration": "3.0 L de agua repartidos en el dia (apoyo a saciedad)."
+        "sources": [
+            "https://manofmany.com/culture/fitness/robert-pattinson-batman-workout-diet-plan",
+            "https://www.menshealth.com/fitness/a39367846/robert-pattinson-batman-diet-plan-aseel-soueid/",
+        ],
+        "aliases": ["batman pattinson", "batman robert pattinson", "robert pattinson", "pattinson"],
     },
-    "resistencia": {
-        "calorias": "Mantenimiento + 100 kcal en dias de entrenamiento largo",
-        "macros": {"proteinas": "1.6 g/kg", "carbohidratos": "5-7 g/kg", "grasas": "0.8 g/kg"},
+    "capitan_america_evans": {
+        "title": "Capitan America (Chris Evans)",
+        "duration": "12 semanas",
+        "focus": "Hipertrofia total y fuerza con alto volumen",
+        "body_type": "Musculoso y equilibrado",
+        "training": "5-6 sesiones/semana con division torso-pierna, trabajo accesorio y core frecuente.",
+        "diet": "Superavit moderado-alto con muchas comidas, carbos complejos y proteina alta.",
+        "calories": "~4000 kcal/dia",
+        "macros": "Proteina ~2 g/kg (200-240 g/dia), carbos complejos altos, grasas saludables.",
         "meals": [
-            {
-                "name": "Desayuno pre entrenamiento",
-                "items": ["Avena con banana y miel", "Bebida isotonica suave"],
-                "notes": "Consumir 90 min antes de la sesion."
-            },
-            {
-                "name": "Almuerzo",
-                "items": ["Pasta integral con pollo", "Verduras salteadas"],
-                "notes": "Agrega sodio controlado si sudas mucho."
-            },
-            {
-                "name": "Snack",
-                "items": ["Barra casera de avena y frutos secos"],
-                "notes": "Ideal entre sesiones dobles."
-            },
-            {
-                "name": "Cena",
-                "items": ["Legumbres (lentejas/ch garbanzos)", "Ensalada variada", "Fruta"],
-                "notes": "Recupera glucogeno con carbohidratos complejos."
-            }
+            "Avena con frutas y nueces",
+            "Batido de suero + BCAA",
+            "Manzana con almendras pre-entreno",
+            "Ensalada de pollo con arroz integral",
+            "Pescado o carne magra con verduras",
+            "Caseina antes de dormir",
         ],
-        "hydration": "Bebe 35 ml por kg de peso + reposiciona 500 ml por cada hora de cardio."
+        "sources": [
+            "https://manofmany.com/culture/fitness/chris-evans-captain-america-workout-diet-plan",
+            "https://www.gq.com.mx/cuidados/fitness/articulos/rutina-de-ejercicio-de-chris-evans/3021",
+        ],
+        "aliases": ["capitan america", "capitan america chris evans", "chris evans"],
     },
-    "equilibrada": {
-        "calorias": "Mantenimiento",
-        "macros": {"proteinas": "1.6 g/kg", "carbohidratos": "4 g/kg", "grasas": "0.9 g/kg"},
+    "superman_cavill": {
+        "title": "Superman (Henry Cavill)",
+        "duration": "12 semanas",
+        "focus": "Hipertrofia + fuerza con alto volumen",
+        "body_type": "Masivo y definido",
+        "training": "Fases de fuerza maxima y luego circuitos intensos tipo acondicionamiento.",
+        "diet": "Fase de volumen hipercalorica y luego ajuste a alimentos mas magros.",
+        "calories": "~5000 kcal/dia (fase volumen)",
+        "macros": "Proteina ~300 g/dia; carbos altos; grasas saludables.",
         "meals": [
-            {
-                "name": "Desayuno",
-                "items": ["Yogur natural con granola", "Fruta de temporada"],
-                "notes": "Incluye frutos secos si necesitas energia extra."
-            },
-            {
-                "name": "Almuerzo",
-                "items": ["Pechuga de pollo", "Arroz integral", "Ensalada de hojas"],
-                "notes": "Sazona con hierbas y limon."
-            },
-            {
-                "name": "Merienda",
-                "items": ["Sandwich integral con pavo", "Verduras crudas"],
-                "notes": "Buena combinacion de proteina y carbohidrato."
-            },
-            {
-                "name": "Cena",
-                "items": ["Omelette de verduras", "Pan integral o quinoa"],
-                "notes": "Añade aguacate para grasas saludables."
-            }
+            "5 claras + 2 yemas + filete + batido de avena",
+            "Requeson con uvas",
+            "Curry de pollo con arroz jazmin",
+            "Carne magra con vegetales",
+            "Batido de caseina nocturno",
         ],
-        "hydration": "2.0 L de agua al dia como base."
-    }
+        "sources": [
+            "http://abcnews.go.com/blogs/entertainment/2013/06/henry-cavill-made-enormous-changes-using-man-of-steel-workout",
+            "https://manofmany.com/culture/fitness/henry-cavills-superman-diet-workout-plan",
+        ],
+        "aliases": ["superman cavill", "henry cavill", "superman"],
+    },
+    "superman_corenswet": {
+        "title": "Superman (David Corenswet)",
+        "duration": "20 semanas",
+        "focus": "Volumen con sobrecarga progresiva",
+        "body_type": "Muy masivo",
+        "training": "Split empuje-traccion-piernas con progresion semanal y tecnica estricta.",
+        "diet": "Volumen limpio con 5 comidas solidas y 2 batidos hipercaloricos.",
+        "calories": "4500-6000 kcal/dia",
+        "macros": "Proteina ~250 g/dia; carbos abundantes; grasas moderadas.",
+        "meals": [
+            "4 huevos + avena con mantequilla de mani + leche entera",
+            "Pollo con arroz",
+            "Carne roja con pasta y verduras",
+            "Batido hipercalorico (~1200 kcal)",
+            "Yogur griego entero antes de dormir",
+        ],
+        "sources": [
+            "https://www.gq.com/story/david-corenswet-superman-legacy-workout-1",
+            "https://www.eonline.com/news/1419758/supermans-david-corenswet-details-diet-and-workout-transformation",
+            "https://menshealth.com.au/david-corenswet-workout-routine-diet-plan/",
+            "https://www.eatingwell.com/david-corenswet-weight-gain-for-superman-11769355",
+        ],
+        "aliases": ["superman corenswet", "david corenswet", "corenswet"],
+    },
+    "wolverine_jackman": {
+        "title": "Wolverine (Hugh Jackman)",
+        "duration": "12 semanas",
+        "focus": "Fuerza + hipertrofia con periodizacion",
+        "body_type": "Muy musculoso y definido",
+        "training": "Basicos pesados con progresion y bloques 4x10-12 a 4x5.",
+        "diet": "Ayuno 16/8 con ventana de comidas densas en calorias.",
+        "calories": "~4000 kcal/dia (fase volumen)",
+        "macros": "230 g proteina / 230 g carbohidratos / 230 g grasas aprox.",
+        "meals": [
+            "Avena con arandanos y 2 huevos",
+            "Filete magro + batata + brocoli",
+            "Pechuga de pollo con arroz integral",
+            "Batido de suero + nueces",
+            "Pescado blanco con aguacate y brocoli",
+        ],
+        "sources": [
+            "https://www.businessinsider.com/how-hugh-jackman-got-in-shape-for-logan-2017-3",
+            "https://www.businessinsider.com/4000-calorie-diet-hugh-jackman-get-shredded-to-play-wolverine-2020-7",
+        ],
+        "aliases": ["wolverine", "hugh jackman", "jackman"],
+    },
 }
 
 # =========================================================
 # Banco de ejercicios y selección
 # =========================================================
-def _build_bank_por_prioridad(grupo: str, equip: str) -> List[Tuple[str, str]]:
-    """
-    Construye un pool de ejercicios (nombre, url) según prioridad:
-    1) grupo + equip
-    2) grupo + cualquier equip disponible
-    3) fallback: fullbody + mancuernas
-    """
-    g = (grupo or "").strip().lower()
-    e = _equip_key_norm(equip)
-
-    pool: List[Tuple[str, str]] = []
-
-    # 1) grupo + equip
-    if g in CATALOGO and e in CATALOGO[g]:
-        pool += [(n, u) for (n, u, _src) in CATALOGO[g][e]]
-
-    # 2) grupo + otros equip si 1) quedó corto
-    if g in CATALOGO:
-        for e2, lista in CATALOGO[g].items():
-            if e2 == e:
-                continue
-            pool += [(n, u) for (n, u, _src) in lista]
-
-    # 3) fallback adicional (se suma al final)
-    if "fullbody" in CATALOGO and "mancuernas" in CATALOGO["fullbody"]:
-        pool += [(n, u) for (n, u, _src) in CATALOGO["fullbody"]["mancuernas"]]
-
-    # deduplicar por nombre
-    seen = set()
-    unique_pool: List[Tuple[str, str]] = []
-    for n, u in pool:
-        if n not in seen:
-            seen.add(n)
-            unique_pool.append((n, u))
-    return unique_pool
-
-def pick_exercises(grupo: str, equip: str, n: int) -> List[Tuple[str, str]]:
-    """Devuelve n ejercicios (nombre, url) priorizando el banco más relevante, sin duplicados."""
-    pool = _build_bank_por_prioridad(grupo, equip)
-    if not pool:
-        return []
-    random.shuffle(pool)
-    return pool[:max(0, n)]
-
 # =========================================================
 # “BD” en memoria (demo) para reservas
 # =========================================================
@@ -1267,6 +1133,155 @@ def _fecha_es_pasada(iso_yyyy_mm_dd: str) -> bool:
         return d < date.today()
     except Exception:
         return False
+
+def _parse_iso_datetime(value: Optional[str]) -> Optional[datetime]:
+    if not value:
+        return None
+    v = value.strip()
+    if v.endswith("Z"):
+        v = v[:-1] + "+00:00"
+    try:
+        return datetime.fromisoformat(v)
+    except Exception:
+        return None
+
+def _fetch_public_classes(search: Optional[str] = None) -> List[Dict[str, Any]]:
+    if not BACKEND_BASE_URL:
+        return []
+    params: Dict[str, str] = {}
+    if search:
+        params["search"] = str(search).strip()
+    try:
+        resp = requests.get(
+            f"{BACKEND_BASE_URL.rstrip('/')}/classes/public",
+            params=params if params else None,
+            timeout=CONTEXT_TIMEOUT,
+        )
+    except requests.RequestException as exc:
+        logger.warning("No se pudo obtener clases publicas: %s", exc)
+        return []
+    if resp.status_code != 200:
+        logger.warning("Clases publicas no disponibles (status=%s)", resp.status_code)
+        return []
+    try:
+        payload = resp.json()
+    except Exception:
+        return []
+    classes = payload.get("classes") if isinstance(payload, dict) else None
+    return classes if isinstance(classes, list) else []
+
+def _fetch_public_sessions(class_id: Optional[int], start_iso: Optional[str], end_iso: Optional[str]) -> List[Dict[str, Any]]:
+    if not BACKEND_BASE_URL:
+        return []
+    params: Dict[str, str] = {}
+    if class_id is not None:
+        params["class_id"] = str(class_id)
+    if start_iso:
+        params["start"] = start_iso
+    if end_iso:
+        params["end"] = end_iso
+    try:
+        resp = requests.get(
+            f"{BACKEND_BASE_URL.rstrip('/')}/classes/public/sessions",
+            params=params if params else None,
+            timeout=CONTEXT_TIMEOUT,
+        )
+    except requests.RequestException as exc:
+        logger.warning("No se pudo obtener sesiones publicas: %s", exc)
+        return []
+    if resp.status_code != 200:
+        logger.warning("Sesiones publicas no disponibles (status=%s)", resp.status_code)
+        return []
+    try:
+        payload = resp.json()
+    except Exception:
+        return []
+    sessions = payload.get("sessions") if isinstance(payload, dict) else None
+    return sessions if isinstance(sessions, list) else []
+
+def _norm_class_name(value: Any) -> str:
+    return str(value or "").strip().lower()
+
+def _resolve_class_match(name: str, classes: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    if not name or not classes:
+        return None
+    norm = _norm_class_name(name)
+    exact = [c for c in classes if _norm_class_name(c.get("name")) == norm]
+    if exact:
+        return exact[0]
+    partial = [c for c in classes if norm in _norm_class_name(c.get("name"))]
+    if len(partial) == 1:
+        return partial[0]
+    return None
+
+def _format_session_label(session: Dict[str, Any]) -> Optional[str]:
+    start = _parse_iso_datetime(session.get("start_time"))
+    if not start:
+        return None
+    return f"{start.date().isoformat()} {start.strftime('%H:%M')}"
+
+class ValidateReservaForm(FormValidationAction):
+    def name(self) -> Text:
+        return "validate_reserva_form"
+
+    def validate_clase(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        clase = str(value or "").strip()
+        if not clase:
+            dispatcher.utter_message(text="Necesito el nombre de la clase para reservar.")
+            return {"clase": None}
+
+        classes = _fetch_public_classes()
+        if not classes:
+            return {"clase": clase}
+
+        match = _resolve_class_match(clase, classes)
+        if match:
+            return {"clase": match.get("name")}
+
+        opciones = [c.get("name") for c in classes if c.get("name")]
+        opciones = opciones[:6]
+        if opciones:
+            dispatcher.utter_message(text="No encontre esa clase. Opciones: " + ", ".join(opciones))
+        else:
+            dispatcher.utter_message(text="No encontre esa clase. Prueba con otro nombre.")
+        return {"clase": None}
+
+    def validate_fecha(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        fecha_raw = str(value or "").strip()
+        fecha = _normaliza_fecha(fecha_raw)
+        if not fecha:
+            dispatcher.utter_message(text="Necesito una fecha valida (ej. 2025-01-10).")
+            return {"fecha": None}
+        if isinstance(fecha, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", fecha) and _fecha_es_pasada(fecha):
+            dispatcher.utter_message(text="Esa fecha ya paso. Elige otra, por favor.")
+            return {"fecha": None}
+        return {"fecha": fecha}
+
+    def validate_hora(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        hora_raw = str(value or "").strip()
+        hora = _normaliza_hora(hora_raw)
+        if not hora or not re.match(r"^\d{2}:\d{2}$", hora):
+            dispatcher.utter_message(text="Necesito una hora valida (ej. 18:30).")
+            return {"hora": None}
+        return {"hora": hora}
 
 # =========================================================
 # VALIDATOR del FORM rutina_form (evita loops y normaliza)
@@ -1519,8 +1534,12 @@ class ValidateHeroForm(FormValidationAction):
         if not norm:
             return None
         for key, data in HERO_PROGRAMS.items():
-            if key in norm or self._norm(data["title"]) in norm:
+            title = self._norm(data.get("title"))
+            if key in norm or (title and title in norm):
                 return key
+            for alias in data.get("aliases", []):
+                if self._norm(alias) in norm:
+                    return key
         return None
 
     def validate_hero_programa(
@@ -1534,7 +1553,12 @@ class ValidateHeroForm(FormValidationAction):
         if matched:
             return {"hero_programa": matched}
         dispatcher.utter_message(
-            text="No reconocí ese plan. Elige entre Shonen Power, Ninja Agility o Mecha Endurance."
+            text=(
+                "No reconocí ese plan. Elige entre Shonen Power, Ninja Agility, Mecha Endurance, "
+                "Batman (Christian Bale), Batman (Ben Affleck), Batman (Robert Pattinson), "
+                "Capitan America (Chris Evans), Superman (Henry Cavill), Superman (David Corenswet) "
+                "o Wolverine (Hugh Jackman)."
+            )
         )
         return {"hero_programa": None}
 
@@ -1749,10 +1773,15 @@ class ActionGenerarRutina(Action):
             context_payload["medical_conditions"] = condiciones
         if alergias and alergias.lower() not in {"", "ninguna", "ninguno", "no"}:
             context_payload["allergies"] = alergias
+        if dislikes and str(dislikes).strip():
+            context_payload["dislikes"] = dislikes
         if context_payload:
             send_context_update(tracker.sender_id, context_payload)
 
-        return [SlotSet("ultima_rutina", routine_summary)]
+        return [
+            SlotSet("ultima_rutina", routine_summary),
+            SlotSet("servicio_pendiente", None),
+        ]
 
 # =========================================================
 # ACCION: Generar dieta complementaria
@@ -1768,6 +1797,7 @@ class ActionGenerarDieta(Action):
         
         ctx = ensure_authenticated_context(tracker)
         profile_data = fetch_user_profile(ctx)
+        ctx_dislikes = ctx.get("dislikes") if ctx else None
 
         profile_goal = None
         if profile_data and profile_data.get("primary_goal"):
@@ -1779,6 +1809,7 @@ class ActionGenerarDieta(Action):
         inferred_level = infer_training_level(profile_data)
         nivel = (_slot(tracker, "nivel") or inferred_level or "intermedio").lower()
         alergias = _slot(tracker, "alergias") or (profile_data.get("allergies") if profile_data else None) or "ninguna"
+        dislikes = _slot(tracker, "no_gusta") or ctx_dislikes
         condiciones = _slot(tracker, "condiciones_salud") or (profile_data.get("medical_conditions") if profile_data else None) or "ninguna"
 
         # If essential info is missing (objetivo explicit or peso), ask like routines do
@@ -1817,6 +1848,7 @@ class ActionGenerarDieta(Action):
         plan_label = objetivo if objetivo in DIET_BASES else "equilibrada"
         health_flags = parse_health_flags(condiciones)
         allergy_list = parse_allergy_list(alergias)
+        dislike_list = parse_allergy_list(dislikes)
 
         adjustments: List[str] = []
         if health_flags.get("hipertension") or health_flags.get("cardiaco"):
@@ -1834,13 +1866,16 @@ class ActionGenerarDieta(Action):
             if allergy_list and any(token in joined for token in allergy_list):
                 allergen_hits.append({"meal": meal.get("name"), "items": meal.get("items", [])})
                 continue
+            if dislike_list and any(token in joined for token in dislike_list):
+                allergen_hits.append({"meal": meal.get("name"), "items": meal.get("items", [])})
+                continue
             filtered_meals.append(meal)
 
         if not filtered_meals:
             filtered_meals = meals
 
-        if allergy_list and allergen_hits:
-            adjustments.append("Reemplaza ingredientes en las comidas marcadas por alternativas seguras.")
+        if (allergy_list or dislike_list) and allergen_hits:
+            adjustments.append("Reemplaza ingredientes en las comidas marcadas por alternativas seguras o evitadas.")
 
         macros = plan.get("macros", {})
         hydration = plan.get("hydration")
@@ -1890,8 +1925,10 @@ class ActionGenerarDieta(Action):
                 lines.append(f"- {note}")
         if allergy_list and not allergen_hits:
             lines.append("Se han considerado tus alergias registradas.")
-        if not allergy_list:
-            lines.append("Si tienes alergias alimentarias, avisa para personalizar mas el plan.")
+        if dislike_list and not allergen_hits:
+            lines.append("Se han evitado tus alimentos no deseados.")
+        if not allergy_list and not dislike_list:
+            lines.append("Si tienes alergias o alimentos que no te gusten, avisa para personalizar mas el plan.")
         if profile_data:
             perfil_bits: List[str] = []
             if profile_data.get("weight_kg"):
@@ -1922,6 +1959,7 @@ class ActionGenerarDieta(Action):
                 "hydration": hydration,
                 "health_adjustments": adjustments or None,
                 "allergies": allergy_list or None,
+                "dislikes": dislike_list or None,
                 "medical_conditions": condiciones if condiciones.lower() not in {"", "ninguna", "ninguno", "no"} else None,
                 "allergen_hits": allergen_hits or None,
             },
@@ -2054,10 +2092,15 @@ class ActionGenerarDieta(Action):
             context_payload["medical_conditions"] = condiciones
         if alergias and alergias.lower() not in {"", "ninguna", "ninguno", "no"}:
             context_payload["allergies"] = alergias
+        if dislikes and str(dislikes).strip():
+            context_payload["dislikes"] = dislikes
         if context_payload:
             send_context_update(tracker.sender_id, context_payload)
 
-        return [SlotSet("ultima_dieta", diet_payload)]
+        return [
+            SlotSet("ultima_dieta", diet_payload),
+            SlotSet("servicio_pendiente", None),
+        ]
 
 
 
@@ -2071,11 +2114,17 @@ class ActionInscribirEntrenoUnico(Action):
         tracker: Tracker,
         domain: Dict[Text, Any],
     ) -> List[Dict[Text, Any]]:
+        ctx = ensure_authenticated_context(tracker)
         raw_key = _slot(tracker, "hero_programa") or "shonen"
         key = raw_key.lower()
         plan = HERO_PROGRAMS.get(key, HERO_PROGRAMS["shonen"])
         inicio = tracker.get_slot("hero_inicio") or "cuando estés listo"
         equip = tracker.get_slot("hero_equipo") or "solo peso corporal"
+        diet = plan.get("diet")
+        calories = plan.get("calories")
+        macros = plan.get("macros")
+        meals = plan.get("meals") or []
+        sources = plan.get("sources") or []
 
         header = f"Plan {plan['title']} — {plan['duration']}"
         lines = [
@@ -2087,6 +2136,39 @@ class ActionInscribirEntrenoUnico(Action):
             plan["training"],
             "Te enviaré recordatorios y recomendaciones adicionales si completas tu perfil.",
         ]
+        if diet:
+            lines.insert(5, f"Enfoque dietario: {diet}")
+        if calories:
+            lines.append(f"Calorias diarias: {calories}")
+        if macros:
+            lines.append(f"Macros: {macros}")
+        if meals:
+            lines.append("Ejemplos de comidas: " + "; ".join(meals))
+        if sources:
+            lines.append("Fuentes: " + " | ".join(sources))
+        if ctx and plan.get("title"):
+            saved = save_hero_plan(
+                ctx,
+                {
+                    "type": "hero_training_plan",
+                    "plan_key": key,
+                    "title": plan["title"],
+                    "duration": plan["duration"],
+                    "focus": plan["focus"],
+                    "body_type": plan["body_type"],
+                    "training": plan["training"],
+                    "diet": diet,
+                    "calories": calories,
+                    "macros": macros,
+                    "meals": meals,
+                    "sources": sources,
+                    "start": inicio,
+                    "equipment": equip,
+                },
+            )
+            if saved:
+                lines.append("Guarde este entreno unico en tu perfil para consultarlo cuando quieras.")
+
         dispatcher.utter_message(text="\n".join(lines))
         dispatcher.utter_message(json_message={
             "type": "hero_training_plan",
@@ -2097,6 +2179,11 @@ class ActionInscribirEntrenoUnico(Action):
             "body_type": plan["body_type"],
             "start": inicio,
             "equipment": equip,
+            "diet": diet,
+            "calories": calories,
+            "macros": macros,
+            "meals": meals,
+            "sources": sources,
         })
 
         return [
@@ -2237,6 +2324,54 @@ class ActionCrearReserva(Action):
         if isinstance(fecha, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", fecha) and _fecha_es_pasada(fecha):
             dispatcher.utter_message(text=f"La fecha {fecha} ya pasó. Elige otra, por favor.")
             return []
+
+        classes = _fetch_public_classes()
+        if classes:
+            match = _resolve_class_match(clase, classes)
+            if not match:
+                opciones = [c.get("name") for c in classes if c.get("name")][:6]
+                if opciones:
+                    dispatcher.utter_message(text="No encontre esa clase. Opciones: " + ", ".join(opciones))
+                else:
+                    dispatcher.utter_message(text="No encontre esa clase. Prueba con otro nombre.")
+                return [SlotSet("clase", None), FollowupAction("reserva_form")]
+
+            class_id = match.get("id")
+            class_name = match.get("name") or clase
+            if isinstance(fecha, str):
+                day_start = f"{fecha}T00:00:00"
+                day_end = f"{fecha}T23:59:59"
+            else:
+                day_start = None
+                day_end = None
+            sessions = _fetch_public_sessions(class_id, day_start, day_end)
+            if sessions:
+                match_session = None
+                for session in sessions:
+                    start = _parse_iso_datetime(session.get("start_time"))
+                    if not start:
+                        continue
+                    if start.date().isoformat() == fecha and start.strftime("%H:%M") == hora:
+                        match_session = session
+                        break
+                if not match_session:
+                    opciones = []
+                    for session in sessions:
+                        label = _format_session_label(session)
+                        if label:
+                            opciones.append(label)
+                    if opciones:
+                        dispatcher.utter_message(
+                            text="No hay clase en ese horario. Opciones: " + ", ".join(opciones[:6])
+                        )
+                    else:
+                        dispatcher.utter_message(text="No hay horarios para esa fecha.")
+                    return [SlotSet("hora", None), FollowupAction("reserva_form")]
+            else:
+                dispatcher.utter_message(text="No hay clases disponibles para esa fecha.")
+                return [SlotSet("fecha", None), SlotSet("hora", None), FollowupAction("reserva_form")]
+
+            clase = class_name
 
         reserva = {
             "user": tracker.sender_id,

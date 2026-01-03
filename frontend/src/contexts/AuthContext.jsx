@@ -193,6 +193,84 @@ export function AuthProvider({ children }) {
     }
   }, [applyAuth, resetMfa, resetProfile]);
 
+  const loginWithGoogle = useCallback(
+    async (credential, options = {}) => {
+      if (!credential) {
+        throw new Error("Token de Google requerido");
+      }
+      setStatus("authenticating");
+      try {
+        const data = await API.auth.googleLogin(credential, options);
+        const normalized = applyAuth({ auth: true, user: data?.user, is_admin: data?.user?.is_admin ?? data?.is_admin });
+        setError(null);
+        loadMfaStatus().catch(() => {});
+        loadProfile().catch(() => {});
+        return normalized;
+      } catch (err) {
+        setError(err);
+        throw err;
+      } finally {
+        setInitialized(true);
+        setStatus("ready");
+      }
+    },
+    [applyAuth, loadMfaStatus, loadProfile]
+  );
+
+  const updateUsername = useCallback(
+    async (username) => {
+      if (!username) {
+        throw new Error("Nombre de usuario requerido");
+      }
+      try {
+        const data = await API.auth.updateUsername(username);
+        const normalized = applyAuth({ auth: true, user: data?.user, is_admin: data?.user?.is_admin ?? data?.is_admin });
+        setError(null);
+        return normalized?.user;
+      } catch (err) {
+        setError(err);
+        throw err;
+      }
+    },
+    [applyAuth]
+  );
+
+  const updateEmail = useCallback(
+    async (email) => {
+      if (!email) {
+        throw new Error("Correo requerido");
+      }
+      try {
+        const data = await API.auth.updateEmail(email);
+        const normalized = applyAuth({ auth: true, user: data?.user, is_admin: data?.user?.is_admin ?? data?.is_admin });
+        setError(null);
+        return normalized?.user;
+      } catch (err) {
+        setError(err);
+        throw err;
+      }
+    },
+    [applyAuth]
+  );
+
+  const updatePassword = useCallback(
+    async ({ currentPassword, newPassword, confirmPassword } = {}) => {
+      if (!newPassword) {
+        throw new Error("Nueva contraseña requerida");
+      }
+      try {
+        const data = await API.auth.updatePassword({ currentPassword, newPassword, confirmPassword });
+        const normalized = applyAuth({ auth: true, user: data?.user, is_admin: data?.user?.is_admin ?? data?.is_admin });
+        setError(null);
+        return normalized?.user;
+      } catch (err) {
+        setError(err);
+        throw err;
+      }
+    },
+    [applyAuth]
+  );
+
   const startMfaSetup = useCallback(async () => {
     if (!authState?.auth) {
       throw new Error("No autenticado");
@@ -303,7 +381,11 @@ export function AuthProvider({ children }) {
       initialized,
       error,
       login,
+      loginWithGoogle,
       logout,
+      updateUsername,
+      updateEmail,
+      updatePassword,
       refresh,
       setUser,
       profile: profileState.data,
@@ -318,7 +400,7 @@ export function AuthProvider({ children }) {
       confirmMfa,
       disableMfa,
     }),
-    [authState, status, initialized, error, login, logout, refresh, setUser, profileState, loadProfile, updateProfile, mfaState, loadMfaStatus, startMfaSetup, confirmMfa, disableMfa]
+    [authState, status, initialized, error, login, loginWithGoogle, logout, refresh, setUser, profileState, loadProfile, updateProfile, updateUsername, updateEmail, updatePassword, mfaState, loadMfaStatus, startMfaSetup, confirmMfa, disableMfa]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

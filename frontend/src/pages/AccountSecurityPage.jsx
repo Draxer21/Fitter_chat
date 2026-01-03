@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useLocale } from "../contexts/LocaleContext";
+import ProfileSectionNav from "../components/ProfileSectionNav";
 import "../styles/account-security.css";
 
 const formatDateTime = (isoString) => {
@@ -17,6 +19,7 @@ const formatDateTime = (isoString) => {
 };
 
 export default function AccountSecurityPage() {
+  const { t } = useLocale();
   const {
     isAuthenticated,
     mfa,
@@ -125,6 +128,7 @@ export default function AccountSecurityPage() {
   return (
     <main className="account-security-page py-5">
       <div className="container account-security-shell">
+        <ProfileSectionNav />
         <div className="row justify-content-center">
           <div className="col-xl-8 col-lg-9">
             <section className="security-hero mb-4">

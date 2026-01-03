@@ -19,6 +19,7 @@ class ChatUserContext(db.Model):
     chat_id = db.Column(db.String(80), nullable=True, index=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
     allergies = db.Column(db.Text, nullable=True)
+    dislikes = db.Column(db.Text, nullable=True)
     medical_conditions = db.Column(db.Text, nullable=True)
     last_routine = db.Column(db.JSON, nullable=True)
     last_diet = db.Column(db.JSON, nullable=True)
@@ -63,6 +64,10 @@ class ChatUserContext(db.Model):
         self.medical_conditions = value.strip() if value else None
         self.touch()
 
+    def set_dislikes(self, value: Optional[str]) -> None:
+        self.dislikes = value.strip() if value else None
+        self.touch()
+
     def set_last_routine(self, routine_payload: Dict[str, Any]) -> None:
         self.last_routine = routine_payload or None
         self.append_history(
@@ -99,6 +104,7 @@ class ChatUserContext(db.Model):
             "sender_id": self.sender_id,
             "user_id": self.user_id,
             "allergies": self.allergies,
+            "dislikes": self.dislikes,
             "medical_conditions": self.medical_conditions,
             "last_routine": self.last_routine,
             "last_diet": self.last_diet,
@@ -128,6 +134,7 @@ class ChatUserContext(db.Model):
             )
         return {
             "allergies": self.allergies,
+            "dislikes": self.dislikes,
             "medical_conditions": self.medical_conditions,
             "last_routine": self.last_routine,
             "last_diet": self.last_diet,

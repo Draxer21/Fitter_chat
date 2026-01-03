@@ -1,5 +1,5 @@
 import os
-from dataclasses import dataclass, fields
+from dataclasses import dataclass, field, fields
 from typing import Any, Dict, List, Mapping, Optional, Sequence
 
 
@@ -25,6 +25,14 @@ def _as_float(raw: Optional[str], default: float) -> float:
         return default
 
 
+def _parse_list(raw: Optional[str], default: Optional[List[str]] = None) -> List[str]:
+    if raw is None:
+        return list(default or [])
+    if isinstance(raw, str):
+        return [item.strip() for item in raw.split(",") if item.strip()]
+    return list(default or [])
+
+
 @dataclass
 class AppConfig:
     SECRET_KEY: str = "change-me"
@@ -42,12 +50,22 @@ class AppConfig:
     MAX_MESSAGE_LEN: int = 5000
     DATA_RETENTION_DAYS: int = 730
     METRICS_API_KEY: str = ""
+    LLM_PROVIDER: str = "disabled"
+    LLM_MODEL: str = "gpt-4o-mini"
+    LLM_API_KEY: str = ""
+    LLM_BASE_URL: str = ""
+    LLM_TEMPERATURE: float = 0.2
+    LLM_MAX_TOKENS: int = 900
+    EMBEDDINGS_MODEL: str = "text-embedding-3-small"
+    RAG_MAX_RESULTS: int = 4
+    RAG_INDEX_PATH: str = ""
     
     # MercadoPago configuration
     MERCADOPAGO_ACCESS_TOKEN: str = ""
     MERCADOPAGO_PUBLIC_KEY: str = ""
     MERCADOPAGO_NOTIFICATION_URL: str = ""
     FRONTEND_URL: str = "http://localhost:3000"
+    GOOGLE_CLIENT_IDS: List[str] = field(default_factory=list)
 
     @classmethod
     def from_env(cls, env: Optional[Env] = None) -> "AppConfig":
@@ -83,6 +101,15 @@ class AppConfig:
                 env.get("DATA_RETENTION_DAYS"), cls.DATA_RETENTION_DAYS
             ),
             METRICS_API_KEY=env.get("METRICS_API_KEY", cls.METRICS_API_KEY),
+            LLM_PROVIDER=env.get("LLM_PROVIDER", cls.LLM_PROVIDER),
+            LLM_MODEL=env.get("LLM_MODEL", cls.LLM_MODEL),
+            LLM_API_KEY=env.get("LLM_API_KEY", cls.LLM_API_KEY),
+            LLM_BASE_URL=env.get("LLM_BASE_URL", cls.LLM_BASE_URL),
+            LLM_TEMPERATURE=_as_float(env.get("LLM_TEMPERATURE"), cls.LLM_TEMPERATURE),
+            LLM_MAX_TOKENS=_as_int(env.get("LLM_MAX_TOKENS"), cls.LLM_MAX_TOKENS),
+            EMBEDDINGS_MODEL=env.get("EMBEDDINGS_MODEL", cls.EMBEDDINGS_MODEL),
+            RAG_MAX_RESULTS=_as_int(env.get("RAG_MAX_RESULTS"), cls.RAG_MAX_RESULTS),
+            RAG_INDEX_PATH=env.get("RAG_INDEX_PATH", cls.RAG_INDEX_PATH),
             MERCADOPAGO_ACCESS_TOKEN=env.get(
                 "MERCADOPAGO_ACCESS_TOKEN", cls.MERCADOPAGO_ACCESS_TOKEN
             ),
@@ -93,6 +120,7 @@ class AppConfig:
                 "MERCADOPAGO_NOTIFICATION_URL", cls.MERCADOPAGO_NOTIFICATION_URL
             ),
             FRONTEND_URL=env.get("FRONTEND_URL", cls.FRONTEND_URL),
+            GOOGLE_CLIENT_IDS=_parse_list(env.get("GOOGLE_CLIENT_IDS")),
         )
 
     def to_mapping(self) -> Dict[str, Any]:
@@ -171,7 +199,7 @@ class RateLimitConfig:
 
     def to_kwargs(self) -> Dict[str, Any]:
         kwargs: Dict[str, Any] = {
-            "default_limits": tuple(self.default_limits),
+            "default_limits": list(self.default_limits),
             "storage_uri": self.storage_uri or "memory://",
         }
         if self.strategy:

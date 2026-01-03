@@ -143,13 +143,18 @@ export default function Navbar() {
                 </button>
                 <ul className='dropdown-menu dropdown-menu-end' aria-labelledby='userMenuLink' role="menu">
                   <li role="none">
+                    <NavLink className='dropdown-item' to='/cuenta/datos-personales' onClick={closeNavbarCollapse} role="menuitem">
+                      {t('nav.account.personal')}
+                    </NavLink>
+                  </li>
+                  <li role="none">
                     <NavLink className='dropdown-item' to='/cuenta/perfil' onClick={closeNavbarCollapse} role="menuitem">
-                      Mi información
+                      {t('nav.account.chatbot')}
                     </NavLink>
                   </li>
                   <li role="none">
                     <NavLink className='dropdown-item' to='/cuenta/seguridad' onClick={closeNavbarCollapse} role="menuitem">
-                      Seguridad (MFA)
+                      {t('nav.account.security')}
                     </NavLink>
                   </li>
                   <li role="separator"><hr className='dropdown-divider' /></li>

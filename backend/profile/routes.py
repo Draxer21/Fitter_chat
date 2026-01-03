@@ -4,11 +4,13 @@ from __future__ import annotations
 from typing import Dict, Optional
 
 from flask import Blueprint, jsonify, request, session, current_app
+from flask import send_file
 
 from ..extensions import db
 from ..chat.models import ChatUserContext
 from ..login.models import User
-from .models import UserProfile
+from ..notifications.document_generator import generate_hero_plan_pdf
+from .models import UserProfile, UserHeroPlan
 
 bp = Blueprint("profile", __name__)
 
@@ -36,6 +38,26 @@ def _context_api_key_valid() -> bool:
     if provided.lower().startswith("bearer "):
         provided = provided.split(" ", 1)[1].strip()
     return provided == expected
+
+
+def _resolve_user_for_request() -> Optional[User]:
+    user = _current_user()
+    if user:
+        return user
+    if not _context_api_key_valid():
+        return None
+    user_id = request.args.get("user_id", type=int)
+    if not user_id:
+        payload = request.get_json(silent=True) or {}
+        if isinstance(payload, dict):
+            user_id = payload.get("user_id")
+    if not user_id:
+        return None
+    try:
+        user_id = int(user_id)
+    except (TypeError, ValueError):
+        return None
+    return User.query.get(user_id)
 
 
 def _get_profile(user: User, create_if_missing: bool = True) -> Optional[UserProfile]:
@@ -136,4 +158,72 @@ def profile_update():
 
     db.session.commit()
     return jsonify({"profile": _profile_to_response(profile)}), 200
+
+
+@bp.get("/hero-plans")
+def hero_plans_list():
+    user = _resolve_user_for_request()
+    if not user:
+        return jsonify({"error": "No autenticado"}), 401
+    plans = (
+        UserHeroPlan.query.filter_by(user_id=user.id)
+        .order_by(UserHeroPlan.created_at.desc())
+        .all()
+    )
+    return jsonify({"plans": [plan.to_dict() for plan in plans]}), 200
+
+
+@bp.post("/hero-plans")
+def hero_plans_create():
+    user = _resolve_user_for_request()
+    if not user:
+        return jsonify({"error": "No autenticado"}), 401
+    payload = request.get_json(force=True, silent=True) or {}
+    if not isinstance(payload, dict):
+        return jsonify({"error": "JSON invalido"}), 400
+    plan_key = str(payload.get("plan_key") or "").strip()
+    title = str(payload.get("title") or "").strip()
+    plan_payload = payload.get("payload")
+    source = str(payload.get("source") or "").strip() or None
+    if not plan_key or not title or not isinstance(plan_payload, dict):
+        return jsonify({"error": "plan_key, title y payload son requeridos"}), 400
+    plan = UserHeroPlan(
+        user_id=user.id,
+        plan_key=plan_key,
+        title=title,
+        payload=plan_payload,
+        source=source,
+    )
+    db.session.add(plan)
+    db.session.commit()
+    return jsonify({"plan": plan.to_dict()}), 201
+
+
+@bp.get("/hero-plans/<int:plan_id>")
+def hero_plans_get(plan_id: int):
+    user = _resolve_user_for_request()
+    if not user:
+        return jsonify({"error": "No autenticado"}), 401
+    plan = UserHeroPlan.query.filter_by(id=plan_id, user_id=user.id).one_or_none()
+    if not plan:
+        return jsonify({"error": "Plan no encontrado"}), 404
+    return jsonify({"plan": plan.to_dict()}), 200
+
+
+@bp.get("/hero-plans/<int:plan_id>/pdf")
+def hero_plans_pdf(plan_id: int):
+    user = _resolve_user_for_request()
+    if not user:
+        return jsonify({"error": "No autenticado"}), 401
+    plan = UserHeroPlan.query.filter_by(id=plan_id, user_id=user.id).one_or_none()
+    if not plan:
+        return jsonify({"error": "Plan no encontrado"}), 404
+    buffer = generate_hero_plan_pdf(plan.to_dict())
+    filename = f"entreno_unico_{plan.plan_key}.pdf"
+    return send_file(
+        buffer,
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=filename,
+    )
 
