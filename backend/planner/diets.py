@@ -24,6 +24,12 @@ ACTIVITY_MULTIPLIERS: Dict[str, float] = {
     "muy_activo": 1.9,
 }
 
+SOMATOTIPO_TIPS: Dict[str, str] = {
+    "ectomorfo": "Enfoca en energía y carbohidratos complejos; comidas frecuentes ayudan.",
+    "mesomorfo": "Mantén balance estable de macros; prioriza calidad y timing.",
+    "endomorfo": "Prioriza proteína/fibra y controla carbohidratos de alta carga.",
+}
+
 
 def calc_target_kcal_and_macros(
     weight_kg: Optional[float],
@@ -32,6 +38,7 @@ def calc_target_kcal_and_macros(
     sex: Optional[str],
     activity_level: Optional[str],
     objetivo: str,
+    somatotipo: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Retorna dict con bmr, maintenance_kcal, target_kcal y macros en gramos.
     Esta función es opt-in y no altera el flujo por defecto si faltan datos.
@@ -86,6 +93,31 @@ def calc_target_kcal_and_macros(
 
     fats_g = round(fats_kcal / 9)
     carbs_g = round(carbs_kcal / 4)
+
+    somatotipo_norm = (somatotipo or "").strip().lower()
+    if somatotipo_norm in {"ectomorfo", "mesomorfo", "endomorfo"}:
+        multipliers = {
+            "ectomorfo": {"protein": 1.0, "carbs": 1.08, "fats": 0.9},
+            "mesomorfo": {"protein": 1.0, "carbs": 1.0, "fats": 1.0},
+            "endomorfo": {"protein": 1.05, "carbs": 0.9, "fats": 1.05},
+        }.get(somatotipo_norm, {})
+        if multipliers:
+            protein_kcal = proteinas_g * 4
+            carbs_kcal = carbs_g * 4
+            fats_kcal = fats_g * 9
+            weighted = {
+                "protein": protein_kcal * multipliers["protein"],
+                "carbs": carbs_kcal * multipliers["carbs"],
+                "fats": fats_kcal * multipliers["fats"],
+            }
+            total_weight = sum(weighted.values()) or target
+            target_val = float(target) if target else float(total_weight)
+            protein_kcal = target_val * (weighted["protein"] / total_weight)
+            carbs_kcal = target_val * (weighted["carbs"] / total_weight)
+            fats_kcal = target_val * (weighted["fats"] / total_weight)
+            proteinas_g = round(protein_kcal / 4)
+            carbs_g = round(carbs_kcal / 4)
+            fats_g = round(fats_kcal / 9)
 
     result.update({
         "bmr": round(bmr),
@@ -277,6 +309,13 @@ def generate_diet_plan(
         adjustments.append("Distribuye carbohidratos complejos en porciones moderadas cada 3-4 horas.")
     if health_flags.get("asma"):
         adjustments.append("Incluye alimentos antiinflamatorios (omega 3, frutas variadas).")
+    somatotipo = (profile_data.get("somatotipo") if profile_data else None)
+    if somatotipo:
+        somatotipo_norm = str(somatotipo).strip().lower()
+        if somatotipo_norm not in {"no_se", "no se", "no sé", "ninguno", "ninguna"}:
+            tip = SOMATOTIPO_TIPS.get(somatotipo_norm)
+            if tip:
+                adjustments.append(f"Somatotipo (heurístico): {somatotipo_norm}. {tip}")
 
     meals = plan.get("meals", [])
     filtered_meals: List[Dict[str, Any]] = []
@@ -315,6 +354,7 @@ def generate_diet_plan(
                 age = int(profile_data.get("age"))
             sex = profile_data.get("sex") if profile_data else None
             activity = profile_data.get("activity_level") if profile_data else None
+            somatotipo = profile_data.get("somatotipo") if profile_data else None
             dieta_calc_info = calc_target_kcal_and_macros(
                 weight_kg=weight,
                 height_cm=height,
@@ -322,6 +362,7 @@ def generate_diet_plan(
                 sex=sex,
                 activity_level=activity,
                 objetivo=objetivo_norm,
+                somatotipo=somatotipo,
             )
         except Exception:
             dieta_calc_info = None
@@ -335,7 +376,7 @@ def generate_diet_plan(
         f"- Grasas: {macros.get('grasas', '-')}",
     ]
     if adjustments:
-        lines.append("Ajustes de salud:")
+        lines.append("Ajustes y personalización:")
         for note in adjustments:
             lines.append(f"- {note}")
     if allergy_list and not allergen_hits:
@@ -361,6 +402,7 @@ def generate_diet_plan(
         "summary": {
             "calorias": plan.get("calorias"),
             "macros": macros,
+            "somatotipo": (profile_data.get("somatotipo") if profile_data else None),
             **(
                 {
                     "target_kcal": dieta_calc_info.get("target_kcal"),

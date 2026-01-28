@@ -1,0 +1,11 @@
+text,intent
+"modo demo",activar_modo_demo
+"activar modo demo",activar_modo_demo
+"activa el modo demo",activar_modo_demo
+"demo",activar_modo_demo
+"entrar a modo demo",activar_modo_demo
+"modo offline demo",activar_modo_demo
+"salir del modo demo",desactivar_modo_demo
+"desactivar modo demo",desactivar_modo_demo
+"volver al modo normal",desactivar_modo_demo
+"quitar modo demo",desactivar_modo_demo

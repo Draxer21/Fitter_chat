@@ -41,6 +41,7 @@ class UserProfile(db.Model):
         "fitness_goal",
         "dietary_preferences",
         "additional_notes",
+        "somatotipo",
     )
 
     def _empty_payload(self) -> Dict[str, Any]:
@@ -145,6 +146,9 @@ class UserProfile(db.Model):
             data["dietary_preferences"] = _clean_text("dietary_preferences", max_len=255)
         if "additional_notes" in payload:
             data["additional_notes"] = _clean_text("additional_notes", max_len=2000)
+        if "somatotipo" in payload:
+            text = _clean_text("somatotipo", max_len=32)
+            data["somatotipo"] = text.lower() if text else None
 
         self._persist_payload(data)
 

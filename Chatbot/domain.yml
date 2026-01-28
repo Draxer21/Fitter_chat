@@ -6,6 +6,8 @@ intents:
   - informar
   - afirmar
   - negar
+  - activar_modo_demo
+  - desactivar_modo_demo
   - solicitar_rutina
   - solicitar_dieta
   - solicitar_entreno_unico
@@ -27,6 +29,7 @@ intents:
   - soporte_general
   - soporte_mfa
   - detener_formulario
+  - faq
   - nlu_fallback
 
 entities:
@@ -55,48 +58,80 @@ slots:
     mappings:
       - type: from_entity
         entity: objetivo
+      - type: from_text
+        conditions:
+          - active_loop: rutina_form
+            requested_slot: objetivo
 
   musculo:
     type: text
     mappings:
       - type: from_entity
         entity: musculo
+      - type: from_text
+        conditions:
+          - active_loop: rutina_form
+            requested_slot: musculo
 
   nivel:
     type: text
     mappings:
       - type: from_entity
         entity: nivel
+      - type: from_text
+        conditions:
+          - active_loop: rutina_form
+            requested_slot: nivel
 
   equipamiento:
     type: text
     mappings:
       - type: from_entity
         entity: equipamiento
+      - type: from_text
+        conditions:
+          - active_loop: rutina_form
+            requested_slot: equipamiento
 
   ejercicios_num:
     type: text
     mappings:
       - type: from_entity
         entity: ejercicios_num
+      - type: from_text
+        conditions:
+          - active_loop: rutina_form
+            requested_slot: ejercicios_num
 
   tiempo_disponible:
     type: text
     mappings:
       - type: from_entity
         entity: tiempo_disponible
+      - type: from_text
+        conditions:
+          - active_loop: rutina_form
+            requested_slot: tiempo_disponible
 
   condiciones_salud:
     type: text
     mappings:
       - type: from_entity
         entity: condiciones_salud
+      - type: from_text
+        conditions:
+          - active_loop: rutina_form
+            requested_slot: condiciones_salud
 
   alergias:
     type: text
     mappings:
       - type: from_entity
         entity: alergias
+      - type: from_text
+        conditions:
+          - active_loop: rutina_form
+            requested_slot: alergias
 
   no_gusta:
     type: text
@@ -112,12 +147,22 @@ slots:
     mappings:
       - type: from_entity
         entity: formato
+      - type: from_text
+        conditions:
+          - active_loop: rutina_form
+            requested_slot: formato
 
   contacto:
     type: text
     mappings:
       - type: from_entity
         entity: contacto
+      - type: from_entity
+        entity: email
+
+  email:
+    type: text
+    mappings:
       - type: from_entity
         entity: email
 
@@ -213,6 +258,47 @@ slots:
           - active_loop: profile_form
             requested_slot: objetivo_fitness
 
+  somatotipo:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: profile_form
+            requested_slot: somatotipo
+
+  demo_offline:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: from_intent
+        intent: activar_modo_demo
+        value: true
+      - type: from_intent
+        intent: desactivar_modo_demo
+        value: false
+
+  offline_mode:
+    type: bool
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  offline_notified:
+    type: bool
+    influence_conversation: false
+    initial_value: false
+    mappings:
+      - type: custom
+
+  backend_down:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+    mappings:
+      - type: custom
+
   padecimientos:
     type: text
     influence_conversation: true
@@ -250,6 +336,24 @@ slots:
     influence_conversation: true
     mappings:
       - type: custom
+
+  requested_plan:
+    type: categorical
+    values:
+      - rutina
+      - dieta
+    influence_conversation: true
+    mappings:
+      - type: from_intent
+        intent: solicitar_rutina
+        value: rutina
+        conditions:
+          - active_loop: null
+      - type: from_intent
+        intent: solicitar_dieta
+        value: dieta
+        conditions:
+          - active_loop: null
 
   servicio_pendiente:
     type: categorical
@@ -376,6 +480,12 @@ responses:
           payload: "/solicitar_entreno_unico{\"hero_programa\": \"batman_pattinson\"}"
         - title: "Capitan America (Chris Evans)"
           payload: "/solicitar_entreno_unico{\"hero_programa\": \"capitan_america_evans\"}"
+        - title: "Superman (Henry Cavill)"
+          payload: "/solicitar_entreno_unico{\"hero_programa\": \"superman_cavill\"}"
+        - title: "Superman (David Corenswet)"
+          payload: "/solicitar_entreno_unico{\"hero_programa\": \"superman_corenswet\"}"
+        - title: "Wolverine (Hugh Jackman)"
+          payload: "/solicitar_entreno_unico{\"hero_programa\": \"wolverine_jackman\"}"
 
   utter_ask_hero_inicio:
     - text: "¿Cuándo quieres comenzar el plan? Puedes indicarme una fecha (ej. 2025-01-10) o decir 'la próxima semana'."
@@ -389,8 +499,32 @@ responses:
   utter_ask_musculo_preferido:
     - text: "¿Hay algún grupo muscular que quieras priorizar de forma habitual (pecho, espalda, piernas, hombros, brazos, core, fullbody, cardio)?"
 
+  utter_offline_intro:
+    - text: "Ahora mismo estoy en modo offline. Puedo ayudarte con una rutina/dieta básica, pero no puedo acceder a tu perfil web ni validar sesión."
+
+  utter_offline_routine_basic:
+    - text: "Rutina básica (3 días): Día 1 fullbody, Día 2 empuje/tirón, Día 3 piernas+core. ¿Objetivo: ganar músculo o bajar grasa?"
+
+  utter_offline_diet_basic:
+    - text: "Dieta básica: proteína en cada comida, verduras 2–3 porciones/día, carbos según entrenamiento. ¿Quieres enfoque hipertrofia o bajar grasa?"
+
+  utter_demo_on:
+    - text: "Modo demo activado ✅ (sin backend). Puedo darte una rutina/dieta básica."
+
+  utter_demo_off:
+    - text: "Modo demo desactivado ✅. Volvemos al flujo normal."
+
+  utter_capabilities:
+    - text: |
+        Puedo ayudarte con:
+        - Rutinas (con o sin perfil)
+        - Dietas y calorías (si tengo peso/altura)
+        - Reservas/horarios/pagos (FAQ)
+        - Soporte (sesión, errores de pago, cuenta)
+        Escribe “modo demo” si quieres usarlo sin backend.
+
   utter_perfil_incompleto:
-    - text: "Para continuar necesito tus datos básicos (peso, altura, objetivo, padecimientos y preferencia de dieta). Dímelos uno por uno y los vamos registrando aquí mismo."
+    - text: "Para continuar necesito tus datos básicos (peso, altura, objetivo, somatotipo, padecimientos y preferencia de dieta). Dímelos uno por uno y los vamos registrando aquí mismo."
 
   utter_mostrar_perfil:
     - text: "Aquí tienes tu perfil: {resumen_perfil}"
@@ -421,8 +555,32 @@ responses:
   utter_ask_objetivo_fitness:
     - text: "Cual es tu objetivo principal ahora mismo? (ejemplo: bajar grasa, ganar masa, rendimiento)"
 
+  utter_ask_somatotipo:
+    - text: "¿Cómo te identificas a nivel de somatotipo? (ectomorfo / mesomorfo / endomorfo / no_se)"
+
   utter_ask_objetivo:
     - text: "¿Cuál es tu objetivo principal? (ej. bajar_grasa, hipertrofia, equilibrada)"
+
+  utter_ask_nivel:
+    - text: "¿Cuál es tu nivel? (principiante / intermedio / avanzado)"
+
+  utter_ask_equipamiento:
+    - text: "¿Con qué equipamiento cuentas? (gimnasio / casa / mancuernas / bandas / ninguno)"
+
+  utter_ask_ejercicios_num:
+    - text: "¿Cuántos ejercicios por sesión prefieres?"
+
+  utter_ask_tiempo_disponible:
+    - text: "¿Cuánto tiempo tienes por sesión? (minutos)"
+
+  utter_ask_condiciones_salud:
+    - text: "¿Tienes lesiones o condiciones a considerar? Si no, responde \"ninguna\"."
+
+  utter_ask_alergias:
+    - text: "¿Tienes alergias o restricciones relevantes? Si no, responde \"ninguna\"."
+
+  utter_ask_formato:
+    - text: "¿Prefieres formato full-body o dividido (push/pull/legs, etc.)?"
 
   utter_ask_padecimientos:
     - text: "Tienes alguna condicion o padecimiento que deba considerar? Si no, dime \"ninguno\"."
@@ -456,6 +614,7 @@ forms:
       - peso
       - altura
       - objetivo_fitness
+      - somatotipo
       - padecimientos
       - preferencia_dieta
       - musculo_preferido
@@ -486,8 +645,10 @@ actions:
   - action_crear_reserva
   - action_cancelar_reserva
   - action_suscripcion_cambio_plan
+  - validate_profile_form
   - validate_reserva_form
   - validate_rutina_form
+  - validate_hero_form
 
 session_config:
   session_expiration_time: 60

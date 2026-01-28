@@ -122,6 +122,7 @@ class User(db.Model):
             "fitness_goal": None,
             "dietary_preferences": None,
             "additional_notes": None,
+            "somatotipo": None,
         }
         encrypted = encrypt_profile_payload(empty_payload)
         checksum = profile_payload_checksum(encrypted)
@@ -155,6 +156,7 @@ class User(db.Model):
             "dietary_preferences": (profile_data or {}).get("dietary_preferences", self.dietary_preferences),
             "health_conditions": (profile_data or {}).get("medical_conditions", self.health_conditions) or [],
             "additional_notes": (profile_data or {}).get("additional_notes", self.additional_notes),
+            "somatotipo": (profile_data or {}).get("somatotipo"),
             "totp_enabled": bool(self.totp_enabled),
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),

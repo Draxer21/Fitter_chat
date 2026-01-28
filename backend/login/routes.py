@@ -6,6 +6,8 @@ from typing import Dict, List, Optional, Tuple
 
 from flask import Blueprint, request, session, jsonify, current_app
 from sqlalchemy.exc import IntegrityError
+import jwt
+from jwt import PyJWTError
 from google.oauth2 import id_token as google_id_token
 from google.auth.transport import requests as google_auth_requests
 
@@ -102,17 +104,41 @@ def _get_google_client_ids() -> List[str]:
     return [value for value in configured if value]
 
 
+def _validate_google_issuer(payload: Dict[str, object]) -> None:
+    issuer = (payload.get("iss") or "").strip()
+    allowed = {"https://accounts.google.com", "accounts.google.com"}
+    if issuer not in allowed:
+        raise ValueError("Issuer de Google no permitido")
+
+
 def _verify_google_credential(credential: str) -> Dict[str, object]:
     if not credential:
         raise ValueError("Token de Google requerido")
-    request_adapter = google_auth_requests.Request()
-    payload = google_id_token.verify_oauth2_token(
-        credential,
-        request_adapter,
-        clock_skew_in_seconds=10,
-    )
+    verify_mode = (current_app.config.get("GOOGLE_AUTH_VERIFY_MODE") or "google").strip().lower()
+    if verify_mode == "mock":
+        try:
+            payload = jwt.decode(
+                credential,
+                options={
+                    "verify_signature": False,
+                    "verify_aud": False,
+                    "verify_exp": True,
+                },
+            )
+        except PyJWTError as exc:
+            raise ValueError("Token de Google invalido") from exc
+    else:
+        request_adapter = google_auth_requests.Request()
+        payload = google_id_token.verify_oauth2_token(
+            credential,
+            request_adapter,
+            clock_skew_in_seconds=10,
+        )
+    _validate_google_issuer(payload)
     allowed = set(_get_google_client_ids())
     audience = payload.get("aud")
+    if not audience:
+        raise ValueError("Token de Google sin audience")
     if allowed and audience not in allowed:
         raise ValueError("Cliente de Google no permitido")
     if not payload.get("email_verified"):
@@ -596,6 +622,9 @@ def profile_update():
         profile_payload["additional_notes"] = _sanitize_optional_string(
             data.get("additional_notes"), max_length=2000
         )
+
+    if "somatotipo" in data:
+        profile_payload["somatotipo"] = _sanitize_optional_string(data.get("somatotipo"), max_length=32)
 
     if "health_conditions" in data:
         conditions, error = _parse_health_conditions(data.get("health_conditions"))

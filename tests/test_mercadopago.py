@@ -17,17 +17,13 @@ def test_mercadopago_connection():
     public_key = os.getenv('MERCADOPAGO_PUBLIC_KEY')
     
     print("\n1. Verificando credenciales...")
-    if not access_token or access_token == 'your_access_token_here':
-        print("   ❌ MERCADOPAGO_ACCESS_TOKEN no está configurado")
-        return False
+    assert access_token and access_token != 'your_access_token_here', "MERCADOPAGO_ACCESS_TOKEN no está configurado"
     else:
         # Mostrar solo los primeros y últimos caracteres
         masked_token = access_token[:10] + "..." + access_token[-10:] if len(access_token) > 20 else "***"
         print(f"   ✓ Access Token: {masked_token}")
     
-    if not public_key or public_key == 'your_public_key_here':
-        print("   ❌ MERCADOPAGO_PUBLIC_KEY no está configurado")
-        return False
+    assert public_key and public_key != 'your_public_key_here', "MERCADOPAGO_PUBLIC_KEY no está configurado"
     else:
         masked_key = public_key[:10] + "..." + public_key[-10:] if len(public_key) > 20 else "***"
         print(f"   ✓ Public Key: {masked_key}")
@@ -43,6 +39,7 @@ def test_mercadopago_connection():
         print("\n3. Probando conexión con la API...")
         payment_methods = sdk.payment_methods().list_all()
         
+        assert payment_methods["status"] == 200, f"Error al conectar: Status {payment_methods['status']}"
         if payment_methods["status"] == 200:
             methods_count = len(payment_methods.get("response", []))
             print(f"   ✓ Conexión exitosa - {methods_count} métodos de pago disponibles")
@@ -55,14 +52,11 @@ def test_mercadopago_connection():
                 if methods_count > 5:
                     print(f"   ... y {methods_count - 5} más")
             
-            return True
-        else:
-            print(f"   ❌ Error al conectar: Status {payment_methods['status']}")
-            return False
+            return
             
     except Exception as e:
         print(f"   ❌ Error: {str(e)}")
-        return False
+        assert False
 
 if __name__ == "__main__":
     success = test_mercadopago_connection()

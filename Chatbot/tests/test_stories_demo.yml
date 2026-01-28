@@ -1,0 +1,50 @@
+version: "3.1"
+
+stories:
+  - story: demo offline end-to-end
+    steps:
+      - user: |
+          modo demo
+        intent: activar_modo_demo
+      - action: utter_demo_on
+      - action: utter_offline_intro
+
+      - user: |
+          quiero una rutina
+        intent: solicitar_rutina
+      - action: utter_offline_routine_basic
+
+      - user: |
+          quiero una dieta
+        intent: solicitar_dieta
+      - action: utter_offline_diet_basic
+
+      - user: |
+          volver al modo normal
+        intent: desactivar_modo_demo
+      - action: utter_demo_off
+
+  - story: demo no repite offline intro
+    steps:
+      - user: |
+          modo demo
+        intent: activar_modo_demo
+      - action: utter_demo_on
+      - action: utter_offline_intro
+      - user: |
+          quiero una rutina
+        intent: solicitar_rutina
+      - action: utter_offline_routine_basic
+      - user: |
+          otra rutina
+        intent: solicitar_rutina
+      - action: utter_offline_routine_basic
+
+  - story: backend down rutina
+    steps:
+      - slot_was_set:
+          - backend_down: true
+      - user: |
+          quiero una rutina
+        intent: solicitar_rutina
+      - action: utter_offline_routine_basic

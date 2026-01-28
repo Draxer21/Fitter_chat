@@ -151,21 +151,19 @@ stories:
       /consultar_perfil
     intent: consultar_perfil
   - action: action_fetch_profile
-  - action: utter_mostrar_perfil
-  - action: utter_perfil_resumen
   - user: |
       /actualizar_perfil_bot
     intent: actualizar_perfil_bot
   - action: profile_form
   - active_loop: profile_form
   - user: |
-      /informar
+      75
     intent: informar
   - slot_was_set:
       - peso: 75
   - action: profile_form
   - user: |
-      /informar
+      180
     intent: informar
   - slot_was_set:
       - altura: 180
@@ -202,8 +200,6 @@ stories:
   - action: profile_form
   - active_loop: null
   - action: action_submit_profile_form
-  - action: utter_perfil_actualizado
-  - action: utter_perfil_actualizado
 
 - story: cancelar profile_form
   steps:
@@ -227,7 +223,6 @@ stories:
   - action: action_fetch_profile
   - slot_was_set:
       - perfil_completo: true
-  - action: utter_perfil_resumen
   - action: action_generar_rutina
   - slot_was_set:
       - servicio_pendiente: null
@@ -285,13 +280,13 @@ stories:
   - action: profile_form
   - active_loop: profile_form
   - user: |
-      /informar
+      80
     intent: informar
   - slot_was_set:
       - peso: 80
   - action: profile_form
   - user: |
-      /informar
+      178
     intent: informar
   - slot_was_set:
       - altura: 178
@@ -328,7 +323,6 @@ stories:
   - action: profile_form
   - active_loop: null
   - action: action_submit_profile_form
-  - action: utter_perfil_actualizado
 
 - story: perfil form completo B
   steps:
@@ -338,13 +332,13 @@ stories:
   - action: profile_form
   - active_loop: profile_form
   - user: |
-      /informar
+      65
     intent: informar
   - slot_was_set:
       - peso: 65
   - action: profile_form
   - user: |
-      /informar
+      165
     intent: informar
   - slot_was_set:
       - altura: 165
@@ -362,7 +356,7 @@ stories:
       - somatotipo: no_se
   - action: profile_form
   - user: |
-      /informar
+      tengo asma leve
     intent: informar
   - slot_was_set:
       - padecimientos: tengo asma leve
@@ -390,7 +384,6 @@ stories:
   - action: action_fetch_profile
   - slot_was_set:
       - perfil_completo: true
-  - action: utter_perfil_resumen
   - action: action_generar_rutina
   - slot_was_set:
       - servicio_pendiente: null
@@ -400,7 +393,6 @@ stories:
   - action: action_fetch_profile
   - slot_was_set:
       - perfil_completo: true
-  - action: utter_perfil_resumen
   - action: action_generar_dieta
   - slot_was_set:
       - servicio_pendiente: null
@@ -413,7 +405,6 @@ stories:
   - action: action_fetch_profile
   - slot_was_set:
       - perfil_completo: true
-  - action: utter_perfil_resumen
   - action: action_generar_dieta
   - slot_was_set:
       - servicio_pendiente: null
@@ -423,7 +414,6 @@ stories:
   - action: action_fetch_profile
   - slot_was_set:
       - perfil_completo: true
-  - action: utter_perfil_resumen
   - action: action_generar_rutina
   - slot_was_set:
       - servicio_pendiente: null

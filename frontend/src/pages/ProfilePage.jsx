@@ -13,6 +13,7 @@ const initialFormState = {
   activity_level: "",
   experience_level: "",
   primary_goal: "",
+  somatotipo: "no_se",
   musculo_preferido: "",
   allergies: "",
   medical_conditions: "",
@@ -47,6 +48,13 @@ const goalOptions = [
   { value: "rendimiento", labelKey: "profile.goal.rendimiento" },
 ];
 
+const somatotypeOptions = [
+  { value: "no_se", labelKey: "profile.somatotype.unknown" },
+  { value: "ectomorfo", labelKey: "profile.somatotype.ectomorfo" },
+  { value: "mesomorfo", labelKey: "profile.somatotype.mesomorfo" },
+  { value: "endomorfo", labelKey: "profile.somatotype.endomorfo" },
+];
+
 const muscleOptions = [
   { value: "", labelKey: "profile.muscle.select" },
   { value: "pecho", labelKey: "profile.muscle.chest" },
@@ -76,6 +84,7 @@ function normalizeProfile(profile) {
     activity_level: profile.activity_level ?? "",
     experience_level: profile.experience_level ?? "",
     primary_goal: profile.primary_goal ?? "",
+    somatotipo: profile.somatotipo ?? "no_se",
     musculo_preferido: profile.musculo_preferido ?? "",
     allergies: profile.allergies ?? "",
     medical_conditions: profile.medical_conditions ?? "",
@@ -286,6 +295,23 @@ export default function ProfilePage() {
                       </option>
                     ))}
                   </select>
+                </div>
+                <div className="col-md-4">
+                  <label htmlFor="somatotipo" className="form-label">{t("profile.fields.somatotype")}</label>
+                  <select
+                    id="somatotipo"
+                    name="somatotipo"
+                    className="form-select"
+                    value={form.somatotipo}
+                    onChange={handleChange}
+                  >
+                    {somatotypeOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {t(option.labelKey)}
+                      </option>
+                    ))}
+                  </select>
+                  <small className="text-muted">{t("profile.somatotype.helper")}</small>
                 </div>
               </div>
 
