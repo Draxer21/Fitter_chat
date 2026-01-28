@@ -30,6 +30,18 @@ export default function ProfileSectionNav() {
       >
         {t("profile.nav.hero_plans")}
       </NavLink>
+      <NavLink
+        to="/cuenta/rutinas"
+        className={({ isActive }) => `profile-section-tab ${isActive ? "is-active" : ""}`}
+      >
+        {t("profile.nav.routines")}
+      </NavLink>
+      <NavLink
+        to="/cuenta/dietas"
+        className={({ isActive }) => `profile-section-tab ${isActive ? "is-active" : ""}`}
+      >
+        {t("profile.nav.diets")}
+      </NavLink>
     </nav>
   );
 }

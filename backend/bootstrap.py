@@ -23,6 +23,7 @@ _MODEL_MODULES: Iterable[Tuple[str, str]] = (
     ("classes", "backend.classes.models"),
     ("login", "backend.login.models"),
     ("profile", "backend.profile.models"),
+    ("plans", "backend.plans.models"),
     ("metrics", "backend.metrics"),
 )
 

@@ -200,6 +200,14 @@ export const API = {
         body: JSON.stringify(payload),
       }).then(j),
     },
+    routinePlans: {
+      list: () => fetch(`${BASE}/api/routine-plans`, { credentials: "include" }).then(j),
+      get: (id) => fetch(`${BASE}/api/routine-plans/${id}`, { credentials: "include" }).then(j),
+    },
+    dietPlans: {
+      list: () => fetch(`${BASE}/api/diet-plans`, { credentials: "include" }).then(j),
+      get: (id) => fetch(`${BASE}/api/diet-plans/${id}`, { credentials: "include" }).then(j),
+    },
   },
   orders: {
     get: (id) => fetch(`${BASE}/orders/${id}`, { credentials:"include" }).then(j),

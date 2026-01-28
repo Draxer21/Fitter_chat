@@ -2,6 +2,7 @@
 from __future__ import annotations
 from typing import Any, Text, Dict, List, Optional, Tuple
 from datetime import datetime, date, timedelta
+import time
 import os
 import random
 import re
@@ -45,8 +46,83 @@ NOTIFICATIONS_TIMEOUT = float(os.getenv("CHAT_NOTIFY_TIMEOUT", "6"))
 EMAIL_ROUTINE_ENABLED = os.getenv("CHAT_EMAIL_ROUTINE", "1").lower() not in {"0", "false", "no"}
 ROUTINE_EMAIL_SUBJECT = (os.getenv("CHAT_ROUTINE_EMAIL_SUBJECT", "Tu rutina diaria Fitter") or "Tu rutina diaria Fitter").strip()
 PROFILE_UPDATE_PATH = "/profile/me"
-CHAT_ENABLE_DIETA_CALC = os.getenv("CHAT_ENABLE_DIETA_CALC", "0").strip() in {"1", "true", "yes"}
+CHAT_ENABLE_DIETA_CALC = os.getenv("CHAT_ENABLE_DIETA_CALC", "0").strip().lower() in {"1", "true", "yes"}
+_RAW_DIETA_CALC_MODE = os.getenv("CHAT_DIETA_CALC_MODE", "").strip().lower()
+if _RAW_DIETA_CALC_MODE in {"off", "auto", "on"}:
+    CHAT_DIETA_CALC_MODE = _RAW_DIETA_CALC_MODE
+else:
+    # Backward compatible: if old flag enabled -> on, otherwise default to auto.
+    CHAT_DIETA_CALC_MODE = "on" if CHAT_ENABLE_DIETA_CALC else "auto"
 CHAT_DIET_CATALOG = os.getenv("CHAT_DIET_CATALOG", "0").strip() in {"1", "true", "yes"}
+BACKEND_HEALTH_PATH = (os.getenv("BACKEND_HEALTH_PATH", "/health") or "/health").strip()
+BACKEND_HEALTH_TIMEOUT = float(os.getenv("BACKEND_HEALTH_TIMEOUT", "0.8"))
+
+
+def backend_health_status(
+    *,
+    sender_id: Optional[str] = None,
+    intent: Optional[str] = None,
+    demo_offline: Optional[bool] = None,
+) -> Tuple[bool, float]:
+    if not BACKEND_BASE_URL:
+        return False, 0.0
+    path = BACKEND_HEALTH_PATH if BACKEND_HEALTH_PATH.startswith("/") else f"/{BACKEND_HEALTH_PATH}"
+    url = f"{BACKEND_BASE_URL.rstrip('/')}{path}"
+    start = time.perf_counter()
+    try:
+        resp = requests.get(url, timeout=BACKEND_HEALTH_TIMEOUT)
+    except Exception:
+        elapsed_ms = (time.perf_counter() - start) * 1000
+        logger.info(
+            "healthcheck",
+            extra={
+                "sender": sender_id,
+                "intent": intent,
+                "demo_offline": demo_offline,
+                "ok": False,
+                "elapsed_ms": round(elapsed_ms, 1),
+            },
+        )
+        return False, elapsed_ms
+    elapsed_ms = (time.perf_counter() - start) * 1000
+    ok = resp.status_code == 200
+    logger.info(
+        "healthcheck",
+        extra={
+            "sender": sender_id,
+            "intent": intent,
+            "demo_offline": demo_offline,
+            "ok": ok,
+            "elapsed_ms": round(elapsed_ms, 1),
+        },
+    )
+    return ok, elapsed_ms
+
+
+def backend_health_ok(
+    *,
+    sender_id: Optional[str] = None,
+    intent: Optional[str] = None,
+    demo_offline: Optional[bool] = None,
+) -> bool:
+    ok, _ = backend_health_status(sender_id=sender_id, intent=intent, demo_offline=demo_offline)
+    return ok
+
+
+def mark_offline(dispatcher: CollectingDispatcher, tracker: Tracker) -> List[Dict[Text, Any]]:
+    logger.info(
+        "served_offline_response",
+        extra={
+            "sender": tracker.sender_id,
+            "intent": tracker.latest_message.get("intent", {}).get("name"),
+            "demo_offline": tracker.get_slot("demo_offline"),
+        },
+    )
+    events: List[Dict[Text, Any]] = [SlotSet("offline_mode", True), SlotSet("backend_down", True)]
+    if not tracker.get_slot("offline_notified"):
+        dispatcher.utter_message(response="utter_offline_intro")
+        events.append(SlotSet("offline_notified", True))
+    return events
 
 
 def send_context_update(sender_id: str, payload: Dict[str, Any]) -> None:
@@ -161,6 +237,39 @@ def save_hero_plan(ctx: Optional[Dict[str, Any]], payload: Dict[str, Any]) -> bo
     return resp.status_code in {200, 201}
 
 
+def persist_plan(
+    ctx: Optional[Dict[str, Any]],
+    *,
+    path: str,
+    payload: Dict[str, Any],
+) -> Optional[str]:
+    if not ctx or not ctx.get("user_id") or not BACKEND_BASE_URL:
+        return None
+    headers: Dict[str, str] = {"Content-Type": "application/json"}
+    if CONTEXT_API_KEY:
+        headers["X-Context-Key"] = CONTEXT_API_KEY
+    body = {"user_id": ctx.get("user_id"), **payload}
+    try:
+        resp = requests.post(
+            f"{BACKEND_BASE_URL.rstrip('/')}{path}",
+            json=body,
+            headers=headers,
+            timeout=CONTEXT_TIMEOUT,
+        )
+    except requests.RequestException as exc:
+        logger.warning("No se pudo guardar plan en %s: %s", path, exc)
+        return None
+    if resp.status_code not in {200, 201}:
+        logger.warning("Persistencia plan fallida %s (status=%s)", path, resp.status_code)
+        return None
+    try:
+        data = resp.json()
+    except Exception:
+        return None
+    plan_id = data.get("id") if isinstance(data, dict) else None
+    return str(plan_id) if plan_id else None
+
+
 def infer_training_level(profile: Optional[Dict[str, Any]]) -> Optional[str]:
     """Determina el nivel de entrenamiento usando experiencia declarada o actividad."""
     if not profile:
@@ -228,6 +337,7 @@ def build_profile_summary(profile: Optional[Dict[str, Any]]) -> str:
     goal = profile.get("primary_goal")
     diet_pref = profile.get("diet_preference")
     medical = _normalize_list_or_text(profile.get("medical_conditions"))
+    somatotipo = _normalize_list_or_text(profile.get("somatotipo"))
     if weight:
         if weight.is_integer():
             bits.append(f"Peso: {int(weight)} kg")
@@ -242,6 +352,9 @@ def build_profile_summary(profile: Optional[Dict[str, Any]]) -> str:
         bits.append(f"Objetivo: {str(goal).replace('_', ' ')}")
     if diet_pref:
         bits.append(f"Dieta: {diet_pref}")
+    if somatotipo:
+        label = "no se" if somatotipo == "no_se" else somatotipo
+        bits.append(f"Somatotipo: {label}")
     if medical:
         bits.append(f"Padecimientos: {medical}")
     if not bits:
@@ -318,6 +431,32 @@ class ValidateProfileForm(FormValidationAction):
                 return {"objetivo_fitness": canonical}
         return {"objetivo_fitness": raw}
 
+    def validate_somatotipo(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        raw = (str(value or "")).strip().lower()
+        if not raw:
+            return {"somatotipo": "no_se"}
+        cleaned = raw.replace("á", "a").replace("é", "e").replace("í", "i").replace("ó", "o").replace("ú", "u")
+        cleaned = re.sub(r"\s+", " ", cleaned)
+        if cleaned in {"no se", "no_se", "no estoy seguro", "no lo se", "ns", "nose"}:
+            return {"somatotipo": "no_se"}
+        if any(token in cleaned for token in {"ecto", "ectomorfo"}):
+            return {"somatotipo": "ectomorfo"}
+        if any(token in cleaned for token in {"meso", "mesomorfo"}):
+            return {"somatotipo": "mesomorfo"}
+        if any(token in cleaned for token in {"endo", "endomorfo"}):
+            return {"somatotipo": "endomorfo"}
+        if ("grasa" in cleaned or "retengo" in cleaned) and ("subo" in cleaned or "acumulo" in cleaned):
+            return {"somatotipo": "endomorfo"}
+        if ("peso" in cleaned or "masa" in cleaned) and ("cuesta" in cleaned or "dif" in cleaned):
+            return {"somatotipo": "ectomorfo"}
+        return {"somatotipo": cleaned}
+
     def validate_padecimientos(
         self,
         value: Any,
@@ -388,6 +527,13 @@ class ActionFetchProfile(Action):
         domain: Dict[Text, Any],
     ) -> List[Dict[Text, Any]]:
         events: List[Dict[Text, Any]] = []
+        active_loop = tracker.active_loop_name
+        intent_name = tracker.latest_message.get("intent", {}).get("name")
+        if not backend_health_ok(sender_id=tracker.sender_id, intent=intent_name, demo_offline=tracker.get_slot("demo_offline")):
+            events.extend(mark_offline(dispatcher, tracker))
+            events.append(SlotSet("resumen_perfil", "Modo offline: no pude acceder al perfil web."))
+            events.append(SlotSet("perfil_completo", False))
+            return events
 
         ctx = ensure_authenticated_context(tracker)
         if not ctx:
@@ -409,6 +555,7 @@ class ActionFetchProfile(Action):
             height = _to_float(profile.get("height_cm"))
             medical = _normalize_list_or_text(profile.get("medical_conditions"))
             diet_pref = _normalize_list_or_text(profile.get("diet_preference"))
+            somatotipo = _normalize_list_or_text(profile.get("somatotipo"))
             goal = str(profile.get("primary_goal") or "").replace("_", " ").strip()
             if weight is not None:
                 events.append(SlotSet("peso", weight))
@@ -420,13 +567,13 @@ class ActionFetchProfile(Action):
                 events.append(SlotSet("padecimientos", medical))
             if diet_pref:
                 events.append(SlotSet("preferencia_dieta", diet_pref))
+            if somatotipo:
+                events.append(SlotSet("somatotipo", somatotipo))
         else:
             profile = {}
 
         summary = build_profile_summary(profile if profile else None)
         events.append(SlotSet("resumen_perfil", summary))
-        dispatcher.utter_message(response="utter_perfil_resumen", resumen_perfil=summary)
-
         events.append(SlotSet("perfil_completo", complete))
         pending_service = tracker.get_slot("servicio_pendiente")
         if not pending_service:
@@ -439,13 +586,9 @@ class ActionFetchProfile(Action):
                 events.append(SlotSet("servicio_pendiente", "dieta"))
 
         if not complete:
-            dispatcher.utter_message(response="utter_perfil_incompleto")
-            return events + [FollowupAction("profile_form")]
-
-        if pending_service == "rutina":
-            return events + [FollowupAction("action_generar_rutina")]
-        if pending_service == "dieta":
-            return events + [FollowupAction("action_generar_dieta")]
+            if active_loop == "profile_form":
+                return events
+            return events
 
         return events
 
@@ -460,6 +603,14 @@ class ActionSubmitProfileForm(Action):
         tracker: Tracker,
         domain: Dict[Text, Any],
     ) -> List[Dict[Text, Any]]:
+        intent_name = tracker.latest_message.get("intent", {}).get("name")
+        if not backend_health_ok(sender_id=tracker.sender_id, intent=intent_name, demo_offline=tracker.get_slot("demo_offline")):
+            events = mark_offline(dispatcher, tracker)
+            dispatcher.utter_message(
+                text="No pude guardar tu perfil porque el backend no está disponible. Puedo seguir con datos locales si quieres."
+            )
+            events.append(SlotSet("perfil_completo", False))
+            return events
         ctx = ensure_authenticated_context(tracker)
         if not ctx:
             dispatcher.utter_message(
@@ -473,6 +624,7 @@ class ActionSubmitProfileForm(Action):
         medical = tracker.get_slot("padecimientos")
         diet_pref = tracker.get_slot("preferencia_dieta")
         preferred_muscle = tracker.get_slot("musculo_preferido")
+        somatotipo = tracker.get_slot("somatotipo")
 
         payload = {
             "user_id": ctx.get("user_id"),
@@ -481,6 +633,7 @@ class ActionSubmitProfileForm(Action):
             "primary_goal": (goal or "").strip() or None,
             "medical_conditions": None if (medical or "").lower() in {"", "ninguno"} else medical,
             "diet_preference": (diet_pref or "").strip() or None,
+            "somatotipo": (somatotipo or "").strip() or None,
         }
 
         headers: Dict[str, str] = {"Content-Type": "application/json"}
@@ -516,7 +669,6 @@ class ActionSubmitProfileForm(Action):
             )
             return []
 
-        dispatcher.utter_message(response="utter_perfil_actualizado")
         refreshed_profile: Optional[Dict[str, Any]] = None
         if resp.content:
             try:
@@ -533,6 +685,7 @@ class ActionSubmitProfileForm(Action):
             refreshed_goal = refreshed_profile.get("primary_goal")
             refreshed_medical = _normalize_list_or_text(refreshed_profile.get("medical_conditions"))
             refreshed_diet = _normalize_list_or_text(refreshed_profile.get("diet_preference"))
+            refreshed_somatotipo = _normalize_list_or_text(refreshed_profile.get("somatotipo"))
             if refreshed_weight is not None:
                 events.append(SlotSet("peso", refreshed_weight))
             if refreshed_height is not None:
@@ -543,6 +696,8 @@ class ActionSubmitProfileForm(Action):
                 events.append(SlotSet("padecimientos", refreshed_medical))
             if refreshed_diet:
                 events.append(SlotSet("preferencia_dieta", refreshed_diet))
+            if refreshed_somatotipo:
+                events.append(SlotSet("somatotipo", refreshed_somatotipo))
         if preferred_muscle is not None:
             events.append(SlotSet("musculo_preferido", preferred_muscle))
         else:
@@ -559,19 +714,14 @@ class ActionSubmitProfileForm(Action):
                 events.append(SlotSet("padecimientos", payload["medical_conditions"]))
             if payload["diet_preference"]:
                 events.append(SlotSet("preferencia_dieta", payload["diet_preference"]))
+            if payload["somatotipo"]:
+                events.append(SlotSet("somatotipo", payload["somatotipo"]))
         if preferred_muscle is not None:
             events.append(SlotSet("musculo_preferido", preferred_muscle))
 
-        target_action = tracker.get_slot("servicio_pendiente")
-        followups: List[Any] = []
-        if target_action == "rutina":
-            followups.append(FollowupAction("action_generar_rutina"))
-        elif target_action == "dieta":
-            followups.append(FollowupAction("action_generar_dieta"))
-
         events.append(SlotSet("servicio_pendiente", None))
 
-        return events + followups
+        return events
 
 
 def maybe_send_routine_email(
@@ -771,6 +921,18 @@ NUTRICION_TIPS: Dict[str, str] = {
     "bajar_grasa":  "Déficit 10–20%; proteínas 1.8–2.4 g/kg; fibra alta; hidratación.",
     "fuerza":       "Calorías de mantenimiento ±5%; hidratos pre/post entreno; sueño 7–9h.",
     "resistencia":  "Hidratos 5–7 g/kg; hidratación y electrolitos; proteína 1.4–1.8 g/kg."
+}
+
+SOMATOTIPO_TIPS_RUTINA: Dict[str, str] = {
+    "ectomorfo": "Prioriza progresión de cargas y descanso suficiente; evita volumen excesivo.",
+    "mesomorfo": "Responde bien a volumen moderado y variedad; mantén consistencia.",
+    "endomorfo": "Combina fuerza con cardio moderado; controla descansos y volumen total.",
+}
+
+SOMATOTIPO_TIPS_DIETA: Dict[str, str] = {
+    "ectomorfo": "Enfoca en energía y carbohidratos complejos; comidas frecuentes ayudan.",
+    "mesomorfo": "Mantén balance estable de macros; prioriza calidad y timing.",
+    "endomorfo": "Prioriza proteína/fibra y controla carbohidratos de alta carga.",
 }
 
 # (nombre, url, fuente)
@@ -1606,20 +1768,26 @@ class ActionGenerarRutina(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
+        intent_name = tracker.latest_message.get("intent", {}).get("name")
+        offline_backend = not backend_health_ok(sender_id=tracker.sender_id, intent=intent_name, demo_offline=tracker.get_slot("demo_offline"))
+        offline_events: List[Dict[Text, Any]] = []
+        if offline_backend:
+            offline_events.extend(mark_offline(dispatcher, tracker))
         ctx: Optional[Dict[str, Any]] = None
         if REQUIRE_AUTH_FOR_ROUTINE:
             ctx = ensure_authenticated_context(tracker)
-            if ctx is None:
+            if ctx is None and not offline_backend:
                 dispatcher.utter_message(text="Necesitas iniciar sesión en Fitter antes de generar tu rutina. Inicia sesión y vuelve a intentarlo.")
                 return []
         if ctx is None:
             ctx = ensure_authenticated_context(tracker)
 
-        profile_data = fetch_user_profile(ctx)
+        profile_data = None if offline_backend else fetch_user_profile(ctx)
 
         profile_goal = None
         if profile_data and profile_data.get("primary_goal"):
             profile_goal = str(profile_data["primary_goal"]).replace("_", " ").strip().lower()
+        somatotipo = (_slot(tracker, "somatotipo") or (profile_data.get("somatotipo") if profile_data else None) or "").strip().lower()
 
         raw_musculo = _slot(tracker, "musculo") or tracker.get_slot("musculo_preferido")
         # If the user hasn't provided a muscle group, ask explicitly and show profile summary
@@ -1704,6 +1872,12 @@ class ActionGenerarRutina(Action):
             f"Sesion aproximada {tiempo} min | {ejercicios_num} ejercicios | Equipo: {equip}",
             f"Progresion sugerida: +2.5-5% carga o +1 rep/serie manteniendo {rir_text}."
         ]
+        if offline_backend:
+            header_lines.append("Modo offline: rutina generada localmente sin perfil web.")
+        if somatotipo and somatotipo not in {"no_se", "no se", "no sé", "ninguno", "ninguna"}:
+            tip = SOMATOTIPO_TIPS_RUTINA.get(somatotipo)
+            if tip:
+                header_lines.append(f"Somatotipo (heurístico): {somatotipo}. {tip}")
         if profile_data:
             profile_bits: List[str] = []
             weight = profile_data.get("weight_kg")
@@ -1743,6 +1917,7 @@ class ActionGenerarRutina(Action):
                 "objetivo": objetivo,
                 "nivel": nivel,
                 "musculo": musculo,
+                "somatotipo": somatotipo if somatotipo else None,
                 "fallback": bool(fallback_notice.strip()),
                 "progresion": f"+2.5-5% carga o +1 rep/serie manteniendo {rir_text}.",
                 "health_notes": health_notes or None,
@@ -1754,6 +1929,20 @@ class ActionGenerarRutina(Action):
         }
 
         dispatcher.utter_message(json_message=routine_summary)
+
+        plan_id = None
+        if not offline_backend:
+            plan_id = persist_plan(
+                ctx,
+                path="/api/routine-plans",
+                payload={
+                    "title": routine_summary.get("header") or "Rutina generada",
+                    "objective": objetivo,
+                    "content": routine_summary,
+                },
+            )
+        if plan_id:
+            dispatcher.utter_message(text=f"Rutina guardada. ID: {plan_id}\nVer detalle: /cuenta/rutinas/{plan_id}")
 
         # Send the routine as an attached PDF to the user's email in background
         # (do not block the action thread to avoid connector timeouts)
@@ -1778,7 +1967,7 @@ class ActionGenerarRutina(Action):
         if context_payload:
             send_context_update(tracker.sender_id, context_payload)
 
-        return [
+        return offline_events + [
             SlotSet("ultima_rutina", routine_summary),
             SlotSet("servicio_pendiente", None),
         ]
@@ -1793,15 +1982,22 @@ class ActionGenerarDieta(Action):
     def run(self, dispatcher: CollectingDispatcher, tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
-        logger.info(f"=== DIETA CONFIG === CHAT_ENABLE_DIETA_CALC={CHAT_ENABLE_DIETA_CALC}, CHAT_DIET_CATALOG={CHAT_DIET_CATALOG}")
+        logger.info(f"=== DIETA CONFIG === CHAT_DIETA_CALC_MODE={CHAT_DIETA_CALC_MODE}, CHAT_DIET_CATALOG={CHAT_DIET_CATALOG}")
         
+        intent_name = tracker.latest_message.get("intent", {}).get("name")
+        offline_backend = not backend_health_ok(sender_id=tracker.sender_id, intent=intent_name, demo_offline=tracker.get_slot("demo_offline"))
+        offline_events: List[Dict[Text, Any]] = []
+        if offline_backend:
+            offline_events.extend(mark_offline(dispatcher, tracker))
+
         ctx = ensure_authenticated_context(tracker)
-        profile_data = fetch_user_profile(ctx)
+        profile_data = None if offline_backend else fetch_user_profile(ctx)
         ctx_dislikes = ctx.get("dislikes") if ctx else None
 
         profile_goal = None
         if profile_data and profile_data.get("primary_goal"):
             profile_goal = str(profile_data["primary_goal"]).replace("_", " ").strip().lower()
+        somatotipo = (_slot(tracker, "somatotipo") or (profile_data.get("somatotipo") if profile_data else None) or "").strip().lower()
 
         # prefer explicit slot, then profile, then sensible default
         objetivo_slot = _slot(tracker, "objetivo")
@@ -1857,6 +2053,10 @@ class ActionGenerarDieta(Action):
             adjustments.append("Distribuye carbohidratos complejos en porciones moderadas cada 3-4 horas.")
         if health_flags.get("asma"):
             adjustments.append("Incluye alimentos antiinflamatorios (omega 3, frutas variadas).")
+        if somatotipo and somatotipo not in {"no_se", "no se", "no sé", "ninguno", "ninguna"}:
+            tip = SOMATOTIPO_TIPS_DIETA.get(somatotipo)
+            if tip:
+                adjustments.append(f"Somatotipo (heurístico): {somatotipo}. {tip}")
 
         meals = plan.get("meals", [])
         filtered_meals: List[Dict[str, Any]] = []
@@ -1882,7 +2082,7 @@ class ActionGenerarDieta(Action):
 
         # Opt-in: calcular kcal objetivo y macros en gramos si la feature está activada
         dieta_calc_info: Optional[Dict[str, Any]] = None
-        if CHAT_ENABLE_DIETA_CALC:
+        if CHAT_DIETA_CALC_MODE != "off":
             try:
                 weight = None
                 if profile_data and profile_data.get("weight_kg") is not None:
@@ -1899,15 +2099,17 @@ class ActionGenerarDieta(Action):
                         age = None
                 sex = profile_data.get("sex") if profile_data else None
                 activity = profile_data.get("activity_level") if profile_data else None
-
-                dieta_calc_info = calc_target_kcal_and_macros(
-                    weight_kg=weight,
-                    height_cm=height,
-                    age=age,
-                    sex=sex,
-                    activity_level=activity,
-                    objetivo=objetivo,
-                )
+                should_calc = CHAT_DIETA_CALC_MODE == "on" or (CHAT_DIETA_CALC_MODE == "auto" and weight and height)
+                if should_calc:
+                    dieta_calc_info = calc_target_kcal_and_macros(
+                        weight_kg=weight,
+                        height_cm=height,
+                        age=age,
+                        sex=sex,
+                        activity_level=activity,
+                        objetivo=objetivo,
+                        somatotipo=somatotipo if somatotipo else None,
+                    )
             except Exception:
                 dieta_calc_info = None
 
@@ -1919,10 +2121,24 @@ class ActionGenerarDieta(Action):
             f"- Carbohidratos: {macros.get('carbohidratos', '-')}",
             f"- Grasas: {macros.get('grasas', '-')}",
         ]
+        if offline_backend:
+            lines.insert(1, "Modo offline: plan generado localmente sin perfil web.")
         if adjustments:
-            lines.append("Ajustes de salud:")
+            lines.append("Ajustes y personalización:")
             for note in adjustments:
                 lines.append(f"- {note}")
+        if dieta_calc_info and dieta_calc_info.get("target_kcal"):
+            lines.append("Detalle calórico estimado:")
+            if dieta_calc_info.get("bmr"):
+                lines.append(f"- BMR: {dieta_calc_info.get('bmr')} kcal")
+            if dieta_calc_info.get("maintenance_kcal"):
+                lines.append(f"- Mantenimiento: {dieta_calc_info.get('maintenance_kcal')} kcal")
+            if dieta_calc_info.get("target_kcal"):
+                lines.append(f"- Objetivo: {dieta_calc_info.get('target_kcal')} kcal")
+            if dieta_calc_info.get("proteinas_g") and dieta_calc_info.get("carbs_g") and dieta_calc_info.get("fats_g"):
+                lines.append(f"- Macros: {dieta_calc_info.get('proteinas_g')}g P / {dieta_calc_info.get('carbs_g')}g C / {dieta_calc_info.get('fats_g')}g G")
+            if dieta_calc_info.get("note"):
+                lines.append(f"Nota: {dieta_calc_info.get('note')}")
         if allergy_list and not allergen_hits:
             lines.append("Se han considerado tus alergias registradas.")
         if dislike_list and not allergen_hits:
@@ -1946,6 +2162,7 @@ class ActionGenerarDieta(Action):
             "summary": {
                 "calorias": plan.get("calorias"),
                 "macros": macros,
+                "somatotipo": somatotipo if somatotipo else None,
                 # si se calculó la versión opt-in, añadimos valores absolutos
                 **({
                     "target_kcal": dieta_calc_info.get("target_kcal"),
@@ -2087,6 +2304,20 @@ class ActionGenerarDieta(Action):
         dispatcher.utter_message(text=text_response)
         dispatcher.utter_message(json_message=diet_payload)
 
+        diet_id = None
+        if not offline_backend:
+            diet_id = persist_plan(
+                ctx,
+                path="/api/diet-plans",
+                payload={
+                    "title": f"Dieta {plan_label}".strip(),
+                    "goal": plan_label,
+                    "content": diet_payload,
+                },
+            )
+        if diet_id:
+            dispatcher.utter_message(text=f"Dieta guardada. ID: {diet_id}\nVer detalle: /cuenta/dietas/{diet_id}")
+
         context_payload: Dict[str, Any] = {}
         if condiciones and condiciones.lower() not in {"", "ninguna", "ninguno", "no"}:
             context_payload["medical_conditions"] = condiciones
@@ -2097,7 +2328,7 @@ class ActionGenerarDieta(Action):
         if context_payload:
             send_context_update(tracker.sender_id, context_payload)
 
-        return [
+        return offline_events + [
             SlotSet("ultima_dieta", diet_payload),
             SlotSet("servicio_pendiente", None),
         ]

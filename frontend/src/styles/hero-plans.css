@@ -7,11 +7,11 @@
 }
 
 .hero-plan-card {
-  background: #ffffff;
+  background: var(--surface);
   border-radius: 20px;
   padding: 24px;
-  border: 1px solid rgba(148, 163, 184, 0.35);
-  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--text) 8%, transparent);
   display: grid;
   gap: 16px;
   font-family: "Space Grotesk", "Segoe UI", sans-serif;
@@ -30,8 +30,8 @@
 }
 
 .hero-plan-chip {
-  background: rgba(15, 23, 42, 0.08);
-  color: #1f2937;
+  background: color-mix(in srgb, var(--surface) 60%, var(--border));
+  color: var(--text);
   border-radius: 999px;
   padding: 4px 10px;
   font-size: 0.75rem;
@@ -40,7 +40,7 @@
 }
 
 .hero-plan-desc {
-  color: #475569;
+  color: var(--muted);
   margin: 0;
 }
 
@@ -55,12 +55,12 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  color: #64748b;
+  color: var(--muted);
 }
 
 .hero-plan-meta strong {
   font-size: 0.95rem;
-  color: #1f2937;
+  color: var(--text);
 }
 
 .hero-plan-actions {
@@ -70,10 +70,10 @@
 }
 
 .hero-plans-empty {
-  background: #f8fafc;
+  background: var(--surface);
   border-radius: 18px;
   padding: 28px;
-  border: 1px dashed #cbd5f5;
+  border: 1px dashed color-mix(in srgb, var(--border) 70%, transparent);
   text-align: center;
 }
 

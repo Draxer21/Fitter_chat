@@ -32,6 +32,10 @@ const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const AccountPersonalPage = lazy(() => import("./pages/AccountPersonalPage"));
 const AccountSecurityPage = lazy(() => import("./pages/AccountSecurityPage"));
 const HeroPlansPage = lazy(() => import("./pages/HeroPlansPage"));
+const RoutinePlansPage = lazy(() => import("./pages/RoutinePlansPage"));
+const RoutinePlanDetailPage = lazy(() => import("./pages/RoutinePlanDetailPage"));
+const DietPlansPage = lazy(() => import("./pages/DietPlansPage"));
+const DietPlanDetailPage = lazy(() => import("./pages/DietPlanDetailPage"));
 const CatalogPage = lazy(() => import("./pages/CatalogPage"));
 const AdminSalesPage = lazy(() => import("./pages/AdminSalesPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
@@ -100,6 +104,10 @@ export default function App() {
                       <Route path="/cuenta/perfil" element={<ProfilePage />} />
                       <Route path="/cuenta/seguridad" element={<AccountSecurityPage />} />
                       <Route path="/cuenta/entrenos-unicos" element={<HeroPlansPage />} />
+                      <Route path="/cuenta/rutinas" element={<RoutinePlansPage />} />
+                      <Route path="/cuenta/rutinas/:id" element={<RoutinePlanDetailPage />} />
+                      <Route path="/cuenta/dietas" element={<DietPlansPage />} />
+                      <Route path="/cuenta/dietas/:id" element={<DietPlanDetailPage />} />
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </Suspense>
