@@ -1,0 +1,43 @@
+version: "3.1"
+stories:
+- story: generar rutina con perfil completo (G:\Fitter\chatbot\tests\test_stories.yml)
+  steps:
+  - intent: solicitar_rutina
+  - action: action_fetch_profile  # predicted: profile_form
+  - slot_was_set:
+    - perfil_completo: true
+  - action: action_generar_rutina  # predicted: action_listen
+  - slot_was_set:
+    - servicio_pendiente: null
+- story: rutina y luego dieta en la misma sesion (G:\Fitter\chatbot\tests\test_stories.yml)
+  steps:
+  - intent: solicitar_rutina
+  - action: action_fetch_profile  # predicted: profile_form
+  - slot_was_set:
+    - perfil_completo: true
+  - action: action_generar_rutina  # predicted: action_listen
+  - slot_was_set:
+    - servicio_pendiente: null
+  - intent: solicitar_dieta
+  - action: action_fetch_profile  # predicted: profile_form
+  - slot_was_set:
+    - perfil_completo: true
+  - action: action_generar_dieta  # predicted: action_listen
+  - slot_was_set:
+    - servicio_pendiente: null
+- story: dieta y luego rutina en la misma sesion (G:\Fitter\chatbot\tests\test_stories.yml)
+  steps:
+  - intent: solicitar_dieta
+  - action: action_fetch_profile  # predicted: profile_form
+  - slot_was_set:
+    - perfil_completo: true
+  - action: action_generar_dieta  # predicted: action_listen
+  - slot_was_set:
+    - servicio_pendiente: null
+  - intent: solicitar_rutina
+  - action: action_fetch_profile  # predicted: profile_form
+  - slot_was_set:
+    - perfil_completo: true
+  - action: action_generar_rutina  # predicted: action_listen
+  - slot_was_set:
+    - servicio_pendiente: null

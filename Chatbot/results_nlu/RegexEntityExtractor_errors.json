@@ -1,0 +1,377 @@
+[
+  {
+    "text": "quiero reservar spinning el 2025-11-01 a las 09:00",
+    "entities": [
+      {
+        "start": 16,
+        "end": 24,
+        "value": "spinning",
+        "entity": "clase"
+      },
+      {
+        "start": 28,
+        "end": 38,
+        "value": "2025-11-01",
+        "entity": "fecha"
+      },
+      {
+        "start": 45,
+        "end": 50,
+        "value": "09:00",
+        "entity": "hora"
+      }
+    ],
+    "predicted_entities": [
+      {
+        "entity": "codigo_reserva",
+        "start": 28,
+        "end": 38,
+        "confidence_entity": 0.15260963141918182,
+        "value": "2025-11-01",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      },
+      {
+        "entity": "codigo_reserva",
+        "start": 45,
+        "end": 50,
+        "confidence_entity": 0.14968371391296387,
+        "value": "09:00",
+        "extractor": "DIETClassifier"
+      },
+      {
+        "entity": "fecha",
+        "start": 28,
+        "end": 38,
+        "value": "2025-11-01",
+        "extractor": "RegexEntityExtractor"
+      },
+      {
+        "entity": "hora",
+        "start": 45,
+        "end": 50,
+        "value": "09:00",
+        "extractor": "RegexEntityExtractor"
+      }
+    ]
+  },
+  {
+    "text": "agenda funcional para 2025-12-15 a las 18:45",
+    "entities": [
+      {
+        "start": 7,
+        "end": 16,
+        "value": "funcional",
+        "entity": "clase"
+      },
+      {
+        "start": 22,
+        "end": 32,
+        "value": "2025-12-15",
+        "entity": "fecha"
+      },
+      {
+        "start": 39,
+        "end": 44,
+        "value": "18:45",
+        "entity": "hora"
+      }
+    ],
+    "predicted_entities": [
+      {
+        "entity": "codigo_reserva",
+        "start": 22,
+        "end": 32,
+        "confidence_entity": 0.15103447437286377,
+        "value": "2025-12-15",
+        "extractor": "DIETClassifier"
+      },
+      {
+        "entity": "codigo_reserva",
+        "start": 39,
+        "end": 44,
+        "confidence_entity": 0.14554263651371002,
+        "value": "18:45",
+        "extractor": "DIETClassifier"
+      },
+      {
+        "entity": "fecha",
+        "start": 22,
+        "end": 32,
+        "value": "2025-12-15",
+        "extractor": "RegexEntityExtractor"
+      },
+      {
+        "entity": "hora",
+        "start": 39,
+        "end": 44,
+        "value": "18:45",
+        "extractor": "RegexEntityExtractor"
+      }
+    ]
+  },
+  {
+    "text": "cancelar la reserva de yoga del 2025-10-10 a las 19:00",
+    "entities": [
+      {
+        "start": 23,
+        "end": 27,
+        "value": "yoga",
+        "entity": "clase"
+      },
+      {
+        "start": 32,
+        "end": 42,
+        "value": "2025-10-10",
+        "entity": "fecha"
+      },
+      {
+        "start": 49,
+        "end": 54,
+        "value": "19:00",
+        "entity": "hora"
+      }
+    ],
+    "predicted_entities": [
+      {
+        "entity": "codigo_reserva",
+        "start": 32,
+        "end": 42,
+        "confidence_entity": 0.15043124556541443,
+        "value": "2025-10-10",
+        "extractor": "DIETClassifier"
+      },
+      {
+        "entity": "codigo_reserva",
+        "start": 49,
+        "end": 54,
+        "confidence_entity": 0.1514984518289566,
+        "value": "19:00",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      },
+      {
+        "entity": "fecha",
+        "start": 32,
+        "end": 42,
+        "value": "2025-10-10",
+        "extractor": "RegexEntityExtractor"
+      },
+      {
+        "entity": "hora",
+        "start": 49,
+        "end": 54,
+        "value": "19:00",
+        "extractor": "RegexEntityExtractor"
+      }
+    ]
+  },
+  {
+    "text": "el codigo es FT-2025",
+    "entities": [
+      {
+        "start": 13,
+        "end": 20,
+        "value": "FT-2025",
+        "entity": "codigo_reserva"
+      }
+    ],
+    "predicted_entities": [
+      {
+        "entity": "codigo_reserva",
+        "start": 13,
+        "end": 20,
+        "confidence_entity": 0.3735421299934387,
+        "value": "FT-2025",
+        "extractor": "DIETClassifier"
+      }
+    ]
+  },
+  {
+    "text": "usa pantalla",
+    "entities": [
+      {
+        "start": 4,
+        "end": 12,
+        "value": "pantalla",
+        "entity": "formato"
+      }
+    ],
+    "predicted_entities": []
+  },
+  {
+    "text": "mi correo es cliente@fitter.com",
+    "entities": [
+      {
+        "start": 13,
+        "end": 31,
+        "value": "cliente@fitter.com",
+        "entity": "email"
+      }
+    ],
+    "predicted_entities": []
+  },
+  {
+    "text": "no me gusta la palta",
+    "entities": [
+      {
+        "start": 15,
+        "end": 20,
+        "value": "palta",
+        "entity": "no_gusta"
+      }
+    ],
+    "predicted_entities": [
+      {
+        "entity": "alimentos_no_gustan",
+        "start": 15,
+        "end": 20,
+        "confidence_entity": 0.8496456146240234,
+        "value": "palta",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ]
+  },
+  {
+    "text": "prepara opciones sin pepino",
+    "entities": [
+      {
+        "start": 21,
+        "end": 27,
+        "value": "pepino",
+        "entity": "alimentos_no_gustan"
+      }
+    ],
+    "predicted_entities": [
+      {
+        "entity": "alimentos_no_gustan",
+        "start": 21,
+        "end": 27,
+        "confidence_entity": 0.807900607585907,
+        "value": "pepino",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      }
+    ]
+  },
+  {
+    "text": "mi objetivo es ganar masa muscular",
+    "entities": [
+      {
+        "start": 15,
+        "end": 34,
+        "value": "ganar masa muscular",
+        "entity": "objetivo"
+      }
+    ],
+    "predicted_entities": []
+  },
+  {
+    "text": "mi objetivo es mejorar resistencia",
+    "entities": [
+      {
+        "start": 15,
+        "end": 34,
+        "value": "mejorar resistencia",
+        "entity": "objetivo"
+      }
+    ],
+    "predicted_entities": []
+  },
+  {
+    "text": "pecho",
+    "entities": [],
+    "predicted_entities": [
+      {
+        "entity": "codigo_reserva",
+        "start": 0,
+        "end": 5,
+        "confidence_entity": 0.13929343223571777,
+        "value": "pecho",
+        "extractor": "DIETClassifier",
+        "processors": [
+          "EntitySynonymMapper"
+        ]
+      },
+      {
+        "entity": "musculo",
+        "start": 0,
+        "end": 5,
+        "value": "pecho",
+        "extractor": "RegexEntityExtractor"
+      }
+    ]
+  },
+  {
+    "text": "espalda",
+    "entities": [],
+    "predicted_entities": [
+      {
+        "entity": "musculo",
+        "start": 0,
+        "end": 7,
+        "value": "espalda",
+        "extractor": "RegexEntityExtractor"
+      }
+    ]
+  },
+  {
+    "text": "arma una rutina de espalda nivel intermedio para hipertrofia",
+    "entities": [
+      {
+        "start": 19,
+        "end": 26,
+        "value": "espalda",
+        "entity": "musculo"
+      },
+      {
+        "start": 33,
+        "end": 43,
+        "value": "intermedio",
+        "entity": "nivel"
+      },
+      {
+        "start": 49,
+        "end": 60,
+        "value": "hipertrofia",
+        "entity": "objetivo"
+      }
+    ],
+    "predicted_entities": [
+      {
+        "entity": "musculo",
+        "start": 19,
+        "end": 26,
+        "value": "espalda",
+        "extractor": "RegexEntityExtractor"
+      }
+    ]
+  },
+  {
+    "text": "necesito una rutina con mancuernas para resistencia",
+    "entities": [
+      {
+        "start": 24,
+        "end": 34,
+        "value": "mancuernas",
+        "entity": "equipamiento"
+      },
+      {
+        "start": 40,
+        "end": 51,
+        "value": "resistencia",
+        "entity": "objetivo"
+      }
+    ],
+    "predicted_entities": []
+  }
+]

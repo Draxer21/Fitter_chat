@@ -17,48 +17,40 @@ stories:
     - action: action_consultar_reserva
     - action: utter_reserva_estado
 
-- story: rutina con perfil completo
+- story: rutina con profile_form
   steps:
     - intent: solicitar_rutina
-    - action: action_fetch_profile
     - slot_was_set:
-        - perfil_completo: true
-    - action: action_generar_rutina
-
-- story: rutina con actualizacion guiada
-  steps:
-    - intent: solicitar_rutina
+        - requested_plan: rutina
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: false
+    - action: utter_perfil_incompleto
     - action: profile_form
     - active_loop: profile_form
     - slot_was_set:
         - requested_slot: null
     - active_loop: null
     - action: action_submit_profile_form
+    - action: utter_perfil_actualizado
     - action: action_generar_rutina
 
-- story: dieta con perfil completo
+- story: dieta con profile_form
   steps:
     - intent: solicitar_dieta
-    - action: action_fetch_profile
     - slot_was_set:
-        - perfil_completo: true
-    - action: action_generar_dieta
-
-- story: dieta con actualizacion guiada
-  steps:
-    - intent: solicitar_dieta
+        - requested_plan: dieta
     - action: action_fetch_profile
     - slot_was_set:
         - perfil_completo: false
+    - action: utter_perfil_incompleto
     - action: profile_form
     - active_loop: profile_form
     - slot_was_set:
         - requested_slot: null
     - active_loop: null
     - action: action_submit_profile_form
+    - action: utter_perfil_actualizado
     - action: action_generar_dieta
 
 - story: dieta con preferencias sin palta
@@ -67,28 +59,74 @@ stories:
       entities:
         - no_gusta: palta
     - slot_was_set:
+        - requested_plan: dieta
+    - slot_was_set:
         - no_gusta: palta
     - action: action_fetch_profile
     - slot_was_set:
-        - perfil_completo: true
+        - perfil_completo: false
+    - action: utter_perfil_incompleto
+    - action: profile_form
+    - active_loop: profile_form
+    - slot_was_set:
+        - requested_slot: null
+    - active_loop: null
+    - action: action_submit_profile_form
+    - action: utter_perfil_actualizado
     - action: action_generar_dieta
 
 - story: dieta con veto pepino
   steps:
     - intent: solicitar_dieta
       entities:
-        - alimentos_no_gustan: pepino
+        - no_gusta: pepino
+    - slot_was_set:
+        - requested_plan: dieta
     - slot_was_set:
         - no_gusta: pepino
     - action: action_fetch_profile
     - slot_was_set:
+        - perfil_completo: false
+    - action: utter_perfil_incompleto
+    - action: profile_form
+    - active_loop: profile_form
+    - slot_was_set:
+        - requested_slot: null
+    - active_loop: null
+    - action: action_submit_profile_form
+    - action: utter_perfil_actualizado
+    - action: action_generar_dieta
+
+- story: rutina con perfil completo
+  steps:
+    - intent: solicitar_rutina
+    - slot_was_set:
+        - requested_plan: rutina
+    - action: action_fetch_profile
+    - action: utter_mostrar_perfil
+    - action: utter_perfil_resumen
+    - slot_was_set:
         - perfil_completo: true
+    - action: utter_perfil_resumen
+    - action: action_generar_rutina
+
+- story: dieta con perfil completo
+  steps:
+    - intent: solicitar_dieta
+    - slot_was_set:
+        - requested_plan: dieta
+    - action: action_fetch_profile
+    - slot_was_set:
+        - perfil_completo: true
+    - action: utter_perfil_resumen
     - action: action_generar_dieta
 
 - story: consultar perfil resumen
   steps:
     - intent: consultar_perfil
     - action: action_fetch_profile
+    - action: utter_mostrar_perfil
+    - action: utter_perfil_resumen
 
 - story: flujo soporte mfa
   steps:
@@ -96,6 +134,7 @@ stories:
     - action: utter_soporte_opciones
     - intent: soporte_mfa
     - action: utter_soporte_mfa
+
 
 - story: flujo entreno unico completo
   steps:
@@ -156,6 +195,7 @@ stories:
         - requested_slot: null
     - active_loop: null
     - action: action_submit_profile_form
+    - action: utter_perfil_actualizado
 
 - story: cambio plan suscripcion
   steps:

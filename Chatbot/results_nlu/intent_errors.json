@@ -1,0 +1,314 @@
+[
+  {
+    "text": "quiero reservar spinning el 2025-11-01 a las 09:00",
+    "intent": "crear_reserva",
+    "intent_prediction": {
+      "name": "informar",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "agenda funcional para 2025-12-15 a las 18:45",
+    "intent": "crear_reserva",
+    "intent_prediction": {
+      "name": "informar",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "cancelar la reserva de yoga del 2025-10-10 a las 19:00",
+    "intent": "cancelar_reserva",
+    "intent_prediction": {
+      "name": "informar",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "anula mi clase agendada",
+    "intent": "cancelar_reserva",
+    "intent_prediction": {
+      "name": "consultar_reserva",
+      "confidence": 0.8031404614448547
+    }
+  },
+  {
+    "text": "usa pantalla",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "mostrar_rutina_pantalla",
+      "confidence": 0.39890792965888977
+    }
+  },
+  {
+    "text": "ganar masa muscular",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "cambiar_objetivo_rutina",
+      "confidence": 0.9388542175292969
+    }
+  },
+  {
+    "text": "mi objetivo es ganar masa muscular",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "cambiar_objetivo_rutina",
+      "confidence": 0.9772122502326965
+    }
+  },
+  {
+    "text": "mejorar resistencia",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "cambiar_objetivo_rutina",
+      "confidence": 0.493819922208786
+    }
+  },
+  {
+    "text": "mi objetivo es mejorar resistencia",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "cambiar_objetivo_rutina",
+      "confidence": 0.9649507999420166
+    }
+  },
+  {
+    "text": "pecho",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "dolor_lesion",
+      "confidence": 0.16730065643787384
+    }
+  },
+  {
+    "text": "mi musculo es pecho",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "cambiar_musculo_rutina",
+      "confidence": 0.2764720320701599
+    }
+  },
+  {
+    "text": "espalda",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "cambiar_musculo_rutina",
+      "confidence": 0.49545159935951233
+    }
+  },
+  {
+    "text": "mi musculo es espalda",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "cambiar_musculo_rutina",
+      "confidence": 0.609060525894165
+    }
+  },
+  {
+    "text": "sin lactosa",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "cambiar_objetivo_rutina",
+      "confidence": 0.18900051712989807
+    }
+  },
+  {
+    "text": "ninguno",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "crear_reserva",
+      "confidence": 0.1403067409992218
+    }
+  },
+  {
+    "text": "/crear_reserva",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "crear_reserva",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/afirmar",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "afirmar",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/negar",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "negar",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/consultar_reserva",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "consultar_reserva",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/solicitar_rutina",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "solicitar_rutina",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/solicitar_entreno_unico{\"hero_programa\":\"batman_bale\"}",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "solicitar_entreno_unico",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/enviar_rutina_correo",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "enviar_rutina_correo",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/suscripcion_cambio_plan",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "suscripcion_cambio_plan",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/consultar_perfil",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "consultar_perfil",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/actualizar_perfil_bot",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "actualizar_perfil_bot",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/detener_formulario",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "detener_formulario",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/mostrar_rutina_pantalla",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "mostrar_rutina_pantalla",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/suscripcion_alta",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "suscripcion_alta",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/suscripcion_baja",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "suscripcion_baja",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/nlu_fallback",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "nlu_fallback",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "/solicitar_dieta",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "solicitar_dieta",
+      "confidence": 1.0
+    }
+  },
+  {
+    "text": "bajar grasa",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "cambiar_objetivo_rutina",
+      "confidence": 0.25274762511253357
+    }
+  },
+  {
+    "text": "core",
+    "intent": "informar",
+    "intent_prediction": {
+      "name": "crear_reserva",
+      "confidence": 0.14770089089870453
+    }
+  },
+  {
+    "text": "arma una rutina de espalda nivel intermedio para hipertrofia",
+    "intent": "solicitar_rutina",
+    "intent_prediction": {
+      "name": "cambiar_nivel_rutina",
+      "confidence": 0.4301375448703766
+    }
+  },
+  {
+    "text": "quiero pasarme al plan anual",
+    "intent": "suscripcion_cambio_plan",
+    "intent_prediction": {
+      "name": "suscripcion_alta",
+      "confidence": 0.9231520891189575
+    }
+  },
+  {
+    "text": "cambia mi suscripcion al plan trimestral",
+    "intent": "suscripcion_cambio_plan",
+    "intent_prediction": {
+      "name": "cambiar_objetivo_rutina",
+      "confidence": 0.7360462546348572
+    }
+  },
+  {
+    "text": "puedes reparar mi bicicleta",
+    "intent": "fuera_de_alcance",
+    "intent_prediction": {
+      "name": "cambiar_objetivo_rutina",
+      "confidence": 0.7226043343544006
+    }
+  },
+  {
+    "text": "organizas servicios de comida",
+    "intent": "fuera_de_alcance",
+    "intent_prediction": {
+      "name": "soporte_general",
+      "confidence": 0.3485620319843292
+    }
+  },
+  {
+    "text": "quiero modificar mi objetivo",
+    "intent": "cambiar_objetivo_rutina",
+    "intent_prediction": {
+      "name": "actualizar_perfil",
+      "confidence": 0.8138391375541687
+    }
+  }
+]

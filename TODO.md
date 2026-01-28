@@ -1,73 +1,26 @@
-# TODO: Fitter – Estado Actual del Proyecto
+# Bitácora técnica – Ajuste FAQ (Retrieval + DIET)
 
-## ✅ Completado
+## Objetivo
+Asegurar que preguntas de horarios y pagos sean clasificadas como intent base `faq` (DIET),
+mientras `ResponseSelector` resuelve el sub-intent (`faq/horarios`, `faq/pagos`) con alta precisión.
 
-### Backend
-- [x] Autenticación con usuario/contraseña
-- [x] Autenticación Multi-Factor (MFA)
-- [x] Gestión de perfiles con cifrado de datos sensibles
-- [x] Sistema de carrito de compras
-- [x] Pago simulado con tarjeta (validación Luhn)
-- [x] Generación de boletas/recibos
-- [x] Gestión de inventario y productos
-- [x] Gestión de órdenes
-- [x] Notificaciones por email
-- [x] Integración con Rasa Chatbot
-- [x] Tests para MFA, perfiles y productos
-- [x] Migraciones de base de datos (Alembic)
-- [x] Seguridad CSRF
+## Cambios realizados
+- Ampliación semántica de NLU en:
+  - `faq/horarios`: +10 ejemplos (hora, abren/cierran, fin de semana).
+  - `faq/pagos`: +10 ejemplos (métodos, transferencia, cuotas, tarjeta/débito).
+- Desambiguación de `soporte_general`:
+  - Reescritura de ejemplos para que “pago” implique fallo explícito (rechazo/error/cobro doble/no se registró).
+  - Micro-ajuste final: reforzado “falló mi último pago” para evitar confusión con “métodos de pago”.
+  - Añadidos ejemplos directos de “tarjeta de débito” en `faq/pagos`.
 
-### Frontend
-- [x] Templates HTML para: índice, login, registro, tienda, carrito, pago, boleta
-- [x] JavaScript Vanilla para funcionalidad del cliente
-- [x] API client (apijs.js) para comunicación con backend
-- [x] Validación de formularios
-- [x] Sistema de temas (Modo claro/oscuro) con CSS variables
-- [x] Context API para manejo de tema global
-- [x] Persistencia de preferencia de tema
+## Evidencia (logs)
+- validate_after_faq_clean.txt / train_after_faq_clean.txt / nlu_probe_after_faq_clean.txt
+- validate_after_faq_micro.txt / train_after_faq_micro.txt / nlu_probe_after_faq_micro.txt
 
-### Chatbot (Rasa)
-- [x] Configuración de dominio
-- [x] Historias de conversación
-- [x] Reglas NLU
-- [x] Generación de 2000 ejemplos por intent
-- [x] Modelos entrenados
+## Resultado (sonda final)
+- “¿Puedo pagar con débito?” → `faq` (0.847) ✅
+- “¿Cómo pago?” → `faq` (0.604) ✅
+- “¿Aceptan transferencia?” → `faq` (0.852) ✅
 
-### DevOps
-- [x] Dockerfile para backend
-- [x] docker-compose.yml
-- [x] Configuración Nginx
-- [x] Script de inicio (start_project.bat)
-
-## 📋 Pendiente/Futuro
-
-### Backend
-- [ ] Autenticación OAuth2/Google
-- [ ] Panel administrativo para gestión de productos
-- [ ] Reportes de ventas y métricas
-- [ ] Integración de pasarela de pago real
-- [ ] Rate limiting y throttling
-- [ ] Logs y auditoría más detallados
-
-### Frontend
-- [ ] Interfaz moderna con framework (React/Vue)
-- [ ] Dashboard de usuario
-- [ ] Historial de compras
-- [ ] Wishlist
-- [ ] Búsqueda y filtros avanzados
-
-### Chatbot
-- [ ] Reconocimiento de intents más complejos
-- [ ] Integración con búsqueda de productos
-- [ ] Recomendaciones personalizadas
-- [ ] Soporte multiidioma
-
-### Testing
-- [ ] Cobertura de tests al 80%+
-- [ ] Tests de integración E2E
-- [ ] Tests de carga y performance
-
-### Documentación
-- [ ] API documentation (Swagger/OpenAPI)
-- [ ] Guía de contribución
-- [ ] Troubleshooting guide
+## Estado
+CERRADO / APROBADO.

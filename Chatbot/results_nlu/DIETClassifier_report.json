@@ -1,0 +1,113 @@
+{
+  "musculo": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 3,
+    "confused_with": {
+      "no_gusta": 1
+    }
+  },
+  "nivel": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 1,
+    "confused_with": {}
+  },
+  "email": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 1,
+    "confused_with": {}
+  },
+  "codigo_reserva": {
+    "precision": 0.125,
+    "recall": 1.0,
+    "f1-score": 0.2222222222222222,
+    "support": 1,
+    "confused_with": {}
+  },
+  "clase": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 3,
+    "confused_with": {}
+  },
+  "hora": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 3,
+    "confused_with": {
+      "codigo_reserva": 3
+    }
+  },
+  "equipamiento": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 1,
+    "confused_with": {}
+  },
+  "alimentos_no_gustan": {
+    "precision": 0.5,
+    "recall": 1.0,
+    "f1-score": 0.6666666666666666,
+    "support": 1,
+    "confused_with": {}
+  },
+  "fecha": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 3,
+    "confused_with": {
+      "codigo_reserva": 3
+    }
+  },
+  "formato": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 1,
+    "confused_with": {}
+  },
+  "objetivo": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 7,
+    "confused_with": {}
+  },
+  "no_gusta": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 1,
+    "confused_with": {
+      "alimentos_no_gustan": 1
+    }
+  },
+  "micro avg": {
+    "precision": 0.18181818181818182,
+    "recall": 0.07692307692307693,
+    "f1-score": 0.10810810810810811,
+    "support": 26
+  },
+  "macro avg": {
+    "precision": 0.052083333333333336,
+    "recall": 0.16666666666666666,
+    "f1-score": 0.07407407407407407,
+    "support": 26
+  },
+  "weighted avg": {
+    "precision": 0.02403846153846154,
+    "recall": 0.07692307692307693,
+    "f1-score": 0.034188034188034185,
+    "support": 26
+  },
+  "accuracy": 0.8563218390804598
+}

@@ -1,0 +1,26 @@
+G:\Fitter\.venv\lib\site-packages\rasa\shared\utils\validation.py:134: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+  import pkg_resources
+G:\Fitter\.venv\lib\site-packages\pkg_resources\__init__.py:3117: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('mpl_toolkits')`.
+Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+  declare_namespace(pkg)
+G:\Fitter\.venv\lib\site-packages\pkg_resources\__init__.py:3117: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('ruamel')`.
+Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+  declare_namespace(pkg)
+G:\Fitter\.venv\lib\site-packages\tensorflow\lite\python\util.py:52: DeprecationWarning: jax.xla_computation is deprecated. Please use the AOT APIs.
+  from jax import xla_computation as _xla_computation
+[93mG:\Fitter\.venv\lib\site-packages\rasa\shared\utils\io.py:99: UserWarning: The following duplicated intents have been found across multiple domain files: faq
+  More info at https://rasa.com/docs/rasa/domain
+[0m2026-01-23 23:11:59 [1;30mINFO    [0m [34mrasa.validator[0m  - Validating intents...
+2026-01-23 23:11:59 [1;30mINFO    [0m [34mrasa.validator[0m  - Validating uniqueness of intents and stories...
+2026-01-23 23:11:59 [1;30mINFO    [0m [34mrasa.validator[0m  - Validating utterances...
+[93mG:\Fitter\.venv\lib\site-packages\rasa\shared\utils\io.py:99: UserWarning: The utterance 'utter_ask_condiciones_salud' is not used in any story or rule.
+[0m[93mG:\Fitter\.venv\lib\site-packages\rasa\shared\utils\io.py:99: UserWarning: The utterance 'utter_ask_formato' is not used in any story or rule.
+[0m[93mG:\Fitter\.venv\lib\site-packages\rasa\shared\utils\io.py:99: UserWarning: The utterance 'utter_ask_nivel' is not used in any story or rule.
+[0m[93mG:\Fitter\.venv\lib\site-packages\rasa\shared\utils\io.py:99: UserWarning: The utterance 'utter_ask_equipamiento' is not used in any story or rule.
+[0m[93mG:\Fitter\.venv\lib\site-packages\rasa\shared\utils\io.py:99: UserWarning: The utterance 'utter_ask_tiempo_disponible' is not used in any story or rule.
+[0m[93mG:\Fitter\.venv\lib\site-packages\rasa\shared\utils\io.py:99: UserWarning: The utterance 'utter_ask_alergias' is not used in any story or rule.
+[0m[93mG:\Fitter\.venv\lib\site-packages\rasa\shared\utils\io.py:99: UserWarning: The utterance 'utter_ask_ejercicios_num' is not used in any story or rule.
+[0m2026-01-23 23:11:59 [1;30mINFO    [0m [34mrasa.validator[0m  - Story structure validation...
+Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s]Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s, # trackers=1]Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s, # trackers=1]Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s, # trackers=1]Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s, # trackers=1]Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s, # trackers=1]Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s, # trackers=1]Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s, # trackers=1]Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s, # trackers=1]Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s, # trackers=1]Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s, # trackers=1]Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s, # trackers=1]Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s, # trackers=1]Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s, # trackers=1]Processed story blocks:   0%|          | 0/14 [00:00<?, ?it/s, # trackers=1]Processed story blocks: 100%|##########| 14/14 [00:00<00:00, 895.18it/s, # trackers=1]
+2026-01-23 23:11:59 [1;30mINFO    [0m [34mrasa.core.training.story_conflict[0m  - Considering all preceding turns for conflict analysis.
+2026-01-23 23:11:59 [1;30mINFO    [0m [34mrasa.validator[0m  - No story structure conflicts found.

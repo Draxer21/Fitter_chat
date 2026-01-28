@@ -23,6 +23,52 @@ nlu:
     - mi correo es [cliente@fitter.com](email)
     - no me gusta la [palta](no_gusta)
     - prepara opciones sin [pepino](alimentos_no_gustan)
+    - ganar masa muscular
+    - mi objetivo es [ganar masa muscular](objetivo)
+    - mejorar resistencia
+    - mi objetivo es [mejorar resistencia](objetivo)
+    - pecho
+    - mi musculo es [pecho](musculo)
+    - espalda
+    - mi musculo es [espalda](musculo)
+    - vegetariana
+    - sin lactosa
+    - ninguno
+    - /crear_reserva
+    - /informar{"clase":"spinning"}
+    - /informar{"fecha":"2025-10-05"}
+    - /informar{"hora":"07:00"}
+    - /afirmar
+    - /informar{"clase":"yoga"}
+    - /informar{"fecha":"2025-10-06"}
+    - /informar{"hora":"18:30"}
+    - /negar
+    - /consultar_reserva
+    - /informar{"codigo_reserva":"ABC123"}
+    - /solicitar_rutina
+    - /solicitar_entreno_unico{"hero_programa":"batman_bale"}
+    - /enviar_rutina_correo
+    - /informar{"email":"cliente@fitter.com"}
+    - /suscripcion_cambio_plan
+    - /consultar_perfil
+    - /actualizar_perfil_bot
+    - 75
+    - 180
+    - /informar
+    - /detener_formulario
+    - /mostrar_rutina_pantalla
+    - /suscripcion_alta
+    - /suscripcion_baja
+    - /informar{"email":"altenativo@fitter.com"}
+    - /nlu_fallback
+    - 80
+    - 178
+    - 65
+    - 165
+    - tengo asma leve
+    - /solicitar_dieta
+    - bajar grasa
+    - core
 
 - intent: solicitar_rutina
   examples: |
@@ -43,3 +89,11 @@ nlu:
   examples: |
     - puedes reparar mi bicicleta
     - organizas servicios de comida
+
+- intent: cambiar_objetivo_rutina
+  examples: |
+    - cambia mi objetivo a ganar masa muscular
+    - cambia mi objetivo a resistencia
+    - quiero cambiar mi meta a resistencia
+    - ajusta mi objetivo a resistencia
+    - quiero modificar mi objetivo

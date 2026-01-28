@@ -1,0 +1,801 @@
+G:\Fitter\.venv\lib\site-packages\rasa\shared\utils\validation.py:134: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html
+  import pkg_resources
+G:\Fitter\.venv\lib\site-packages\pkg_resources\__init__.py:3117: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('mpl_toolkits')`.
+Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+  declare_namespace(pkg)
+G:\Fitter\.venv\lib\site-packages\pkg_resources\__init__.py:3117: DeprecationWarning: Deprecated call to `pkg_resources.declare_namespace('ruamel')`.
+Implementing implicit namespace packages (as specified in PEP 420) is preferred to `pkg_resources.declare_namespace`. See https://setuptools.pypa.io/en/latest/references/keywords.html#keyword-namespace-packages
+  declare_namespace(pkg)
+G:\Fitter\.venv\lib\site-packages\tensorflow\lite\python\util.py:52: DeprecationWarning: jax.xla_computation is deprecated. Please use the AOT APIs.
+  from jax import xla_computation as _xla_computation
+2026-01-23 22:57:18 [1;30mINFO    [0m [34mrasa.core.processor[0m  - Loading model models\20260123-224848-elegant-allegory.tar.gz...
+NLU model loaded. Type a message and press enter to parse it.
+Next message:
+{
+  "text": "ï»¿Â¿CuÃ¡l es el horario?",
+  "intent": {
+    "name": "faq",
+    "confidence": 0.8575272560119629,
+    "full_retrieval_intent_name": null
+  },
+  "entities": [],
+  "text_tokens": [
+    [
+      0,
+      1
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      5,
+      8
+    ],
+    [
+      9,
+      10
+    ],
+    [
+      11,
+      13
+    ],
+    [
+      14,
+      16
+    ],
+    [
+      17,
+      24
+    ]
+  ],
+  "intent_ranking": [
+    {
+      "name": "faq",
+      "confidence": 0.8575272560119629
+    },
+    {
+      "name": "suscripcion_baja",
+      "confidence": 0.036895930767059326
+    },
+    {
+      "name": "negar",
+      "confidence": 0.03597297891974449
+    },
+    {
+      "name": "dolor_lesion",
+      "confidence": 0.025611253455281258
+    },
+    {
+      "name": "solicitar_dieta",
+      "confidence": 0.00807451643049717
+    },
+    {
+      "name": "saludar",
+      "confidence": 0.006859046872705221
+    },
+    {
+      "name": "afirmar",
+      "confidence": 0.006275514606386423
+    },
+    {
+      "name": "solicitar_rutina",
+      "confidence": 0.005381150636821985
+    },
+    {
+      "name": "enviar_rutina_correo",
+      "confidence": 0.0027987388893961906
+    },
+    {
+      "name": "navegar_perfil_web",
+      "confidence": 0.0021096535492688417
+    }
+  ],
+  "response_selector": {
+    "all_retrieval_intents": [
+      "faq"
+    ],
+    "default": {
+      "response": {
+        "responses": [
+          {
+            "text": "Nuestro gimnasio abre de lunes a viernes de 6:00 a 22:00, sábados de 8:00 a 20:00 y domingos de 9:00 a 14:00. Si necesitas un horario especial, avísame."
+          }
+        ],
+        "confidence": 1.0,
+        "intent_response_key": "faq/horarios",
+        "utter_action": "utter_faq/horarios"
+      },
+      "ranking": [
+        {
+          "confidence": 1.0,
+          "intent_response_key": "faq/horarios"
+        },
+        {
+          "confidence": 2.4163793283290137e-16,
+          "intent_response_key": "faq/pagos"
+        }
+      ]
+    }
+  }
+}
+Next message:
+{
+  "text": "Â¿A quÃ© hora abren?",
+  "intent": {
+    "name": "faq",
+    "confidence": 0.6181399822235107,
+    "full_retrieval_intent_name": null
+  },
+  "entities": [],
+  "text_tokens": [
+    [
+      0,
+      1
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      4,
+      7
+    ],
+    [
+      9,
+      13
+    ],
+    [
+      14,
+      19
+    ]
+  ],
+  "intent_ranking": [
+    {
+      "name": "faq",
+      "confidence": 0.6181399822235107
+    },
+    {
+      "name": "afirmar",
+      "confidence": 0.0790795162320137
+    },
+    {
+      "name": "solicitar_dieta",
+      "confidence": 0.07603070139884949
+    },
+    {
+      "name": "solicitar_rutina",
+      "confidence": 0.06804995238780975
+    },
+    {
+      "name": "negar",
+      "confidence": 0.05834893509745598
+    },
+    {
+      "name": "saludar",
+      "confidence": 0.023299798369407654
+    },
+    {
+      "name": "soporte_general",
+      "confidence": 0.020711779594421387
+    },
+    {
+      "name": "mostrar_rutina_pantalla",
+      "confidence": 0.016324274241924286
+    },
+    {
+      "name": "crear_reserva",
+      "confidence": 0.005085058975964785
+    },
+    {
+      "name": "cambiar_objetivo_rutina",
+      "confidence": 0.004726047161966562
+    }
+  ],
+  "response_selector": {
+    "all_retrieval_intents": [
+      "faq"
+    ],
+    "default": {
+      "response": {
+        "responses": [
+          {
+            "text": "Nuestro gimnasio abre de lunes a viernes de 6:00 a 22:00, sábados de 8:00 a 20:00 y domingos de 9:00 a 14:00. Si necesitas un horario especial, avísame."
+          }
+        ],
+        "confidence": 1.0,
+        "intent_response_key": "faq/horarios",
+        "utter_action": "utter_faq/horarios"
+      },
+      "ranking": [
+        {
+          "confidence": 1.0,
+          "intent_response_key": "faq/horarios"
+        },
+        {
+          "confidence": 2.639130754211738e-11,
+          "intent_response_key": "faq/pagos"
+        }
+      ]
+    }
+  }
+}
+Next message:
+{
+  "text": "Â¿A quÃ© hora cierran?",
+  "intent": {
+    "name": "faq",
+    "confidence": 0.6799855828285217,
+    "full_retrieval_intent_name": null
+  },
+  "entities": [],
+  "text_tokens": [
+    [
+      0,
+      1
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      4,
+      7
+    ],
+    [
+      9,
+      13
+    ],
+    [
+      14,
+      21
+    ]
+  ],
+  "intent_ranking": [
+    {
+      "name": "faq",
+      "confidence": 0.6799855828285217
+    },
+    {
+      "name": "solicitar_dieta",
+      "confidence": 0.06582434475421906
+    },
+    {
+      "name": "negar",
+      "confidence": 0.05863930284976959
+    },
+    {
+      "name": "solicitar_rutina",
+      "confidence": 0.04382326826453209
+    },
+    {
+      "name": "suscripcion_baja",
+      "confidence": 0.03511059656739235
+    },
+    {
+      "name": "afirmar",
+      "confidence": 0.021831678226590157
+    },
+    {
+      "name": "saludar",
+      "confidence": 0.018981050699949265
+    },
+    {
+      "name": "soporte_general",
+      "confidence": 0.017907913774251938
+    },
+    {
+      "name": "cambiar_objetivo_rutina",
+      "confidence": 0.015376689843833447
+    },
+    {
+      "name": "suscripcion_cambio_plan",
+      "confidence": 0.010475666262209415
+    }
+  ],
+  "response_selector": {
+    "all_retrieval_intents": [
+      "faq"
+    ],
+    "default": {
+      "response": {
+        "responses": [
+          {
+            "text": "Nuestro gimnasio abre de lunes a viernes de 6:00 a 22:00, sábados de 8:00 a 20:00 y domingos de 9:00 a 14:00. Si necesitas un horario especial, avísame."
+          }
+        ],
+        "confidence": 1.0,
+        "intent_response_key": "faq/horarios",
+        "utter_action": "utter_faq/horarios"
+      },
+      "ranking": [
+        {
+          "confidence": 1.0,
+          "intent_response_key": "faq/horarios"
+        },
+        {
+          "confidence": 1.8669583294692732e-13,
+          "intent_response_key": "faq/pagos"
+        }
+      ]
+    }
+  }
+}
+Next message:
+{
+  "text": "Horario domingo",
+  "intent": {
+    "name": "faq",
+    "confidence": 0.844520628452301,
+    "full_retrieval_intent_name": null
+  },
+  "entities": [],
+  "text_tokens": [
+    [
+      0,
+      7
+    ],
+    [
+      8,
+      15
+    ]
+  ],
+  "intent_ranking": [
+    {
+      "name": "faq",
+      "confidence": 0.844520628452301
+    },
+    {
+      "name": "negar",
+      "confidence": 0.05438628047704697
+    },
+    {
+      "name": "dolor_lesion",
+      "confidence": 0.03342743217945099
+    },
+    {
+      "name": "suscripcion_baja",
+      "confidence": 0.032129086554050446
+    },
+    {
+      "name": "saludar",
+      "confidence": 0.00828942283987999
+    },
+    {
+      "name": "solicitar_dieta",
+      "confidence": 0.005656416527926922
+    },
+    {
+      "name": "afirmar",
+      "confidence": 0.005294030532240868
+    },
+    {
+      "name": "solicitar_rutina",
+      "confidence": 0.003842584788799286
+    },
+    {
+      "name": "cambiar_nivel_rutina",
+      "confidence": 0.0020841811783611774
+    },
+    {
+      "name": "nlu_fallback",
+      "confidence": 0.0013208476593717933
+    }
+  ],
+  "response_selector": {
+    "all_retrieval_intents": [
+      "faq"
+    ],
+    "default": {
+      "response": {
+        "responses": [
+          {
+            "text": "Nuestro gimnasio abre de lunes a viernes de 6:00 a 22:00, sábados de 8:00 a 20:00 y domingos de 9:00 a 14:00. Si necesitas un horario especial, avísame."
+          }
+        ],
+        "confidence": 1.0,
+        "intent_response_key": "faq/horarios",
+        "utter_action": "utter_faq/horarios"
+      },
+      "ranking": [
+        {
+          "confidence": 1.0,
+          "intent_response_key": "faq/horarios"
+        },
+        {
+          "confidence": 1.293448261778756e-17,
+          "intent_response_key": "faq/pagos"
+        }
+      ]
+    }
+  }
+}
+Next message:
+{
+  "text": "Â¿CÃ³mo pago?",
+  "intent": {
+    "name": "faq",
+    "confidence": 0.6161274313926697,
+    "full_retrieval_intent_name": null
+  },
+  "entities": [],
+  "text_tokens": [
+    [
+      0,
+      1
+    ],
+    [
+      2,
+      4
+    ],
+    [
+      5,
+      7
+    ],
+    [
+      8,
+      12
+    ]
+  ],
+  "intent_ranking": [
+    {
+      "name": "faq",
+      "confidence": 0.6161274313926697
+    },
+    {
+      "name": "negar",
+      "confidence": 0.12034772336483002
+    },
+    {
+      "name": "soporte_general",
+      "confidence": 0.07296410202980042
+    },
+    {
+      "name": "solicitar_dieta",
+      "confidence": 0.053482189774513245
+    },
+    {
+      "name": "afirmar",
+      "confidence": 0.05064194276928902
+    },
+    {
+      "name": "saludar",
+      "confidence": 0.02165125124156475
+    },
+    {
+      "name": "solicitar_rutina",
+      "confidence": 0.01190083660185337
+    },
+    {
+      "name": "suscripcion_baja",
+      "confidence": 0.011585628613829613
+    },
+    {
+      "name": "actualizar_perfil_bot",
+      "confidence": 0.006731431931257248
+    },
+    {
+      "name": "cambiar_objetivo_rutina",
+      "confidence": 0.006425747647881508
+    }
+  ],
+  "response_selector": {
+    "all_retrieval_intents": [
+      "faq"
+    ],
+    "default": {
+      "response": {
+        "responses": [
+          {
+            "text": "Puedes pagar con tarjetas de crédito y débito, transferencia o Mercado Pago. También tenemos cuotas sin interés en membresías trimestrales y anuales."
+          }
+        ],
+        "confidence": 1.0,
+        "intent_response_key": "faq/pagos",
+        "utter_action": "utter_faq/pagos"
+      },
+      "ranking": [
+        {
+          "confidence": 1.0,
+          "intent_response_key": "faq/pagos"
+        },
+        {
+          "confidence": 1.5599163627477708e-10,
+          "intent_response_key": "faq/horarios"
+        }
+      ]
+    }
+  }
+}
+Next message:
+{
+  "text": "Â¿Aceptan transferencia?",
+  "intent": {
+    "name": "faq",
+    "confidence": 0.8741729259490967,
+    "full_retrieval_intent_name": null
+  },
+  "entities": [],
+  "text_tokens": [
+    [
+      0,
+      1
+    ],
+    [
+      2,
+      9
+    ],
+    [
+      10,
+      23
+    ]
+  ],
+  "intent_ranking": [
+    {
+      "name": "faq",
+      "confidence": 0.8741729259490967
+    },
+    {
+      "name": "negar",
+      "confidence": 0.0638631209731102
+    },
+    {
+      "name": "suscripcion_baja",
+      "confidence": 0.01698225550353527
+    },
+    {
+      "name": "solicitar_dieta",
+      "confidence": 0.0100241145119071
+    },
+    {
+      "name": "saludar",
+      "confidence": 0.008800214156508446
+    },
+    {
+      "name": "afirmar",
+      "confidence": 0.00604707607999444
+    },
+    {
+      "name": "solicitar_rutina",
+      "confidence": 0.004928250331431627
+    },
+    {
+      "name": "dolor_lesion",
+      "confidence": 0.0034828349016606808
+    },
+    {
+      "name": "cambiar_nivel_rutina",
+      "confidence": 0.002158782910555601
+    },
+    {
+      "name": "soporte_general",
+      "confidence": 0.001974683254957199
+    }
+  ],
+  "response_selector": {
+    "all_retrieval_intents": [
+      "faq"
+    ],
+    "default": {
+      "response": {
+        "responses": [
+          {
+            "text": "Puedes pagar con tarjetas de crédito y débito, transferencia o Mercado Pago. También tenemos cuotas sin interés en membresías trimestrales y anuales."
+          }
+        ],
+        "confidence": 1.0,
+        "intent_response_key": "faq/pagos",
+        "utter_action": "utter_faq/pagos"
+      },
+      "ranking": [
+        {
+          "confidence": 1.0,
+          "intent_response_key": "faq/pagos"
+        },
+        {
+          "confidence": 3.349790063389424e-13,
+          "intent_response_key": "faq/horarios"
+        }
+      ]
+    }
+  }
+}
+Next message:
+{
+  "text": "Â¿Puedo pagar con dÃ©bito?",
+  "intent": {
+    "name": "soporte_general",
+    "confidence": 0.9303117394447327
+  },
+  "entities": [],
+  "text_tokens": [
+    [
+      0,
+      1
+    ],
+    [
+      2,
+      7
+    ],
+    [
+      8,
+      13
+    ],
+    [
+      14,
+      17
+    ],
+    [
+      18,
+      20
+    ],
+    [
+      21,
+      25
+    ]
+  ],
+  "intent_ranking": [
+    {
+      "name": "soporte_general",
+      "confidence": 0.9303117394447327
+    },
+    {
+      "name": "faq",
+      "confidence": 0.034541692584753036
+    },
+    {
+      "name": "suscripcion_baja",
+      "confidence": 0.023307185620069504
+    },
+    {
+      "name": "mostrar_rutina_pantalla",
+      "confidence": 0.0023690920788794756
+    },
+    {
+      "name": "cambiar_nivel_rutina",
+      "confidence": 0.0015568166272714734
+    },
+    {
+      "name": "negar",
+      "confidence": 0.0013603073311969638
+    },
+    {
+      "name": "enviar_rutina_correo",
+      "confidence": 0.0011884600389748812
+    },
+    {
+      "name": "consultar_reserva",
+      "confidence": 0.0009883958846330643
+    },
+    {
+      "name": "solicitar_dieta",
+      "confidence": 0.0008181091980077326
+    },
+    {
+      "name": "saludar",
+      "confidence": 0.0006877908599562943
+    }
+  ],
+  "response_selector": {
+    "all_retrieval_intents": [
+      "faq"
+    ],
+    "default": {
+      "response": {
+        "responses": [
+          {
+            "text": "Puedes pagar con tarjetas de crédito y débito, transferencia o Mercado Pago. También tenemos cuotas sin interés en membresías trimestrales y anuales."
+          }
+        ],
+        "confidence": 1.0,
+        "intent_response_key": "faq/pagos",
+        "utter_action": "utter_faq/pagos"
+      },
+      "ranking": [
+        {
+          "confidence": 1.0,
+          "intent_response_key": "faq/pagos"
+        },
+        {
+          "confidence": 6.036155082711492e-12,
+          "intent_response_key": "faq/horarios"
+        }
+      ]
+    }
+  }
+}
+Next message:
+{
+  "text": "Â¿Tienen cuotas?",
+  "intent": {
+    "name": "faq",
+    "confidence": 0.7645646333694458,
+    "full_retrieval_intent_name": null
+  },
+  "entities": [],
+  "text_tokens": [
+    [
+      0,
+      1
+    ],
+    [
+      2,
+      8
+    ],
+    [
+      9,
+      15
+    ]
+  ],
+  "intent_ranking": [
+    {
+      "name": "faq",
+      "confidence": 0.7645646333694458
+    },
+    {
+      "name": "negar",
+      "confidence": 0.08256026357412338
+    },
+    {
+      "name": "afirmar",
+      "confidence": 0.08010081201791763
+    },
+    {
+      "name": "solicitar_dieta",
+      "confidence": 0.01777157001197338
+    },
+    {
+      "name": "saludar",
+      "confidence": 0.01399657316505909
+    },
+    {
+      "name": "dolor_lesion",
+      "confidence": 0.009051426313817501
+    },
+    {
+      "name": "mostrar_rutina_pantalla",
+      "confidence": 0.007641680538654327
+    },
+    {
+      "name": "solicitar_rutina",
+      "confidence": 0.007239680737257004
+    },
+    {
+      "name": "actualizar_perfil_bot",
+      "confidence": 0.004267920274287462
+    },
+    {
+      "name": "navegar_perfil_web",
+      "confidence": 0.0023273248225450516
+    }
+  ],
+  "response_selector": {
+    "all_retrieval_intents": [
+      "faq"
+    ],
+    "default": {
+      "response": {
+        "responses": [
+          {
+            "text": "Puedes pagar con tarjetas de crédito y débito, transferencia o Mercado Pago. También tenemos cuotas sin interés en membresías trimestrales y anuales."
+          }
+        ],
+        "confidence": 1.0,
+        "intent_response_key": "faq/pagos",
+        "utter_action": "utter_faq/pagos"
+      },
+      "ranking": [
+        {
+          "confidence": 1.0,
+          "intent_response_key": "faq/pagos"
+        },
+        {
+          "confidence": 6.12348279721564e-13,
+          "intent_response_key": "faq/horarios"
+        }
+      ]
+    }
+  }
+}
+Next message:
+Wrapping up command line chat...

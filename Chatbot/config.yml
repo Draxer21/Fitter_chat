@@ -1,4 +1,4 @@
-﻿# The config recipe.
+# The config recipe.
 # https://rasa.com/docs/rasa/model-configuration/
 recipe: default.v1
 
@@ -15,10 +15,6 @@ pipeline:
     intent_tokenization_flag: false
   - name: RegexFeaturizer
     case_sensitive: false
-  - name: RegexEntityExtractor
-    use_regexes: true
-    use_lookup_tables: true
-    overwrite_existing_extracted_entities: true
   - name: LexicalSyntacticFeaturizer
   - name: CountVectorsFeaturizer
     min_ngram: 1
@@ -28,18 +24,22 @@ pipeline:
     min_ngram: 1
     max_ngram: 4
   - name: DIETClassifier
-    epochs: 15
+    epochs: 10
     transformer_size: 16
     number_of_transformer_layers: 1
     embedding_dimension: 116
     batch_strategy: "sequence"
-    batch_size: 8
+    batch_size: 32
     learning_rate: 0.002
     constrain_similarities: true
     evaluate_on_number_of_examples: 50
     evaluate_every_number_of_epochs: 10
     early_stopping_patience: 10
   - name: EntitySynonymMapper
+  - name: RegexEntityExtractor
+    use_regexes: true
+    use_lookup_tables: true
+    overwrite_existing_extracted_entities: true
   - name: ResponseSelector
     epochs: 20
     embedding_dimension: 16

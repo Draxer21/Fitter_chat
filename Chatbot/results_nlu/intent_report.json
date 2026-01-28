@@ -1,0 +1,102 @@
+{
+  "crear_reserva": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 2,
+    "confused_with": {
+      "informar": 2
+    }
+  },
+  "solicitar_rutina": {
+    "precision": 0.5,
+    "recall": 0.5,
+    "f1-score": 0.5,
+    "support": 2,
+    "confused_with": {
+      "cambiar_nivel_rutina": 1
+    }
+  },
+  "suscripcion_cambio_plan": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 2,
+    "confused_with": {
+      "suscripcion_alta": 1,
+      "cambiar_objetivo_rutina": 1
+    }
+  },
+  "enviar_rutina_correo": {
+    "precision": 0.6666666666666666,
+    "recall": 1.0,
+    "f1-score": 0.8,
+    "support": 2,
+    "confused_with": {}
+  },
+  "cambiar_objetivo_rutina": {
+    "precision": 0.3333333333333333,
+    "recall": 0.8,
+    "f1-score": 0.47058823529411764,
+    "support": 5,
+    "confused_with": {
+      "actualizar_perfil": 1
+    }
+  },
+  "informar": {
+    "precision": 0.88,
+    "recall": 0.43137254901960786,
+    "f1-score": 0.5789473684210527,
+    "support": 51,
+    "confused_with": {
+      "cambiar_objetivo_rutina": 6,
+      "cambiar_musculo_rutina": 3
+    }
+  },
+  "consultar_reserva": {
+    "precision": 0.5,
+    "recall": 1.0,
+    "f1-score": 0.6666666666666666,
+    "support": 2,
+    "confused_with": {}
+  },
+  "cancelar_reserva": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 2,
+    "confused_with": {
+      "consultar_reserva": 1,
+      "informar": 1
+    }
+  },
+  "fuera_de_alcance": {
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1-score": 0.0,
+    "support": 2,
+    "confused_with": {
+      "soporte_general": 1,
+      "cambiar_objetivo_rutina": 1
+    }
+  },
+  "micro avg": {
+    "precision": 0.62,
+    "recall": 0.44285714285714284,
+    "f1-score": 0.5166666666666667,
+    "support": 70
+  },
+  "macro avg": {
+    "precision": 0.32,
+    "recall": 0.41459694989106755,
+    "f1-score": 0.33513358559798184,
+    "support": 70
+  },
+  "weighted avg": {
+    "precision": 0.7125714285714286,
+    "recall": 0.44285714285714284,
+    "f1-score": 0.511608432846823,
+    "support": 70
+  },
+  "accuracy": 0.44285714285714284
+}

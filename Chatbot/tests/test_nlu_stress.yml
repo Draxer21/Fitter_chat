@@ -1,0 +1,64 @@
+version: "3.1"
+
+nlu:
+- intent: crear_reserva
+  examples: |
+    - quiero reservar [spinning](clase) el [2025-11-01](fecha) a las [09:00](hora)
+    - agenda [funcional](clase) para [2025-12-15](fecha) a las [18:45](hora)
+
+- intent: cancelar_reserva
+  examples: |
+    - cancelar la reserva de [yoga](clase) del [2025-10-10](fecha) a las [19:00](hora)
+    - anula mi clase agendada
+
+- intent: consultar_reserva
+  examples: |
+    - cual es el estado de mi reserva
+    - ver mi proxima reserva
+
+- intent: informar
+  examples: |
+    - el codigo es [FT-2025](codigo_reserva)
+    - usa [pantalla](formato)
+    - mi correo es [cliente@fitter.com](email)
+    - no me gusta la [palta](no_gusta)
+    - prepara opciones sin [pepino](alimentos_no_gustan)
+    - ganar masa muscular
+    - mi objetivo es [ganar masa muscular](objetivo)
+    - mejorar resistencia
+    - mi objetivo es [mejorar resistencia](objetivo)
+    - pecho
+    - mi musculo es [pecho](musculo)
+    - espalda
+    - mi musculo es [espalda](musculo)
+    - vegetariana
+    - sin lactosa
+    - ninguno
+
+- intent: solicitar_rutina
+  examples: |
+    - arma una rutina de [espalda](musculo) nivel [intermedio](nivel) para [hipertrofia](objetivo)
+    - necesito una rutina con [mancuernas](equipamiento) para [resistencia](objetivo)
+
+- intent: enviar_rutina_correo
+  examples: |
+    - enviame la rutina al correo
+    - podrias mandarme el plan por email
+
+- intent: suscripcion_cambio_plan
+  examples: |
+    - quiero pasarme al plan anual
+    - cambia mi suscripcion al plan trimestral
+
+- intent: fuera_de_alcance
+  examples: |
+    - puedes reparar mi bicicleta
+    - organizas servicios de comida
+
+- intent: cambiar_objetivo_rutina
+  examples: |
+    - cambia mi objetivo a ganar masa muscular
+    - cambia mi objetivo a resistencia
+    - quiero cambiar mi meta a resistencia
+    - ajusta mi objetivo a resistencia
+    - quiero modificar mi objetivo
