@@ -289,8 +289,38 @@ Cuando termines la sesión, presiona `Ctrl+C` en la terminal para cerrar todos l
 ### 🔐 Login con Google y apodos
 
 - `GOOGLE_CLIENT_IDS` acepta uno o varios **Client ID** (separados por comas) configurados en Google Cloud y el backend valida que el `aud` del `id_token` pertenezca a esa lista.
-- `REACT_APP_GOOGLE_CLIENT_ID` debe apuntar al Client ID que usará el botón de Google Identity Services en el frontend.
+- `VITE_GOOGLE_CLIENT_ID` debe apuntar al Client ID que usará el botón de Google Identity Services en el frontend (Vite expone solo variables con prefijo `VITE_`).
 - Los usuarios que ingresan con Google reciben un nombre temporal para efectos internos y se les ofrece, inmediatamente después, un formulario accesible para definir su apodo dentro de la app (pueden omitirlo y volver cuando quieran).
+
+#### Contrato: `POST /auth/google`
+
+Autenticación mediante Google Sign-In. Recibe un token (Google Credential) y valida la audiencia (`aud`) contra `GOOGLE_CLIENT_IDS`. En tests puede operar en modo mock (`GOOGLE_AUTH_VERIFY_MODE=mock`) para evitar dependencias externas.
+
+Request (JSON):
+```json
+{
+  "credential": "JWT_ID_TOKEN"
+}
+```
+
+Respuestas:
+- **200 OK**: token válido (`aud` permitido; `email_verified=true`).
+  - Body: `{"ok": true, "user": { ... }}`
+- **401 Unauthorized**: token inválido, `aud` no permitido o `email_verified=false`.
+- **503 Service Unavailable**: configuración incompleta (`GOOGLE_CLIENT_IDS` vacío).
+
+Config relevante:
+- `GOOGLE_CLIENT_IDS`: lista/CSV de Client IDs permitidos.
+- `GOOGLE_AUTH_VERIFY_MODE`:
+  - `google` (default): verificación real contra Google.
+  - `mock`: decodificación local para tests (sin dependencia externa).
+
+Ejemplo cURL:
+```bash
+curl -X POST http://localhost:5000/auth/google \
+  -H "Content-Type: application/json" \
+  -d '{"credential":"<JWT_ID_TOKEN>"}'
+```
 
 ## 📁 Estructura del proyecto
 

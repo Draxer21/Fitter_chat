@@ -66,6 +66,7 @@ class AppConfig:
     MERCADOPAGO_NOTIFICATION_URL: str = ""
     FRONTEND_URL: str = "http://localhost:3000"
     GOOGLE_CLIENT_IDS: List[str] = field(default_factory=list)
+    GOOGLE_AUTH_VERIFY_MODE: str = "google"
 
     @classmethod
     def from_env(cls, env: Optional[Env] = None) -> "AppConfig":
@@ -121,6 +122,9 @@ class AppConfig:
             ),
             FRONTEND_URL=env.get("FRONTEND_URL", cls.FRONTEND_URL),
             GOOGLE_CLIENT_IDS=_parse_list(env.get("GOOGLE_CLIENT_IDS")),
+            GOOGLE_AUTH_VERIFY_MODE=env.get(
+                "GOOGLE_AUTH_VERIFY_MODE", cls.GOOGLE_AUTH_VERIFY_MODE
+            ),
         )
 
     def to_mapping(self) -> Dict[str, Any]:

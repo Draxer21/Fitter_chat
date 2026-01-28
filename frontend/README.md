@@ -1,6 +1,11 @@
-# Getting Started with Create React App
+# Frontend — Vite + React
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This frontend is built with Vite and React.
+
+## Env vars (Vite)
+
+Frontend env vars exposed to the client **must** be prefixed with `VITE_`.
+After changing any `.env*` file, restart `npm run dev` for Vite to reload them.
 
 ## Available Scripts
 

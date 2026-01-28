@@ -42,6 +42,9 @@ export default function GoogleAuthButton({
       setScriptError("missing_client_id");
       return () => {};
     }
+    if (import.meta.env.DEV) {
+      console.info("Google Sign-In client ID present:", Boolean(clientId));
+    }
     loadGoogleScript()
       .then(() => {
         if (!cancelled) {
