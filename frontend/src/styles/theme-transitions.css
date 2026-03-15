@@ -53,9 +53,9 @@ button:active,
 }
 
 /* Generic white background elements */
-div[style*="background-color: #fff"],
-div[style*="background-color: #ffffff"],
-[style*="background-color: #fff"],
-[style*="background-color: #ffffff"] {
+div[style*="background-color: var(--neutral-0)"],
+div[style*="background-color: var(--neutral-0)"],
+[style*="background-color: var(--neutral-0)"],
+[style*="background-color: var(--neutral-0)"] {
   background-color: var(--bg) !important;
 }

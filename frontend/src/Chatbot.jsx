@@ -1,5 +1,6 @@
 // Chatbot.jsx
 import { useEffect, useRef, useState } from "react";
+import { API } from "./services/apijs";
 import "./styles/Chatbot.css";
 
 const SENDER_STORAGE_KEY = "rasa_uid";
@@ -29,7 +30,22 @@ export default function Chatbot(props = {}) {
   const uidRef = useRef(senderId || getOrCreateSenderId());
 
   const CONSENT_KEY = "fitter_chat_consent";
+  const CONSENT_VERSION = "2025-11-22";
   const [consent, setConsent] = useState(() => localStorage.getItem(CONSENT_KEY) === "1");
+  const consentSyncedRef = useRef(false);
+
+  const syncConsent = async (given) => {
+    try {
+      await API.chat.updateContext(uidRef.current, {
+        consent_given: Boolean(given),
+        consent_version: CONSENT_VERSION,
+      });
+      consentSyncedRef.current = true;
+    } catch (e) {
+      // best-effort: no bloquear experiencia del usuario
+      console.warn("No se pudo registrar el consentimiento en backend.", e);
+    }
+  };
 
   const onConsentChange = (checked) => {
     setConsent(checked);
@@ -38,6 +54,7 @@ export default function Chatbot(props = {}) {
     } catch (e) {
       // ignore
     }
+    syncConsent(checked);
     if (checked) setErrorText("");
   };
 
@@ -83,6 +100,13 @@ export default function Chatbot(props = {}) {
   // Limpieza al desmontar
   useEffect(() => () => abortRef.current?.abort(), []);
 
+  // Sincroniza consentimiento si ya estaba aceptado
+  useEffect(() => {
+    if (consent && !consentSyncedRef.current) {
+      syncConsent(true);
+    }
+  }, [consent]);
+
   const pushMessage = (msg) => {
     setMessages((prev) => [...prev, { id: nextId.current++, ...msg }]);
   };
@@ -104,11 +128,16 @@ export default function Chatbot(props = {}) {
     const controller = new AbortController();
     abortRef.current = controller;
 
+    const payload = {
+      sender: uidRef.current,
+      message: text,
+    };
+
     const res = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ sender: uidRef.current, message: text }),
+      body: JSON.stringify(payload),
       signal: controller.signal
     });
 
@@ -125,6 +154,19 @@ export default function Chatbot(props = {}) {
     }
 
     const data = await res.json();
+    if (data && data.error === "consent_required") {
+      const version = data.consent_version ? ` (versión ${data.consent_version})` : "";
+      setErrorText(`Debes aceptar las condiciones de uso del chatbot${version} para continuar.`);
+      setMessages((prev) => [
+        ...prev,
+        {
+          from: "bot",
+          id: nextId.current++,
+          text: `Para continuar necesito tu consentimiento${version}.`,
+        },
+      ]);
+      return;
+    }
     const botMsgs = normalizeBotPayloads(data);
     setMessages((prev) =>
       botMsgs.length
@@ -173,6 +215,65 @@ export default function Chatbot(props = {}) {
     }
   };
 
+  const sendToBackendWithPayload = async (extraPayload, displayText) => {
+    if (!consent) {
+      setErrorText("Debes aceptar las condiciones de uso del chatbot para enviar mensajes.");
+      return false;
+    }
+    if (loading) return false;
+
+    setErrorText("");
+    if (displayText !== false) {
+      pushMessage({ from: "user", text: typeof displayText === "string" ? displayText : "Solicitar asesor" });
+    }
+    setLoading(true);
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          sender: uidRef.current,
+          message: "",
+          ...extraPayload,
+        }),
+      });
+      if (!res.ok) {
+        const t = await res.text().catch(() => "");
+        throw new Error(`HTTP ${res.status}${t ? `: ${t.slice(0, 160)}` : ""}`);
+      }
+      const data = await res.json();
+      if (data && data.error === "consent_required") {
+        const version = data.consent_version ? ` (versión ${data.consent_version})` : "";
+        setErrorText(`Debes aceptar las condiciones de uso del chatbot${version} para continuar.`);
+        setMessages((prev) => [
+          ...prev,
+          {
+            from: "bot",
+            id: nextId.current++,
+            text: `Para continuar necesito tu consentimiento${version}.`,
+          },
+        ]);
+        return false;
+      }
+      const botMsgs = normalizeBotPayloads(data);
+      setMessages((prev) =>
+        botMsgs.length
+          ? [...prev, ...botMsgs]
+          : [...prev, { from: "bot", id: nextId.current++, text: "No recibí respuesta. ¿Puedes intentar de nuevo?" }]
+      );
+      return true;
+    } catch (e) {
+      const msg = e?.name === "AbortError" ? "Solicitud cancelada." : "Error de conexión con el backend.";
+      setErrorText(typeof e?.message === "string" ? e.message : msg);
+      pushMessage({ from: "bot", text: "Error de conexión con el backend." });
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const sendMessage = async () => {
     const text = input.trim();
     const sent = await sendText(text, text);
@@ -193,6 +294,21 @@ export default function Chatbot(props = {}) {
       ...prev,
       [key]: !prev[key]
     }));
+  };
+
+  const parseHandoffPayload = (payload) => {
+    if (typeof payload !== "string") return null;
+    if (!payload.startsWith("/handoff_human")) return null;
+    const idx = payload.indexOf("{");
+    if (idx === -1) return { reason: "otro" };
+    try {
+      const jsonPart = payload.slice(idx);
+      const parsed = JSON.parse(jsonPart);
+      const reason = typeof parsed?.handoff_reason === "string" ? parsed.handoff_reason : "otro";
+      return { reason };
+    } catch (e) {
+      return { reason: "otro" };
+    }
   };
 
   const openDietView = (diet) => {
@@ -687,6 +803,14 @@ export default function Chatbot(props = {}) {
                     key={`btn-${m.id}-${idx}`}
                     type="button"
                     onClick={() => {
+                      const handoff = parseHandoffPayload(buttonPayload);
+                      if (handoff) {
+                        sendToBackendWithPayload(
+                          { handoff: true, handoff_reason: handoff.reason },
+                          buttonTitle
+                        );
+                        return;
+                      }
                       if (buttonPayload) {
                         sendText(buttonPayload, buttonTitle);
                       }

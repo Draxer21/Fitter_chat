@@ -31,6 +31,7 @@ export default function EntrenosUnicos() {
     }
     try {
       const details = planDetails[plan.key] || {};
+      const workoutPlan = getWorkoutPlan(plan.key);
       const response = await API.profile.heroPlans.create({
         plan_key: plan.key,
         title: plan.title,
@@ -47,6 +48,8 @@ export default function EntrenosUnicos() {
           meals: details.meals,
           sources: details.sources,
           guidelines: details.guidelines,
+          progression_model: getProgressionModel(plan.key),
+          workout_plan: workoutPlan,
         },
         source: "web",
       });
@@ -84,6 +87,449 @@ export default function EntrenosUnicos() {
   const getPlanByIndex = (idx) => plans[(idx + plans.length) % plans.length];
   const handlePrevPlan = () => setCarouselIndex((prev) => (prev - 1 + plans.length) % plans.length);
   const handleNextPlan = () => setCarouselIndex((prev) => (prev + 1) % plans.length);
+
+  const progressionModels = {
+    flash: "Doble progresion en compuestos (sube repeticiones y luego carga), con descarga ligera cada 4 semanas.",
+    shazam: "Primero calidad tecnica, luego volumen y por ultimo intensidad en saltos/velocidad.",
+    mecha: "Aumenta tiempo de trabajo o distancia semanalmente, manteniendo una sesion de descarga cada 5 semanas.",
+    batman_bale: "Bloques de 4 semanas: acumulacion (8-12 reps), intensificacion (4-6 reps), peaking (3-5 reps).",
+    batman_affleck: "Ondulacion semanal de cargas: pesado/medio/volumen para sostener fuerza e hipertrofia.",
+    batman_pattinson: "Progresion por densidad: mismo trabajo en menos tiempo y luego mayor dificultad tecnica.",
+    capitan_america_evans: "Split de alto volumen con sobrecarga progresiva semanal en los basicos.",
+    superman_cavill: "Fase 1 fuerza base, fase 2 hipertrofia, fase 3 acondicionamiento metabolico.",
+    superman_corenswet: "Empuje-traccion-piernas con subida progresiva de tonelaje y mini-deload cada 6 semanas.",
+    wolverine_jackman: "Periodizacion de repeticiones (12-10-8-6-5) y ajustes de cardio segun definicion.",
+  };
+
+  const workoutPlanTemplates = {
+    flash: [
+      {
+        day: "Dia 1 - Potencia de pierna",
+        objective: "Fuerza de tren inferior y salida explosiva",
+        exercises: [
+          { name: "Back Squat", sets: "5", reps: "5", intensity: "RPE 8", rest: "120 s" },
+          { name: "Romanian Deadlift", sets: "4", reps: "8", intensity: "RPE 8", rest: "90 s" },
+          { name: "Box Jump", sets: "5", reps: "3", intensity: "Explosivo", rest: "75 s" },
+          { name: "Sled Push", sets: "6", reps: "20 m", intensity: "Alto", rest: "90 s" },
+          { name: "Plank + Dead Bug", sets: "3", reps: "45 s + 10/10", intensity: "Control", rest: "45 s" },
+        ],
+      },
+      {
+        day: "Dia 2 - Torso de potencia",
+        objective: "Empuje/traccion con velocidad",
+        exercises: [
+          { name: "Bench Press", sets: "5", reps: "4", intensity: "RPE 8", rest: "120 s" },
+          { name: "Weighted Pull-up", sets: "4", reps: "6", intensity: "RPE 8", rest: "120 s" },
+          { name: "Push Press", sets: "4", reps: "5", intensity: "RPE 8", rest: "90 s" },
+          { name: "Medicine Ball Slam", sets: "4", reps: "10", intensity: "Explosivo", rest: "60 s" },
+          { name: "Pallof Press", sets: "3", reps: "12/12", intensity: "Control", rest: "45 s" },
+        ],
+      },
+      {
+        day: "Dia 3 - Metabolico completo",
+        objective: "Acondicionamiento y potencia metabolica",
+        exercises: [
+          { name: "Thruster", sets: "5", reps: "8", intensity: "RPE 8", rest: "75 s" },
+          { name: "Kettlebell Swing", sets: "5", reps: "15", intensity: "RPE 8", rest: "60 s" },
+          { name: "Burpee Over Bar", sets: "4", reps: "10", intensity: "Alto", rest: "60 s" },
+          { name: "Farmer Carry", sets: "4", reps: "30 m", intensity: "RPE 8", rest: "75 s" },
+        ],
+      },
+      {
+        day: "Dia 4 - Velocidad y core",
+        objective: "Sprint y estabilidad central",
+        exercises: [
+          { name: "Sprint", sets: "8", reps: "20 s", intensity: "90-95%", rest: "90 s" },
+          { name: "Walking Lunge", sets: "3", reps: "12/12", intensity: "RPE 7", rest: "75 s" },
+          { name: "TRX Row", sets: "4", reps: "12", intensity: "RPE 7", rest: "60 s" },
+          { name: "Hanging Knee Raise", sets: "4", reps: "12", intensity: "Control", rest: "45 s" },
+        ],
+      },
+    ],
+    shazam: [
+      {
+        day: "Dia 1 - Movilidad + agilidad",
+        objective: "Rango articular y cambios de direccion",
+        exercises: [
+          { name: "Mobility Flow (cadera/tobillo/torax)", sets: "3", reps: "8 min", intensity: "Suave", rest: "30 s" },
+          { name: "Ladder Drills", sets: "8", reps: "20 s", intensity: "Rapido", rest: "40 s" },
+          { name: "Lateral Bounds", sets: "4", reps: "8/8", intensity: "Explosivo", rest: "60 s" },
+          { name: "Bear Crawl", sets: "4", reps: "20 m", intensity: "Control", rest: "45 s" },
+        ],
+      },
+      {
+        day: "Dia 2 - Plyo de cuerpo completo",
+        objective: "Elasticidad y potencia",
+        exercises: [
+          { name: "Depth Jump", sets: "5", reps: "3", intensity: "Max calidad", rest: "90 s" },
+          { name: "Broad Jump", sets: "5", reps: "4", intensity: "Explosivo", rest: "75 s" },
+          { name: "Explosive Push-up", sets: "4", reps: "6", intensity: "RPE 8", rest: "75 s" },
+          { name: "Battle Rope Intervals", sets: "8", reps: "20 s", intensity: "Alto", rest: "40 s" },
+        ],
+      },
+      {
+        day: "Dia 3 - Core reactivo",
+        objective: "Estabilidad dinamica",
+        exercises: [
+          { name: "Turkish Get-up", sets: "4", reps: "4/4", intensity: "Tecnico", rest: "60 s" },
+          { name: "Single Leg RDL", sets: "4", reps: "10/10", intensity: "RPE 7", rest: "60 s" },
+          { name: "Plank Reach", sets: "3", reps: "12/12", intensity: "Control", rest: "45 s" },
+          { name: "Side Plank with Hip Lift", sets: "3", reps: "12/12", intensity: "Control", rest: "45 s" },
+        ],
+      },
+      {
+        day: "Dia 4 - Condicionamiento funcional",
+        objective: "Capacidad aerobica sin perder agilidad",
+        exercises: [
+          { name: "Shadow Boxing", sets: "6", reps: "2 min", intensity: "Moderado", rest: "45 s" },
+          { name: "Skater Jump", sets: "4", reps: "12/12", intensity: "RPE 8", rest: "60 s" },
+          { name: "Row Erg", sets: "6", reps: "250 m", intensity: "Fuerte", rest: "60 s" },
+          { name: "Hollow Body Hold", sets: "4", reps: "30 s", intensity: "Control", rest: "40 s" },
+        ],
+      },
+    ],
+    mecha: [
+      {
+        day: "Dia 1 - Fuerza base",
+        objective: "Base robusta de tren inferior y espalda",
+        exercises: [
+          { name: "Trap Bar Deadlift", sets: "5", reps: "5", intensity: "RPE 8", rest: "150 s" },
+          { name: "Front Squat", sets: "4", reps: "6", intensity: "RPE 8", rest: "120 s" },
+          { name: "Barbell Row", sets: "4", reps: "8", intensity: "RPE 8", rest: "90 s" },
+          { name: "Farmer Carry", sets: "5", reps: "30 m", intensity: "Pesado", rest: "90 s" },
+        ],
+      },
+      {
+        day: "Dia 2 - Cardio progresivo",
+        objective: "Resistencia aerobia",
+        exercises: [
+          { name: "Zone 2 Run", sets: "1", reps: "35-50 min", intensity: "Suave", rest: "-" },
+          { name: "Assault Bike", sets: "6", reps: "2 min", intensity: "Moderado", rest: "60 s" },
+          { name: "Sled Drag", sets: "6", reps: "25 m", intensity: "RPE 8", rest: "75 s" },
+        ],
+      },
+      {
+        day: "Dia 3 - Hero WOD",
+        objective: "Resistencia muscular y mental",
+        exercises: [
+          { name: "EMOM 24' - KB Swing", sets: "8", reps: "12", intensity: "RPE 7-8", rest: "-" },
+          { name: "EMOM 24' - Push-up", sets: "8", reps: "15", intensity: "RPE 7-8", rest: "-" },
+          { name: "EMOM 24' - Walking Lunge", sets: "8", reps: "20 pasos", intensity: "RPE 7-8", rest: "-" },
+          { name: "Row Cooldown", sets: "1", reps: "10 min", intensity: "Suave", rest: "-" },
+        ],
+      },
+      {
+        day: "Dia 4 - Torso resistente",
+        objective: "Fuerza de empuje/traccion bajo fatiga",
+        exercises: [
+          { name: "Incline Bench Press", sets: "4", reps: "8", intensity: "RPE 8", rest: "90 s" },
+          { name: "Weighted Pull-up", sets: "4", reps: "6", intensity: "RPE 8", rest: "90 s" },
+          { name: "Landmine Press", sets: "4", reps: "10/10", intensity: "RPE 7", rest: "60 s" },
+          { name: "Plank Walkout", sets: "3", reps: "10", intensity: "Control", rest: "45 s" },
+        ],
+      },
+    ],
+    batman_bale: [
+      {
+        day: "Dia 1 - Golden 5 (pierna)",
+        objective: "Fuerza pesada en basicos",
+        exercises: [
+          { name: "Back Squat", sets: "5", reps: "5", intensity: "RPE 8", rest: "150 s" },
+          { name: "Romanian Deadlift", sets: "4", reps: "8", intensity: "RPE 8", rest: "120 s" },
+          { name: "Bulgarian Split Squat", sets: "3", reps: "10/10", intensity: "RPE 8", rest: "75 s" },
+          { name: "Ab Wheel", sets: "4", reps: "10", intensity: "Control", rest: "45 s" },
+        ],
+      },
+      {
+        day: "Dia 2 - Golden 5 (pecho/espalda)",
+        objective: "Torso denso",
+        exercises: [
+          { name: "Bench Press", sets: "5", reps: "5", intensity: "RPE 8", rest: "150 s" },
+          { name: "Weighted Chin-up", sets: "5", reps: "5", intensity: "RPE 8", rest: "120 s" },
+          { name: "Dumbbell Row", sets: "4", reps: "10", intensity: "RPE 8", rest: "75 s" },
+          { name: "Dips", sets: "4", reps: "8-12", intensity: "RPE 8", rest: "60 s" },
+        ],
+      },
+      {
+        day: "Dia 3 - Funcional combate",
+        objective: "Acondicionamiento y transferencia",
+        exercises: [
+          { name: "Heavy Bag Intervals", sets: "10", reps: "1 min", intensity: "Alto", rest: "30 s" },
+          { name: "Kettlebell Clean & Press", sets: "4", reps: "8/8", intensity: "RPE 8", rest: "75 s" },
+          { name: "Sled Push", sets: "6", reps: "20 m", intensity: "Fuerte", rest: "75 s" },
+          { name: "Hanging Leg Raise", sets: "4", reps: "12", intensity: "Control", rest: "45 s" },
+        ],
+      },
+      {
+        day: "Dia 4 - Hombro y brazo",
+        objective: "Detalle estetico",
+        exercises: [
+          { name: "Overhead Press", sets: "5", reps: "5", intensity: "RPE 8", rest: "120 s" },
+          { name: "Lateral Raise", sets: "4", reps: "15", intensity: "RPE 8", rest: "45 s" },
+          { name: "Barbell Curl", sets: "4", reps: "10", intensity: "RPE 8", rest: "60 s" },
+          { name: "Skull Crusher", sets: "4", reps: "10", intensity: "RPE 8", rest: "60 s" },
+        ],
+      },
+    ],
+    batman_affleck: [
+      {
+        day: "Dia 1 - Pecho/Espalda pesado",
+        objective: "Fuerza maxima de torso",
+        exercises: [
+          { name: "Bench Press", sets: "6", reps: "4", intensity: "RPE 9", rest: "150 s" },
+          { name: "Weighted Pull-up", sets: "5", reps: "5", intensity: "RPE 8.5", rest: "120 s" },
+          { name: "Incline Dumbbell Press", sets: "4", reps: "8", intensity: "RPE 8", rest: "90 s" },
+          { name: "Chest Supported Row", sets: "4", reps: "10", intensity: "RPE 8", rest: "75 s" },
+        ],
+      },
+      {
+        day: "Dia 2 - Pierna densa",
+        objective: "Masa y potencia",
+        exercises: [
+          { name: "Back Squat", sets: "5", reps: "5", intensity: "RPE 8.5", rest: "150 s" },
+          { name: "Leg Press", sets: "4", reps: "12", intensity: "RPE 9", rest: "90 s" },
+          { name: "Romanian Deadlift", sets: "4", reps: "8", intensity: "RPE 8", rest: "120 s" },
+          { name: "Walking Lunge", sets: "3", reps: "12/12", intensity: "RPE 8", rest: "75 s" },
+        ],
+      },
+      {
+        day: "Dia 3 - Chaos conditioning",
+        objective: "Capacidad anaerobica",
+        exercises: [
+          { name: "Airdyne Sprint", sets: "12", reps: "15 s", intensity: "All out", rest: "45 s" },
+          { name: "Battle Rope", sets: "8", reps: "30 s", intensity: "Alto", rest: "30 s" },
+          { name: "Sledgehammer Strike", sets: "6", reps: "15/15", intensity: "Alto", rest: "45 s" },
+          { name: "Suitcase Carry", sets: "4", reps: "25 m/25 m", intensity: "RPE 8", rest: "60 s" },
+        ],
+      },
+      {
+        day: "Dia 4 - Hombro y brazo pesado",
+        objective: "Densidad de hombro",
+        exercises: [
+          { name: "Push Press", sets: "5", reps: "4", intensity: "RPE 8.5", rest: "120 s" },
+          { name: "Upright Row", sets: "4", reps: "10", intensity: "RPE 8", rest: "75 s" },
+          { name: "Close Grip Bench Press", sets: "4", reps: "8", intensity: "RPE 8", rest: "90 s" },
+          { name: "Hammer Curl", sets: "4", reps: "10", intensity: "RPE 8", rest: "60 s" },
+        ],
+      },
+    ],
+    batman_pattinson: [
+      {
+        day: "Dia 1 - Calistenia fuerte",
+        objective: "Fuerza relativa",
+        exercises: [
+          { name: "Pull-up", sets: "5", reps: "AMRAP tecnico", intensity: "RIR 1-2", rest: "90 s" },
+          { name: "Push-up", sets: "5", reps: "15-25", intensity: "RIR 2", rest: "60 s" },
+          { name: "Ring Row", sets: "4", reps: "12", intensity: "RPE 8", rest: "60 s" },
+          { name: "Pistol Squat (asistida)", sets: "4", reps: "8/8", intensity: "RPE 8", rest: "75 s" },
+        ],
+      },
+      {
+        day: "Dia 2 - Boxeo + core",
+        objective: "Resistencia y coordinacion",
+        exercises: [
+          { name: "Shadow Boxing", sets: "8", reps: "2 min", intensity: "Moderado-alto", rest: "45 s" },
+          { name: "Heavy Bag", sets: "6", reps: "2 min", intensity: "Alto", rest: "60 s" },
+          { name: "Jump Rope", sets: "8", reps: "1 min", intensity: "Rapido", rest: "30 s" },
+          { name: "Hollow Hold + Russian Twist", sets: "4", reps: "30 s + 20", intensity: "Control", rest: "45 s" },
+        ],
+      },
+      {
+        day: "Dia 3 - Funcional",
+        objective: "Agilidad y control",
+        exercises: [
+          { name: "Sandbag Clean", sets: "5", reps: "6", intensity: "RPE 8", rest: "75 s" },
+          { name: "Kettlebell Snatch", sets: "4", reps: "8/8", intensity: "RPE 8", rest: "75 s" },
+          { name: "Box Step-up", sets: "4", reps: "12/12", intensity: "RPE 7", rest: "60 s" },
+          { name: "Bear Crawl", sets: "4", reps: "20 m", intensity: "Control", rest: "45 s" },
+        ],
+      },
+      {
+        day: "Dia 4 - Cardio base",
+        objective: "Definicion sin perder rendimiento",
+        exercises: [
+          { name: "Run Intervals", sets: "10", reps: "1 min", intensity: "RPE 8", rest: "1 min" },
+          { name: "Assault Bike", sets: "6", reps: "2 min", intensity: "Moderado", rest: "1 min" },
+          { name: "Mobility Flow", sets: "1", reps: "15 min", intensity: "Suave", rest: "-" },
+        ],
+      },
+    ],
+    capitan_america_evans: [
+      {
+        day: "Dia 1 - Torso fuerza",
+        objective: "Compuestos pesados",
+        exercises: [
+          { name: "Bench Press", sets: "5", reps: "5", intensity: "RPE 8", rest: "150 s" },
+          { name: "Pendlay Row", sets: "5", reps: "6", intensity: "RPE 8", rest: "120 s" },
+          { name: "Weighted Dip", sets: "4", reps: "8", intensity: "RPE 8", rest: "90 s" },
+          { name: "Weighted Pull-up", sets: "4", reps: "6", intensity: "RPE 8", rest: "90 s" },
+        ],
+      },
+      {
+        day: "Dia 2 - Pierna fuerza",
+        objective: "Masa y estabilidad",
+        exercises: [
+          { name: "Back Squat", sets: "5", reps: "5", intensity: "RPE 8", rest: "150 s" },
+          { name: "Deadlift", sets: "4", reps: "4", intensity: "RPE 8.5", rest: "150 s" },
+          { name: "Rear Foot Elevated Split Squat", sets: "4", reps: "10/10", intensity: "RPE 8", rest: "75 s" },
+          { name: "Standing Calf Raise", sets: "4", reps: "15", intensity: "RPE 8", rest: "45 s" },
+        ],
+      },
+      {
+        day: "Dia 3 - Torso hipertrofia",
+        objective: "Volumen y detalle",
+        exercises: [
+          { name: "Incline Dumbbell Press", sets: "4", reps: "10", intensity: "RPE 8", rest: "90 s" },
+          { name: "Seated Cable Row", sets: "4", reps: "12", intensity: "RPE 8", rest: "75 s" },
+          { name: "Lateral Raise", sets: "4", reps: "15", intensity: "RPE 8", rest: "45 s" },
+          { name: "Face Pull", sets: "4", reps: "15", intensity: "RPE 8", rest: "45 s" },
+        ],
+      },
+      {
+        day: "Dia 4 - Potencia + core",
+        objective: "Atletismo global",
+        exercises: [
+          { name: "Power Clean", sets: "5", reps: "3", intensity: "RPE 8", rest: "120 s" },
+          { name: "Sled Push", sets: "6", reps: "20 m", intensity: "Fuerte", rest: "75 s" },
+          { name: "Battle Rope", sets: "8", reps: "30 s", intensity: "Alto", rest: "30 s" },
+          { name: "Hanging Leg Raise", sets: "4", reps: "12", intensity: "Control", rest: "45 s" },
+        ],
+      },
+    ],
+    superman_cavill: [
+      {
+        day: "Dia 1 - Fuerza maxima",
+        objective: "Construir base de fuerza",
+        exercises: [
+          { name: "Back Squat", sets: "6", reps: "3", intensity: "RPE 8.5", rest: "150 s" },
+          { name: "Bench Press", sets: "6", reps: "3", intensity: "RPE 8.5", rest: "150 s" },
+          { name: "Weighted Chin-up", sets: "5", reps: "5", intensity: "RPE 8", rest: "120 s" },
+          { name: "Farmer Carry", sets: "5", reps: "30 m", intensity: "Pesado", rest: "90 s" },
+        ],
+      },
+      {
+        day: "Dia 2 - Volumen hipertrofia",
+        objective: "Pecho/hombro dominante",
+        exercises: [
+          { name: "Incline Bench Press", sets: "5", reps: "8", intensity: "RPE 8", rest: "90 s" },
+          { name: "Overhead Press", sets: "4", reps: "8", intensity: "RPE 8", rest: "90 s" },
+          { name: "Lat Pulldown", sets: "4", reps: "10", intensity: "RPE 8", rest: "75 s" },
+          { name: "Cable Fly", sets: "4", reps: "12", intensity: "RPE 8", rest: "60 s" },
+        ],
+      },
+      {
+        day: "Dia 3 - Pierna y posterior",
+        objective: "Pierna potente",
+        exercises: [
+          { name: "Deadlift", sets: "5", reps: "4", intensity: "RPE 8.5", rest: "150 s" },
+          { name: "Front Squat", sets: "4", reps: "6", intensity: "RPE 8", rest: "120 s" },
+          { name: "Hip Thrust", sets: "4", reps: "10", intensity: "RPE 8", rest: "90 s" },
+          { name: "Hamstring Curl", sets: "4", reps: "12", intensity: "RPE 8", rest: "60 s" },
+        ],
+      },
+      {
+        day: "Dia 4 - Circuito intenso",
+        objective: "Definicion y condicion",
+        exercises: [
+          { name: "Row Erg", sets: "6", reps: "500 m", intensity: "RPE 8", rest: "75 s" },
+          { name: "Burpee", sets: "5", reps: "12", intensity: "Alto", rest: "45 s" },
+          { name: "Kettlebell Swing", sets: "5", reps: "20", intensity: "RPE 8", rest: "45 s" },
+          { name: "Ab Wheel", sets: "4", reps: "12", intensity: "Control", rest: "45 s" },
+        ],
+      },
+    ],
+    superman_corenswet: [
+      {
+        day: "Dia 1 - Push",
+        objective: "Pecho/hombro/triceps",
+        exercises: [
+          { name: "Bench Press", sets: "5", reps: "6", intensity: "RPE 8", rest: "120 s" },
+          { name: "Incline Dumbbell Press", sets: "4", reps: "10", intensity: "RPE 8", rest: "90 s" },
+          { name: "Seated Dumbbell Press", sets: "4", reps: "10", intensity: "RPE 8", rest: "75 s" },
+          { name: "Cable Lateral Raise", sets: "4", reps: "15", intensity: "RPE 8", rest: "45 s" },
+          { name: "Triceps Pressdown", sets: "4", reps: "12", intensity: "RPE 8", rest: "45 s" },
+        ],
+      },
+      {
+        day: "Dia 2 - Pull",
+        objective: "Espalda/biceps",
+        exercises: [
+          { name: "Deadlift", sets: "5", reps: "5", intensity: "RPE 8", rest: "150 s" },
+          { name: "Weighted Pull-up", sets: "4", reps: "6", intensity: "RPE 8", rest: "120 s" },
+          { name: "Barbell Row", sets: "4", reps: "8", intensity: "RPE 8", rest: "90 s" },
+          { name: "Seated Row", sets: "4", reps: "12", intensity: "RPE 8", rest: "75 s" },
+          { name: "EZ Curl", sets: "4", reps: "10", intensity: "RPE 8", rest: "60 s" },
+        ],
+      },
+      {
+        day: "Dia 3 - Piernas",
+        objective: "Masa de tren inferior",
+        exercises: [
+          { name: "Back Squat", sets: "5", reps: "6", intensity: "RPE 8", rest: "120 s" },
+          { name: "Leg Press", sets: "4", reps: "12", intensity: "RPE 9", rest: "90 s" },
+          { name: "Romanian Deadlift", sets: "4", reps: "8", intensity: "RPE 8", rest: "90 s" },
+          { name: "Leg Curl", sets: "4", reps: "12", intensity: "RPE 8", rest: "60 s" },
+          { name: "Standing Calf Raise", sets: "5", reps: "15", intensity: "RPE 8", rest: "45 s" },
+        ],
+      },
+      {
+        day: "Dia 4 - Push/Pull accesorio",
+        objective: "Volumen extra",
+        exercises: [
+          { name: "Dip", sets: "4", reps: "8-12", intensity: "RPE 8", rest: "75 s" },
+          { name: "Lat Pulldown", sets: "4", reps: "10", intensity: "RPE 8", rest: "75 s" },
+          { name: "Machine Chest Press", sets: "4", reps: "12", intensity: "RPE 8", rest: "60 s" },
+          { name: "Face Pull", sets: "4", reps: "15", intensity: "RPE 8", rest: "45 s" },
+          { name: "Cable Curl + Rope Extension", sets: "3", reps: "12 + 12", intensity: "RPE 8", rest: "45 s" },
+        ],
+      },
+    ],
+    wolverine_jackman: [
+      {
+        day: "Dia 1 - Fuerza torso",
+        objective: "Basicos pesados",
+        exercises: [
+          { name: "Bench Press", sets: "5", reps: "5", intensity: "RPE 8.5", rest: "150 s" },
+          { name: "Weighted Chin-up", sets: "5", reps: "5", intensity: "RPE 8.5", rest: "120 s" },
+          { name: "Overhead Press", sets: "4", reps: "6", intensity: "RPE 8", rest: "90 s" },
+          { name: "Barbell Row", sets: "4", reps: "8", intensity: "RPE 8", rest: "90 s" },
+        ],
+      },
+      {
+        day: "Dia 2 - Fuerza pierna",
+        objective: "Compuestos pesados de pierna",
+        exercises: [
+          { name: "Back Squat", sets: "5", reps: "5", intensity: "RPE 8.5", rest: "150 s" },
+          { name: "Deadlift", sets: "4", reps: "4", intensity: "RPE 8.5", rest: "150 s" },
+          { name: "Walking Lunge", sets: "4", reps: "10/10", intensity: "RPE 8", rest: "75 s" },
+          { name: "Hanging Leg Raise", sets: "4", reps: "12", intensity: "Control", rest: "45 s" },
+        ],
+      },
+      {
+        day: "Dia 3 - Hipertrofia",
+        objective: "Volumen muscular",
+        exercises: [
+          { name: "Incline Dumbbell Press", sets: "4", reps: "10-12", intensity: "RPE 8", rest: "75 s" },
+          { name: "Lat Pulldown", sets: "4", reps: "10-12", intensity: "RPE 8", rest: "75 s" },
+          { name: "Leg Press", sets: "4", reps: "12", intensity: "RPE 8", rest: "90 s" },
+          { name: "Seated Curl + Skull Crusher", sets: "3", reps: "12 + 12", intensity: "RPE 8", rest: "45 s" },
+        ],
+      },
+      {
+        day: "Dia 4 - Definicion",
+        objective: "Mantener masa y reducir grasa",
+        exercises: [
+          { name: "HIIT Treadmill", sets: "12", reps: "30 s", intensity: "90%", rest: "60 s" },
+          { name: "Kettlebell Swing", sets: "5", reps: "15", intensity: "RPE 8", rest: "45 s" },
+          { name: "Battle Rope", sets: "8", reps: "20 s", intensity: "Alto", rest: "40 s" },
+          { name: "Core Circuit (Plank/Side/Hollow)", sets: "4", reps: "40 s c/u", intensity: "Control", rest: "45 s" },
+        ],
+      },
+    ],
+  };
+
+  const getWorkoutPlan = (planKey) => workoutPlanTemplates[planKey] || [];
+  const getProgressionModel = (planKey) => progressionModels[planKey] || "Ajusta cargas o volumen cada semana y manten tecnica estricta.";
 
   const planDetails = {
     flash: {
@@ -425,257 +871,168 @@ export default function EntrenosUnicos() {
   ];
 
   return (
-    <main className="entrenos-page">
-      <header className="entrenos-hero">
-        <div className="entrenos-hero-content">
-          <p className="entrenos-eyebrow">Colección premium 2025</p>
-          <h1 className="entrenos-title">Entrenos Únicos</h1>
-          <p className="entrenos-lead">
-            Programas de entrenamiento temáticos con duración definida, guías nutricionales y recomendaciones por nivel.
-            Diseñados para lograr físicos icónicos con un enfoque serio y progresivo.
-          </p>
+    <main className="profile-page entrenos-page">
+      <div className="profile-shell">
+        <header className="profile-header text-center mb-4">
+          <h1 className="profile-title">Entrenos únicos</h1>
+          <h4 className="profile-subtitle">
+            Duración definida, guía nutricional e instrucciones generales para lograr físicos icónicos.
+          </h4>
           <div className="entrenos-hero-actions">
             <button className="btn btn-primary" onClick={handleScrollToPlans}>Explorar planes</button>
             <a className="btn btn-outline-secondary" href="/registro">Inscribirme</a>
           </div>
-          <div className="entrenos-hero-meta">
-            <div>
-              <span>Duración</span>
-              <strong>6-20 semanas</strong>
-            </div>
-            <div>
-              <span>Entrenamiento</span>
-              <strong>Fuerza + acondicionamiento</strong>
-            </div>
-            <div>
-              <span>Nutrición</span>
-              <strong>Macros + ejemplos de comidas</strong>
-            </div>
+        </header>
+        <div className="profile-highlight mb-4 entrenos-pad-left">
+          <div>
+            <h2 className="profile-highlight-title">Acceso y seguimiento</h2>
+            <p className="mb-0">Guarda tu plan y revísalo desde tu perfil cuando quieras.</p>
+          </div>
+          <div className="profile-highlight-icon" aria-hidden="true">
+            <span className="bi bi-lightning-charge" />
           </div>
         </div>
-      </header>
 
-      <section className="entrenos-section">
-        <div className="entrenos-section-header">
-          <h2>Resumen</h2>
-          <p>
-            Cada plan incluye una progresión completa, guía alimentaria orientativa y sugerencias de equipamiento para casa o gimnasio.
-            Antes de iniciar, revisa la <strong>evaluación médica</strong> para asegurar que puedes entrenar con seguridad.
-          </p>
-        </div>
-      </section>
-
-      <section className="entrenos-section">
-        <div className="entrenos-section-header">
-          <h2>Acceso exclusivo a estos planes</h2>
-          <p>
-            Estos estilos se diseñaron para replicar el físico mostrado en la vista previa. Solo puedes acceder a las progresiones completas
-            desde esta página o al inscribirte en el programa.
-          </p>
-        </div>
-        <div className="entrenos-exclusive-grid">
-          {plans.map((p) => (
-            <article className="entrenos-exclusive-card" key={`exclusive-${p.key}`}>
-              <header>
-                <h3>{p.title}</h3>
-                <p>{p.duration} · {p.bodyType}</p>
-              </header>
-              <ul>
-                {(p.exclusiveNotes || []).map((note, idx) => (
-                  <li key={`${p.key}-note-${idx}`}>{note}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="entrenos-section" id="planes-disponibles">
-        <div className="entrenos-section-header">
-          <h2>Planes disponibles</h2>
-          <p>Explora los planes en el carrusel y previsualiza el estilo antes de inscribirte.</p>
-        </div>
-        {(statusMessage || statusError) && (
-          <div className="entrenos-alerts">
-            {statusMessage && <div className="alert alert-success">{statusMessage}</div>}
-            {statusError && <div className="alert alert-danger">{statusError}</div>}
-          </div>
-        )}
-        <div className="entrenos-carousel">
-          <button className="entrenos-carousel-btn" onClick={handlePrevPlan} aria-label="Plan anterior">
-            ‹
-          </button>
-          <div className="entrenos-carousel-track">
-            {[-1, 0, 1].map((offset) => {
-              const plan = getPlanByIndex(carouselIndex + offset);
-              const isCenter = offset === 0;
-              return (
-                <article
-                  className={`entreno-card entreno-card--carousel ${isCenter ? "is-center" : ""} ${selectedPreview === plan.key ? "is-selected" : ""}`}
-                  key={`${plan.key}-${offset}`}
-                  role="button"
-                  onClick={() => setSelectedPreview(plan.key)}
-                >
-                  <div className="entreno-card-image">
-                    <img src={plan.img} alt={`${plan.title} preview`} />
-                  </div>
-                  <div className="entreno-card-body">
-                    <div className="entreno-card-meta">
-                      <span>{plan.duration}</span>
-                      <span>{plan.bodyType}</span>
-                    </div>
-                    <h3>{plan.title}</h3>
-                    <p className="entreno-card-desc">{plan.description}</p>
-                  </div>
-                  <div className="entreno-card-footer">
-                    <button className={`btn ${selectedPreview === plan.key ? "btn-outline-primary" : "btn-primary"}`} onClick={(e) => { e.stopPropagation(); setSelectedPreview(plan.key); }}>
-                      {selectedPreview === plan.key ? "Seleccionado" : "Ver vista"}
-                    </button>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-          <button className="entrenos-carousel-btn" onClick={handleNextPlan} aria-label="Plan siguiente">
-            ›
-          </button>
-        </div>
-
-        <div className="entreno-preview">
-          <h3>Vista previa seleccionada</h3>
-          {!selectedPreview && <p className="text-muted">Haz clic en una tarjeta para ver una vista ampliada del tipo de cuerpo asociado al plan.</p>}
-          {selectedPreview && (
-            (() => {
-              const p = plans.find(pl => pl.key === selectedPreview);
-              const details = planDetails[p?.key] || {};
-              return (
-                <div className="entreno-preview-card">
-                  <div className="entreno-preview-image">
-                    <img src={p.img} alt={`${p.title} large preview`} />
-                  </div>
-                  <div className="entreno-preview-body">
-                    <h4>{p.title} — {p.duration}</h4>
-                    <p>{p.description}</p>
-                    <p><strong>Tipo de cuerpo objetivo:</strong> {p.bodyType}</p>
-                    <div className="entreno-preview-details">
-                      <div>
-                        <strong>Entrenamiento:</strong>
-                        <p>{details.training || "Consulta la guia completa del plan para el detalle."}</p>
-                      </div>
-                      <div>
-                        <strong>Nutricion:</strong>
-                        <p>{details.diet || "Incluye guia de macros y ejemplo de comidas."}</p>
-                      </div>
-                      {details.calories && <p><strong>Calorias:</strong> {details.calories}</p>}
-                      {details.macros && <p><strong>Macros:</strong> {details.macros}</p>}
-                      {(details.meals || []).length > 0 && (
-                        <div>
-                          <strong>Ejemplos de comidas:</strong>
-                          <ul>
-                            {details.meals.map((meal) => (
-                              <li key={`${p.key}-meal-${meal}`}>{meal}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      {(details.guidelines || []).length > 0 && (
-                        <div>
-                          <strong>Instrucciones generales:</strong>
-                          <ul>
-                            {details.guidelines.map((note) => (
-                              <li key={`${p.key}-guide-${note}`}>{note}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                      {(details.sources || []).length > 0 && (
-                        <div>
-                          <strong>Fuentes:</strong>
-                          <ul>
-                            {details.sources.map((src) => (
-                              <li key={`${p.key}-src-${src}`}>{src}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                    <p className="text-muted">Selecciona este estilo si te identifica el tipo de cuerpo mostrado y tus objetivos.</p>
-                    <div className="entreno-preview-actions">
-                      <button className="btn btn-primary" onClick={() => handleEnrollPlan(p)}>Recibir plan</button>
-                      {!isAuthenticated && <a className="btn btn-outline-secondary" href="/registro">Registrarme</a>}
-                      {savedPlan?.id && savedPlan?.plan_key === p.key && (
-                        <button className="btn btn-outline-primary" onClick={() => handleDownload(savedPlan.id)}>Descargar PDF</button>
-                      )}
-                      <button className="btn btn-outline-secondary" onClick={() => setSelectedPreview(null)}>Cerrar vista</button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })()
+        <section className="mb-4 entrenos-pad-left" id="planes-disponibles">
+          <h2 className="mb-2">Planes disponibles</h2>
+          <p className="text-muted">Explora los planes en el carrusel y previsualiza el estilo antes de inscribirte.</p>
+          {(statusMessage || statusError) && (
+            <div className="entrenos-alerts">
+              {statusMessage && <div className="alert alert-success">{statusMessage}</div>}
+              {statusError && <div className="alert alert-danger">{statusError}</div>}
+            </div>
           )}
-        </div>
-      </section>
-
-      <section className="entrenos-section entrenos-info-grid">
-        <article>
-          <h2>Alimentación (orientativa)</h2>
-          <p>
-            Cada plan incluye un esquema alimenticio orientativo con macronutrientes objetivo (proteína, carbohidrato, grasa) y ejemplos de
-            comidas. No sustituye la consulta con un nutricionista.
-          </p>
-          <ul>
-            <li><strong>Desayuno:</strong> carbohidrato complejo + proteína (ej. avena + claras o queso fresco).</li>
-            <li><strong>Almuerzo:</strong> proteína magra + carbohidrato + verduras.</li>
-            <li><strong>Cena:</strong> proteína ligera + verduras + grasas saludables.</li>
-          </ul>
-        </article>
-        <article>
-          <h2>Equipamiento</h2>
-          <div className="entrenos-equip-grid">
-            <div>
-              <h3>Casa</h3>
-              <ul>
-                <li>Mancuernas ajustables / juego de mancuernas</li>
-                <li>Banda elástica o minibands</li>
-                <li>Colchoneta de ejercicio</li>
-                <li>Barra para dominadas (opcional)</li>
-              </ul>
+          <div className="entrenos-carousel">
+            <button className="entrenos-carousel-btn" onClick={handlePrevPlan} aria-label="Plan anterior">
+              ‹
+            </button>
+            <div className="entrenos-carousel-track">
+              {[-1, 0, 1].map((offset) => {
+                const plan = getPlanByIndex(carouselIndex + offset);
+                const isCenter = offset === 0;
+                return (
+                  <article
+                    className={`entreno-card entreno-card--carousel ${isCenter ? "is-center" : ""} ${selectedPreview === plan.key ? "is-selected" : ""}`}
+                    key={`${plan.key}-${offset}`}
+                    role="button"
+                    onClick={() => setSelectedPreview(plan.key)}
+                  >
+                    <div className="entreno-card-image">
+                      <img src={plan.img} alt={`${plan.title} preview`} />
+                    </div>
+                    <div className="entreno-card-body">
+                      <div className="entreno-card-meta">
+                        <span>{plan.duration}</span>
+                        <span>{plan.bodyType}</span>
+                      </div>
+                      <h3>{plan.title}</h3>
+                      <p className="entreno-card-desc">{plan.description}</p>
+                    </div>
+                    <div className="entreno-card-footer">
+                      <button className={`btn ${selectedPreview === plan.key ? "btn-outline-primary" : "btn-primary"}`} onClick={(e) => { e.stopPropagation(); setSelectedPreview(plan.key); }}>
+                        {selectedPreview === plan.key ? "Seleccionado" : "Ver vista"}
+                      </button>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
-            <div>
-              <h3>Gimnasio</h3>
-              <ul>
-                <li>Multigimnasio o banco con barra y discos</li>
-                <li>Máquinas de polea y cables</li>
-                <li>Estación de dominadas / TRX</li>
-                <li>Equipo para cardio (cinta, bicicleta, remo)</li>
-              </ul>
-            </div>
+            <button className="entrenos-carousel-btn" onClick={handleNextPlan} aria-label="Plan siguiente">
+              ›
+            </button>
           </div>
-        </article>
-      </section>
 
-      <section className="entrenos-section entrenos-info-grid">
-        <article>
-          <h2>Evaluación médica</h2>
-          <p>Antes de iniciar cualquier Entreno Único, recomendamos realizar una evaluación médica.</p>
-          <ul>
-            <li>Enfermedad cardiovascular diagnosticada o arritmias no controladas.</li>
-            <li>Hipertensión severa no controlada (consultar médico antes de iniciar).</li>
-            <li>Embarazo o postparto reciente (consultar profesional de salud).</li>
-            <li>Lesiones agudas o dolor articular no evaluado.</li>
-            <li>Enfermedades respiratorias graves sin control.</li>
-          </ul>
-          <p className="text-muted">Si tienes dudas, consulta con tu médico. Estos criterios son orientativos.</p>
-        </article>
-        <article className="entrenos-cta-card">
-          <h2>Cómo acceder</h2>
-          <p>Para ver el plan completo, descarga la guía o inscríbete en el programa.</p>
-          <div className="entrenos-cta-actions">
-            <a className="btn btn-primary" href="/registro">Inscríbete ahora</a>
-            <button className="btn btn-outline-secondary" onClick={handleScrollToPlans}>Ver planes</button>
+          <div className="entreno-preview mt-4">
+            <h3 className="h5">Vista previa seleccionada</h3>
+            {!selectedPreview && <p className="text-muted">Haz clic en una tarjeta para ver una vista ampliada del tipo de cuerpo asociado al plan.</p>}
+            {selectedPreview && (
+              (() => {
+                const p = plans.find(pl => pl.key === selectedPreview);
+                const details = planDetails[p?.key] || {};
+                const workoutPlan = getWorkoutPlan(p?.key);
+                const progressionModel = getProgressionModel(p?.key);
+                return (
+                  <div className="card shadow-sm border-0">
+                    <div className="row g-0">
+                      <div className="col-md-5">
+                        <img src={p.img} alt={`${p.title} large preview`} className="img-fluid h-100 w-100" style={{ objectFit: "cover" }} />
+                      </div>
+                      <div className="col-md-7">
+                        <div className="card-body">
+                          <h4 className="card-title">{p.title} — {p.duration}</h4>
+                          <p className="card-text">{p.description}</p>
+                          <p className="card-text"><strong>Tipo de cuerpo objetivo:</strong> {p.bodyType}</p>
+                          <div className="entreno-preview-details">
+                            <div>
+                              <strong>Entrenamiento:</strong>
+                              <p className="mb-2">{details.training || "Consulta la guía completa del plan para el detalle."}</p>
+                            </div>
+                            <div>
+                              <strong>Nutrición:</strong>
+                              <p className="mb-2">{details.diet || "Incluye guía de macros y ejemplo de comidas."}</p>
+                            </div>
+                            {details.calories && <p className="mb-2"><strong>Calorías:</strong> {details.calories}</p>}
+                            {details.macros && <p className="mb-2"><strong>Macros:</strong> {details.macros}</p>}
+                            {(details.meals || []).length > 0 && (
+                              <div className="mb-2">
+                                <strong>Ejemplos de comidas:</strong>
+                                <ul className="mb-0">
+                                  {details.meals.map((meal) => (
+                                    <li key={`${p.key}-meal-${meal}`}>{meal}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {(details.guidelines || []).length > 0 && (
+                              <div>
+                                <strong>Instrucciones generales:</strong>
+                                <ul className="mb-0">
+                                  {details.guidelines.map((note) => (
+                                    <li key={`${p.key}-guide-${note}`}>{note}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {workoutPlan.length > 0 && (
+                              <div className="mt-3">
+                                <strong>Plan de ejercicios sugerido:</strong>
+                                <ul className="mb-2">
+                                  {workoutPlan.map((session) => (
+                                    <li key={`${p.key}-${session.day}`}>
+                                      <strong>{session.day}:</strong> {session.objective}
+                                      <ul>
+                                        {session.exercises.slice(0, 3).map((exercise) => (
+                                          <li key={`${p.key}-${session.day}-${exercise.name}`}>
+                                            {exercise.name} — {exercise.sets}x{exercise.reps} ({exercise.intensity})
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </li>
+                                  ))}
+                                </ul>
+                                <p className="mb-0"><strong>Progresión:</strong> {progressionModel}</p>
+                              </div>
+                            )}
+                          </div>
+                          <p className="text-muted">Selecciona este estilo si te identifica el tipo de cuerpo mostrado y tus objetivos.</p>
+                          <div className="d-flex flex-wrap gap-2">
+                            <button className="btn btn-primary" onClick={() => handleEnrollPlan(p)}>Recibir plan</button>
+                            {!isAuthenticated && <a className="btn btn-outline-secondary" href="/registro">Registrarme</a>}
+                            {savedPlan?.id && savedPlan?.plan_key === p.key && (
+                              <button className="btn btn-outline-primary" onClick={() => handleDownload(savedPlan.id)}>Descargar PDF</button>
+                            )}
+                            <button className="btn btn-outline-secondary" onClick={() => setSelectedPreview(null)}>Cerrar vista</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()
+            )}
           </div>
-        </article>
-      </section>
+        </section>
+      </div>
     </main>
   );
 }

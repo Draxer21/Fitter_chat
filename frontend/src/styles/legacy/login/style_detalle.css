@@ -1,6 +1,6 @@
 .container {
     max-width: 800px;
-    background-color: #fff;
+    background-color: var(--neutral-0);
     border-radius: 12px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     padding: 30px;
@@ -18,7 +18,7 @@
     height: auto;
     border-radius: 10px;
     margin-bottom: 20px;
-    border: 2px solid #4CAF50; /* Borde verde alrededor de la imagen */
+    border: 2px solid var(--brand-500); /* Borde verde alrededor de la imagen */
     transition: transform 0.3s;
 }
 
@@ -50,12 +50,12 @@
 .producto-detalle .precio {
     font-size: 24px;
     font-weight: bold;
-    color: #4CAF50; /* Color verde para el precio */
+    color: var(--brand-500); /* Color verde para el precio */
     margin-bottom: 25px;
 }
 
 button.comprar {
-    background-color: #4CAF50;
+    background-color: var(--brand-500);
     color: white;
     padding: 12px 24px;
     border: none;
@@ -67,7 +67,7 @@ button.comprar {
 }
 
 button.comprar:hover {
-    background-color: #45a049;
+    background-color: var(--brand-600);
     transform: scale(1.05); /* Efecto de aumento en el botón al pasar el ratón */
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 30%, transparent);
 }

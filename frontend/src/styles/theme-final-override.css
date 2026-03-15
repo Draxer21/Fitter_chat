@@ -77,7 +77,7 @@ a:hover {
 .btn-primary {
   background-color: var(--primary) !important;
   border-color: var(--primary) !important;
-  color: #fff !important;
+  color: var(--neutral-0) !important;
 }
 
 .btn-primary:hover {

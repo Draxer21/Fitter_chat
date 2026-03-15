@@ -16,7 +16,7 @@
   border-radius: 1.5rem;
   padding: 2.5rem;
   box-shadow: 0 35px 80px rgba(15, 23, 42, 0.45);
-  color: #f8fafc;
+  color: var(--neutral-50);
 }
 
 .security-hero__badge {
@@ -69,7 +69,7 @@
 }
 
 .status-pill--on {
-  --pill-color: #15803d;
+  --pill-color: var(--brand-500);
   background: rgba(34, 197, 94, 0.18);
 }
 
@@ -80,7 +80,7 @@
 
 .security-hero .status-pill {
   background: rgba(255, 255, 255, 0.2);
-  color: #f8fafc;
+  color: var(--neutral-50);
 }
 
 .security-hero .status-pill::before {

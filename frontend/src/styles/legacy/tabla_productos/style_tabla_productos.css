@@ -74,7 +74,7 @@ h1{
     color: white;
     margin-bottom: 25px;
     font-weight: 500;
-    border-bottom: 2px solid #4CAF50; 
+    border-bottom: 2px solid var(--brand-500); 
     padding-bottom: 10px;
     display: inline-block;
 }
@@ -144,12 +144,12 @@ h1{
 
 /* Botón de añadir producto */
 .btn-success {
-    color: #ffffff !important;
+    color: var(--neutral-0) !important;
     font-weight: 500;
 }
 
 .btn-success:hover {
-    color: #ffffff !important;
+    color: var(--neutral-0) !important;
 }
 
 /* Mejorar botones de acción */
@@ -199,13 +199,13 @@ h1{
 }
 
 .tabla-productos-wrapper .btn-danger {
-    background-color: #dc3545 !important;
-    color: #ffffff !important;
+    background-color: var(--danger-600) !important;
+    color: var(--neutral-0) !important;
 }
 
 .tabla-productos-wrapper .btn-danger:hover {
     background-color: #bb2d3b !important;
-    color: #ffffff !important;
+    color: var(--neutral-0) !important;
 }
 
 .tabla-productos-wrapper .btn-action:hover {

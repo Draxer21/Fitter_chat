@@ -4,7 +4,7 @@
 
 /* 1. NAVEGACIÓN POR TECLADO - Focus visible mejorado */
 *:focus {
-  outline: 3px solid var(--focus-ring-color, #0066cc);
+  outline: 3px solid var(--focus-ring-color, var(--accent-600));
   outline-offset: 2px;
   transition: outline-offset 0.1s ease;
 }
@@ -14,7 +14,7 @@
 }
 
 *:focus-visible {
-  outline: 3px solid var(--focus-ring-color, #0066cc);
+  outline: 3px solid var(--focus-ring-color, var(--accent-600));
   outline-offset: 2px;
 }
 
@@ -24,7 +24,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid var(--focus-ring-color, #0066cc);
+  outline: 3px solid var(--focus-ring-color, var(--accent-600));
   outline-offset: 2px;
   box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.2);
 }
@@ -41,11 +41,11 @@ textarea:focus-visible {
   /* Colores con contraste WCAG AA */
   --text-primary: #1a1a1a;
   --text-secondary: #4a4a4a;
-  --bg-primary: #ffffff;
+  --bg-primary: var(--neutral-0);
   --bg-secondary: #f5f5f5;
   
   /* Links con contraste mejorado */
-  --link-color: #0056b3;
+  --link-color: var(--accent-600);
   --link-hover: #003d82;
   --link-visited: #551a8b;
 }
@@ -83,9 +83,9 @@ a:visited {
 
 /* Botones con contraste mejorado */
 .btn-primary {
-  background-color: #0056b3;
-  border-color: #0056b3;
-  color: #ffffff;
+  background-color: var(--accent-600);
+  border-color: var(--accent-600);
+  color: var(--neutral-0);
 }
 
 .btn-primary:hover,
@@ -118,7 +118,7 @@ input[type="reset"],
   top: -40px;
   left: 0;
   background: #000;
-  color: #fff;
+  color: var(--neutral-0);
   padding: 8px 16px;
   text-decoration: none;
   z-index: 10000;
@@ -128,7 +128,7 @@ input[type="reset"],
 
 .skip-link:focus {
   top: 0;
-  outline: 3px solid #fff;
+  outline: 3px solid var(--neutral-0);
   outline-offset: 2px;
 }
 
@@ -220,7 +220,7 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-  border-color: var(--focus-ring-color, #0066cc);
+  border-color: var(--focus-ring-color, var(--accent-600));
   outline: none;
   box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.2);
 }
@@ -241,12 +241,12 @@ textarea[aria-invalid="true"] {
 @media (prefers-contrast: high) {
   :root {
     --text-primary: #000000;
-    --bg-primary: #ffffff;
+    --bg-primary: var(--neutral-0);
     --link-color: #0000ff;
   }
   
   [data-theme="dark"] {
-    --text-primary: #ffffff;
+    --text-primary: var(--neutral-0);
     --bg-primary: #000000;
     --link-color: #00ffff;
   }
@@ -260,14 +260,14 @@ textarea[aria-invalid="true"] {
 .high-contrast {
   --text-primary: #000000;
   --text-secondary: #1a1a1a;
-  --bg-primary: #ffffff;
+  --bg-primary: var(--neutral-0);
   --bg-secondary: #f0f0f0;
   --link-color: #0000ee;
   --link-hover: #0000cc;
 }
 
 .high-contrast.dark {
-  --text-primary: #ffffff;
+  --text-primary: var(--neutral-0);
   --text-secondary: #e0e0e0;
   --bg-primary: #000000;
   --bg-secondary: #1a1a1a;

@@ -18,6 +18,8 @@ __pycache__/
 *.egg
 *.development
 *.png
+*.env
+.venv*
 # ==========================
 # Archivos de Rasa
 # ==========================
@@ -63,3 +65,5 @@ Thumbs.db
 docker-compose.override.yml
 
 backend/logs/
+
+.vscode

@@ -1,7 +1,7 @@
 .payment-page {
   min-height: 100vh;
   padding: 48px 16px;
-  background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+  background: linear-gradient(180deg, var(--neutral-50) 0%, #eef2ff 100%);
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -13,7 +13,7 @@
 }
 
 .payment-card {
-  background: #ffffff;
+  background: var(--neutral-0);
   border-radius: 24px;
   border: 1px solid rgba(148, 163, 184, 0.28);
   box-shadow: 0 32px 60px rgba(15, 23, 42, 0.12);
@@ -22,8 +22,8 @@
 
 .payment-header {
   padding: 32px;
-  background: linear-gradient(135deg, #0f172a 0%, #1d4ed8 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, #0f172a 0%, var(--accent-600) 100%);
+  color: var(--neutral-0);
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -171,7 +171,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  color: #ffffff;
+  color: var(--neutral-0);
 }
 
 .payment-card-face--front {
@@ -304,7 +304,7 @@
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #ffffff;
+  color: var(--neutral-0);
   box-shadow: 0 10px 20px rgba(15, 23, 42, 0.12);
 }
 
@@ -348,12 +348,12 @@
   border: 1px solid rgba(148, 163, 184, 0.6);
   font-size: 1rem;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  background: #ffffff;
+  background: var(--neutral-0);
 }
 
 .payment-input:focus {
   outline: none;
-  border-color: #2563eb;
+  border-color: var(--accent-500);
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
@@ -369,7 +369,7 @@
 
 .payment-error {
   font-size: 0.85rem;
-  color: #dc2626;
+  color: var(--danger-600);
   font-weight: 500;
 }
 
@@ -395,8 +395,8 @@
 .payment-submit {
   padding: 16px;
   border-radius: 16px;
-  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 80%);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-600) 80%);
+  color: var(--neutral-0);
   font-size: 1rem;
   font-weight: 600;
   border: none;
@@ -556,8 +556,8 @@
   padding: 12px 16px;
   border-radius: 12px;
   border: 1px solid rgba(37, 99, 235, 0.4);
-  background: #ffffff;
-  color: #2563eb;
+  background: var(--neutral-0);
+  color: var(--accent-500);
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
@@ -565,13 +565,13 @@
 
 .payment-secondary-btn:hover {
   background: rgba(37, 99, 235, 0.08);
-  color: #1d4ed8;
+  color: var(--accent-600);
 }
 
 .payment-help {
   padding: 20px;
   border-radius: 18px;
-  background: #ffffff;
+  background: var(--neutral-0);
   border: 1px solid rgba(148, 163, 184, 0.35);
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
   display: flex;

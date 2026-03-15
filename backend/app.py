@@ -3,6 +3,9 @@ import os
 import json
 import logging
 import time
+from collections import deque
+from datetime import datetime
+from math import ceil
 from typing import Any, Dict
 from flask import Flask, request, jsonify, render_template, session as flask_session
 from logging.handlers import RotatingFileHandler
@@ -31,6 +34,53 @@ try:
     get_remote_address = _get_remote_address
 except Exception:
     pass
+
+
+class OperationalMetrics:
+    def __init__(self, window_size: int) -> None:
+        self._events = deque(maxlen=max(1, int(window_size or 500)))
+
+    def record(
+        self,
+        *,
+        status_code: int,
+        latency_ms: float,
+        interaction_result: str | None,
+    ) -> None:
+        self._events.append(
+            {
+                "status_code": int(status_code),
+                "latency_ms": max(0.0, float(latency_ms)),
+                "interaction_result": interaction_result or "",
+            }
+        )
+
+    def snapshot(self) -> Dict[str, Any]:
+        events = list(self._events)
+        total = len(events)
+        count_2xx = sum(1 for event in events if 200 <= event["status_code"] < 300)
+        count_4xx = sum(1 for event in events if 400 <= event["status_code"] < 500)
+        count_5xx = sum(1 for event in events if 500 <= event["status_code"] < 600)
+        fallback_count = sum(1 for event in events if event["interaction_result"] == "fallback")
+        handoff_count = sum(1 for event in events if event["interaction_result"] == "handoff")
+        blocked_count = sum(1 for event in events if event["interaction_result"] == "blocked_no_consent")
+
+        p95_latency_ms = 0.0
+        if events:
+            latencies = sorted(event["latency_ms"] for event in events)
+            index = max(0, ceil(0.95 * len(latencies)) - 1)
+            p95_latency_ms = round(latencies[index], 3)
+
+        return {
+            "window_size": total,
+            "fallback_rate": round(fallback_count / total, 4) if total else 0.0,
+            "handoff_rate": round(handoff_count / total, 4) if total else 0.0,
+            "blocked_rate": round(blocked_count / total, 4) if total else 0.0,
+            "p95_latency_ms": p95_latency_ms,
+            "count_2xx": count_2xx,
+            "count_4xx": count_4xx,
+            "count_5xx": count_5xx,
+        }
 
 
 def create_app() -> Flask:
@@ -117,6 +167,8 @@ def create_app() -> Flask:
         pass
 
     chat_service = ChatService(app, db, http_session)
+    app.chat_service = chat_service
+    app.operational_metrics = OperationalMetrics(app.config.get("METRICS_WINDOW_SIZE", 500))
 
     # ---------------- Utiles internos ----------------
     def _json_error(msg: str, code: int = 400):
@@ -125,13 +177,39 @@ def create_app() -> Flask:
     # ---------------- Endpoints propios ----------------
     @app.get("/health")
     def health():
-        return {"status": "ok"}, 200
+        return {
+            "ok": True,
+            "service": app.config.get("SERVICE_NAME", "fitter-backend"),
+            "ts": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+        }, 200
+
+    @app.get("/ready")
+    def ready():
+        if not chat_service.check_database_ready():
+            return {
+                "ok": False,
+                "reason": "db_unavailable",
+            }, 503
+        if not chat_service.check_rasa_ready():
+            return {
+                "ok": False,
+                "reason": "rasa_unavailable",
+            }, 503
+        return {
+            "ok": True,
+            "service": app.config.get("SERVICE_NAME", "fitter-backend"),
+        }, 200
+
+    @app.get("/metrics")
+    def operational_metrics():
+        return jsonify(app.operational_metrics.snapshot()), 200
 
     @app.post("/chat/send")
     def chat_send():
         started = time.perf_counter()
         status = "ok"
         status_code = 200
+        interaction_result = None
         try:
             data: Dict[str, Any] = request.get_json(force=True, silent=False)
         except Exception:
@@ -139,6 +217,11 @@ def create_app() -> Flask:
             status = "error"
             status_code = 400
             elapsed_ms = (time.perf_counter() - started) * 1000
+            app.operational_metrics.record(
+                status_code=status_code,
+                latency_ms=elapsed_ms,
+                interaction_result=interaction_result,
+            )
             metrics.inc_counter("chat_send_total", tags={"status": status, "code": status_code})
             metrics.observe_latency("chat_send_latency_ms", elapsed_ms, tags={"status": status})
             return _json_error("JSON invalido", 400)
@@ -149,11 +232,22 @@ def create_app() -> Flask:
             status = "error"
             status_code = exc.status_code
             elapsed_ms = (time.perf_counter() - started) * 1000
+            app.operational_metrics.record(
+                status_code=status_code,
+                latency_ms=elapsed_ms,
+                interaction_result=interaction_result,
+            )
             metrics.inc_counter("chat_send_total", tags={"status": status, "code": status_code})
             metrics.observe_latency("chat_send_latency_ms", elapsed_ms, tags={"status": status})
             return _json_error(exc.message, exc.status_code)
         status_code = result.status_code
+        interaction_result = result.interaction_result
         elapsed_ms = (time.perf_counter() - started) * 1000
+        app.operational_metrics.record(
+            status_code=status_code,
+            latency_ms=elapsed_ms,
+            interaction_result=interaction_result,
+        )
         metrics.inc_counter("chat_send_total", tags={"status": status, "code": status_code})
         metrics.observe_latency("chat_send_latency_ms", elapsed_ms, tags={"status": status})
         return jsonify(result.payload), result.status_code
@@ -178,6 +272,20 @@ def create_app() -> Flask:
         try:
             chat_id = request.args.get("chat_id") or data.get("chat_id")
             result = chat_service.update_context(sender, chat_id, data, request.headers, flask_session)
+        except ChatServiceError as exc:
+            return _json_error(exc.message, exc.status_code)
+        return jsonify(result.payload), result.status_code
+
+    @app.post("/chat/consent/revoke/<sender>")
+    def chat_consent_revoke(sender: str):
+        try:
+            data: Dict[str, Any] = request.get_json(force=True, silent=True) or {}
+        except Exception:
+            db.session.rollback()
+            return _json_error("JSON invalido", 400)
+        chat_id = data.get("chat_id")
+        try:
+            result = chat_service.revoke_consent(sender, chat_id, request.headers, flask_session)
         except ChatServiceError as exc:
             return _json_error(exc.message, exc.status_code)
         return jsonify(result.payload), result.status_code

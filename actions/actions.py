@@ -304,8 +304,14 @@ def profile_is_complete(profile: Optional[Dict[str, Any]]) -> bool:
         return False
     weight = profile.get("weight_kg")
     height = profile.get("height_cm")
+    age = profile.get("age_years")
     goal = profile.get("primary_goal")
-    return weight not in {None, "", 0} and height not in {None, "", 0} and bool(goal)
+    return (
+        weight not in {None, "", 0}
+        and height not in {None, "", 0}
+        and age not in {None, "", 0}
+        and bool(goal)
+    )
 
 
 def _to_float(value: Any) -> Optional[float]:
@@ -334,6 +340,7 @@ def build_profile_summary(profile: Optional[Dict[str, Any]]) -> str:
     bits: List[str] = []
     weight = _to_float(profile.get("weight_kg"))
     height = _to_float(profile.get("height_cm"))
+    age = profile.get("age_years")
     goal = profile.get("primary_goal")
     diet_pref = profile.get("diet_preference")
     medical = _normalize_list_or_text(profile.get("medical_conditions"))
@@ -348,6 +355,11 @@ def build_profile_summary(profile: Optional[Dict[str, Any]]) -> str:
             bits.append(f"Altura: {int(height)} cm")
         else:
             bits.append(f"Altura: {height:.1f} cm")
+    if age not in {None, "", 0}:
+        try:
+            bits.append(f"Edad: {int(age)} anos")
+        except (TypeError, ValueError):
+            pass
     if goal:
         bits.append(f"Objetivo: {str(goal).replace('_', ' ')}")
     if diet_pref:
@@ -404,6 +416,29 @@ class ValidateProfileForm(FormValidationAction):
         domain: Dict[Text, Any],
     ) -> Dict[Text, Any]:
         return self._validate_range(dispatcher, "altura", value, 120, 230, "cm")
+
+    def validate_edad(
+        self,
+        value: Any,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> Dict[Text, Any]:
+        number = _to_float(value)
+        if number is None and isinstance(value, str):
+            match = re.search(r"\b(\d{1,3})\b", value)
+            if match:
+                try:
+                    number = float(match.group(1))
+                except (TypeError, ValueError):
+                    number = None
+        if number is None:
+            dispatcher.utter_message(text="Necesito tu edad en años (solo número).")
+            return {"edad": None}
+        if number < 18 or number > 100:
+            dispatcher.utter_message(text="La edad debe estar entre 18 y 100 años.")
+            return {"edad": None}
+        return {"edad": int(number)}
 
     def _normalize_optional(self, value: Any, default: Text = "") -> Text:
         text = (str(value or "")).strip()
@@ -553,6 +588,7 @@ class ActionFetchProfile(Action):
         if profile:
             weight = _to_float(profile.get("weight_kg"))
             height = _to_float(profile.get("height_cm"))
+            age = profile.get("age_years")
             medical = _normalize_list_or_text(profile.get("medical_conditions"))
             diet_pref = _normalize_list_or_text(profile.get("diet_preference"))
             somatotipo = _normalize_list_or_text(profile.get("somatotipo"))
@@ -561,6 +597,11 @@ class ActionFetchProfile(Action):
                 events.append(SlotSet("peso", weight))
             if height is not None:
                 events.append(SlotSet("altura", height))
+            if age not in {None, "", 0}:
+                try:
+                    events.append(SlotSet("edad", int(age)))
+                except (TypeError, ValueError):
+                    pass
             if goal:
                 events.append(SlotSet("objetivo_fitness", goal))
             if medical:
@@ -620,6 +661,7 @@ class ActionSubmitProfileForm(Action):
 
         weight = tracker.get_slot("peso")
         height = tracker.get_slot("altura")
+        age = tracker.get_slot("edad")
         goal = tracker.get_slot("objetivo_fitness")
         medical = tracker.get_slot("padecimientos")
         diet_pref = tracker.get_slot("preferencia_dieta")
@@ -630,6 +672,7 @@ class ActionSubmitProfileForm(Action):
             "user_id": ctx.get("user_id"),
             "weight_kg": float(weight) if weight is not None else None,
             "height_cm": float(height) if height is not None else None,
+            "age_years": int(age) if age is not None else None,
             "primary_goal": (goal or "").strip() or None,
             "medical_conditions": None if (medical or "").lower() in {"", "ninguno"} else medical,
             "diet_preference": (diet_pref or "").strip() or None,
@@ -682,6 +725,7 @@ class ActionSubmitProfileForm(Action):
             events.append(SlotSet("perfil_completo", profile_is_complete(refreshed_profile)))
             refreshed_weight = _to_float(refreshed_profile.get("weight_kg"))
             refreshed_height = _to_float(refreshed_profile.get("height_cm"))
+            refreshed_age = refreshed_profile.get("age_years")
             refreshed_goal = refreshed_profile.get("primary_goal")
             refreshed_medical = _normalize_list_or_text(refreshed_profile.get("medical_conditions"))
             refreshed_diet = _normalize_list_or_text(refreshed_profile.get("diet_preference"))
@@ -690,6 +734,11 @@ class ActionSubmitProfileForm(Action):
                 events.append(SlotSet("peso", refreshed_weight))
             if refreshed_height is not None:
                 events.append(SlotSet("altura", refreshed_height))
+            if refreshed_age not in {None, "", 0}:
+                try:
+                    events.append(SlotSet("edad", int(refreshed_age)))
+                except (TypeError, ValueError):
+                    pass
             if refreshed_goal:
                 events.append(SlotSet("objetivo_fitness", str(refreshed_goal).replace("_", " ").strip()))
             if refreshed_medical:
@@ -708,6 +757,8 @@ class ActionSubmitProfileForm(Action):
                 events.append(SlotSet("peso", payload["weight_kg"]))
             if payload["height_cm"] is not None:
                 events.append(SlotSet("altura", payload["height_cm"]))
+            if payload["age_years"] is not None:
+                events.append(SlotSet("edad", payload["age_years"]))
             if payload["primary_goal"]:
                 events.append(SlotSet("objetivo_fitness", payload["primary_goal"]))
             if payload["medical_conditions"]:

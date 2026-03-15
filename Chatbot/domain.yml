@@ -28,6 +28,7 @@ intents:
   - navegar_perfil_web
   - soporte_general
   - soporte_mfa
+  - handoff_human
   - detener_formulario
   - faq
   - nlu_fallback
@@ -51,6 +52,7 @@ entities:
   - clase
   - fecha
   - hora
+  - edad
 
 slots:
   objetivo:
@@ -248,6 +250,15 @@ slots:
         conditions:
           - active_loop: profile_form
             requested_slot: altura
+
+  edad:
+    type: float
+    influence_conversation: true
+    mappings:
+      - type: from_text
+        conditions:
+          - active_loop: profile_form
+            requested_slot: edad
 
   objetivo_fitness:
     type: text
@@ -524,7 +535,7 @@ responses:
         Escribe “modo demo” si quieres usarlo sin backend.
 
   utter_perfil_incompleto:
-    - text: "Para continuar necesito tus datos básicos (peso, altura, objetivo, somatotipo, padecimientos y preferencia de dieta). Dímelos uno por uno y los vamos registrando aquí mismo."
+    - text: "Para continuar necesito tus datos básicos (peso, altura, edad, objetivo, somatotipo, padecimientos y preferencia de dieta). Dímelos uno por uno y los vamos registrando aquí mismo."
 
   utter_mostrar_perfil:
     - text: "Aquí tienes tu perfil: {resumen_perfil}"
@@ -541,16 +552,22 @@ responses:
         - title: "Problemas con MFA"
           payload: "/soporte_mfa"
         - title: "Hablar con un asesor"
-          payload: "/informar{\"contacto\": \"asesor\"}"
+          payload: "/handoff_human{\"handoff_reason\": \"asesor\"}"
 
   utter_soporte_mfa:
     - text: "Si no puedes iniciar sesion con MFA, verifica la hora del dispositivo, regenera el codigo desde la app y, si es necesario, usa un codigo de respaldo o solicita uno nuevo desde tu perfil."
+
+  utter_handoff_human:
+    - text: "Te voy a derivar con un asesor humano para continuar. En breve te contactaremos."
 
   utter_ask_peso:
     - text: "Cual es tu peso actual en kilogramos? Puedes aproximarlo a numeros enteros."
 
   utter_ask_altura:
     - text: "Cual es tu altura en centimetros?"
+
+  utter_ask_edad:
+    - text: "Cual es tu edad en anos?"
 
   utter_ask_objetivo_fitness:
     - text: "Cual es tu objetivo principal ahora mismo? (ejemplo: bajar grasa, ganar masa, rendimiento)"
@@ -613,6 +630,7 @@ forms:
     required_slots:
       - peso
       - altura
+      - edad
       - objetivo_fitness
       - somatotipo
       - padecimientos

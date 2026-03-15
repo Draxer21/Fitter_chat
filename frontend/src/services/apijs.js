@@ -228,6 +228,18 @@ export const API = {
         body: JSON.stringify({ sender, message }),
       }).then(j);
     },
+    updateContext: (sender, payload) => {
+      const headers = { "Content-Type": "application/json" };
+      if (CHAT_CONTEXT_KEY) {
+        headers["X-Context-Key"] = CHAT_CONTEXT_KEY;
+      }
+      return fetch(`${BASE}/chat/context/${encodeURIComponent(sender)}`, {
+        method: "POST",
+        headers,
+        credentials: "include",
+        body: JSON.stringify(payload || {}),
+      }).then(j);
+    },
   },
 };
 

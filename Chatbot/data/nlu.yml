@@ -8674,6 +8674,22 @@ nlu:
 
     - Tengo [60](tiempo_disponible) minutos
 
+    - Tengo [28](edad) anos
+
+    - Mi edad es [34](edad)
+
+    - Tengo [45](edad) anos
+
+    - Edad [29](edad)
+
+    - Son [38](edad) anos
+
+    - Cumpli [52](edad)
+
+    - Tengo [63](edad)
+
+    - [26](edad) anos
+
     - formato [correo](formato)
 
     - formato [pdf](formato)
@@ -12977,6 +12993,16 @@ nlu:
     - Buenas por favor que alguien me ayude con un cobro extraño
 
     - buenas necesito que soporte revise soporte onboarding porque mi perfil quedo bloqueado'
+- intent: handoff_human
+  examples: '- hablar con un asesor
+
+    - necesito hablar con una persona
+
+    - derivame con un humano
+
+    - quiero soporte humano
+
+    - pasame a un asesor'
 - intent: soporte_mfa
   examples: '- oye el codigo de 1Password me marca expirado
 

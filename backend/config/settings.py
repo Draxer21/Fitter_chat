@@ -43,6 +43,7 @@ class AppConfig:
     RASA_BASE_URL: str = "http://localhost:5005"
     RASA_REST_WEBHOOK: str = "/webhooks/rest/webhook"
     RASA_PARSE_ENDPOINT: str = "/model/parse"
+    RASA_STATUS_ENDPOINT: str = "/status"
     RASA_TIMEOUT_SEND: float = 15.0
     RASA_TIMEOUT_PARSE: float = 10.0
     CHAT_CONTEXT_API_KEY: str = ""
@@ -50,6 +51,9 @@ class AppConfig:
     MAX_MESSAGE_LEN: int = 5000
     DATA_RETENTION_DAYS: int = 730
     METRICS_API_KEY: str = ""
+    METRICS_WINDOW_SIZE: int = 500
+    CONSENT_VERSION: str = "2025-11-22"
+    NLU_FALLBACK_THRESHOLD: float = 0.25
     LLM_PROVIDER: str = "disabled"
     LLM_MODEL: str = "gpt-4o-mini"
     LLM_API_KEY: str = ""
@@ -83,6 +87,9 @@ class AppConfig:
             RASA_PARSE_ENDPOINT=env.get(
                 "RASA_PARSE_ENDPOINT", cls.RASA_PARSE_ENDPOINT
             ),
+            RASA_STATUS_ENDPOINT=env.get(
+                "RASA_STATUS_ENDPOINT", cls.RASA_STATUS_ENDPOINT
+            ),
             RASA_TIMEOUT_SEND=_as_float(
                 env.get("RASA_TIMEOUT_SEND"), cls.RASA_TIMEOUT_SEND
             ),
@@ -102,6 +109,13 @@ class AppConfig:
                 env.get("DATA_RETENTION_DAYS"), cls.DATA_RETENTION_DAYS
             ),
             METRICS_API_KEY=env.get("METRICS_API_KEY", cls.METRICS_API_KEY),
+            METRICS_WINDOW_SIZE=_as_int(
+                env.get("METRICS_WINDOW_SIZE"), cls.METRICS_WINDOW_SIZE
+            ),
+            CONSENT_VERSION=env.get("CONSENT_VERSION", cls.CONSENT_VERSION),
+            NLU_FALLBACK_THRESHOLD=_as_float(
+                env.get("NLU_FALLBACK_THRESHOLD"), cls.NLU_FALLBACK_THRESHOLD
+            ),
             LLM_PROVIDER=env.get("LLM_PROVIDER", cls.LLM_PROVIDER),
             LLM_MODEL=env.get("LLM_MODEL", cls.LLM_MODEL),
             LLM_API_KEY=env.get("LLM_API_KEY", cls.LLM_API_KEY),

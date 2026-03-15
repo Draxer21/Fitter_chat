@@ -33,21 +33,21 @@ export default function HomeHero() {
         </div>
       </div>
 
-      <section className="hero-features container" role="region" aria-label="Características principales">
-        <div className="row">
-          <div className="col-md-3 feature">
+      <section className="hero-features" role="region" aria-label="Características principales">
+        <div className="hero-features-grid">
+          <div className="feature">
             <h5>{t('home.hero.feature.training.title')}</h5>
             <p>{t('home.hero.feature.training.desc')}</p>
           </div>
-          <div className="col-md-3 feature">
+          <div className="feature">
             <h5>{t('home.hero.feature.ai.title')}</h5>
             <p>{t('home.hero.feature.ai.desc')}</p>
           </div>
-          <div className="col-md-3 feature">
+          <div className="feature">
             <h5>{t('home.hero.feature.gym.title')}</h5>
             <p>{t('home.hero.feature.gym.desc')}</p>
           </div>
-          <div className="col-md-3 feature">
+          <div className="feature">
             <h5>{t('home.hero.feature.community.title')}</h5>
             <p>{t('home.hero.feature.community.desc')}</p>
           </div>

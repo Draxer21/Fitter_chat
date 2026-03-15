@@ -1,0 +1,1 @@
+const t=new Intl.NumberFormat("es-CL",{style:"currency",currency:"CLP",minimumFractionDigits:0,maximumFractionDigits:0}),m=r=>{if(r==null)return t.format(0);const e=typeof r=="number"?r:Number.parseFloat(r);if(!Number.isFinite(e))return t.format(0);const n=Math.round(e);return t.format(n)};export{m as f};

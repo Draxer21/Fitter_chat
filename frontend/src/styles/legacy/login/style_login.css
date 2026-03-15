@@ -64,7 +64,7 @@ body {
     color: white;
     margin-bottom: 25px;
     font-weight: 500;
-    border-bottom: 2px solid #4CAF50; /* Green accent for gym theme */
+    border-bottom: 2px solid var(--brand-500); /* Green accent for gym theme */
     padding-bottom: 10px;
     display: inline-block;
 }

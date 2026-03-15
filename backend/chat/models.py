@@ -25,6 +25,11 @@ class ChatUserContext(db.Model):
     last_diet = db.Column(db.JSON, nullable=True)
     history = db.Column(db.JSON, nullable=False, default=list)
     notes = db.Column(db.Text, nullable=True)
+    consent_given = db.Column(db.Boolean, nullable=False, default=False)
+    consent_version = db.Column(db.String(32), nullable=True)
+    consent_timestamp = db.Column(db.DateTime, nullable=True)
+    consent_revoked_at = db.Column(db.DateTime, nullable=True)
+    last_interaction_result = db.Column(db.String(32), nullable=True)
     last_interaction_at = db.Column(db.DateTime, nullable=False, default=_now)
     created_at = db.Column(db.DateTime, nullable=False, default=_now)
     updated_at = db.Column(db.DateTime, nullable=False, default=_now, onupdate=_now)
@@ -99,6 +104,34 @@ class ChatUserContext(db.Model):
         self.history = items
         self.touch()
 
+    def set_consent(self, *, given: bool, version: Optional[str] = None) -> None:
+        prev_given = bool(self.consent_given)
+        self.consent_given = bool(given)
+        self.consent_version = version.strip()[:32] if isinstance(version, str) and version.strip() else None
+        if self.consent_given and not prev_given:
+            self.consent_timestamp = _now()
+        self.consent_revoked_at = None if self.consent_given else self.consent_revoked_at
+        self.touch()
+
+    def revoke_consent(self) -> None:
+        self.consent_given = False
+        self.consent_revoked_at = _now()
+        self.touch()
+
+    def reset_sensitive_context(self) -> None:
+        self.allergies = None
+        self.dislikes = None
+        self.medical_conditions = None
+        self.last_routine = None
+        self.last_diet = None
+        self.notes = None
+        self.history = []
+        self.touch()
+
+    def set_last_interaction_result(self, result: Optional[str]) -> None:
+        self.last_interaction_result = result.strip()[:32] if isinstance(result, str) and result.strip() else None
+        self.touch()
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "sender_id": self.sender_id,
@@ -110,6 +143,11 @@ class ChatUserContext(db.Model):
             "last_diet": self.last_diet,
             "history": self.history or [],
             "notes": self.notes,
+            "consent_given": self.consent_given,
+            "consent_version": self.consent_version,
+            "consent_timestamp": (self.consent_timestamp.isoformat() if self.consent_timestamp else None),
+            "consent_revoked_at": (self.consent_revoked_at.isoformat() if self.consent_revoked_at else None),
+            "last_interaction_result": self.last_interaction_result,
             "last_interaction_at": (self.last_interaction_at.isoformat() if self.last_interaction_at else None),
             "updated_at": (self.updated_at.isoformat() if self.updated_at else None),
         }
@@ -138,6 +176,8 @@ class ChatUserContext(db.Model):
             "medical_conditions": self.medical_conditions,
             "last_routine": self.last_routine,
             "last_diet": self.last_diet,
+            "consent_given": self.consent_given,
+            "consent_version": self.consent_version,
             "recent_history": meta_history,
             "last_explanation": last_explanation,
         }

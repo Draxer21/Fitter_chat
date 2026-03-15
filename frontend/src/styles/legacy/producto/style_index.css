@@ -55,7 +55,7 @@
     border-radius: 50%;
     border: none;
     background: rgba(0, 0, 0, 0.6);
-    color: #fff;
+    color: var(--neutral-0);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -241,7 +241,7 @@ body {
 
 
 button {
-    background-color: #4CAF50; 
+    background-color: var(--brand-500); 
     color: white;
     padding: 10px;
     border: none;
@@ -253,14 +253,14 @@ button {
 }
 
 button:hover {
-    background-color: #45a049; 
+    background-color: var(--brand-600); 
     box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 30%, transparent);
 }
 
 
 .productos-scroll-btn {
     background: rgba(0, 0, 0, 0.6) !important;
-    color: #fff !important;
+    color: var(--neutral-0) !important;
     padding: 0 !important;
     border: none !important;
 }
@@ -306,7 +306,7 @@ button:hover {
     color: white;
     margin-bottom: 25px;
     font-weight: 500;
-    border-bottom: 2px solid #4CAF50; 
+    border-bottom: 2px solid var(--brand-500); 
     padding-bottom: 10px;
     display: inline-block;
 }

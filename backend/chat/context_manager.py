@@ -60,6 +60,18 @@ class ChatContextManager:
         else:
             self.context.notes = str(note).strip() or None
 
+    def set_consent(self, given: bool, version: Optional[str] = None) -> None:
+        self.context.set_consent(given=given, version=version)
+
+    def revoke_consent(self) -> None:
+        self.context.revoke_consent()
+
+    def reset_sensitive_context(self) -> None:
+        self.context.reset_sensitive_context()
+
+    def set_last_interaction_result(self, result: Optional[str]) -> None:
+        self.context.set_last_interaction_result(result)
+
     def to_metadata(self) -> Dict[str, Any]:
         return self.context.to_metadata()
 

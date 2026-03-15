@@ -64,7 +64,7 @@
 }
 
 .sc-btn:focus {
-  outline: 2px solid #007bff;
+  outline: 2px solid var(--accent-500);
   outline-offset: 2px;
 }
 

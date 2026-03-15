@@ -261,6 +261,40 @@ def generate_hero_plan_pdf(plan_data: Dict[str, Any]) -> BytesIO:
         story.append(Paragraph("Entrenamiento", subtitle_style))
         story.append(Paragraph(str(training), normal_style))
 
+    workout_plan = payload.get("workout_plan") or []
+    if isinstance(workout_plan, list) and workout_plan:
+        story.append(Paragraph("Plan de ejercicios sugerido", subtitle_style))
+        for session in workout_plan:
+            if not isinstance(session, dict):
+                continue
+            day = str(session.get("day") or "Sesion")
+            objective = str(session.get("objective") or "")
+            session_title = f"{day} - {objective}" if objective else day
+            story.append(Paragraph(session_title, normal_style))
+
+            exercises = session.get("exercises") or []
+            if isinstance(exercises, list):
+                for exercise in exercises:
+                    if not isinstance(exercise, dict):
+                        continue
+                    name = str(exercise.get("name") or "Ejercicio")
+                    sets = str(exercise.get("sets") or "-")
+                    reps = str(exercise.get("reps") or "-")
+                    intensity = str(exercise.get("intensity") or "RPE segun objetivo")
+                    rest = str(exercise.get("rest") or "60-90 s")
+                    story.append(
+                        Paragraph(
+                            f"• {name}: {sets}x{reps} | Intensidad: {intensity} | Descanso: {rest}",
+                            normal_style,
+                        )
+                    )
+            story.append(Spacer(1, 0.06 * inch))
+
+    progression_model = payload.get("progression_model")
+    if progression_model:
+        story.append(Paragraph("Modelo de progresion", subtitle_style))
+        story.append(Paragraph(str(progression_model), normal_style))
+
     diet = payload.get("diet")
     if diet:
         story.append(Paragraph("Enfoque dietario", subtitle_style))
@@ -280,6 +314,12 @@ def generate_hero_plan_pdf(plan_data: Dict[str, Any]) -> BytesIO:
         story.append(Paragraph("Ejemplos de comidas", subtitle_style))
         for meal in meals:
             story.append(Paragraph(f"• {meal}", normal_style))
+
+    guidelines = payload.get("guidelines") or []
+    if guidelines:
+        story.append(Paragraph("Instrucciones generales", subtitle_style))
+        for guideline in guidelines:
+            story.append(Paragraph(f"• {guideline}", normal_style))
 
     sources = payload.get("sources") or []
     if sources:

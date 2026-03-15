@@ -126,8 +126,14 @@ export default function LoginPage() {
 
   return (
     <main>
-      <div className='d-flex justify-content-center align-items-center' style={{ height: '67.5vh' }}>
-        <div className='container mt-5 border mx-auto' style={{ backgroundColor: 'rgba(0,0,0,.904)', width: 500, borderRadius: 13, color: 'white' }}>
+      <div
+        className='d-flex justify-content-center align-items-center'
+        style={{ minHeight: 'calc(100dvh - 140px)', padding: '1rem' }}
+      >
+        <div
+          className='container mt-3 mt-md-5 border mx-auto'
+          style={{ backgroundColor: 'rgba(0,0,0,.904)', width: 'min(500px, 100%)', borderRadius: 13, color: 'white', paddingInline: 'clamp(0.75rem, 2vw, 1.25rem)' }}
+        >
           <h2 className='text-center m-4'>{t('login.title')}</h2>
 
           {isAuthenticated ? (
@@ -140,7 +146,7 @@ export default function LoginPage() {
               </button>
             </div>
           ) : (
-            <form className='w-50 mx-auto' onSubmit={submit}>
+            <form className='w-100 mx-auto' style={{ maxWidth: 420 }} onSubmit={submit}>
               <div className='form-group mb-3'>
                 <label htmlFor='loginUsername'>{t('login.username.label')}</label>
                 <input

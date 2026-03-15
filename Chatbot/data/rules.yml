@@ -163,6 +163,16 @@ rules:
       - intent: informar
       - action: profile_form
 
+  - rule: pedir edad en profile_form
+    condition:
+      - active_loop: profile_form
+    steps:
+      - slot_was_set:
+          - requested_slot: edad
+      - action: utter_ask_edad
+      - intent: informar
+      - action: profile_form
+
   - rule: pedir objetivo fitness en profile_form
     condition:
       - active_loop: profile_form
@@ -327,6 +337,11 @@ rules:
     steps:
       - intent: soporte_general
       - action: utter_soporte_opciones
+
+  - rule: derivar a humano
+    steps:
+      - intent: handoff_human
+      - action: utter_handoff_human
 
   - rule: soporte mfa
     steps:

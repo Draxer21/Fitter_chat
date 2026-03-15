@@ -1,10 +1,12 @@
 import json
+from datetime import datetime
 from dataclasses import dataclass
 from threading import Lock
 from typing import Any, Dict, List, Mapping, MutableMapping, Optional, Tuple
 
 import requests
 from flask import Flask
+from sqlalchemy import text
 from .models import ChatUserContext
 from .context_manager import ChatContextManager
 from .errors import ChatServiceError
@@ -16,6 +18,7 @@ from ..security.session import context_api_key_valid, session_uid
 class ServiceResponse:
     payload: Any
     status_code: int = 200
+    interaction_result: Optional[str] = None
 
 
 class ChatService:
@@ -61,6 +64,63 @@ class ChatService:
     def _max_message_len(self) -> int:
         return int(self.app.config.get("MAX_MESSAGE_LEN", 5000))
 
+    def _consent_version(self) -> str:
+        return str(self.app.config.get("CONSENT_VERSION", "2025-11-22"))
+
+    def _block_no_consent(self, manager: ChatContextManager) -> ServiceResponse:
+        try:
+            manager.add_history_entry(
+                {
+                    "type": "interaction_result",
+                    "result": "blocked_no_consent",
+                    "gated_pre_nlu": True,
+                    "consent_version": self._consent_version(),
+                }
+            )
+        except Exception:
+            pass
+        try:
+            manager.set_last_interaction_result("blocked_no_consent")
+        except Exception:
+            pass
+        self.db.session.commit()
+        return ServiceResponse(
+            {
+                "ok": False,
+                "error": "consent_required",
+                "consent_version": self._consent_version(),
+            },
+            200,
+            "blocked_no_consent",
+        )
+
+    def _normalize_handoff_reason(self, raw: Any) -> str:
+        allowed = {"asesor", "salud_riesgo", "fuera_de_alcance", "otro"}
+        if isinstance(raw, str):
+            value = raw.strip().lower()
+            if value in allowed:
+                return value
+        return "otro"
+
+    def check_database_ready(self) -> bool:
+        try:
+            self.db.session.execute(text("SELECT 1"))
+            return True
+        except Exception:
+            self.db.session.rollback()
+            return False
+
+    def check_rasa_ready(self) -> bool:
+        status_path = str(self.app.config.get("RASA_STATUS_ENDPOINT", "/status"))
+        try:
+            resp = self.http.get(
+                self.rasa_url(status_path),
+                timeout=self.app.config.get("RASA_TIMEOUT_PARSE", 3),
+            )
+            return 200 <= resp.status_code < 300
+        except Exception:
+            return False
+
     # -------- API publica --------
     def send_message(
         self,
@@ -71,11 +131,13 @@ class ChatService:
         data = self._ensure_dict(raw_data)
         sender = str(data.get("sender", "web-user")).strip() or "web-user"
         sender = sender[:80]
+        handoff_request = bool(data.get("handoff"))
         message = str(data.get("message", "")).strip()
-        if not message:
-            raise ChatServiceError("El campo 'message' es obligatorio.", 400)
-        if len(message) > self._max_message_len():
-            raise ChatServiceError("El mensaje es demasiado largo.", 413)
+        if not handoff_request:
+            if not message:
+                raise ChatServiceError("El campo 'message' es obligatorio.", 400)
+            if len(message) > self._max_message_len():
+                raise ChatServiceError("El mensaje es demasiado largo.", 413)
 
         inflight_token = self._acquire_sender_slot(sender)
         if inflight_token is None:
@@ -83,10 +145,15 @@ class ChatService:
             return ServiceResponse(
                 [{"text": "Sigo trabajando en tu solicitud anterior, dame unos segundos y vuelve a intentarlo."}],
                 200,
+                "success",
             )
 
         ctx = ChatUserContext.get_or_create(sender, session_uid(flask_session))
         manager = ChatContextManager(ctx)
+
+        if not ctx.consent_given:
+            return self._block_no_consent(manager)
+
         rasa_payload: Dict[str, Any] = {"sender": sender, "message": message}
         metadata = manager.to_metadata()
         if metadata:
@@ -94,36 +161,58 @@ class ChatService:
 
         # Attempt to parse the user's message to capture intent/entities for history
         parsed_intent = None
+        parsed_confidence = None
         parsed_entities = None
-        try:
-            parse_resp = self.http.post(
-                self.rasa_url(self.app.config["RASA_PARSE_ENDPOINT"]),
-                json={"text": message},
-                timeout=self.app.config.get("RASA_TIMEOUT_PARSE", 3),
-            )
-            parse_resp.raise_for_status()
-            parse_payload = parse_resp.json()
-            if isinstance(parse_payload, dict):
-                parsed_intent = (parse_payload.get("intent") or {}).get("name")
-                parsed_entities = [
-                    {"entity": e.get("entity"), "value": e.get("value")} for e in (parse_payload.get("entities") or [])
-                ]
-        except Exception:
-            # parsing is best-effort; continue without failing the request
-            parsed_intent = None
+        if handoff_request:
+            parsed_intent = "handoff_human"
+            parsed_confidence = 1.0
             parsed_entities = None
+        else:
+            try:
+                parse_resp = self.http.post(
+                    self.rasa_url(self.app.config["RASA_PARSE_ENDPOINT"]),
+                    json={"text": message},
+                    timeout=self.app.config.get("RASA_TIMEOUT_PARSE", 3),
+                )
+                parse_resp.raise_for_status()
+                parse_payload = parse_resp.json()
+                if isinstance(parse_payload, dict):
+                    intent_payload = parse_payload.get("intent") or {}
+                    parsed_intent = intent_payload.get("name")
+                    parsed_confidence = intent_payload.get("confidence")
+                    parsed_entities = [
+                        {"entity": e.get("entity"), "value": e.get("value")}
+                        for e in (parse_payload.get("entities") or [])
+                    ]
+            except Exception:
+                # parsing is best-effort; continue without failing the request
+                parsed_intent = None
+                parsed_confidence = None
+                parsed_entities = None
 
         # record the user's message into history including parsed NLU metadata
-        try:
-            entry = {"type": "user_message", "text": message}
-            if parsed_intent:
-                entry["intent"] = parsed_intent
-            if parsed_entities:
-                entry["entities"] = parsed_entities
-            manager.add_history_entry(entry)
-        except Exception:
-            # do not fail the request if history append fails
-            pass
+        if not handoff_request:
+            try:
+                entry = {"type": "user_message", "text": message}
+                if parsed_intent:
+                    entry["intent"] = parsed_intent
+                if isinstance(parsed_confidence, (int, float)):
+                    entry["confidence"] = round(float(parsed_confidence), 6)
+                if parsed_entities:
+                    entry["entities"] = parsed_entities
+                manager.add_history_entry(entry)
+            except Exception:
+                # do not fail the request if history append fails
+                pass
+        else:
+            try:
+                entry = {
+                    "type": "handoff_request",
+                    "handoff_reason": self._normalize_handoff_reason(data.get("handoff_reason")),
+                }
+                manager.add_history_entry(entry)
+            except Exception:
+                pass
 
         try:
             self._ensure_context_access(ctx, headers, flask_session)
@@ -143,15 +232,61 @@ class ChatService:
                     self.app.logger.exception("LLM orchestrator fallo; se usa Rasa como respaldo")
 
             if payload is None:
-                payload = self._call_rasa(rasa_payload)
+                if handoff_request:
+                    reason = self._normalize_handoff_reason(data.get("handoff_reason"))
+                    payload = [
+                        {
+                            "text": "Te voy a derivar con un asesor humano para continuar.",
+                            "custom": {"handoff": True, "handoff_reason": reason},
+                        }
+                    ]
+                else:
+                    payload = self._call_rasa(rasa_payload)
 
             processed_payload, updated_context = self._process_bot_payload(payload, manager)
+
+            (
+                interaction_result,
+                is_fallback,
+                is_handoff,
+                handoff_reason,
+                threshold_used,
+            ) = self._classify_interaction_result(
+                parsed_intent,
+                parsed_confidence,
+                parsed_entities,
+                processed_payload,
+            )
+            if interaction_result:
+                try:
+                    manager.add_history_entry(
+                        {
+                            "type": "interaction_result",
+                            "result": interaction_result,
+                            "nlu_intent": parsed_intent,
+                            "nlu_confidence": (
+                                round(float(parsed_confidence), 6)
+                                if isinstance(parsed_confidence, (int, float))
+                                else None
+                            ),
+                            "is_fallback": bool(is_fallback),
+                            "is_handoff": bool(is_handoff),
+                            "handoff_reason": handoff_reason,
+                            "threshold_used": threshold_used,
+                        }
+                    )
+                except Exception:
+                    pass
+                try:
+                    manager.set_last_interaction_result(interaction_result)
+                except Exception:
+                    pass
 
             if not updated_context:
                 manager.touch()
 
             self.db.session.commit()
-            return ServiceResponse(processed_payload, 200)
+            return ServiceResponse(processed_payload, 200, interaction_result)
         except ChatServiceError:
             self.db.session.rollback()
             raise
@@ -271,6 +406,32 @@ class ChatService:
             self._ensure_context_access(ctx, headers, flask_session)
 
             updated = False
+            consent_fields = {"consent_given", "consent_version"}
+            if not ctx.consent_given:
+                extra_fields = {k for k in data.keys() if k not in consent_fields}
+                if extra_fields:
+                    try:
+                        manager.add_history_entry(
+                            {
+                                "type": "interaction_result",
+                                "result": "blocked_no_consent",
+                            }
+                        )
+                    except Exception:
+                        pass
+                    try:
+                        manager.set_last_interaction_result("blocked_no_consent")
+                    except Exception:
+                        pass
+                    self.db.session.commit()
+                    return ServiceResponse(
+                        {
+                            "ok": False,
+                            "error": "consent_required",
+                            "consent_version": self._consent_version(),
+                        },
+                        200,
+                    )
             if "allergies" in data:
                 manager.set_allergies(data.get("allergies"))
                 updated = True
@@ -289,6 +450,14 @@ class ChatService:
             if isinstance(data.get("last_diet"), dict):
                 manager.set_last_diet(data["last_diet"])
                 updated = True
+            if "consent_given" in data:
+                consent_given = bool(data.get("consent_given"))
+                consent_version = self._consent_version()
+                manager.set_consent(
+                    consent_given,
+                    version=consent_version,
+                )
+                updated = True
             history_entry = data.get("history_entry")
             if isinstance(history_entry, dict):
                 manager.add_history_entry(history_entry)
@@ -302,6 +471,40 @@ class ChatService:
         except ChatServiceError:
             self.db.session.rollback()
             raise
+
+    def revoke_consent(
+        self,
+        raw_sender: str,
+        chat_id: Optional[str],
+        headers: Mapping[str, str],
+        flask_session: MutableMapping[str, Any],
+    ) -> ServiceResponse:
+        sender = (raw_sender or "").strip()[:80]
+        sender_for_lookup = sender if not chat_id else f"{sender}::{chat_id}"
+        ctx = ChatUserContext.get_or_create(sender_for_lookup, session_uid(flask_session))
+        manager = ChatContextManager(ctx)
+        self._ensure_context_access(ctx, headers, flask_session)
+        manager.revoke_consent()
+        manager.reset_sensitive_context()
+        try:
+            manager.add_history_entry(
+                {
+                    "type": "consent_revoked",
+                    "timestamp": datetime.utcnow().isoformat(),
+                }
+            )
+        except Exception:
+            pass
+        self.db.session.commit()
+        return ServiceResponse(
+            {
+                "ok": True,
+                "consent_given": False,
+                "consent_version": self._consent_version(),
+                "consent_revoked_at": ctx.consent_revoked_at.isoformat() if ctx.consent_revoked_at else None,
+            },
+            200,
+        )
 
     # -------- internal helpers --------
     def _call_rasa(self, rasa_payload: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -381,6 +584,47 @@ class ChatService:
             elif isinstance(payload, dict):
                 fallback_items = [payload]
         return items or fallback_items, updated_context
+
+    def _classify_interaction_result(
+        self,
+        parsed_intent: Optional[str],
+        parsed_confidence: Optional[float],
+        parsed_entities: Optional[List[Dict[str, Any]]],
+        payload: List[Dict[str, Any]],
+    ) -> Tuple[str, bool, bool, Optional[str], float]:
+        fallback_intents = {"nlu_fallback", "out_of_scope", "fallback"}
+        threshold = float(self.app.config.get("NLU_FALLBACK_THRESHOLD", 0.25))
+
+        is_fallback = False
+        if parsed_intent in fallback_intents:
+            is_fallback = True
+        if isinstance(parsed_confidence, (int, float)) and parsed_confidence < threshold:
+            is_fallback = True
+
+        is_handoff = False
+        handoff_reason = None
+        handoff_intents = {"handoff_human"}
+        if parsed_intent in handoff_intents:
+            is_handoff = True
+            handoff_reason = f"intent:{parsed_intent}"
+
+        if not is_handoff:
+            for item in payload or []:
+                custom_payload = item.get("custom")
+                if not custom_payload and isinstance(item.get("json_message"), dict):
+                    custom_payload = item.get("json_message")
+                if isinstance(custom_payload, dict) and custom_payload.get("handoff") is True:
+                    is_handoff = True
+                    reason = custom_payload.get("handoff_reason") or custom_payload.get("reason")
+                    normalized = self._normalize_handoff_reason(reason)
+                    handoff_reason = f"payload:{normalized}"
+                    break
+
+        if is_handoff:
+            return "handoff", is_fallback, True, handoff_reason, threshold
+        if is_fallback:
+            return "fallback", True, False, None, threshold
+        return "success", False, False, None, threshold
 
     def _normalize_explanation(self, raw: Any) -> Optional[str]:
         if isinstance(raw, str) and raw.strip():

@@ -1,8 +1,8 @@
 :root {
-  --white: #ffffff;
+  --white: var(--neutral-0);
   --light: #f8f9fa;
-  --primary: #007bff;
-  --dark: #212529;
+  --primary: var(--accent-500);
+  --dark: var(--neutral-800);
   --max-width: 430px;
   --max-height: 600px;
 }
