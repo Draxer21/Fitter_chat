@@ -92,7 +92,8 @@ def test_login_with_totp_success(app, client):
     # ensure new code window if confirm and login happened muy rápido
     time.sleep(0.5)
     code = totp.now()
-    resp = post_with_csrf(client, "/auth/login", json={"username": creds["username"], "password": creds["password"], "totp": code})
+    resp = post_with_csrf(client, "/auth/login",
+                          json={"username": creds["username"], "password": creds["password"], "totp": code})
     assert resp.status_code == 200, resp.get_data(as_text=True)
     data = resp.get_json()
     assert data["user"]["email"] == creds["email"]
@@ -168,4 +169,3 @@ def test_disable_mfa_requires_valid_code(app, client):
     post_with_csrf(client, "/auth/logout")
     resp = post_with_csrf(client, "/auth/login", json={"username": creds["username"], "password": creds["password"]})
     assert resp.status_code == 200, resp.get_data(as_text=True)
-

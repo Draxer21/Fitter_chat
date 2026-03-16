@@ -5,6 +5,7 @@ from ..extensions import db
 
 bp = Blueprint("chat", __name__)
 
+
 @bp.post("/send")
 def chat_send():
     data = request.get_json(force=True, silent=True) or {}
@@ -22,6 +23,7 @@ def chat_send():
         return jsonify(r.json()), 200
     except requests.RequestException:
         return jsonify([{"text": "No se pudo conectar al motor conversacional."}]), 502
+
 
 @bp.post("/parse")
 def nlu_parse():

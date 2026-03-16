@@ -6,4 +6,3 @@ Este paquete expone utilidades para enviar correos y futuros canales.
 """
 
 from .email import send_email  # noqa: F401
-

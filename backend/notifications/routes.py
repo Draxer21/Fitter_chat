@@ -1,6 +1,7 @@
 # backend/notifications/routes.py
 from __future__ import annotations
 
+import json
 import os
 from typing import Optional
 
@@ -45,12 +46,12 @@ def send_daily_routine():
     """
     Envía un correo con la rutina diaria a un usuario específico.
 
-    Requiere sesión activa O API key válida. Usuarios no administradores solo 
+    Requiere sesión activa O API key válida. Usuarios no administradores solo
     pueden enviarse correos a sí mismos (cuando usan sesión web).
     """
     # Intentar autenticación por sesión
     actor = _current_user()
-    
+
     # Si no hay sesión, intentar validar por API key
     has_valid_api_key = False
     if not actor:
@@ -141,21 +142,21 @@ def send_daily_routine():
 def download_routine():
     """
     Genera y descarga una rutina en formato PDF o DOCX.
-    
+
     Body:
         - format: "pdf" o "docx"
         - routine_data: estructura completa de routine_detail
     """
     data = request.get_json(force=True, silent=True) or {}
-    
+
     format_type = (data.get("format") or "pdf").lower()
     if format_type not in {"pdf", "docx"}:
         return jsonify({"error": "Formato inválido, usa 'pdf' o 'docx'"}), 400
-    
+
     routine_data = data.get("routine_data")
     if not routine_data or not isinstance(routine_data, dict):
         return jsonify({"error": "routine_data es obligatorio y debe ser un objeto"}), 400
-    
+
     try:
         if format_type == "pdf":
             buffer = generate_routine_pdf(routine_data)
@@ -165,11 +166,11 @@ def download_routine():
             buffer = generate_routine_docx(routine_data)
             mimetype = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
             extension = "docx"
-        
+
         # Nombre del archivo
         routine_id = routine_data.get("routine_id", "rutina")
         filename = f"{routine_id}.{extension}"
-        
+
         return send_file(
             buffer,
             mimetype=mimetype,
@@ -298,7 +299,7 @@ def send_diet():
         if diet_data and isinstance(diet_data, dict):
             lines = [diet_data.get('header', 'Tu dieta Fitter'), '']
             for meal in diet_data.get('meals', []):
-                lines.append(f"{meal.get('name','Comida')}:")
+                lines.append(f"{meal.get('name', 'Comida')}:")
                 for it in meal.get('items', []):
                     # Handle both string format and object format
                     if isinstance(it, str):
@@ -330,10 +331,10 @@ def send_diet():
             fmt = (data.get('format') or 'pdf').lower()
             if fmt == 'docx':
                 buf = generate_diet_docx(diet_data)
-                filename = f"{diet_data.get('diet_id','dieta')}.docx"
+                filename = f"{diet_data.get('diet_id', 'dieta')}.docx"
             else:
                 buf = generate_diet_pdf(diet_data)
-                filename = f"{diet_data.get('diet_id','dieta')}.pdf"
+                filename = f"{diet_data.get('diet_id', 'dieta')}.pdf"
             attachment_bytes = buf.getvalue()
         else:
             attachment_bytes = None
@@ -378,5 +379,3 @@ def download_diet():
         return send_file(buffer, mimetype=mimetype, as_attachment=True, download_name=filename)
     except Exception as exc:
         return jsonify({'error': 'No se pudo generar el documento', 'details': str(exc)}), 500
-
-

@@ -1,4 +1,4 @@
-﻿# backend/app.py
+# backend/app.py
 import os
 import json
 import logging
@@ -393,5 +393,3 @@ if __name__ == "__main__":
         port=int(os.getenv("PORT", "5000")),
         debug=os.getenv("FLASK_DEBUG", "1") == "1"
     )
-
-

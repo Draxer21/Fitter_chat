@@ -1,4 +1,4 @@
-﻿import os
+import os
 
 import pyotp
 import pytest
@@ -121,4 +121,3 @@ def test_profile_requires_auth_without_key(client):
     client.post("/auth/logout", headers=csrf_headers(client))
     resp = client.get("/profile/me")
     assert resp.status_code == 401
-

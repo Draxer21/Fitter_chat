@@ -226,4 +226,3 @@ def hero_plans_pdf(plan_id: int):
         as_attachment=True,
         download_name=filename,
     )
-

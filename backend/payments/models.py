@@ -8,45 +8,45 @@ from datetime import datetime
 class Payment(db.Model):
     """Modelo para registrar pagos"""
     __tablename__ = 'payment'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
-    
+
     # Información de MercadoPago
     preference_id = db.Column(db.String(255), unique=True, nullable=False)
     payment_id = db.Column(db.String(255), unique=True, nullable=True)
-    
+
     # Estado del pago
     status = db.Column(db.String(50), nullable=False, default='pending')
     # pending, approved, rejected, cancelled, refunded, in_process
-    
+
     # Montos
     transaction_amount = db.Column(db.Float, nullable=False)
     currency_id = db.Column(db.String(10), default='CLP')
-    
+
     # Método de pago usado
     payment_method_id = db.Column(db.String(50), nullable=True)
     payment_type_id = db.Column(db.String(50), nullable=True)
-    
+
     # Metadatos adicionales
     merchant_order_id = db.Column(db.String(255), nullable=True)
     external_reference = db.Column(db.String(255), nullable=True)
-    
+
     # Información del pagador (opcional)
     payer_email = db.Column(db.String(255), nullable=True)
     payer_id = db.Column(db.String(255), nullable=True)
-    
+
     # Timestamps
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
     approved_at = db.Column(db.DateTime, nullable=True)
-    
+
     # Relaciones
     order = db.relationship('Order', back_populates='payment')
-    
+
     def __repr__(self):
         return f'<Payment {self.id} - Order {self.order_id} - Status: {self.status}>'
-    
+
     def to_dict(self):
         """Convertir a diccionario"""
         return {

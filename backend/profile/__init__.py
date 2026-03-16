@@ -2,4 +2,3 @@
 """Perfil de usuario (salud, biometría y preferencias)."""
 
 # Las importaciones públicas viven en cada módulo específico.
-

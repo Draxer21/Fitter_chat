@@ -198,9 +198,9 @@ def procesar_pago():
 
         carrito = Carrito()
         snapshot = carrito.snapshot()
-        
+
         current_app.logger.info(f"Snapshot del carrito: {snapshot}")
-        
+
         if not snapshot.get("items"):
             return jsonify({"error": "Carrito vacio."}), 400
 
@@ -210,7 +210,7 @@ def procesar_pago():
 
         if not name:
             return jsonify({"error": "Nombre requerido."}), 400
-        
+
         if not email:
             return jsonify({"error": "Email requerido."}), 400
 
@@ -238,9 +238,9 @@ def procesar_pago():
             metadata={"snapshot": snapshot},
         )
         db.session.commit()
-        
+
         current_app.logger.info(f"Orden creada: {order.id}, total: {order.total_amount}")
-        
+
         # Preparar items para MercadoPago
         items = []
         for item_data in snapshot.get("items", {}).values():
@@ -249,9 +249,9 @@ def procesar_pago():
                 'quantity': item_data.get('cantidad', 1),
                 'price': float(item_data.get('precio_unitario', 0))
             })
-        
+
         current_app.logger.info(f"Items para MercadoPago: {items}")
-        
+
         # Crear preferencia de MercadoPago
         mp_service = MercadoPagoService()
         payer_info = {
@@ -259,17 +259,17 @@ def procesar_pago():
             'name': name.split()[0] if name else '',
             'surname': ' '.join(name.split()[1:]) if len(name.split()) > 1 else ''
         }
-        
+
         result = mp_service.create_preference(
             order_id=order.id,
             items=items,
             payer_info=payer_info
         )
-        
+
         # Limpiar el carrito
         carrito.limpiar()
         session["last_order_id"] = order.id
-        
+
         # Devolver URL de MercadoPago
         return jsonify({
             "exito": "Orden creada. Redirigiendo a MercadoPago...",
@@ -278,7 +278,7 @@ def procesar_pago():
             "sandbox_payment_url": result.get("sandbox_init_point"),
             "preference_id": result.get("preference_id")
         }), 200
-        
+
     except ValueError as exc:
         current_app.logger.error(f"ValueError en procesar_pago: {str(exc)}")
         return jsonify({"error": str(exc)}), 400
@@ -390,10 +390,9 @@ def ver_orden(order_id: int):
     order = db.session.get(Order, order_id)
     if not order:
         return jsonify({"error": "Orden no encontrada."}), 404
-    
+
     if not _order_is_visible(order):
         return jsonify({"error": "No autorizado."}), 403
-    
+
     # Redirigir a la boleta con el ID de la orden
     return render_template("boleta.html", order_id=order_id)
-

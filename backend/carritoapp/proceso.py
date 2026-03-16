@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import session
 
+
 def total_carrito():
     total = 0
     for v in session.get("carrito", {}).values():

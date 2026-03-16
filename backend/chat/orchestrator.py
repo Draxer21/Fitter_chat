@@ -176,7 +176,8 @@ class KnowledgeStore:
             os.makedirs(self.settings.rag_index_path, exist_ok=True)
         except Exception:
             pass
-        client = chromadb.PersistentClient(path=self.settings.rag_index_path) if self.settings.rag_index_path else chromadb.Client()  # type: ignore
+        client = chromadb.PersistentClient(
+            path=self.settings.rag_index_path) if self.settings.rag_index_path else chromadb.Client()  # type: ignore
         emb_fn = self._embedding_function()
         self._collection = client.get_or_create_collection("fitter-kb", embedding_function=emb_fn)
 
@@ -207,7 +208,6 @@ class KnowledgeStore:
                     n_results=min(self.settings.rag_max_results, 6),
                 )
                 matches: List[Dict[str, Any]] = []
-                ids = result.get("ids", [[]])[0]
                 docs = result.get("documents", [[]])[0]
                 metas = result.get("metadatas", [[]])[0]
                 dists = result.get("distances", [[]])[0]
@@ -574,7 +574,8 @@ class ChatOrchestrator:
             raise ChatServiceError("LLM orchestrator no configurado.")
 
         # Pre-screen
-        screening = self.tools.dispatch("screen_user", {"medical_conditions": manager.context.medical_conditions}, manager)
+        screening = self.tools.dispatch(
+            "screen_user", {"medical_conditions": manager.context.medical_conditions}, manager)
         if screening["result"].get("needs_clearance"):
             return screening.get("responses") or []
 

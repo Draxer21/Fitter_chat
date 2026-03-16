@@ -165,27 +165,33 @@ CATALOGO: Dict[str, Dict[str, List[Tuple[str, str, str]]]] = {
         ]
     },
     "cardio": {
-    "peso_corporal": [
-        ("Saltar la cuerda (básico)", "https://exrx.net/Aerobic/Exercises/JumpRopeSingleHop", "ExRx"),
-        ("Saltar la cuerda (dobles)", "https://exrx.net/Aerobic/Exercises/JumpRopeDoubleRotation", "ExRx"),
-        ("Burpees", "https://exrx.net/Aerobic/Exercises/Burpee", "ExRx"),
-        ("Jumping jacks", "https://exrx.net/Aerobic/Exercises/JumpingJack", "ExRx"),
-        ("Mountain climbers", "https://exrx.net/Aerobic/Exercises/MountainClimber", "ExRx"),
-        ("Rodillas altas (high knees)", "https://exrx.net/Aerobic/Exercises/HighKneeRun", "ExRx"),
-        ("Saltos laterales (skater)", "https://exrx.net/Plyometrics/MBLateralBound", "ExRx"),
-        ("Shadow boxing (rounds)", "https://www.youtube.com/watch?v=J4j3AOVWuHE", "Tony Jeffries (YouTube)")
-    ],
-    "máquinas": [
-        ("Cinta de correr: entrenos clave (intervalos/cuestas)", "https://www.youtube.com/watch?v=kvITDpAfJxg", "The Running Channel (YouTube)"),
-        ("Cinta de correr: 20 min principiantes (intervalos guiados)", "https://www.youtube.com/watch?v=ufhM_9eLU-s", "Sam Candler (YouTube)"),
-        ("Bicicleta estática: 20 min intervalos principiantes", "https://www.youtube.com/watch?v=KTQGbk8_2DM", "Sunny Health & Fitness (YouTube)"),
-        ("Bicicleta estática: HIIT 15 min principiantes", "https://www.youtube.com/watch?v=GzEpFWfFWiQ", "Kaleigh Cohen Fitness (YouTube)"),
-        ("Elíptica: cómo usarla (técnica)", "https://www.youtube.com/watch?v=yISC2qwdh9I", "Nuffield Health (YouTube)"),
-        ("Elíptica: intervalos 10 min principiantes", "https://www.youtube.com/watch?v=t9KVWTROVb0", "Sunny Health & Fitness (YouTube)"),
-        ("Remo indoor: técnica correcta", "https://www.concept2.com/training/rowing-technique", "Concept2"),
-        ("Stair climber: guía para principiantes", "https://www.youtube.com/watch?v=SZU9Rm0sNOo", "Calvin The Alchemist (YouTube)")
-    ]
-},
+        "peso_corporal": [
+            ("Saltar la cuerda (básico)", "https://exrx.net/Aerobic/Exercises/JumpRopeSingleHop", "ExRx"),
+            ("Saltar la cuerda (dobles)", "https://exrx.net/Aerobic/Exercises/JumpRopeDoubleRotation", "ExRx"),
+            ("Burpees", "https://exrx.net/Aerobic/Exercises/Burpee", "ExRx"),
+            ("Jumping jacks", "https://exrx.net/Aerobic/Exercises/JumpingJack", "ExRx"),
+            ("Mountain climbers", "https://exrx.net/Aerobic/Exercises/MountainClimber", "ExRx"),
+            ("Rodillas altas (high knees)", "https://exrx.net/Aerobic/Exercises/HighKneeRun", "ExRx"),
+            ("Saltos laterales (skater)", "https://exrx.net/Plyometrics/MBLateralBound", "ExRx"),
+            ("Shadow boxing (rounds)", "https://www.youtube.com/watch?v=J4j3AOVWuHE", "Tony Jeffries (YouTube)")
+        ],
+        "máquinas": [
+            ("Cinta de correr: entrenos clave (intervalos/cuestas)",
+             "https://www.youtube.com/watch?v=kvITDpAfJxg", "The Running Channel (YouTube)"),
+            ("Cinta de correr: 20 min principiantes (intervalos guiados)",
+             "https://www.youtube.com/watch?v=ufhM_9eLU-s", "Sam Candler (YouTube)"),
+            ("Bicicleta estática: 20 min intervalos principiantes",
+             "https://www.youtube.com/watch?v=KTQGbk8_2DM", "Sunny Health & Fitness (YouTube)"),
+            ("Bicicleta estática: HIIT 15 min principiantes",
+             "https://www.youtube.com/watch?v=GzEpFWfFWiQ", "Kaleigh Cohen Fitness (YouTube)"),
+            ("Elíptica: cómo usarla (técnica)", "https://www.youtube.com/watch?v=yISC2qwdh9I", "Nuffield Health (YouTube)"),
+            ("Elíptica: intervalos 10 min principiantes",
+             "https://www.youtube.com/watch?v=t9KVWTROVb0", "Sunny Health & Fitness (YouTube)"),
+            ("Remo indoor: técnica correcta", "https://www.concept2.com/training/rowing-technique", "Concept2"),
+            ("Stair climber: guía para principiantes",
+             "https://www.youtube.com/watch?v=SZU9Rm0sNOo", "Calvin The Alchemist (YouTube)")
+        ]
+    },
 
 }
 
@@ -376,6 +382,8 @@ DIET_BASES: Dict[str, Dict[str, Any]] = {
 # =========================================================
 # Banco de ejercicios y selección
 # =========================================================
+
+
 def _build_bank_por_prioridad(grupo: str, equip: str) -> List[Tuple[str, str]]:
     """
     Construye un pool de ejercicios (nombre, url) según prioridad:
@@ -384,7 +392,7 @@ def _build_bank_por_prioridad(grupo: str, equip: str) -> List[Tuple[str, str]]:
     3) fallback: fullbody + mancuernas
     """
     g = (grupo or "").strip().lower()
-    e = _equip_key_norm(equip)
+    e = equip_key_norm(equip)
 
     pool: List[Tuple[str, str]] = []
 
@@ -412,50 +420,6 @@ def _build_bank_por_prioridad(grupo: str, equip: str) -> List[Tuple[str, str]]:
             unique_pool.append((n, u))
     return unique_pool
 
-def pick_exercises(grupo: str, equip: str, n: int) -> List[Tuple[str, str]]:
-    """Devuelve n ejercicios (nombre, url) priorizando el banco más relevante, sin duplicados."""
-    pool = _build_bank_por_prioridad(grupo, equip)
-    if not pool:
-        return []
-    random.shuffle(pool)
-    return pool[:max(0, n)]
-
-
-def _build_bank_por_prioridad(grupo: str, equip: str) -> List[Tuple[str, str]]:
-    """
-    Construye un pool de ejercicios (nombre, url) según prioridad:
-    1) grupo + equip
-    2) grupo + cualquier equip disponible
-    3) fallback: fullbody + mancuernas
-    """
-    g = (grupo or "").strip().lower()
-    e = _equip_key_norm(equip)
-
-    pool: List[Tuple[str, str]] = []
-
-    # 1) grupo + equip
-    if g in CATALOGO and e in CATALOGO[g]:
-        pool += [(n, u) for (n, u, _src) in CATALOGO[g][e]]
-
-    # 2) grupo + otros equip si 1) quedó corto
-    if g in CATALOGO:
-        for e2, lista in CATALOGO[g].items():
-            if e2 == e:
-                continue
-            pool += [(n, u) for (n, u, _src) in lista]
-
-    # 3) fallback adicional (se suma al final)
-    if "fullbody" in CATALOGO and "mancuernas" in CATALOGO["fullbody"]:
-        pool += [(n, u) for (n, u, _src) in CATALOGO["fullbody"]["mancuernas"]]
-
-    # deduplicar por nombre
-    seen = set()
-    unique_pool: List[Tuple[str, str]] = []
-    for n, u in pool:
-        if n not in seen:
-            seen.add(n)
-            unique_pool.append((n, u))
-    return unique_pool
 
 def pick_exercises(grupo: str, equip: str, n: int) -> List[Tuple[str, str]]:
     """Devuelve n ejercicios (nombre, url) priorizando el banco más relevante, sin duplicados."""
@@ -464,7 +428,6 @@ def pick_exercises(grupo: str, equip: str, n: int) -> List[Tuple[str, str]]:
         return []
     random.shuffle(pool)
     return pool[:max(0, n)]
-
 
 
 def generate_workout_plan(

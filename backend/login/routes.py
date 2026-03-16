@@ -1,4 +1,9 @@
-﻿# backend/login/routes.py
+# backend/login/routes.py
+from ..security.csrf import (
+    get_or_create_csrf_token,
+    set_csrf_cookie,
+    validate_csrf,
+)
 from datetime import datetime
 import re
 import secrets
@@ -15,11 +20,6 @@ from ..extensions import db
 from .models import User
 bp = Blueprint("login", __name__)
 
-from ..security.csrf import (
-    get_or_create_csrf_token,
-    set_csrf_cookie,
-    validate_csrf,
-)
 
 USERNAME_PATTERN = re.compile(r"^[a-z0-9_-]{3,32}$")
 EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
@@ -262,7 +262,8 @@ def google_login():
 
     email = _normalize_email(google_info.get("email"))
     sub = (google_info.get("sub") or "").strip()
-    full_name = (google_info.get("name") or google_info.get("given_name") or google_info.get("family_name") or "").strip() or email
+    full_name = (google_info.get("name") or google_info.get("given_name")
+                 or google_info.get("family_name") or "").strip() or email
 
     if not email or not sub:
         return jsonify({"error": "Respuesta de Google incompleta"}), 400

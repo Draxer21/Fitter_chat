@@ -126,7 +126,7 @@ class User(db.Model):
         }
         encrypted = encrypt_profile_payload(empty_payload)
         checksum = profile_payload_checksum(encrypted)
-        
+
         self.profile = UserProfile(
             user=self,
             encrypted_payload=encrypted,

@@ -63,7 +63,7 @@ class AppConfig:
     EMBEDDINGS_MODEL: str = "text-embedding-3-small"
     RAG_MAX_RESULTS: int = 4
     RAG_INDEX_PATH: str = ""
-    
+
     # MercadoPago configuration
     MERCADOPAGO_ACCESS_TOKEN: str = ""
     MERCADOPAGO_PUBLIC_KEY: str = ""

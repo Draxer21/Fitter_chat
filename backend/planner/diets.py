@@ -7,6 +7,7 @@ from urllib.parse import quote
 
 from .common import parse_allergy_list, parse_health_flags
 
+
 def mifflin_st_jeor(weight_kg: float, height_cm: float, age: int, sex: Optional[str]) -> float:
     """Calcula BMR usando Mifflin-St Jeor. sex: 'f' o 'm' (insensible a mayúsculas)."""
     s = -161 if (str(sex or "").strip().lower().startswith("f")) else 5
@@ -132,8 +133,6 @@ def calc_target_kcal_and_macros(
         result["note"] = "Algunos datos (edad/sexo) faltan; resultados aproximados."
 
     return result
-
-
 
 
 DIET_BASES: Dict[str, Dict[str, Any]] = {
@@ -273,7 +272,6 @@ DIET_BASES: Dict[str, Dict[str, Any]] = {
         "hydration": "2.0 L de agua al dia como base."
     }
 }
-
 
 
 def generate_diet_plan(

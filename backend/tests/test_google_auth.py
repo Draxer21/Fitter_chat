@@ -63,7 +63,8 @@ def test_google_login_creates_placeholder_username(app, client, monkeypatch):
 def test_google_login_rejects_taken_username(app, client, monkeypatch):
     app.config["GOOGLE_CLIENT_IDS"] = ["test-client"]
     with app.app_context():
-        user = User.create(email="existing@example.com", username="taken_name", password="Secret123", full_name="Existing")
+        user = User.create(email="existing@example.com", username="taken_name",
+                           password="Secret123", full_name="Existing")
         db.session.commit()
         assert user.username == "taken_name"
 

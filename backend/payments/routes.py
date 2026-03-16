@@ -32,7 +32,7 @@ def _require_auth():
 def create_preference():
     """
     Crear una preferencia de pago en MercadoPago
-    
+
     Request body:
     {
         "order_id": 123,
@@ -47,31 +47,31 @@ def create_preference():
     current_user, error = _require_auth()
     if error:
         return error
-    
+
     try:
         data = request.get_json()
         order_id = data.get('order_id')
-        
+
         if not order_id:
             return jsonify({'error': 'order_id es requerido'}), 400
-        
+
         # Verificar que la orden existe y pertenece al usuario
         order = Order.query.get(order_id)
         if not order:
             return jsonify({'error': 'Orden no encontrada'}), 404
-        
+
         if order.user_id != current_user.id:
             return jsonify({'error': 'No autorizado'}), 403
-        
+
         # Verificar que la orden no tenga ya un pago aprobado
         existing_payment = Payment.query.filter_by(
             order_id=order_id,
             status='approved'
         ).first()
-        
+
         if existing_payment:
             return jsonify({'error': 'Esta orden ya tiene un pago aprobado'}), 400
-        
+
         # Preparar items de la orden
         items = []
         for item in order.items:
@@ -80,12 +80,12 @@ def create_preference():
                 'quantity': item.quantity,
                 'price': item.price
             })
-        
+
         # Información del pagador
         payer_info = data.get('payer_info', {})
         if not payer_info.get('email'):
             payer_info['email'] = current_user.email
-        
+
         # Crear preferencia
         mp_service = MercadoPagoService()
         result = mp_service.create_preference(
@@ -93,9 +93,9 @@ def create_preference():
             items=items,
             payer_info=payer_info
         )
-        
+
         return jsonify(result), 200
-        
+
     except ValueError as e:
         return jsonify({'error': str(e)}), 400
     except Exception as e:
@@ -110,16 +110,16 @@ def webhook():
     """
     try:
         data = request.get_json()
-        
+
         # Procesar notificación
         mp_service = MercadoPagoService()
         success = mp_service.process_webhook_notification(data)
-        
+
         if success:
             return jsonify({'status': 'ok'}), 200
         else:
             return jsonify({'status': 'ignored'}), 200
-            
+
     except Exception as e:
         current_app.logger.error(f"Error en webhook: {str(e)}")
         return jsonify({'error': 'Error procesando webhook'}), 500
@@ -134,19 +134,19 @@ def get_payment_status(payment_id):
     current_user, error = _require_auth()
     if error:
         return error
-    
+
     try:
         payment = Payment.query.get(payment_id)
-        
+
         if not payment:
             return jsonify({'error': 'Pago no encontrado'}), 404
-        
+
         # Verificar que el pago pertenece al usuario
         if payment.order.user_id != current_user.id:
             return jsonify({'error': 'No autorizado'}), 403
-        
+
         return jsonify(payment.to_dict()), 200
-        
+
     except Exception as e:
         current_app.logger.error(f"Error obteniendo estado del pago: {str(e)}")
         return jsonify({'error': 'Error al obtener estado del pago'}), 500
@@ -161,23 +161,23 @@ def get_order_payment(order_id):
     current_user, error = _require_auth()
     if error:
         return error
-    
+
     try:
         order = Order.query.get(order_id)
-        
+
         if not order:
             return jsonify({'error': 'Orden no encontrada'}), 404
-        
+
         if order.user_id != current_user.id:
             return jsonify({'error': 'No autorizado'}), 403
-        
+
         payment = Payment.query.filter_by(order_id=order_id).order_by(Payment.created_at.desc()).first()
-        
+
         if not payment:
             return jsonify({'error': 'No se encontró información de pago para esta orden'}), 404
-        
+
         return jsonify(payment.to_dict()), 200
-        
+
     except Exception as e:
         current_app.logger.error(f"Error obteniendo pago de orden: {str(e)}")
         return jsonify({'error': 'Error al obtener información del pago'}), 500

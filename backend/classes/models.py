@@ -64,8 +64,10 @@ class ClassSession(db.Model):
     fitness_class = db.relationship("FitnessClass", back_populates="sessions")
 
     __table_args__ = (
-        db.CheckConstraint("duration_override IS NULL OR duration_override > 0", name="ck_class_session_duration_positive"),
-        db.CheckConstraint("capacity_override IS NULL OR capacity_override >= 0", name="ck_class_session_capacity_nonneg"),
+        db.CheckConstraint("duration_override IS NULL OR duration_override > 0",
+                           name="ck_class_session_duration_positive"),
+        db.CheckConstraint("capacity_override IS NULL OR capacity_override >= 0",
+                           name="ck_class_session_capacity_nonneg"),
     )
 
     def effective_duration(self) -> int:

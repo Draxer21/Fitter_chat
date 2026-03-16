@@ -12,6 +12,8 @@ bp = Blueprint("producto", __name__)
 # -----------------------
 # LISTAR TODOS
 # -----------------------
+
+
 @bp.get("/")
 def listar_productos():
     productos = Producto.query.all()
@@ -20,6 +22,8 @@ def listar_productos():
 # -----------------------
 # OBTENER POR ID
 # -----------------------
+
+
 @bp.get("/<int:producto_id>")
 def obtener_producto(producto_id):
     p = Producto.query.get_or_404(producto_id)
@@ -28,6 +32,8 @@ def obtener_producto(producto_id):
 # -----------------------
 # CREAR
 # -----------------------
+
+
 @bp.post("/")
 def crear_producto():
     # Soportar tanto JSON como multipart/form-data con archivo 'imagen'
@@ -119,6 +125,8 @@ def crear_producto():
 # -----------------------
 # ACTUALIZAR
 # -----------------------
+
+
 @bp.put("/<int:producto_id>")
 def actualizar_producto(producto_id):
     p = Producto.query.get_or_404(producto_id)
@@ -128,6 +136,7 @@ def actualizar_producto(producto_id):
         for campo in ["nombre", "precio", "descripcion", "categoria", "stock"]:
             if campo in form:
                 setattr(p, campo, form.get(campo))
+
         def _parse_json_field(value):
             if value in (None, "", []):
                 return None
@@ -172,6 +181,7 @@ def actualizar_producto(producto_id):
         for campo in ["nombre", "precio", "descripcion", "categoria", "stock"]:
             if campo in data:
                 setattr(p, campo, data[campo])
+
         def _parse_json_field(value):
             if value in (None, "", []):
                 return None
@@ -207,6 +217,8 @@ def actualizar_producto(producto_id):
 # -----------------------
 # ELIMINAR
 # -----------------------
+
+
 @bp.delete("/<int:producto_id>")
 def eliminar_producto(producto_id):
     p = Producto.query.get_or_404(producto_id)

@@ -5,28 +5,28 @@ Generador de documentos PDF y DOCX para rutinas de entrenamiento.
 from __future__ import annotations
 
 from io import BytesIO
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any
 from datetime import datetime
 
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
-from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib.enums import TA_CENTER
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib import colors
 
 from docx import Document
-from docx.shared import Inches, Pt, RGBColor
+from docx.shared import Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 
 def generate_routine_pdf(routine_data: Dict[str, Any]) -> BytesIO:
     """
     Genera un PDF de la rutina de entrenamiento.
-    
+
     Args:
         routine_data: Diccionario con la estructura de routine_detail del chatbot
-        
+
     Returns:
         BytesIO con el contenido del PDF
     """
@@ -39,10 +39,10 @@ def generate_routine_pdf(routine_data: Dict[str, Any]) -> BytesIO:
         topMargin=0.75 * inch,
         bottomMargin=0.75 * inch
     )
-    
+
     story = []
     styles = getSampleStyleSheet()
-    
+
     # Estilo personalizado para el título
     title_style = ParagraphStyle(
         'CustomTitle',
@@ -53,7 +53,7 @@ def generate_routine_pdf(routine_data: Dict[str, Any]) -> BytesIO:
         alignment=TA_CENTER,
         fontName='Helvetica-Bold'
     )
-    
+
     # Estilo para subtítulos
     subtitle_style = ParagraphStyle(
         'CustomSubtitle',
@@ -63,7 +63,7 @@ def generate_routine_pdf(routine_data: Dict[str, Any]) -> BytesIO:
         spaceAfter=10,
         fontName='Helvetica-Bold'
     )
-    
+
     # Estilo para texto normal
     normal_style = ParagraphStyle(
         'CustomNormal',
@@ -71,12 +71,12 @@ def generate_routine_pdf(routine_data: Dict[str, Any]) -> BytesIO:
         fontSize=10,
         spaceAfter=6
     )
-    
+
     # Título principal
     header = routine_data.get("header", "Rutina de Entrenamiento")
     story.append(Paragraph(header, title_style))
     story.append(Spacer(1, 0.2 * inch))
-    
+
     # Información del resumen
     summary = routine_data.get("summary", {})
     summary_data = [
@@ -87,7 +87,7 @@ def generate_routine_pdf(routine_data: Dict[str, Any]) -> BytesIO:
         ["Nivel:", summary.get('nivel', '-')],
         ["Músculo:", summary.get('musculo', '-')],
     ]
-    
+
     summary_table = Table(summary_data, colWidths=[2 * inch, 4 * inch])
     summary_table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#f3f4f6')),
@@ -103,7 +103,7 @@ def generate_routine_pdf(routine_data: Dict[str, Any]) -> BytesIO:
     ]))
     story.append(summary_table)
     story.append(Spacer(1, 0.3 * inch))
-    
+
     # Precauciones de salud
     health_notes = summary.get('health_notes')
     if health_notes and isinstance(health_notes, list) and len(health_notes) > 0:
@@ -111,26 +111,26 @@ def generate_routine_pdf(routine_data: Dict[str, Any]) -> BytesIO:
         for note in health_notes:
             story.append(Paragraph(f"• {note}", normal_style))
         story.append(Spacer(1, 0.2 * inch))
-    
+
     # Alergias
     allergies = summary.get('allergies')
     if allergies and isinstance(allergies, list) and len(allergies) > 0:
         allergy_text = f"Alergias registradas: {', '.join(allergies)}"
         story.append(Paragraph(allergy_text, normal_style))
         story.append(Spacer(1, 0.2 * inch))
-    
+
     # Fallback notice
     fallback_notice = routine_data.get('fallback_notice')
     if fallback_notice:
         story.append(Paragraph(f"ℹ️ {fallback_notice}", normal_style))
         story.append(Spacer(1, 0.2 * inch))
-    
+
     # Ejercicios
     exercises = routine_data.get('exercises', [])
     if exercises:
         story.append(Paragraph("Detalle de Ejercicios", subtitle_style))
         story.append(Spacer(1, 0.1 * inch))
-        
+
         for exercise in exercises:
             ex_name = exercise.get('nombre', 'Ejercicio')
             series = exercise.get('series', '-')
@@ -138,7 +138,7 @@ def generate_routine_pdf(routine_data: Dict[str, Any]) -> BytesIO:
             rpe = exercise.get('rpe', '-')
             rir = exercise.get('rir', '-')
             video = exercise.get('video', '')
-            
+
             # Nombre del ejercicio
             ex_title = ParagraphStyle(
                 'ExerciseTitle',
@@ -149,17 +149,17 @@ def generate_routine_pdf(routine_data: Dict[str, Any]) -> BytesIO:
                 spaceAfter=4
             )
             story.append(Paragraph(f"{exercise.get('orden', '')}. {ex_name}", ex_title))
-            
+
             # Detalles del ejercicio
             details = f"Series: {series} • Repeticiones: {reps} • {rpe} • {rir}"
             story.append(Paragraph(details, normal_style))
-            
+
             if video:
                 video_text = f'<font color="#2563eb">🎥 Video: {video}</font>'
                 story.append(Paragraph(video_text, normal_style))
-            
+
             story.append(Spacer(1, 0.15 * inch))
-    
+
     # Progresión
     progresion = summary.get('progresion')
     if progresion:
@@ -172,7 +172,7 @@ def generate_routine_pdf(routine_data: Dict[str, Any]) -> BytesIO:
             italic=True
         )
         story.append(Paragraph(f"📈 Progresión: {progresion}", prog_style))
-    
+
     # Footer
     story.append(Spacer(1, 0.3 * inch))
     footer_style = ParagraphStyle(
@@ -184,7 +184,7 @@ def generate_routine_pdf(routine_data: Dict[str, Any]) -> BytesIO:
     )
     footer_text = f"Generado por Fitter • {datetime.now().strftime('%d/%m/%Y %H:%M')}"
     story.append(Paragraph(footer_text, footer_style))
-    
+
     doc.build(story)
     buffer.seek(0)
     return buffer
@@ -345,36 +345,36 @@ def generate_hero_plan_pdf(plan_data: Dict[str, Any]) -> BytesIO:
 def generate_routine_docx(routine_data: Dict[str, Any]) -> BytesIO:
     """
     Genera un documento Word de la rutina de entrenamiento.
-    
+
     Args:
         routine_data: Diccionario con la estructura de routine_detail del chatbot
-        
+
     Returns:
         BytesIO con el contenido del documento Word
     """
     buffer = BytesIO()
     doc = Document()
-    
+
     # Configurar estilos
     style = doc.styles['Normal']
     font = style.font
     font.name = 'Calibri'
     font.size = Pt(11)
-    
+
     # Título principal
     header = routine_data.get("header", "Rutina de Entrenamiento")
     title = doc.add_heading(header, level=0)
     title.alignment = WD_ALIGN_PARAGRAPH.CENTER
     title_run = title.runs[0]
     title_run.font.color.rgb = RGBColor(30, 64, 175)
-    
+
     # Información del resumen
     doc.add_heading('Resumen', level=1)
     summary = routine_data.get("summary", {})
-    
+
     table = doc.add_table(rows=6, cols=2)
     table.style = 'Light Grid Accent 1'
-    
+
     summary_items = [
         ("Tiempo estimado:", f"{summary.get('tiempo_min', '-')} minutos"),
         ("Ejercicios:", str(summary.get('ejercicios', '-'))),
@@ -383,13 +383,13 @@ def generate_routine_docx(routine_data: Dict[str, Any]) -> BytesIO:
         ("Nivel:", summary.get('nivel', '-')),
         ("Músculo:", summary.get('musculo', '-')),
     ]
-    
+
     for idx, (label, value) in enumerate(summary_items):
         row = table.rows[idx]
         row.cells[0].text = label
         row.cells[1].text = value
         row.cells[0].paragraphs[0].runs[0].font.bold = True
-    
+
     # Precauciones de salud
     health_notes = summary.get('health_notes')
     if health_notes and isinstance(health_notes, list) and len(health_notes) > 0:
@@ -397,7 +397,7 @@ def generate_routine_docx(routine_data: Dict[str, Any]) -> BytesIO:
         for note in health_notes:
             p = doc.add_paragraph(note, style='List Bullet')
             p.runs[0].font.color.rgb = RGBColor(185, 28, 28)
-    
+
     # Alergias
     allergies = summary.get('allergies')
     if allergies and isinstance(allergies, list) and len(allergies) > 0:
@@ -405,7 +405,7 @@ def generate_routine_docx(routine_data: Dict[str, Any]) -> BytesIO:
         p.add_run(f"Alergias registradas: {', '.join(allergies)}")
         p.runs[0].font.italic = True
         p.runs[0].font.size = Pt(10)
-    
+
     # Fallback notice
     fallback_notice = routine_data.get('fallback_notice')
     if fallback_notice:
@@ -413,12 +413,12 @@ def generate_routine_docx(routine_data: Dict[str, Any]) -> BytesIO:
         p.add_run(f"ℹ️ {fallback_notice}")
         p.runs[0].font.italic = True
         p.runs[0].font.color.rgb = RGBColor(146, 64, 14)
-    
+
     # Ejercicios
     exercises = routine_data.get('exercises', [])
     if exercises:
         doc.add_heading('Detalle de Ejercicios', level=1)
-        
+
         for exercise in exercises:
             ex_name = exercise.get('nombre', 'Ejercicio')
             series = exercise.get('series', '-')
@@ -427,24 +427,24 @@ def generate_routine_docx(routine_data: Dict[str, Any]) -> BytesIO:
             rir = exercise.get('rir', '-')
             video = exercise.get('video', '')
             orden = exercise.get('orden', '')
-            
+
             # Nombre del ejercicio
             p = doc.add_paragraph()
             run = p.add_run(f"{orden}. {ex_name}")
             run.font.bold = True
             run.font.size = Pt(12)
             run.font.color.rgb = RGBColor(31, 41, 55)
-            
+
             # Detalles
             details = f"Series: {series} • Repeticiones: {reps} • {rpe} • {rir}"
             p = doc.add_paragraph(details)
-            
+
             if video:
                 p = doc.add_paragraph()
                 run = p.add_run(f"🎥 Video: {video}")
                 run.font.color.rgb = RGBColor(37, 99, 235)
                 run.font.size = Pt(9)
-    
+
     # Progresión
     progresion = summary.get('progresion')
     if progresion:
@@ -454,7 +454,7 @@ def generate_routine_docx(routine_data: Dict[str, Any]) -> BytesIO:
         run.font.italic = True
         run.font.size = Pt(10)
         run.font.color.rgb = RGBColor(107, 114, 128)
-    
+
     # Footer
     doc.add_paragraph()
     p = doc.add_paragraph()
@@ -462,7 +462,7 @@ def generate_routine_docx(routine_data: Dict[str, Any]) -> BytesIO:
     run = p.add_run(f"Generado por Fitter • {datetime.now().strftime('%d/%m/%Y %H:%M')}")
     run.font.size = Pt(8)
     run.font.color.rgb = RGBColor(156, 163, 175)
-    
+
     doc.save(buffer)
     buffer.seek(0)
     return buffer
@@ -556,7 +556,12 @@ def generate_diet_docx(diet_data: Dict[str, Any]) -> BytesIO:
     summary = diet_data.get('summary', {})
     if summary:
         doc.add_heading('Resumen', level=1)
-        for k, v in [('Kcal objetivo', summary.get('target_kcal')), ('Proteínas (g)', summary.get('proteinas_g')), ('Carbs (g)', summary.get('carbs_g')), ('Grasas (g)', summary.get('fats_g'))]:
+        for k, v in [
+            ('Kcal objetivo', summary.get('target_kcal')),
+            ('Proteínas (g)', summary.get('proteinas_g')),
+            ('Carbs (g)', summary.get('carbs_g')),
+            ('Grasas (g)', summary.get('fats_g')),
+        ]:
             if v is not None:
                 p = doc.add_paragraph()
                 p.add_run(f"{k}: ").bold = True

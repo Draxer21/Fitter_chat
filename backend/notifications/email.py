@@ -117,4 +117,3 @@ def send_email(
     except Exception:
         # Si no hay contexto de app, evitamos romper la ejecución.
         pass
-

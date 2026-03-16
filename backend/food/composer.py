@@ -9,6 +9,7 @@ API:
 
 Returns a dict with keys: diet_id, header, summary, meals (list of meals with items).
 """
+from .catalog import get_catalog
 from typing import List, Dict, Any, Optional, Set, Tuple
 from collections import defaultdict
 import uuid
@@ -145,7 +146,6 @@ TAG_DIVERSITY_TARGETS: Dict[str, int] = {
     "nut_or_seed": 4,
 }
 
-from .catalog import get_catalog
 
 # Plantillas de comidas para forzar variedad y asignar periodos específicos
 MEAL_TEMPLATES = [
@@ -502,10 +502,12 @@ def compose_diet(target_kcal: int, n_meals: int = 3, catalog_path: Optional[str]
     # pre-sort items according to objective to bias selection
     if objetivo_norm in {'hipertrofia', 'ganar masa', 'ganar_masa'}:
         # prefer high energy density and reasonable protein
-        items.sort(key=lambda it: ((it.get('energy_kcal_100g') or 0.0) * 0.7 + (it.get('proteins_g_100g') or 0.0) * 8.0), reverse=True)
+        items.sort(key=lambda it: ((it.get('energy_kcal_100g') or 0.0) * 0.7 +
+                   (it.get('proteins_g_100g') or 0.0) * 8.0), reverse=True)
     elif objetivo_norm in {'bajar_grasa', 'perder_peso', 'perder_grasa'}:
         # prefer higher protein and lower energy density
-        items.sort(key=lambda it: ((it.get('proteins_g_100g') or 0.0) * 12.0 - (it.get('energy_kcal_100g') or 0.0) * 0.5), reverse=True)
+        items.sort(key=lambda it: ((it.get('proteins_g_100g') or 0.0) * 12.0 -
+                   (it.get('energy_kcal_100g') or 0.0) * 0.5), reverse=True)
     else:
         items.sort(key=score_item, reverse=True)
 
@@ -528,7 +530,6 @@ def compose_diet(target_kcal: int, n_meals: int = 3, catalog_path: Optional[str]
         used_in_meal: Set[str] = set()
         meal_tag_counts: Dict[str, int] = defaultdict(int)
         pending_tags: Set[str] = set(template.get("required_tags", []))
-        deferred_items: List[Dict[str, Any]] = []
         attempts = 0
 
         # limit items per meal
@@ -545,7 +546,7 @@ def compose_diet(target_kcal: int, n_meals: int = 3, catalog_path: Optional[str]
                 pending_tags=pending_tags,
                 meal_tag_counts=meal_tag_counts,
                 meal_tag_limits=template.get("meal_tag_limits"),
-                )
+            )
             if not candidate:
                 # relax keyword restriction, then sweets restriction as last resort
                 candidate = _pick_candidate(

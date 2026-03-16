@@ -1,4 +1,4 @@
-﻿import pytest
+import pytest
 
 from backend.app import create_app
 from backend.extensions import db

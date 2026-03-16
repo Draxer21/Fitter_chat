@@ -12,6 +12,7 @@ producto_categoria = db.Table(
     db.Column("categoria_id", db.Integer, db.ForeignKey("categoria.id"), primary_key=True),
 )
 
+
 class Categoria(db.Model):
     __tablename__ = "categoria"
     id = db.Column(db.Integer, primary_key=True)
@@ -21,6 +22,7 @@ class Categoria(db.Model):
 
     def __repr__(self) -> str:
         return f"<Categoria id={self.id} nombre={self.nombre!r}>"
+
 
 class Producto(db.Model):
     __tablename__ = "producto"

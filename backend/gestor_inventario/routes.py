@@ -5,6 +5,7 @@ from .models import Producto
 
 bp = Blueprint("inventario", __name__)
 
+
 @bp.get("/")
 def resumen():
     # Devuelve lista de productos y su stock

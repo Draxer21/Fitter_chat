@@ -23,7 +23,7 @@ class ProductPayload:
     nombre: str
     categoria: str
     categorias: Sequence[str]
-    precio: str  
+    precio: str
     descripcion: str
     stock: int
     imagen_filename: str | None = None
