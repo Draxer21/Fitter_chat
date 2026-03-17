@@ -1,0 +1,34 @@
+COMANDOS DE ARRANQUE DEL PROYECTO (WINDOWS / POWERSHELL)
+
+Requisitos previos:
+- Estar en la raiz del proyecto: G:\Fitter
+- Tener Python, Node.js y Rasa instalados en el entorno del proyecto
+
+1) ACTIVAR ENTORNO PYTHON (en cada terminal de backend/rasa)
+cd G:\Fitter
+.\.venv\Scripts\Activate.ps1
+
+2) TERMINAL 1 - RASA SERVER (desde carpeta Chatbot)
+cd G:\Fitter\Chatbot
+rasa run --enable-api --cors "*" --debug
+
+3) TERMINAL 2 - RASA ACTIONS (desde carpeta Chatbot)
+cd G:\Fitter\Chatbot
+rasa run actions
+
+4) TERMINAL 3 - BACKEND FLASK (desde raiz del proyecto)
+cd G:\Fitter
+python -m backend.app
+
+5) TERMINAL 4 - FRONTEND REACT/VITE (desde carpeta frontend)
+cd G:\Fitter\frontend
+npm install
+npm start
+
+Opcional (stack docker completo):
+cd G:\Fitter\infra
+docker compose up -d --build
+
+Notas:
+- Si cambias variables de entorno del frontend, reinicia npm start.
+- Mantener cada servicio en su propia terminal facilita el debug.
