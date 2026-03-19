@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { useLocale } from "../contexts/LocaleContext";
 import { useAuth } from "../contexts/AuthContext";
 import { API } from "../services/apijs";
@@ -97,7 +98,7 @@ export default function EntrenosUnicos() {
     batman_pattinson: "Progresion por densidad: mismo trabajo en menos tiempo y luego mayor dificultad tecnica.",
     capitan_america_evans: "Split de alto volumen con sobrecarga progresiva semanal en los basicos.",
     superman_cavill: "Fase 1 fuerza base, fase 2 hipertrofia, fase 3 acondicionamiento metabolico.",
-    superman_corenswet: "Empuje-traccion-piernas con subida progresiva de tonelaje y mini-deload cada 6 semanas.",
+    superman_corenswet: "Sobrecarga progresiva: aumenta la dificultad haciendo las repeticiones más lentas (3 segundos para bajar) o aumentando las repeticiones. Frecuencia 2 para maximizar resultados.",
     wolverine_jackman: "Periodizacion de repeticiones (12-10-8-6-5) y ajustes de cardio segun definicion.",
   };
 
@@ -440,47 +441,33 @@ export default function EntrenosUnicos() {
     ],
     superman_corenswet: [
       {
-        day: "Dia 1 - Push",
-        objective: "Pecho/hombro/triceps",
+        day: "Días 1 y 4: Torso Superior (Pecho, Espalda y Hombros)",
+        objective: "Fuerza y volumen en torso superior",
         exercises: [
-          { name: "Bench Press", sets: "5", reps: "6", intensity: "RPE 8", rest: "120 s" },
-          { name: "Incline Dumbbell Press", sets: "4", reps: "10", intensity: "RPE 8", rest: "90 s" },
-          { name: "Seated Dumbbell Press", sets: "4", reps: "10", intensity: "RPE 8", rest: "75 s" },
-          { name: "Cable Lateral Raise", sets: "4", reps: "15", intensity: "RPE 8", rest: "45 s" },
-          { name: "Triceps Pressdown", sets: "4", reps: "12", intensity: "RPE 8", rest: "45 s" },
+          { name: "Press de pecho con mancuernas en el suelo", sets: "4", reps: "10-12", intensity: "Controlado", rest: "90 s" },
+          { name: "Remo a una mano con mancuerna", sets: "4", reps: "12", intensity: "Por lado", rest: "75 s" },
+          { name: "Press militar de pie (Hombros)", sets: "3", reps: "10", intensity: "Técnica perfecta", rest: "90 s" },
+          { name: "Vuelos laterales", sets: "3", reps: "15-20", intensity: "Ligero", rest: "60 s" },
+          { name: "Flexiones de brazos (Push-ups)", sets: "3", reps: "Al fallo", intensity: "Controlado", rest: "60 s" },
         ],
       },
       {
-        day: "Dia 2 - Pull",
-        objective: "Espalda/biceps",
+        day: "Días 2 y 5: Piernas y Core",
+        objective: "Fuerza y estabilidad en tren inferior",
         exercises: [
-          { name: "Deadlift", sets: "5", reps: "5", intensity: "RPE 8", rest: "150 s" },
-          { name: "Weighted Pull-up", sets: "4", reps: "6", intensity: "RPE 8", rest: "120 s" },
-          { name: "Barbell Row", sets: "4", reps: "8", intensity: "RPE 8", rest: "90 s" },
-          { name: "Seated Row", sets: "4", reps: "12", intensity: "RPE 8", rest: "75 s" },
-          { name: "EZ Curl", sets: "4", reps: "10", intensity: "RPE 8", rest: "60 s" },
+          { name: "Sentadilla Goblet (Sujetando una mancuerna al pecho)", sets: "4", reps: "12", intensity: "Profundo", rest: "90 s" },
+          { name: "Peso muerto rumano con mancuernas", sets: "4", reps: "10-12", intensity: "Enfoque femorales", rest: "90 s" },
+          { name: "Zancadas (Lunges)", sets: "3", reps: "10", intensity: "Por pierna", rest: "75 s" },
+          { name: "Plancha abdominal", sets: "3", reps: "45-60 s", intensity: "Estático", rest: "45 s" },
         ],
       },
       {
-        day: "Dia 3 - Piernas",
-        objective: "Masa de tren inferior",
+        day: "Días 3 y 6: Brazos y Puntos Débiles (Opcional pero recomendado)",
+        objective: "Desarrollo de brazos y corrección",
         exercises: [
-          { name: "Back Squat", sets: "5", reps: "6", intensity: "RPE 8", rest: "120 s" },
-          { name: "Leg Press", sets: "4", reps: "12", intensity: "RPE 9", rest: "90 s" },
-          { name: "Romanian Deadlift", sets: "4", reps: "8", intensity: "RPE 8", rest: "90 s" },
-          { name: "Leg Curl", sets: "4", reps: "12", intensity: "RPE 8", rest: "60 s" },
-          { name: "Standing Calf Raise", sets: "5", reps: "15", intensity: "RPE 8", rest: "45 s" },
-        ],
-      },
-      {
-        day: "Dia 4 - Push/Pull accesorio",
-        objective: "Volumen extra",
-        exercises: [
-          { name: "Dip", sets: "4", reps: "8-12", intensity: "RPE 8", rest: "75 s" },
-          { name: "Lat Pulldown", sets: "4", reps: "10", intensity: "RPE 8", rest: "75 s" },
-          { name: "Machine Chest Press", sets: "4", reps: "12", intensity: "RPE 8", rest: "60 s" },
-          { name: "Face Pull", sets: "4", reps: "15", intensity: "RPE 8", rest: "45 s" },
-          { name: "Cable Curl + Rope Extension", sets: "3", reps: "12 + 12", intensity: "RPE 8", rest: "45 s" },
+          { name: "Curl de bíceps", sets: "3", reps: "12", intensity: "Controlado", rest: "60 s" },
+          { name: "Copa de tríceps (tras nuca)", sets: "3", reps: "12", intensity: "Completo", rest: "60 s" },
+          { name: "Encogimientos de hombros", sets: "3", reps: "15", intensity: "Trapecio", rest: "45 s" },
         ],
       },
     ],
@@ -693,14 +680,15 @@ export default function EntrenosUnicos() {
     },
     superman_corenswet: {
       focus: "Volumen con sobrecarga progresiva",
-      training: "Split empuje-tracción-piernas con progresión semanal.",
-      diet: "Volumen limpio con 5 comidas y 2 batidos hipercalóricos.",
+      training: "Rutina 'Superman en Casa' (Solo Mancuernas). Corenswet se enfocó en el 'look de superhéroe': hombros anchos y cintura estrecha (forma de V). Como solo tienes mancuernas, usaremos frecuencia 2 (entrenar cada músculo 2 veces por semana) para maximizar resultados.",
+      diet: "Dieta de 'Super-Ahorro' (Presupuesto: $100.000 CLP/mes). Para crecer necesitas un superávit calórico y mucha proteína. Con 100 mil pesos al mes (aprox. $3.300 diarios), debemos priorizar alimentos densos y baratos. Lista de compras inteligente (Precios estimados en Chile): Huevos: Tu fuente principal de proteína. Compra bandejas de 30. Legumbres (Lentejas/Garbanzos): Proteína barata y muchos carbohidratos. Arroz y Fideos: Compras de 5kg para ahorrar. Avena: Ideal para desayunos calóricos. Pollo (Cuartos traseros): Es más barato que la pechuga y tiene más calorías. Atún en lata / Jurel: El jurel es mucho más barato y nutritivo.",
       calories: "4500-6000 kcal/día",
       macros: "Proteína ~250 g/día; carbos abundantes; grasas moderadas.",
       meals: [
-        "4 huevos + avena con mantequilla de maní",
-        "Pollo con arroz",
-        "Batido hipercalórico",
+        "Desayuno: 1 taza de avena con agua o leche y 2 huevos duros.",
+        "Almuerzo: 1.5 tazas de lentejas con arroz y una porción de jurel.",
+        "Post-entreno: 2 huevos revueltos con pan.",
+        "Cena: Cuarto trasero de pollo al horno con papas o arroz.",
       ],
       sources: [
         "https://www.gq.com/story/david-corenswet-superman-legacy-workout-1",
@@ -709,9 +697,9 @@ export default function EntrenosUnicos() {
         "https://www.eatingwell.com/david-corenswet-weight-gain-for-superman-11769355",
       ],
       guidelines: [
-        "Progresión semanal de cargas o repeticiones.",
-        "Prioriza técnica y rango completo.",
-        "Recuperación activa 1 día por semana.",
+        "Requerimientos y Contraindicaciones: No todos pueden realizar esta rutina de inmediato. Debes detenerte o consultar a un médico si presentas: Problemas Cardíacos, Lesiones de Columna (Hernias), Problemas Articulares (Artrosis/Tendinitis), Hernias Inguinales.",
+        "Consejos de 'Superman Realista': Sobrecarga Progresiva, El descanso es gratis, Creatividad con el peso, Agua: Bebe al menos 3 litros al día.",
+        "Nota: Corenswet subió casi 20kg de masa muscular, algo imposible de forma natural en poco tiempo. No te compares con su ritmo; busca una versión más fuerte y saludable de ti mismo.",
       ],
     },
     wolverine_jackman: {
@@ -845,7 +833,7 @@ export default function EntrenosUnicos() {
     {
       key: "superman_corenswet",
       title: "Superman (David Corenswet)",
-      duration: "20 semanas",
+      duration: "12-16 semanas",
       description: "Volumen con sobrecarga progresiva y división empuje-tracción-piernas.",
       img: "/superman-david.jpg",
       bodyType: "Muy masivo",
@@ -1017,6 +1005,7 @@ export default function EntrenosUnicos() {
                           <p className="text-muted">Selecciona este estilo si te identifica el tipo de cuerpo mostrado y tus objetivos.</p>
                           <div className="d-flex flex-wrap gap-2">
                             <button className="btn btn-primary" onClick={() => handleEnrollPlan(p)}>Recibir plan</button>
+                            <Link className="btn btn-outline-secondary" to={`/entrenos-unicos/detalle/${p.key}`}>Más detalles</Link>
                             {!isAuthenticated && <a className="btn btn-outline-secondary" href="/registro">Registrarme</a>}
                             {savedPlan?.id && savedPlan?.plan_key === p.key && (
                               <button className="btn btn-outline-primary" onClick={() => handleDownload(savedPlan.id)}>Descargar PDF</button>

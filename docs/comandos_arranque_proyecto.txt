@@ -6,7 +6,7 @@ Requisitos previos:
 
 1) ACTIVAR ENTORNO PYTHON (en cada terminal de backend/rasa)
 cd G:\Fitter
-.\.venv\Scripts\Activate.ps1
+.\venv\Scripts\Activate.ps1
 
 2) TERMINAL 1 - RASA SERVER (desde carpeta Chatbot)
 cd G:\Fitter\Chatbot
@@ -24,6 +24,7 @@ python -m backend.app
 cd G:\Fitter\frontend
 npm install
 npm start
+npm run dev
 
 Opcional (stack docker completo):
 cd G:\Fitter\infra

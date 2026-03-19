@@ -8,7 +8,7 @@ intents:
   - negar
   - activar_modo_demo
   - desactivar_modo_demo
-  - solicitar_rutina
+  - solicitar_rutina_corenswet
   - solicitar_dieta
   - solicitar_entreno_unico
   - cambiar_objetivo_rutina

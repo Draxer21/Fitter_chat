@@ -67,9 +67,9 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className='navbar navbar-expand-lg custom-navbar p-3 fixed-top shadow-sm' role="navigation" aria-label="Navegación principal">
+      <nav className='navbar navbar-expand-lg custom-navbar p-2 fixed-top shadow-sm' role="navigation" aria-label="Navegación principal">
         <NavLink className='navbar-brand' to='/' aria-label='Ir a página principal de Fitter'>
-          <Logo src='/fitter_logo.png' alt='Logo de Fitter - Plataforma de fitness y entrenamiento' width={120} height={80} className='d-inline-block align-text-top' />
+          <Logo src='/fitter_logo.png' alt='Logo de Fitter - Plataforma de fitness y entrenamiento' width={90} height={60} className='d-inline-block align-text-top' />
         </NavLink>
 
         <button

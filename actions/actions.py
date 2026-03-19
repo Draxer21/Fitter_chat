@@ -1286,19 +1286,74 @@ HERO_PROGRAMS: Dict[str, Dict[str, Any]] = {
     },
     "superman_corenswet": {
         "title": "Superman (David Corenswet)",
-        "duration": "20 semanas",
+        "duration": "12-16 semanas",
         "focus": "Volumen con sobrecarga progresiva",
         "body_type": "Muy masivo",
-        "training": "Split empuje-traccion-piernas con progresion semanal y tecnica estricta.",
-        "diet": "Volumen limpio con 5 comidas solidas y 2 batidos hipercaloricos.",
+        "training": """1. Rutina "Superman en Casa" (Solo Mancuernas)
+Corenswet se enfocó en el "look de superhéroe": hombros anchos y cintura estrecha (forma de V). Como solo tienes mancuernas, usaremos frecuencia 2 (entrenar cada músculo 2 veces por semana) para maximizar resultados.
+
+Días 1 y 4: Torso Superior (Pecho, Espalda y Hombros)
+
+Press de pecho con mancuernas en el suelo: 4 series de 10-12 reps. (Al no tener banco, el suelo limita el rango pero permite cargar más peso).
+
+Remo a una mano con mancuerna: 4 series de 12 reps por lado. (Apóyate en una silla o cama).
+
+Press militar de pie (Hombros): 3 series de 10 reps. Clave para la anchura de Superman.
+
+Vuelos laterales: 3 series de 15-20 reps. (Usa poco peso, controla el movimiento).
+
+Flexiones de brazos (Push-ups): 3 series al fallo técnico.
+
+Días 2 y 5: Piernas y Core
+
+Sentadilla Goblet (Sujetando una mancuerna al pecho): 4 series de 12 reps.
+
+Peso muerto rumano con mancuernas: 4 series de 10-12 reps (Enfoque en femorales y glúteos).
+
+Zancadas (Lunges): 3 series de 10 reps por pierna.
+
+Plancha abdominal: 3 series de 45-60 segundos.
+
+Días 3 y 6: Brazos y Puntos Débiles (Opcional pero recomendado)
+
+Curl de bíceps: 3 series de 12 reps.
+
+Copa de tríceps (tras nuca): 3 series de 12 reps.
+
+Encogimientos de hombros: 3 series de 15 reps (Para el trapecio, vital en el traje de Superman).""",
+        "diet": """2. Dieta de "Super-Ahorro" (Presupuesto: $100.000 CLP/mes)
+Para crecer necesitas un superávit calórico y mucha proteína. Con 100 mil pesos al mes (aprox. $3.300 diarios), debemos priorizar alimentos densos y baratos.
+
+Lista de compras inteligente (Precios estimados en Chile):
+
+Huevos: Tu fuente principal de proteína. Compra bandejas de 30.
+
+Legumbres (Lentejas/Garbanzos): Proteína barata y muchos carbohidratos.
+
+Arroz y Fideos: Compras de 5kg para ahorrar.
+
+Avena: Ideal para desayunos calóricos.
+
+Pollo (Cuartos traseros): Es más barato que la pechuga y tiene más calorías.
+
+Atún en lata / Jurel: El jurel es mucho más barato y nutritivo.
+
+Ejemplo de menú diario:
+
+Desayuno: 1 taza de avena con agua o leche y 2 huevos duros.
+
+Almuerzo: 1.5 tazas de lentejas con arroz y una porción de jurel.
+
+Post-entreno: 2 huevos revueltos con pan.
+
+Cena: Cuarto trasero de pollo al horno con papas o arroz.""",
         "calories": "4500-6000 kcal/dia",
         "macros": "Proteina ~250 g/dia; carbos abundantes; grasas moderadas.",
         "meals": [
-            "4 huevos + avena con mantequilla de mani + leche entera",
-            "Pollo con arroz",
-            "Carne roja con pasta y verduras",
-            "Batido hipercalorico (~1200 kcal)",
-            "Yogur griego entero antes de dormir",
+            "Desayuno: 1 taza de avena con agua o leche y 2 huevos duros",
+            "Almuerzo: 1.5 tazas de lentejas con arroz y una porción de jurel",
+            "Post-entreno: 2 huevos revueltos con pan",
+            "Cena: Cuarto trasero de pollo al horno con papas o arroz",
         ],
         "sources": [
             "https://www.gq.com/story/david-corenswet-superman-legacy-workout-1",
@@ -1307,6 +1362,27 @@ HERO_PROGRAMS: Dict[str, Dict[str, Any]] = {
             "https://www.eatingwell.com/david-corenswet-weight-gain-for-superman-11769355",
         ],
         "aliases": ["superman corenswet", "david corenswet", "corenswet"],
+        "notes": """3. Requerimientos y Contraindicaciones
+No todos pueden realizar esta rutina de inmediato. Debes detenerte o consultar a un médico si presentas:
+
+Problemas Cardíacos: El entrenamiento de fuerza eleva la presión arterial momentáneamente.
+
+Lesiones de Columna (Hernias): Ejercicios como el peso muerto o press militar de pie requieren una técnica perfecta para no dañar los discos.
+
+Problemas Articulares (Artrosis/Tendinitis): Si te duelen las muñecas o codos al cargar peso, debes bajar la carga.
+
+Hernias Inguinales: El esfuerzo de carga puede agravarlas.
+
+4. Consejos de "Superman Realista"
+Sobrecarga Progresiva: Como no tienes muchas mancuernas de distintos pesos, aumenta la dificultad haciendo las repeticiones más lentas (3 segundos para bajar) o aumentando las repeticiones.
+
+El descanso es gratis: Corenswet dormía 9-10 horas. Tú intenta llegar a 8. El músculo crece cuando duermes, no cuando entrenas.
+
+Creatividad con el peso: Si tus mancuernas se quedan cortas para las piernas, llena una mochila con libros o botellas de agua y póntela mientras haces las sentadillas.
+
+Agua: Bebe al menos 3 litros al día. La hidratación es clave para la síntesis de proteína y es el "suplemento" más barato.
+
+Nota: Corenswet subió casi 20kg de masa muscular, algo imposible de forma natural en poco tiempo. No te compares con su ritmo; busca una versión más fuerte y saludable de ti mismo.""",
     },
     "wolverine_jackman": {
         "title": "Wolverine (Hugh Jackman)",
@@ -2428,6 +2504,9 @@ class ActionInscribirEntrenoUnico(Action):
             lines.append("Ejemplos de comidas: " + "; ".join(meals))
         if sources:
             lines.append("Fuentes: " + " | ".join(sources))
+        notes = plan.get("notes")
+        if notes:
+            lines.append(notes)
         if ctx and plan.get("title"):
             saved = save_hero_plan(
                 ctx,
@@ -2444,6 +2523,7 @@ class ActionInscribirEntrenoUnico(Action):
                     "macros": macros,
                     "meals": meals,
                     "sources": sources,
+                    "notes": notes,
                     "start": inicio,
                     "equipment": equip,
                 },
@@ -2466,6 +2546,7 @@ class ActionInscribirEntrenoUnico(Action):
             "macros": macros,
             "meals": meals,
             "sources": sources,
+            "notes": notes,
         })
 
         return [

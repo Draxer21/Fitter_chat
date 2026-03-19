@@ -15416,6 +15416,7 @@ nlu:
     - Inscríbeme en [Capitan America Chris Evans](hero_programa) para subir masa.
     - Quiero el plan [Superman Henry Cavill](hero_programa) con volumen alto.
     - Anótame en [Superman David Corenswet](hero_programa) con sobrecarga progresiva.
+    - [rutina de david corenswet](hero_programa:superman_corenswet)
     - Inscríbeme al plan [Wolverine Hugh Jackman](hero_programa) con fuerza y definición.
     - Quiero un plan temático estilo anime para prepararme.
     - ¿Cuáles son los entrenos únicos disponibles?
@@ -15461,6 +15462,7 @@ nlu:
     - plan de superheroe
     - entrenamiento tipo batman
     - rutina estilo superman
+    - rutina de david corenswet
     - entreno unico tipo shonen
     - quiero shonen power
     - quiero ninja agility
