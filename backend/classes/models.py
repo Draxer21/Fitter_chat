@@ -99,3 +99,30 @@ class ClassSession(db.Model):
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
+
+
+class ClassBooking(db.Model):
+    __tablename__ = "class_booking"
+
+    id = db.Column(db.Integer, primary_key=True)
+    session_id = db.Column(db.Integer, db.ForeignKey("class_session.id"), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
+    booked_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    cancelled_at = db.Column(db.DateTime, nullable=True)
+
+    session = db.relationship("ClassSession", backref=db.backref("bookings", lazy="dynamic"))
+    user = db.relationship("User", backref=db.backref("class_bookings", lazy="dynamic"))
+
+    __table_args__ = (
+        db.UniqueConstraint("session_id", "user_id", name="uq_booking_session_user"),
+    )
+
+    def to_dict(self) -> dict:
+        return {
+            "id": self.id,
+            "session_id": self.session_id,
+            "user_id": self.user_id,
+            "booked_at": self.booked_at.isoformat() if self.booked_at else None,
+            "cancelled_at": self.cancelled_at.isoformat() if self.cancelled_at else None,
+            "session": self.session.to_dict() if self.session else None,
+        }

@@ -11,7 +11,7 @@ import "./styles/accessibility.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import SideControls from "./components/SideControls";
-import { LocaleProvider } from "./contexts/LocaleContext";
+import { LocaleProvider, useLocale } from "./contexts/LocaleContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -44,6 +44,10 @@ const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const AccessibilityPage = lazy(() => import("./pages/AccessibilityPage"));
 const ChatPage = lazy(() => import("./pages/ChatPage"));
 const EntrenosUnicos = lazy(() => import("./pages/EntrenosUnicos"));
+const AnalyticsDashboardPage = lazy(() => import("./pages/AnalyticsDashboardPage"));
+const ClassCalendarPage = lazy(() => import("./pages/ClassCalendarPage"));
+const SubscriptionPage = lazy(() => import("./pages/SubscriptionPage"));
+const AdminHandoffPage = lazy(() => import("./pages/AdminHandoffPage"));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -54,11 +58,69 @@ function ScrollToTop() {
 }
 
 function NotFound() {
+  const { t } = useLocale();
   return (
     <div style={{ padding: 24 }}>
-      <h2>404 - Pagina no encontrada</h2>
-      <a href="/">Volver al inicio</a>
+      <h2>{t("notFound.title")}</h2>
+      <a href="/">{t("notFound.back")}</a>
     </div>
+  );
+}
+
+function AppContent() {
+  const { t } = useLocale();
+  return (
+    <BrowserRouter>
+      <a className="skip-link" href="#main-content">{t("app.skipLink")}</a>
+      <ScrollToTop />
+      <Navbar />
+
+      <main id="main-content" className="app-content-safe-area" tabIndex="-1" role="main" aria-label={t("app.mainContent")}>
+        <Suspense fallback={<div style={{ padding: 16 }}>{t("app.loading")}</div>}>
+          <Routes>
+            <Route element={<LegacyStylesLayout />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/tienda" element={<HomePage />} />
+              <Route path="/producto/:id" element={<ProductoDetalle />} />
+              <Route path="/registro" element={<RegistroPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/sobre-nosotros" element={<AboutPage />} />
+              <Route path="/terminos" element={<TermsPage />} />
+              <Route path="/entrenos-unicos" element={<EntrenosUnicos />} />
+              <Route path="/privacidad" element={<PrivacyPage />} />
+              <Route path="/accesibilidad" element={<AccessibilityPage />} />
+            </Route>
+
+            <Route path="/catalogo" element={<CatalogPage />} />
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/carrito" element={<CarritoPage />} />
+            <Route path="/pago" element={<PagoPage />} />
+            <Route path="/boleta" element={<BoletaPage />} />
+            <Route path="/admin/productos" element={<TablaProductos />} />
+            <Route path="/admin/productos/nuevo" element={<ProductoForm />} />
+            <Route path="/admin/productos/:id/editar" element={<ProductoForm />} />
+            <Route path="/admin/ventas" element={<AdminSalesPage />} />
+            <Route path="/admin/analiticas" element={<AnalyticsDashboardPage />} />
+            <Route path="/admin/handoff" element={<AdminHandoffPage />} />
+            <Route path="/clases" element={<ClassCalendarPage />} />
+            <Route path="/rutina/:id" element={<RutinaPage />} />
+            <Route path="/cuenta/datos-personales" element={<AccountPersonalPage />} />
+            <Route path="/cuenta/perfil" element={<ProfilePage />} />
+            <Route path="/cuenta/seguridad" element={<AccountSecurityPage />} />
+            <Route path="/cuenta/entrenos-unicos" element={<HeroPlansPage />} />
+            <Route path="/cuenta/rutinas" element={<RoutinePlansPage />} />
+            <Route path="/cuenta/rutinas/:id" element={<RoutinePlanDetailPage />} />
+            <Route path="/cuenta/dietas" element={<DietPlansPage />} />
+            <Route path="/cuenta/dietas/:id" element={<DietPlanDetailPage />} />
+            <Route path="/cuenta/suscripcion" element={<SubscriptionPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
+      </main>
+      <Footer />
+
+      <SideControls />
+    </BrowserRouter>
   );
 }
 
@@ -69,53 +131,7 @@ export default function App() {
         <LocaleProvider>
           <AuthProvider>
             <CartProvider>
-              <BrowserRouter>
-                <a className="skip-link" href="#main-content">Saltar al contenido principal</a>
-                <ScrollToTop />
-                <Navbar />
-
-                <main id="main-content" className="app-content-safe-area" tabIndex="-1" role="main" aria-label="Contenido principal">
-                  <Suspense fallback={<div style={{ padding: 16 }}>Cargando.</div>}>
-                    <Routes>
-                      <Route element={<LegacyStylesLayout />}>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path="/tienda" element={<HomePage />} />
-                        <Route path="/producto/:id" element={<ProductoDetalle />} />
-                        <Route path="/registro" element={<RegistroPage />} />
-                        <Route path="/login" element={<LoginPage />} />
-                        <Route path="/sobre-nosotros" element={<AboutPage />} />
-                        <Route path="/terminos" element={<TermsPage />} />
-                        <Route path="/entrenos-unicos" element={<EntrenosUnicos />} />
-                        <Route path="/privacidad" element={<PrivacyPage />} />
-                        <Route path="/accesibilidad" element={<AccessibilityPage />} />
-                      </Route>
-
-                      <Route path="/catalogo" element={<CatalogPage />} />
-                      <Route path="/chat" element={<ChatPage />} />
-                      <Route path="/carrito" element={<CarritoPage />} />
-                      <Route path="/pago" element={<PagoPage />} />
-                      <Route path="/boleta" element={<BoletaPage />} />
-                      <Route path="/admin/productos" element={<TablaProductos />} />
-                      <Route path="/admin/productos/nuevo" element={<ProductoForm />} />
-                      <Route path="/admin/productos/:id/editar" element={<ProductoForm />} />
-                      <Route path="/admin/ventas" element={<AdminSalesPage />} />
-                      <Route path="/rutina/:id" element={<RutinaPage />} />
-                      <Route path="/cuenta/datos-personales" element={<AccountPersonalPage />} />
-                      <Route path="/cuenta/perfil" element={<ProfilePage />} />
-                      <Route path="/cuenta/seguridad" element={<AccountSecurityPage />} />
-                      <Route path="/cuenta/entrenos-unicos" element={<HeroPlansPage />} />
-                      <Route path="/cuenta/rutinas" element={<RoutinePlansPage />} />
-                      <Route path="/cuenta/rutinas/:id" element={<RoutinePlanDetailPage />} />
-                      <Route path="/cuenta/dietas" element={<DietPlansPage />} />
-                      <Route path="/cuenta/dietas/:id" element={<DietPlanDetailPage />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Routes>
-                  </Suspense>
-                </main>
-                <Footer />
-
-                <SideControls />
-              </BrowserRouter>
+              <AppContent />
             </CartProvider>
           </AuthProvider>
         </LocaleProvider>

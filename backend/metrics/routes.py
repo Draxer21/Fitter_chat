@@ -22,6 +22,14 @@ def _authorized() -> bool:
     return provided == expected
 
 
+@bp.get("/")
+def public_snapshot():
+    op = getattr(current_app, "op_metrics", None)
+    if op is None:
+        return jsonify({}), 200
+    return jsonify(op.snapshot()), 200
+
+
 @bp.get("/summary")
 def summary():
     if not _authorized():

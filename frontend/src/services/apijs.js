@@ -215,6 +215,59 @@ export const API = {
     list: (params="") => fetch(`${BASE}/admin/orders${params ? `?${params}` : ""}`, { credentials:"include" }).then(j),
     receiptPdf: (id) => fetch(`${BASE}/orders/${id}/receipt.pdf`, { credentials:"include" }),
   },
+  metrics: {
+    snapshot: () => fetch(`${BASE}/metrics`, { credentials: "include" }).then(j),
+  },
+  classes: {
+    sessions: (params = "") => fetch(`${BASE}/classes/sessions${params ? `?${params}` : ""}`, { credentials: "include" }).then(j),
+    myBookings: () => fetch(`${BASE}/classes/my-bookings`, { credentials: "include" }).then(j),
+    book: async (sessionId) => fetch(`${BASE}/classes/book/${sessionId}`, {
+      method: "POST",
+      headers: await csrfHeaders(),
+      credentials: "include",
+    }).then(j),
+    cancelBooking: async (bookingId) => fetch(`${BASE}/classes/booking/${bookingId}`, {
+      method: "DELETE",
+      headers: await csrfHeaders(),
+      credentials: "include",
+    }).then(j),
+  },
+  subscriptions: {
+    current: () => fetch(`${BASE}/subscriptions/`, { credentials: "include" }).then(j),
+    create: async (data) => fetch(`${BASE}/subscriptions/`, {
+      method: "POST",
+      headers: await csrfHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
+      body: JSON.stringify(data),
+    }).then(j),
+    update: async (id, data) => fetch(`${BASE}/subscriptions/${id}`, {
+      method: "PUT",
+      headers: await csrfHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
+      body: JSON.stringify(data),
+    }).then(j),
+    cancel: async (id) => fetch(`${BASE}/subscriptions/${id}`, {
+      method: "DELETE",
+      headers: await csrfHeaders(),
+      credentials: "include",
+    }).then(j),
+    history: () => fetch(`${BASE}/subscriptions/history`, { credentials: "include" }).then(j),
+  },
+  handoff: {
+    list: (status) => fetch(`${BASE}/handoff/${status ? `?status=${status}` : ""}`, { credentials: "include" }).then(j),
+    assign: async (id) => fetch(`${BASE}/handoff/${id}/assign`, {
+      method: "PATCH",
+      headers: await csrfHeaders(),
+      credentials: "include",
+    }).then(j),
+    resolve: async (id, notes) => fetch(`${BASE}/handoff/${id}/resolve`, {
+      method: "PATCH",
+      headers: await csrfHeaders({ "Content-Type": "application/json" }),
+      credentials: "include",
+      body: JSON.stringify({ notes }),
+    }).then(j),
+    pendingCount: () => fetch(`${BASE}/handoff/pending/count`, { credentials: "include" }).then(j),
+  },
   chat: {
     send: (sender, message) => {
       const headers = { "Content-Type": "application/json" };

@@ -127,8 +127,18 @@ export default function Navbar() {
                 <li className='nav-item' role="none">
                   <NavLink className='nav-link' to='/admin/ventas' role="menuitem">Panel de ventas</NavLink>
                 </li>
+                <li className='nav-item' role="none">
+                  <NavLink className='nav-link' to='/admin/analiticas' role="menuitem">{t('nav.admin.analytics')}</NavLink>
+                </li>
+                <li className='nav-item' role="none">
+                  <NavLink className='nav-link' to='/admin/handoff' role="menuitem">{t('nav.admin.handoff')}</NavLink>
+                </li>
               </>
             )}
+
+            <li className='nav-item' role="none">
+              <NavLink className='nav-link' to='/clases' role="menuitem">{t('nav.classes')}</NavLink>
+            </li>
 
             <li className='nav-item' role="none">
               <button className='nav-link' type="button" data-bs-toggle='modal' data-bs-target='#supportModal' role="menuitem">
