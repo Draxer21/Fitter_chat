@@ -11,11 +11,13 @@ import "./styles/accessibility.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import SideControls from "./components/SideControls";
+import ToastContainer from "./components/ToastContainer";
 import { LocaleProvider, useLocale } from "./contexts/LocaleContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { FontSizeProvider } from "./contexts/FontSizeContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 import LegacyStylesLayout from "./layouts/LegacyStylesLayout";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -120,6 +122,7 @@ function AppContent() {
       <Footer />
 
       <SideControls />
+      <ToastContainer />
     </BrowserRouter>
   );
 }
@@ -130,9 +133,11 @@ export default function App() {
       <FontSizeProvider>
         <LocaleProvider>
           <AuthProvider>
-            <CartProvider>
-              <AppContent />
-            </CartProvider>
+            <NotificationProvider>
+              <CartProvider>
+                <AppContent />
+              </CartProvider>
+            </NotificationProvider>
           </AuthProvider>
         </LocaleProvider>
       </FontSizeProvider>

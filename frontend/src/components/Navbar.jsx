@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import Logo from '../components/Logo';
 import { useLocale } from '../contexts/LocaleContext';
 import { useAuth } from '../contexts/AuthContext';
+import NotificationBell from '../components/NotificationBell';
 
 const closeBootstrapModal = (ref) => {
   const Modal = window.bootstrap && window.bootstrap.Modal;
@@ -197,10 +198,10 @@ export default function Navbar() {
               </NavLink>
             </li>
             <li className='nav-item' role="none">
-              <NavLink 
-                className='nav-link d-flex align-items-center px-3' 
-                to='/carrito' 
-                aria-label='Ver carrito de compras' 
+              <NavLink
+                className='nav-link d-flex align-items-center px-3'
+                to='/carrito'
+                aria-label='Ver carrito de compras'
                 role="menuitem"
                 title="Carrito"
                 style={{ fontSize: '24px', fontWeight: 'bold' }}
@@ -208,6 +209,11 @@ export default function Navbar() {
                 🛒
               </NavLink>
             </li>
+            {isAuthenticated && (
+              <li className='nav-item' role="none">
+                <NotificationBell />
+              </li>
+            )}
           </ul>
         </div>
       </nav>

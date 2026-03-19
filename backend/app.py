@@ -20,7 +20,7 @@ from .config import (
 )
 from .bootstrap import init_extensions, load_models
 from .blueprints import register_blueprints
-from .extensions import db, cors  # unica instancia compartida
+from .extensions import db, cors, socketio  # unica instancia compartida
 from .chat.service import ChatService, ChatServiceError, ServiceResponse
 from .metrics import metrics, setup_metrics_logger
 
@@ -103,6 +103,9 @@ def create_app() -> Flask:
         app.logger.warning(cors_config.warning)
     cors.init_app(app, **cors_config.to_kwargs())
 
+    if socketio is not None:
+        socketio.init_app(app, cors_allowed_origins="*", async_mode="threading")
+
     rate_limit_config = build_rate_limit_config()
     if Limiter and get_remote_address:
         limiter_kwargs = rate_limit_config.to_kwargs()
@@ -147,6 +150,10 @@ def create_app() -> Flask:
 
     # ---------------- Blueprints ----------------
     register_blueprints(app)
+
+    # ---------------- Realtime (SocketIO) ----------------
+    from .realtime.events import init_realtime
+    init_realtime(app)
 
     # ---------------- Cliente HTTP con retry/backoff ----------------
     http_session = requests.Session()

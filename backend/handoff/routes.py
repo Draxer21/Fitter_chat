@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from datetime import datetime
 
 from flask import Blueprint, jsonify, request, session
@@ -7,6 +8,13 @@ from flask import Blueprint, jsonify, request, session
 from ..extensions import db
 from ..login.models import User
 from .models import HandoffRequest
+
+logger = logging.getLogger(__name__)
+
+try:
+    from ..realtime.events import notify_admins as _notify_admins
+except Exception:  # pragma: no cover
+    _notify_admins = None  # type: ignore[assignment]
 
 bp = Blueprint("handoff", __name__)
 
@@ -56,6 +64,22 @@ def create_handoff_request():
     )
     db.session.add(handoff)
     db.session.commit()
+
+    if _notify_admins is not None:
+        try:
+            _notify_admins(
+                "new_handoff",
+                {
+                    "id": handoff.id,
+                    "sender_id": handoff.sender_id,
+                    "reason": handoff.reason,
+                    "user_id": handoff.user_id,
+                    "created_at": handoff.created_at.isoformat() if handoff.created_at else None,
+                },
+            )
+        except Exception:
+            logger.exception("create_handoff_request: failed to send realtime notification")
+
     return jsonify({"request": handoff.to_dict()}), 201
 
 
