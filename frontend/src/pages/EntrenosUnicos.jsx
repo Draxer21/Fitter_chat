@@ -879,8 +879,8 @@ export default function EntrenosUnicos() {
             Duración definida, guía nutricional e instrucciones generales para lograr físicos icónicos.
           </h4>
           <div className="entrenos-hero-actions">
-            <button className="btn btn-primary" onClick={handleScrollToPlans}>Explorar planes</button>
-            <a className="btn btn-outline-secondary" href="/registro">Inscribirme</a>
+            <button className="btn btn-primary btn-lg" onClick={handleScrollToPlans}>Explorar planes</button>
+            <a className="btn btn-outline-secondary btn-lg" href="/registro">Inscribirme</a>
           </div>
         </header>
         <div className="profile-highlight mb-4 entrenos-pad-left">

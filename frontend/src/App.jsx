@@ -7,6 +7,7 @@ import "./styles/theme-transitions.css";
 import "./styles/theme-overrides.css";
 import "./styles/theme-final-override.css";
 import "./styles/accessibility.css";
+import "./styles/buttons.css";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";

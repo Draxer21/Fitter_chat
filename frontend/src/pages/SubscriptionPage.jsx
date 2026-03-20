@@ -194,14 +194,14 @@ export default function SubscriptionPage() {
                           {cancelConfirm ? (
                             <div className="d-flex gap-2">
                               <button
-                                className="btn btn-danger btn-sm"
+                                className="btn btn-danger"
                                 disabled={actionLoading}
                                 onClick={handleCancel}
                               >
                                 {t("subscription.cancelConfirm")}
                               </button>
                               <button
-                                className="btn btn-outline-secondary btn-sm"
+                                className="btn btn-outline-secondary"
                                 onClick={() => setCancelConfirm(false)}
                               >
                                 {t("subscription.cancelBack")}
@@ -209,7 +209,7 @@ export default function SubscriptionPage() {
                             </div>
                           ) : (
                             <button
-                              className="btn btn-outline-danger btn-sm"
+                              className="btn btn-outline-danger"
                               disabled={actionLoading}
                               onClick={handleCancel}
                             >
@@ -219,7 +219,7 @@ export default function SubscriptionPage() {
                         </>
                       ) : currentPlanType ? (
                         <button
-                          className="btn btn-primary btn-sm"
+                          className="btn btn-primary"
                           disabled={actionLoading}
                           onClick={() => handleChange(plan)}
                         >
@@ -227,7 +227,7 @@ export default function SubscriptionPage() {
                         </button>
                       ) : (
                         <button
-                          className="btn btn-primary btn-sm"
+                          className="btn btn-primary"
                           disabled={actionLoading}
                           onClick={() => handleSubscribe(plan)}
                         >

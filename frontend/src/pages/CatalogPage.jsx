@@ -252,12 +252,12 @@ export default function CatalogPage() {
                         </div>
                       </div>
                       <div className="catalog-card__actions">
-                        <Link to={`/producto/${product.id}`} className="btn btn-outline-secondary btn-sm catalog-card__btn">
+                        <Link to={`/producto/${product.id}`} className="btn btn-outline-secondary catalog-card__btn">
                           Ver detalle
                         </Link>
                         <button
                           type="button"
-                          className="btn btn-dark btn-sm catalog-card__btn"
+                          className="btn btn-dark catalog-card__btn"
                           disabled={outOfStock}
                           onClick={() => addToCart(product.id)}
                         >

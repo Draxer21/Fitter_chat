@@ -210,14 +210,13 @@
   box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--primary) 15%, transparent);
 }
 
-.account-security-page .btn {
+/* Button styling inherits from buttons.css.
+   Only pill-shape the primary CTA, not all buttons. */
+.account-security-page .btn-primary,
+.account-security-page .btn-outline-danger {
   border-radius: 999px;
   padding-left: 1.5rem;
   padding-right: 1.5rem;
-}
-
-.account-security-page .btn-outline-danger {
-  border-width: 2px;
 }
 
 @media (max-width: 576px) {

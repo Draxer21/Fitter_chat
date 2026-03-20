@@ -94,22 +94,12 @@ a:visited {
   border-color: #003d82;
 }
 
-/* 3. TAMAÑOS DE CLICK TARGETS (mínimo 44x44px) */
-button,
-a.btn,
-input[type="button"],
-input[type="submit"],
-input[type="reset"],
+/* 3. TAMAÑOS DE CLICK TARGETS
+   Button sizing is now managed by buttons.css.
+   Only enforce touch-target minimum on truly interactive non-btn elements. */
 .clickable {
   min-height: 44px;
   min-width: 44px;
-  padding: 8px 16px;
-}
-
-/* Click targets para iconos */
-.sc-btn {
-  min-height: 48px !important;
-  min-width: 48px !important;
 }
 
 /* 4. SKIP LINKS - Saltar al contenido principal */
