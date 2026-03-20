@@ -10,7 +10,7 @@
 }
 
 .plan-comparison-modal {
-  background: var(--bs-body-bg, #fff);
+  background: var(--bg, var(--bs-body-bg, #fff));
   border-radius: 1rem;
   width: 100%;
   max-width: 900px;
@@ -44,7 +44,7 @@
   font-weight: 600;
   font-size: 0.95rem;
   padding: 0.5rem 0.75rem;
-  background: var(--bs-tertiary-bg, #f0f0f0);
+  background: var(--surface, var(--bs-tertiary-bg, #f0f0f0));
   border-radius: 0.5rem;
   text-align: center;
 }

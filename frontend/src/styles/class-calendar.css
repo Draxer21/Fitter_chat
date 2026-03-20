@@ -1,8 +1,8 @@
 /* ── Class Calendar ─────────────────────────────────── */
 
 .class-calendar {
-  color: var(--bs-body-color);
-  background: var(--bs-body-bg);
+  color: var(--text, var(--bs-body-color));
+  background: var(--bg, var(--bs-body-bg));
 }
 
 /* ── Controls row ──────────────────────────────────── */
@@ -21,10 +21,10 @@
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 1px;
-  border: 1px solid var(--bs-border-color, #dee2e6);
+  border: 1px solid var(--border, var(--bs-border-color, #dee2e6));
   border-radius: 0.375rem;
   overflow: hidden;
-  background: var(--bs-border-color, #dee2e6);
+  background: var(--border, var(--bs-border-color, #dee2e6));
 }
 
 /* ── Day header ────────────────────────────────────── */
@@ -35,8 +35,8 @@
   font-weight: 600;
   font-size: 0.8rem;
   text-transform: uppercase;
-  background: var(--bs-tertiary-bg, #f8f9fa);
-  color: var(--bs-body-color);
+  background: var(--surface, var(--bs-tertiary-bg, #f8f9fa));
+  color: var(--text, var(--bs-body-color));
 }
 
 /* ── Day cell ──────────────────────────────────────── */
@@ -47,7 +47,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  background: var(--bs-body-bg);
+  background: var(--bg, var(--bs-body-bg));
   position: relative;
 }
 
@@ -150,8 +150,8 @@
 
 .class-calendar-modal-content {
   position: relative;
-  background: var(--bs-body-bg);
-  color: var(--bs-body-color);
+  background: var(--bg, var(--bs-body-bg));
+  color: var(--text, var(--bs-body-color));
   border-radius: 0.5rem;
   padding: 1.5rem 1.75rem;
   max-width: 420px;
@@ -173,7 +173,7 @@
   border: none;
   font-size: 1.5rem;
   line-height: 1;
-  color: var(--bs-body-color);
+  color: var(--text, var(--bs-body-color));
   cursor: pointer;
   opacity: 0.6;
   transition: opacity 0.15s;
@@ -197,7 +197,7 @@
   .class-calendar-cell {
     min-height: auto;
     padding: 0.5rem;
-    border-bottom: 1px solid var(--bs-border-color, #dee2e6);
+    border-bottom: 1px solid var(--border, var(--bs-border-color, #dee2e6));
   }
 
   .class-calendar-cell-date {

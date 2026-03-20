@@ -29,8 +29,8 @@
 }
 
 .analytics-kpi {
-  background: var(--bs-body-bg, #fff);
-  border: 1px solid var(--bs-border-color, #dee2e6);
+  background: var(--surface, var(--bs-body-bg, #fff));
+  border: 1px solid var(--border, var(--bs-border-color, #dee2e6));
   border-radius: 0.75rem;
   padding: 1.25rem;
   display: flex;
@@ -64,8 +64,8 @@
 
 /* Bar Chart */
 .analytics-chart {
-  background: var(--bs-body-bg, #fff);
-  border: 1px solid var(--bs-border-color, #dee2e6);
+  background: var(--surface, var(--bs-body-bg, #fff));
+  border: 1px solid var(--border, var(--bs-border-color, #dee2e6));
   border-radius: 0.75rem;
   padding: 1.25rem;
 }
@@ -97,7 +97,7 @@
 
 .analytics-bar__track {
   height: 24px;
-  background: var(--bs-tertiary-bg, #f0f0f0);
+  background: var(--surface, var(--bs-tertiary-bg, #f0f0f0));
   border-radius: 4px;
   overflow: hidden;
 }
