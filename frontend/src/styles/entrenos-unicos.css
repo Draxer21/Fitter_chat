@@ -42,12 +42,16 @@
 .entreno-card-image {
   height: 200px;
   overflow: hidden;
+  touch-action: manipulation;
 }
 
 .entreno-card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
 }
 
 .entreno-card-body {
@@ -158,6 +162,72 @@
 
 .entrenos-pad-left {
   padding-left: 1.25rem;
+}
+
+/* ── Meal Carousel ─────────────────────────────────── */
+
+.meal-carousel {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.meal-carousel-btn {
+  border: 1px solid var(--border, #dee2e6);
+  background: var(--surface, #f8f9fa);
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  font-size: 1.2rem;
+  color: var(--text, #212529);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.meal-carousel-btn:hover {
+  border-color: var(--accent-500, #0d6efd);
+  color: var(--accent-500, #0d6efd);
+}
+
+.meal-carousel-track {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.meal-carousel-card {
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface, #f8f9fa);
+  border: 1px solid var(--border, #dee2e6);
+  text-align: center;
+}
+
+.meal-carousel-card img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.meal-carousel-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 6px;
+  color: var(--text, #212529);
+}
+
+@media (max-width: 600px) {
+  .meal-carousel-track {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
