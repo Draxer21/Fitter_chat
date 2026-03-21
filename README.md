@@ -1,416 +1,315 @@
-# 🤖 Fitter – Chatbot con Rasa
+# Fitter – Plataforma Integral para Gimnasios
 
-Proyecto de Título – Ingeniería en Informática (INACAP)  
-Autores: Bryan Carreño / Diego Guzman  
-Docente Guía: Ivan Riquelme Nuñez  
+Proyecto de Titulo – Ingenieria en Informatica (INACAP)
+Autores: Bryan Carreno / Diego Guzman
+Docente Guia: Ivan Riquelme Nunez
 
 ---
 
-## 📌 Descripción
-Fitter es una **plataforma integral para gimnasios y centros deportivos** con chatbot en español diseñado con **Rasa**. Permite a los usuarios y administradores:
-- Consultar rutinas personalizadas de entrenamiento (a través del chatbot).
-- Gestionar inventario y productos.
+## Descripcion
+
+Fitter es una **plataforma integral para gimnasios y centros deportivos** con chatbot en espanol disenado con **Rasa**. Permite a los usuarios y administradores:
+
+- Consultar rutinas personalizadas de entrenamiento (a traves del chatbot).
+- Gestionar inventario y productos con catalogo avanzado.
 - Realizar compras y pagos simulados.
-- Registrar reservas de clases.
-- Gestionar órdenes y perfiles de usuario.
-- Recibir notificaciones por email.
-- Autenticación segura con MFA.
-- Inicio de sesión y registro con Google con apodos personalizables.
+- Reservar clases con calendario interactivo semanal/mensual.
+- Explorar planes de entrenamiento de heroes (Entrenos Unicos).
+- Comparar planes de rutinas y dietas side-by-side.
+- Gestionar suscripciones (Basic / Premium / Black).
+- Recibir notificaciones en tiempo real via WebSocket.
+- Solicitar handoff a agente humano desde el chat.
+- Consultar metricas operacionales en dashboard de analiticas.
+- Navegar en multiples idiomas (Espanol / Ingles).
+- Autenticacion segura con MFA y Google Sign-In.
 
-El sistema cumple con la normativa chilena (Ley 21.719) sobre protección de datos.
-
----
-
-## 🌙 Sistema de temas (Modo Claro / Oscuro)
-
-La aplicación frontend incluye un **sistema de temas dinámico** con soporte completo para modo claro y oscuro:
-
-- **Acceso rápido:** Botón 🌙/☀️ en la esquina inferior izquierda (controles laterales)
-- **Persistencia:** El tema seleccionado se guarda en `localStorage` y se mantiene entre sesiones
-- **Respuesta del SO:** Se detecta automáticamente la preferencia del sistema operativo (si no hay tema guardado)
-- **Variables CSS:** Sistema de variables CSS (`--bg`, `--text`, `--primary`, etc.) que se aplican globalmente
-- **Transiciones suaves:** Cambios de color suave de 200ms para mejor UX
-- **Cobertura completa:** Todos los componentes (Bootstrap, formularios, botones, modales, etc.) respetan el tema
-
-**Colores por tema:**
-- Modo claro: Fondo blanco (#ffffff), texto oscuro (#111827)
-- Modo oscuro: Fondo muy oscuro (#0b1020), texto claro (#e5e7eb)
+El sistema cumple con la normativa chilena (Ley 21.719) sobre proteccion de datos y WCAG 2.1 nivel AA.
 
 ---
 
-## ♿ Accesibilidad e Inclusión Digital
+## Features Principales
 
-Fitter implementa un conjunto completo de características de accesibilidad que cumplen con las **WCAG 2.1 nivel AA** y se alinea con las **normativas chilenas de accesibilidad web** establecidas por **SENADIS** (Servicio Nacional de la Discapacidad) y la **Ley 20.422** sobre Igualdad de Oportunidades e Inclusión Social de Personas con Discapacidad.
+### Multi-idioma (i18n)
+- Soporte completo Espanol / Ingles con `LocaleContext`
+- Selector de idioma en controles laterales
+- 200+ claves de traduccion cubriendo todas las paginas
 
-### 🇨🇱 Cumplimiento Normativo Chile
+### Catalogo de Productos
+- Grid de productos con filtros (categoria, precio, stock)
+- Tags de filtros activos con remocion individual
+- Descripcion con line-clamp y dark mode completo
+- Sidebar de carrito con resumen de compra
 
-**SENADIS y Ley 20.422:**
-- ✅ **Artículo 26**: Accesibilidad a medios físicos, transporte, información y comunicaciones
-- ✅ **Decreto Supremo N°1**: Norma técnica sobre accesibilidad de sitios web de servicios públicos
-- ✅ **WCAG 2.1 Nivel AA**: Estándar adoptado por SENADIS para accesibilidad web
-- ✅ **Inclusión Universal**: Diseño usable por todas las personas sin necesidad de adaptación
+### Entrenos Unicos
+- Planes de entrenamiento inspirados en heroes (Superman Corenswet, etc.)
+- Carousel de cards con navegacion
+- Vista detalle con plan de entrenamiento + dieta + tabla nutricional
+- Carousel de imagenes de comidas por heroe
 
-**Principios SENADIS aplicados:**
-1. **Perceptibilidad**: Información presentada de forma que todos los usuarios puedan percibirla
-2. **Operabilidad**: Interfaz y navegación utilizable por todos los usuarios
-3. **Comprensibilidad**: Información y operación comprensible para todos
-4. **Robustez**: Compatible con tecnologías asistivas actuales y futuras
+### Calendario de Clases
+- Vista semanal y mensual con CSS Grid
+- Reserva/cancelacion de clases con validacion de capacidad
+- Indicadores visuales: reservada (verde), llena (gris), disponible (azul)
+- Datos de ejemplo cuando el backend no esta disponible
 
-### 🎯 Cumplimiento WCAG 2.1
+### Comparacion de Planes
+- Modal reutilizable para comparar 2 planes side-by-side
+- Funciona con rutinas y dietas
+- Resalta diferencias entre planes
 
-- **Nivel A**: ✅ Cumplimiento total (12 criterios)
-- **Nivel AA**: ✅ Cumplimiento total (20 criterios)
-- **Nivel AAA**: ⚡ Cumplimiento parcial (algunos criterios superados)
-- **Lighthouse Score**: 95/100 en accesibilidad
-- **Certificación**: Alineado con estándares SENADIS
+### Gestion de Suscripciones
+- Tres niveles: Basic, Premium, Black
+- CRUD completo con estados (active/cancelled/expired/pending)
+- Cambio y cancelacion desde el perfil
 
-### ✅ 1. ARIA Labels y Roles Semánticos
+### Handoff a Humano
+- Solicitud de atencion humana desde el chatbot
+- Panel admin con cola de handoffs (pendientes/asignados/resueltos)
+- Notificacion en tiempo real a admins
 
-**Implementación completa de landmarks y roles:**
-- Navegación principal con `role="navigation"` y `aria-label="Navegación principal"`
-- Menús desplegables: `role="menubar"`, `role="menu"`, `role="menuitem"`
-- Landmarks semánticos: `role="banner"`, `role="main"`, `role="contentinfo"`, `role="region"`
-- Estados dinámicos: `aria-expanded`, `aria-hidden`, `aria-haspopup`, `aria-invalid`
-- Todos los botones e iconos tienen `aria-label` descriptivos
+### Dashboard de Analiticas
+- KPI cards: fallback rate, handoff rate, p95 latency
+- Distribucion de status codes (2xx/4xx/5xx)
+- Auto-refresh cada 30 segundos
 
-**Impacto:**
-- ✅ Lectores de pantalla (NVDA, JAWS, VoiceOver, TalkBack) identifican correctamente todas las secciones
-- ✅ Usuarios con discapacidad visual tienen contexto completo de navegación
-- ✅ Mejora SEO y estructura semántica
-
-### ✅ 2. Navegación por Teclado
-
-**Características implementadas:**
-- **Skip Link** (`SkipLink.jsx`): Permite saltar al contenido principal con `Tab` (cumple WCAG 2.4.1)
-- **Focus visible**: Indicador de 3px azul (#0066cc) con sombra de 4px para máxima visibilidad
-- **Tab order lógico**: Secuencia coherente y predecible en todos los componentes
-- **Atajos de teclado**: Enter/Space en elementos interactivos, Escape cierra modales
-- **Sin trampas**: Todos los modales y menús son escapables
-
-**Estilos aplicados** (`accessibility.css`):
-```css
-*:focus-visible {
-  outline: 3px solid var(--focus-ring-color, #0066cc);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.2);
-}
-```
-
-**Impacto:**
-- ✅ Usuarios de teclado pueden navegar toda la aplicación sin mouse
-- ✅ Acceso rápido al contenido (1 tecla Tab → Enter en skip link)
-- ✅ Indicadores visuales claros de dónde está el foco
-
-### ✅ 3. Contraste WCAG AA/AAA
-
-**Ratios de contraste verificados:**
-
-| Elemento | Modo Claro | Modo Oscuro | Cumplimiento |
-|----------|------------|-------------|--------------|
-| Texto principal | 14.8:1 | 13.2:1 | ✅ AAA |
-| Texto secundario | 8.6:1 | 7.1:1 | ✅ AAA |
-| Links | 8.2:1 | 6.8:1 | ✅ AA Large |
-| Botones primarios | 8.2:1 | 6.8:1 | ✅ AA Large |
-
-**Características adicionales:**
-- Variables CSS con contraste garantizado (`:root` y `[data-theme="dark"]`)
-- Soporte para `prefers-contrast: high` (alto contraste del sistema)
-- Modo de alto contraste personalizado disponible
-- Todos los elementos UI superan 3:1 (contraste no textual)
-
-**Impacto:**
-- ✅ Usuarios con baja visión pueden leer todo el contenido sin esfuerzo
-- ✅ Daltonismo considerado en selección de colores
-- ✅ Legibilidad en condiciones de luz variable
-
-### ✅ 4. Alt Text y Descripciones
-
-**Todas las imágenes tienen descripciones apropiadas:**
-- **Logo**: `alt="Logo de Fitter - Plataforma de fitness y entrenamiento"`
-- **Iconos funcionales**: Link/botón tiene `aria-label`, icono SVG tiene `aria-hidden="true"`
-- **Iconos decorativos**: `aria-hidden="true"` y `focusable="false"` en SVG
-- **Imágenes decorativas**: `aria-hidden="true"` en contenedores
-- **SVG con título interno**: `<title>Icono de carrito de compras</title>`
-
-**Impacto:**
-- ✅ Lectores de pantalla describen todas las imágenes funcionales correctamente
-- ✅ Imágenes decorativas no interrumpen la navegación
-- ✅ SEO mejorado con descripciones claras
-
-### 🎨 Características Adicionales
-
-- ✅ **Click targets**: Mínimo 44x44px (móvil) / 48x48px (panel de controles) - cumple WCAG 2.5.5
-- ✅ **Reducción de movimiento**: Respeta `prefers-reduced-motion` (animaciones deshabilitadas automáticamente)
-- ✅ **Formularios accesibles**: Labels obligatorios, errores con `aria-invalid`, mensajes claros
-- ✅ **Tamaño de fuente**: Mínimo 16px en inputs (evita zoom automático en iOS)
-- ✅ **Line height**: 1.6 para texto, 1.3 para encabezados (máxima legibilidad)
-- ✅ **Ancho de línea**: Máximo 70 caracteres para lectura óptima
-- ✅ **Compatibilidad**: Lectores de pantalla (NVDA, JAWS, VoiceOver, TalkBack)
-
-### 📊 Métricas y Validación
-
-**Herramientas de auditoría utilizadas:**
-- Google Lighthouse: **95/100** en accesibilidad
-- axe DevTools: 0 violaciones críticas
-- WAVE: Validación manual completa
-- WebAIM Contrast Checker: Todos los elementos AA/AAA
-
-**Navegadores probados:**
-- ✅ Chrome 90+ (accesibilidad completa)
-- ✅ Firefox 88+ (ARIA completo)
-- ✅ Safari 14+ (VoiceOver optimizado)
-- ✅ Edge 90+ (Narrator compatible)
-
-### 📖 Documentación y Normativa
-
-**Documentación técnica completa**: Ver [ACCESIBILIDAD.md](frontend/ACCESIBILIDAD.md)
-
-Incluye:
-
-### 🪄 Script PowerShell
-Se añadió el script PowerShell `scripts/apply_schema_windows.ps1`.
-
-Ejemplo de uso en Windows (PowerShell):
-
-```powershell
-# Desde la raíz del repositorio (Windows PowerShell)
-.\scripts\apply_schema_windows.ps1
-```
-
-El script activa el virtualenv `.venv`, establece `PYTHONPATH` al directorio del repo y ejecuta `scripts/apply_schema_sql.py`.
-**Marco normativo chileno:**
-- Ley 20.422 (2010) - Igualdad de Oportunidades e Inclusión Social de Personas con Discapacidad
-- Decreto Supremo N°1 (2015) - Norma técnica sobre accesibilidad web
-- Guías SENADIS de Accesibilidad Digital
-- NTC (Normas Técnicas Chilenas) de Accesibilidad
-
-**Contacto accesibilidad:**
-- Para reportar problemas: Modal de soporte en la aplicación
-- Sugerencias de mejora: GitHub Issues
-- Email: accessibility@fitter.com
+### Notificaciones en Tiempo Real
+- WebSocket con Socket.IO (backend + frontend)
+- Campana con badge de no leidas en navbar
+- Toasts auto-dismiss con `aria-live="polite"`
+- Eventos: booking confirmado, suscripcion cambiada, handoff creado
 
 ---
 
-## 🛠️ Tecnologías utilizadas
+## Sistema de Temas (Modo Claro / Oscuro)
+
+- **Acceso rapido:** Boton en controles laterales
+- **Persistencia:** Se guarda en `localStorage`
+- **Respuesta del SO:** Detecta `prefers-color-scheme` automaticamente
+- **Variables CSS:** Sistema completo (`--bg`, `--text`, `--surface`, `--border`, `--muted`)
+- **Transiciones suaves:** 200ms para cambios de color
+- **Cobertura completa:** Todos los componentes respetan el tema
+
+---
+
+## Accesibilidad
+
+Fitter cumple con **WCAG 2.1 nivel AA** y la **Ley 20.422** (Chile).
+
+- ARIA labels y roles semanticos completos
+- Navegacion por teclado con skip-link
+- Contraste AA/AAA verificado en ambos temas
+- Alt text en todas las imagenes funcionales
+- Click targets minimo 44x44px
+- Respeta `prefers-reduced-motion`
+- Sistema de botones normalizado con `buttons.css`
+
+Documentacion completa en [ACCESIBILIDAD.md](frontend/ACCESIBILIDAD.md).
+
+---
+
+## Tecnologias
 
 ### Backend
-- **Python 3.10** (entorno base)
+- **Python 3.10**
 - **Rasa 3.6** (NLP / NLU)
-- **Rasa SDK 3.6.2** (servidor de acciones)
-- **Flask 3.1.2** (servidor web)
-- **Flask-SQLAlchemy** (ORM)
-- **Flask-Migrate** (migraciones de base de datos)
-- **SQLAlchemy 1.4+** (motor de base de datos)
-- **PostgreSQL** con **psycopg2-binary 2.9.10**
-- **TensorFlow 2.12.0** (machine learning)
-- **Cryptography 43.0.1** (cifrado de datos sensibles)
-- **PyOTP 2.9.0** (autenticación de dos factores)
-- **ReportLab 4.0.9** (generación de PDFs)
-- **python-docx 1.1.2** (generación de documentos Word)
-- **MercadoPago SDK** (procesamiento de pagos)
-- **Requests 2.32.5** (cliente HTTP)
-- **python-dotenv 1.1.1** (variables de entorno)
+- **Flask 3.1.2** + Flask-SQLAlchemy + Flask-Migrate
+- **python-socketio 5.15** (WebSocket en tiempo real)
+- **PostgreSQL** con psycopg2-binary
+- **Alembic** (migraciones de esquema)
+- **PyOTP** (MFA), **Cryptography** (cifrado), **ReportLab** (PDFs)
+- **MercadoPago SDK** (pagos)
 
 ### Frontend
-- **React 18.2.0** (librería UI)
-- **React Router DOM 7.9.1** (enrutamiento)
-- **Bootstrap 5.3.8** (framework CSS)
-- **React Scripts 5.0.1** (tooling)
+- **React 18.2** con **Vite 5.4** (bundler)
+- **React Router DOM 7.9**
+- **Bootstrap 5.3**
+- **socket.io-client 4.8** (notificaciones en tiempo real)
+- **Vitest** + **Testing Library** (tests)
 
 ### DevOps
-- **Docker** (containerización)
-- **Nginx** (proxy reverso)
+- **Docker** + **Nginx** (proxy reverso)
 - **GitHub** (control de versiones)
-- **Alembic** (migraciones de esquema)
 
 ---
 
-## 🔐 Configuración de seguridad
-
-- Genera una clave Fernet para cifrar la información sensible del perfil y expórtala como `PROFILE_ENCRYPTION_KEY` antes de iniciar el backend o ejecutar migraciones:
-
-  ```bash
-  python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
-  export PROFILE_ENCRYPTION_KEY="<clave-generada>"
-  ```
-
-- Revisa las políticas y lineamientos de seguridad en `docs/policies/security-policy.md` y los términos y condiciones en `docs/policies/terms-and-conditions.md`.
-
-- Para coordinar el trabajo asistido por modelos en VS Code, usa los prompts sugeridos en `docs/prompts/codex_security_prompts.md`.
-
----
-
-## ▶️ Arranque rápido en VS Code
-
-1. **Prepara las dependencias una sola vez**
-   Nota: este proyecto usa **Python 3.10**. Verifica la versión instalada antes de crear el entorno virtual.
-
-   ```bash
-   # Verifica la versión de Python (debe ser 3.10.x)
-   python --version
-
-   # Crea el virtualenv (usa explícitamente el binario de Python 3.10 si tienes múltiples versiones)
-   python -m venv .venv
-
-   # En Windows (PowerShell):
-   .venv\Scripts\Activate.ps1
-
-   # En Linux/Mac:
-   source .venv/bin/activate
-
-   pip install -r requirements.txt
-   pip install rasa
-   ```
-2. **Exporta las variables sensibles** (ejemplo):
-   ```bash
-   # Windows (PowerShell):
-   $env:PROFILE_ENCRYPTION_KEY="<clave-Fernet>"
-   $env:CHAT_CONTEXT_API_KEY="<token-opcional>"
-   $env:GOOGLE_CLIENT_IDS="tu-client-id.apps.googleusercontent.com"
-   $env:REACT_APP_GOOGLE_CLIENT_ID="tu-client-id.apps.googleusercontent.com"
-   
-   # Linux/Mac:
-   export PROFILE_ENCRYPTION_KEY="<clave-Fernet>"
-   export CHAT_CONTEXT_API_KEY="<token-opcional>"
-   export GOOGLE_CLIENT_IDS="tu-client-id.apps.googleusercontent.com"
-   export REACT_APP_GOOGLE_CLIENT_ID="tu-client-id.apps.googleusercontent.com"
-   ```
-3. **Inicia los servicios desde la terminal integrada de VS Code**:
-   ```bat
-   scripts\start_project.bat
-   ```
-   El script levanta tres servicios:
-   - Backend Flask en `http://localhost:5000`
-   - Servidor Rasa en `http://localhost:5005`
-   - Servidor de acciones Rasa SDK en `http://localhost:5055`
-
-Cuando termines la sesión, presiona `Ctrl+C` en la terminal para cerrar todos los servicios de forma ordenada.
-
-### 🔐 Login con Google y apodos
-
-- `GOOGLE_CLIENT_IDS` acepta uno o varios **Client ID** (separados por comas) configurados en Google Cloud y el backend valida que el `aud` del `id_token` pertenezca a esa lista.
-- `VITE_GOOGLE_CLIENT_ID` debe apuntar al Client ID que usará el botón de Google Identity Services en el frontend (Vite expone solo variables con prefijo `VITE_`).
-- Los usuarios que ingresan con Google reciben un nombre temporal para efectos internos y se les ofrece, inmediatamente después, un formulario accesible para definir su apodo dentro de la app (pueden omitirlo y volver cuando quieran).
-
-#### Contrato: `POST /auth/google`
-
-Autenticación mediante Google Sign-In. Recibe un token (Google Credential) y valida la audiencia (`aud`) contra `GOOGLE_CLIENT_IDS`. En tests puede operar en modo mock (`GOOGLE_AUTH_VERIFY_MODE=mock`) para evitar dependencias externas.
-
-Request (JSON):
-```json
-{
-  "credential": "JWT_ID_TOKEN"
-}
-```
-
-Respuestas:
-- **200 OK**: token válido (`aud` permitido; `email_verified=true`).
-  - Body: `{"ok": true, "user": { ... }}`
-- **401 Unauthorized**: token inválido, `aud` no permitido o `email_verified=false`.
-- **503 Service Unavailable**: configuración incompleta (`GOOGLE_CLIENT_IDS` vacío).
-
-Config relevante:
-- `GOOGLE_CLIENT_IDS`: lista/CSV de Client IDs permitidos.
-- `GOOGLE_AUTH_VERIFY_MODE`:
-  - `google` (default): verificación real contra Google.
-  - `mock`: decodificación local para tests (sin dependencia externa).
-
-Ejemplo cURL:
-```bash
-curl -X POST http://localhost:5000/auth/google \
-  -H "Content-Type: application/json" \
-  -d '{"credential":"<JWT_ID_TOKEN>"}'
-```
-
-## 📁 Estructura del proyecto
+## Estructura del Proyecto
 
 ```
 Fitter/
-├── backend/              # Servidor Flask con módulos de negocio
-│   ├── carritoapp/       # Gestión de carrito de compras
-│   ├── chat/             # Integración con Rasa Chatbot
-│   ├── gestor_inventario/# Gestión de productos e inventario
-│   ├── login/            # Autenticación y MFA
-│   ├── orders/           # Gestión de órdenes
-│   ├── profile/          # Perfiles de usuario (con cifrado)
-│   ├── security/         # Seguridad y sesiones
-│   ├── notifications/    # Notificaciones por email
-│   ├── migrations/       # Migraciones de BD (Alembic)
-│   └── templates/        # Templates HTML
-├── Chatbot/              # Modelos y configuración de Rasa
-│   ├── data/             # NLU, stories, rules, specs
-│   └── models/           # Modelos entrenados
-├── scripts/              # Scripts de utilidad
-│   ├── start_project.bat # Script de inicio
-│   └── generate_nlu_dataset.py
-├── infra/                # Configuración Docker y Nginx
-└── requirements.txt      # Dependencias Python
+├── backend/
+│   ├── carritoapp/          # Carrito de compras
+│   ├── chat/                # Integracion con Rasa
+│   ├── classes/             # Clases y reservas (ClassBooking)
+│   ├── gestor_inventario/   # Productos e inventario
+│   ├── handoff/             # Handoff a agente humano
+│   ├── login/               # Autenticacion y MFA
+│   ├── metrics/             # Metricas operacionales
+│   ├── notifications/       # Notificaciones por email
+│   ├── orders/              # Gestion de ordenes
+│   ├── profile/             # Perfiles (con cifrado)
+│   ├── realtime/            # WebSocket (Socket.IO)
+│   ├── security/            # Seguridad y sesiones
+│   ├── subscriptions/       # Gestion de suscripciones
+│   └── templates/           # Templates HTML
+├── frontend/
+│   ├── src/
+│   │   ├── components/      # Navbar, Footer, SideControls, NotificationBell, etc.
+│   │   ├── contexts/        # Auth, Cart, Theme, Locale, FontSize, Notification
+│   │   ├── pages/           # Todas las paginas (lazy-loaded)
+│   │   ├── services/        # API client (apijs.js)
+│   │   └── styles/          # CSS por feature + buttons.css + legacy/
+│   └── dist/                # Build de produccion
+├── Chatbot/                 # Modelos y config de Rasa
+│   ├── data/                # NLU, stories, rules
+│   └── models/              # Modelos entrenados
+├── actions/                 # Acciones personalizadas de Rasa
+├── migrations/              # Migraciones Alembic
+├── scripts/                 # Scripts de utilidad
+├── infra/                   # Docker y Nginx
+└── requirements.txt         # Dependencias Python
 ```
 
-## 🧪 Generar ejemplos NLU
+---
 
-Usa el script `scripts/generate_nlu_dataset.py` para recrear el dataset NLU a partir de los YAML en `Chatbot/data/specs`:
+## Arranque Rapido
+
+### 1. Dependencias
+
+```bash
+# Python 3.10 requerido
+python -m venv .venv
+
+# Windows:
+.venv\Scripts\Activate.ps1
+# Linux/Mac:
+source .venv/bin/activate
+
+pip install -r requirements.txt
+pip install rasa
+
+# Frontend
+cd frontend
+npm install
+```
+
+### 2. Variables de entorno
+
+```bash
+export PROFILE_ENCRYPTION_KEY="<clave-Fernet>"
+export CHAT_CONTEXT_API_KEY="<token-opcional>"
+export GOOGLE_CLIENT_IDS="tu-client-id.apps.googleusercontent.com"
+export VITE_GOOGLE_CLIENT_ID="tu-client-id.apps.googleusercontent.com"
+```
+
+Genera la clave Fernet:
+```bash
+python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+```
+
+### 3. Base de datos
+
+```bash
+cd backend
+alembic -c migrations/alembic.ini upgrade head
+```
+
+Para bases existentes con historial Alembic diferente:
+```bash
+python scripts/apply_schema_sql.py
+```
+
+### 4. Iniciar servicios
+
+```bash
+# Opcion 1: Script automatico (Windows)
+scripts\start_project.bat
+
+# Opcion 2: Manual
+# Terminal 1 - Backend Flask:
+python -m flask --app backend.app run --port 5000
+
+# Terminal 2 - Rasa:
+rasa run --enable-api --cors "*"
+
+# Terminal 3 - Rasa Actions:
+rasa run actions
+
+# Terminal 4 - Frontend (desarrollo):
+cd frontend && npm run dev
+```
+
+Servicios:
+- Backend Flask: `http://localhost:5000`
+- Rasa: `http://localhost:5005`
+- Rasa Actions: `http://localhost:5055`
+- Frontend dev: `http://localhost:3000`
+
+---
+
+## Tests
+
+```bash
+# Backend (28 tests)
+python -m pytest backend/tests/ -v
+
+# Frontend (3 tests)
+cd frontend && npx vitest run
+```
+
+Tests backend cubren: autenticacion MFA, Google Auth, chat audit/consent, perfiles, productos, endpoints operacionales.
+
+Tests frontend: smoke test de App (navbar, login CTA, logo).
+
+---
+
+## Build de Produccion
+
+```bash
+cd frontend
+npm run build
+```
+
+Los archivos se generan en `frontend/dist/`.
+
+---
+
+## Login con Google
+
+- `GOOGLE_CLIENT_IDS` acepta uno o varios Client IDs (separados por comas)
+- `VITE_GOOGLE_CLIENT_ID` debe apuntar al Client ID del frontend
+- Usuarios nuevos reciben formulario para definir su apodo
+- Modo mock disponible para tests: `GOOGLE_AUTH_VERIFY_MODE=mock`
+
+---
+
+## Seguridad
+
+- Cifrado de datos sensibles con Fernet (`PROFILE_ENCRYPTION_KEY`)
+- CSRF protection en todas las operaciones POST/PUT/DELETE
+- MFA con TOTP y codigos de respaldo
+- Rate limiting en endpoints sensibles
+- Cumplimiento Ley 21.719 (proteccion de datos, Chile)
+
+Politicas completas en `docs/policies/security-policy.md`.
+
+---
+
+## Migraciones
+
+El proyecto usa Alembic para migraciones de esquema. Migraciones recientes:
+
+- `20260319_add_class_booking.py` — Modelo ClassBooking
+- `20260319_add_subscription.py` — Modelo Subscription
+- `20260319_add_handoff_request.py` — Modelo HandoffRequest
+
+Ver `migrations/versions/` para el historial completo.
+
+---
+
+## Generar ejemplos NLU
 
 ```bash
 python scripts/generate_nlu_dataset.py --update-nlu
 ```
 
-El comando genera hasta 2 000 ejemplos por intent, crea un respaldo en `Chatbot/data/generated/nlu_generated.yml` y actualiza `Chatbot/data/nlu.yml`.
-
-## 🧪 Tests
-
-Ejecuta los tests del backend:
-
-```bash
-python -m pytest backend/tests/
-```
-
-Incluye tests para:
-- Autenticación MFA
-- Modelos de productos
-- Perfiles de usuario
-
----
-
-**Database Migrations**: explicación de scripts y recomendaciones
-
-- **Propósito general**: El repositorio contiene migraciones Alembic y scripts auxiliares para facilitar la creación y actualización del esquema de la base de datos. Debido a cambios históricos en diferentes carpetas de migraciones, se incluye una migración "squash" idempotente y scripts seguros para instalar el esquema en una base de datos nueva o existente sin sobrescribir el historial de Alembic del servidor.
-
-- **Archivos importantes**:
-   - `migrations/versions/20251129_squash_schema.py`: migración "squash" idempotente que crea las tablas y columnas principales si no existen (diseñada para instalaciones limpias). Ahora depende de `20251129_add_chat_id_to_chat_user_context` para que el árbol de revisiones sea lineal.
-   - `migrations/versions/20251129_add_chat_id_to_chat_user_context.py`: migración puntual que añade `chat_id` a `chat_user_context` (ya presente en el historial del proyecto).
-   - `migrations/legacy_versions/`: carpeta donde dejamos migraciones antiguas que ya no forman parte del flujo activo. El backend únicamente recorre `migrations/versions`.
-   - `scripts/apply_schema_sql.py`: script ejecutado por el mantenedor para aplicar SQL idempotente directamente a la base de datos (usa `ALTER TABLE IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`, etc.). Útil cuando la base de datos de destino tiene un historial Alembic distinto y se desea garantizar que las columnas/índices estén presentes sin tocar `alembic_version`.
-   - `scripts/apply_migrations.py`: helper para ejecutar Alembic desde el contexto de la aplicación Flask (útil si quieres que Alembic use la URL y engine configurados por Flask-SQLAlchemy).
-   - `scripts/inspect_migrations.py`: script de inspección que muestra el contenido de `alembic_version` en la BD y lista los archivos de migración disponibles (útil para diagnóstico).
-
-- **Cómo aplicar el esquema (recomendado)**
-
-   - Para una base de datos nueva (instalación fresca): usar Alembic normalmente desde `backend`:
-
-   ```powershell
-   & .venv\Scripts\Activate.ps1
-   cd backend
-   alembic -c migrations/alembic.ini upgrade head
-   ```
-
-   - Para una base de datos existente que tiene un historial Alembic distinto (caso del revisor): ejecutar el script idempotente que garantiza columnas y tablas sin manipular `alembic_version`:
-
-   ```powershell
-   & .venv\Scripts\Activate.ps1
-   $env:PYTHONPATH='G:\Fitter'
-   python scripts\apply_schema_sql.py
-   ```
-
-- **Notas importantes y advertencias**
-   - `scripts/apply_schema_sql.py` aplica DDL directamente (usando `IF NOT EXISTS`) en la BD; **no** modifica la tabla `alembic_version`. Esto evita romper historiales de migración en bases ya en producción. Recomendado cuando el árbol de migraciones del revisor/destino no coincide exactamente con el del repositorio.
-   - Si necesitas alinear el historial de Alembic (solo si sabes lo que haces), puedes usar `alembic stamp` para marcar la BD con la revisión actual del repo. Esto es intrusivo: haz backup de la BD antes de usar `stamp`.
-
-      ```powershell
-      # marca la BD con la última revisión del repo sin ejecutar DDL
-      alembic -c migrations/alembic.ini stamp head
-      ```
-
-   - Entregar el proyecto con la migración "squash" incluida garantiza que quien instale el proyecto desde cero pueda ejecutar `alembic upgrade head` sin dependencias entre ramas de migración. Para bases de datos ya existentes, usar `scripts/apply_schema_sql.py` tal como se muestra arriba.
-
----
+Genera hasta 2000 ejemplos por intent y actualiza `Chatbot/data/nlu.yml`.

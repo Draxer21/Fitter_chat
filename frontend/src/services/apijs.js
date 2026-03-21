@@ -219,7 +219,7 @@ export const API = {
     snapshot: () => fetch(`${BASE}/metrics`, { credentials: "include" }).then(j),
   },
   classes: {
-    sessions: (params = "") => fetch(`${BASE}/classes/sessions${params ? `?${params}` : ""}`, { credentials: "include" }).then(j),
+    sessions: (params = "") => fetch(`${BASE}/classes/public/sessions${params ? `?${params}` : ""}`, { credentials: "include" }).then(j),
     myBookings: () => fetch(`${BASE}/classes/my-bookings`, { credentials: "include" }).then(j),
     book: async (sessionId) => fetch(`${BASE}/classes/book/${sessionId}`, {
       method: "POST",
