@@ -422,16 +422,6 @@ stories:
     - intent: suscripcion_baja
     - action: utter_suscripcion_baja
 
-- story: faq horarios
-  steps:
-    - intent: faq
-    - action: utter_faq/horarios
-
-- story: faq pagos
-  steps:
-    - intent: faq
-    - action: utter_faq/pagos
-
 - story: cambio de musculo en rutina
   steps:
     - intent: solicitar_rutina

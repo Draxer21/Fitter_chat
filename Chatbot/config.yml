@@ -22,14 +22,14 @@ pipeline:
   - name: CountVectorsFeaturizer
     analyzer: char_wb
     min_ngram: 1
-    max_ngram: 4
+    max_ngram: 3
   - name: DIETClassifier
     epochs: 20
     transformer_size: 16
     number_of_transformer_layers: 1
-    embedding_dimension: 116
+    embedding_dimension: 64
     batch_strategy: "sequence"
-    batch_size: 32
+    batch_size: 8
     learning_rate: 0.002
     constrain_similarities: true
     evaluate_on_number_of_examples: 50
