@@ -47,6 +47,7 @@ const PrivacyPage = lazy(() => import("./pages/PrivacyPage"));
 const AccessibilityPage = lazy(() => import("./pages/AccessibilityPage"));
 const ChatPage = lazy(() => import("./pages/ChatPage"));
 const EntrenosUnicos = lazy(() => import("./pages/EntrenosUnicos"));
+const EntrenoDetalle = lazy(() => import("./pages/EntrenoDetalle"));
 const AnalyticsDashboardPage = lazy(() => import("./pages/AnalyticsDashboardPage"));
 const ClassCalendarPage = lazy(() => import("./pages/ClassCalendarPage"));
 const SubscriptionPage = lazy(() => import("./pages/SubscriptionPage"));
@@ -90,6 +91,7 @@ function AppContent() {
               <Route path="/sobre-nosotros" element={<AboutPage />} />
               <Route path="/terminos" element={<TermsPage />} />
               <Route path="/entrenos-unicos" element={<EntrenosUnicos />} />
+              <Route path="/entrenos-unicos/detalle/:planKey" element={<EntrenoDetalle />} />
               <Route path="/privacidad" element={<PrivacyPage />} />
               <Route path="/accesibilidad" element={<AccessibilityPage />} />
             </Route>

@@ -18,7 +18,7 @@
    - btn-warning        → attention (login CTA in navbar)
    ================================================ */
 
-/* --- Base reset: undo overly aggressive accessibility.css rule --- */
+/* --- Base reset: undo overly aggressive legacy rules --- */
 button,
 a.btn,
 input[type="button"],
@@ -26,6 +26,7 @@ input[type="submit"],
 input[type="reset"] {
   min-height: 0;
   min-width: 0;
+  margin-top: 0;
 }
 
 /* --- Default .btn: consistent base --- */

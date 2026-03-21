@@ -1,4 +1,4 @@
-﻿.catalog-layout {
+.catalog-layout {
   padding-top: 2.5rem;
   margin-top: 1.5rem;
 }
@@ -9,29 +9,137 @@
   gap: 24px;
 }
 
+/* ── Filters & Cart Sidebar ──────────────────────────── */
+
 .catalog-filters,
 .catalog-cart {
-  background: var(--neutral-0);
-  border: 1px solid #e0e0e0;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e0e0e0);
   border-radius: 12px;
-  padding: 16px;
+  padding: 20px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
   position: sticky;
   top: 100px;
   align-self: start;
-  color: #111111;
+  color: var(--text, #111);
 }
 
-.catalog-filters h2,
-.catalog-cart__header h2 {
-  font-size: 1.4rem;
-  margin-bottom: 8px;
-  color: #111111;
+.catalog-filters__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--border, #e0e0e0);
 }
+
+.catalog-filters__header h2 {
+  font-size: 1.3rem;
+  margin: 0;
+  color: var(--text, #111);
+}
+
+.catalog-filters__clear {
+  background: none;
+  border: none;
+  color: var(--bs-primary, #0d6efd);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.catalog-filters__clear:hover {
+  opacity: 0.7;
+}
+
+.catalog-cart__header h2 {
+  font-size: 1.3rem;
+  margin-bottom: 8px;
+  color: var(--text, #111);
+}
+
+/* ── Filter Groups ───────────────────────────────────── */
 
 .catalog-filter-group {
   margin-bottom: 16px;
 }
+
+.catalog-filter-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text, #111);
+  margin-bottom: 6px;
+}
+
+.catalog-price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.catalog-price-separator {
+  color: var(--muted, #6c757d);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.catalog-stock-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text, #111);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #e0e0e0);
+  transition: background 0.15s;
+}
+
+.catalog-stock-toggle:hover {
+  background: color-mix(in srgb, var(--text, #111) 5%, transparent);
+}
+
+/* ── Active Filter Tags ──────────────────────────────── */
+
+.catalog-active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--border, #e0e0e0);
+}
+
+.catalog-active-filters__label {
+  font-size: 0.75rem;
+  color: var(--muted, #6c757d);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.catalog-active-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: color-mix(in srgb, var(--bs-primary, #0d6efd) 12%, transparent);
+  color: var(--bs-primary, #0d6efd);
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.catalog-active-tag:hover {
+  opacity: 0.7;
+}
+
+/* ── Products Header ─────────────────────────────────── */
 
 .catalog-products__header {
   display: flex;
@@ -43,7 +151,10 @@
 .catalog-products__header h1 {
   font-size: 1.8rem;
   margin-bottom: 4px;
+  color: var(--text, #111);
 }
+
+/* ── Products Grid ───────────────────────────────────── */
 
 .catalog-products__grid {
   display: grid;
@@ -51,16 +162,17 @@
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
 }
 
+/* ── Product Card ────────────────────────────────────── */
+
 .catalog-card {
-  background: var(--neutral-0);
+  background: var(--surface, #fff);
   border-radius: 12px;
-  border: 1px solid #ececec;
+  border: 1px solid var(--border, #ececec);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-  
 }
 
 .catalog-card:hover {
@@ -71,7 +183,7 @@
 .catalog-card__image {
   position: relative;
   padding-top: 62%;
-  background: #f6f6f6;
+  background: var(--bg, #f6f6f6);
 }
 
 .catalog-card__image img {
@@ -89,7 +201,7 @@
   top: 12px;
   left: 12px;
   background: rgba(0, 0, 0, 0.75);
-  color: var(--neutral-0);
+  color: #fff;
   padding: 2px 10px;
   border-radius: 999px;
   font-size: 0.75rem;
@@ -98,19 +210,21 @@
 .catalog-card__body {
   padding: 16px;
   flex-grow: 1;
-  color: #111111;
+  color: var(--text, #111);
 }
 
 .catalog-card__body h3 {
   font-size: 1.1rem;
   margin-bottom: 8px;
-  color: #111111;
+  color: var(--text, #111);
 }
 
 .catalog-card__description {
-  color: #111111;
+  color: var(--muted, #6c757d);
   font-size: 0.9rem;
-  max-height: 60px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
@@ -119,22 +233,25 @@
   justify-content: space-between;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #111111;
+  color: var(--text, #111);
   margin-top: 12px;
 }
 
 .catalog-card__actions {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   gap: 8px;
   padding: 16px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--border, #f0f0f0);
 }
 
 .catalog-card__btn {
   flex: 1 1 0;
   text-align: center;
 }
+
+/* ── Cart Sidebar ────────────────────────────────────── */
 
 .catalog-cart__header {
   display: flex;
@@ -150,16 +267,16 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  color: #111111;
+  color: var(--text, #111);
 }
 
 .catalog-cart__list li {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  border-bottom: 1px dashed #e4e4e4;
+  border-bottom: 1px dashed var(--border, #e4e4e4);
   padding-bottom: 8px;
-  color: #111111;
+  color: var(--text, #111);
 }
 
 .catalog-cart__total {
@@ -168,8 +285,23 @@
   justify-content: space-between;
   margin-bottom: 12px;
   font-size: 1.1rem;
-  color: #111111;
+  color: var(--text, #111);
 }
+
+/* ── Form controls theme ─────────────────────────────── */
+
+.catalog-filters .form-control,
+.catalog-filters .form-select {
+  background-color: var(--bg, #fff);
+  color: var(--text, #111);
+  border-color: var(--border, #dee2e6);
+}
+
+.catalog-filters .form-control::placeholder {
+  color: var(--muted, #6c757d);
+}
+
+/* ── Responsive ──────────────────────────────────────── */
 
 @media (max-width: 1200px) {
   .catalog-grid {
@@ -191,4 +323,3 @@
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   }
 }
-

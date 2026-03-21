@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { API } from "../services/apijs";
 import { useCart } from "../contexts/CartContext";
+import { useLocale } from "../contexts/LocaleContext";
 import { formatearPrecio } from "../utils/formatPrice";
 import "../styles/catalog.css";
 
@@ -17,6 +18,7 @@ const normalizeStock = (value) => {
 
 export default function CatalogPage() {
   const location = useLocation();
+  const { t } = useLocale();
   const { addItem, items: cartItems, total } = useCart();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -143,27 +145,37 @@ export default function CatalogPage() {
         <div className="col-12 col-xl-10">
           <div className="catalog-grid">
             <aside className="catalog-filters">
-              <h2>Filtros</h2>
+              <div className="catalog-filters__header">
+                <h2>{t("catalog.filters")}</h2>
+                {(search || selectedCategory !== "all" || inStockOnly) && (
+                  <button
+                    className="catalog-filters__clear"
+                    onClick={() => { setSearch(""); setSelectedCategory("all"); setInStockOnly(false); setPriceFrom(priceLimits.min.toString()); setPriceTo(priceLimits.max.toString()); }}
+                  >
+                    {t("catalog.clearFilters")}
+                  </button>
+                )}
+              </div>
               <div className="catalog-filter-group">
-                <label htmlFor="catalog-search">Buscar</label>
+                <label htmlFor="catalog-search" className="catalog-filter-label">🔍 {t("catalog.search")}</label>
                 <input
                   id="catalog-search"
                   type="text"
                   className="form-control"
-                  placeholder="Nombre o descripción"
+                  placeholder={t("catalog.searchPlaceholder")}
                   value={search}
                   onChange={(event) => setSearch(event.target.value)}
                 />
               </div>
               <div className="catalog-filter-group">
-                <label htmlFor="catalog-category">Categoría</label>
+                <label htmlFor="catalog-category" className="catalog-filter-label">📂 {t("catalog.category")}</label>
                 <select
                   id="catalog-category"
                   className="form-select"
                   value={selectedCategory}
                   onChange={(event) => setSelectedCategory(event.target.value)}
                 >
-                  <option value="all">Todas</option>
+                  <option value="all">{t("catalog.allCategories")}</option>
                   {categories.map((cat) => (
                     <option key={cat} value={cat}>
                       {cat}
@@ -172,55 +184,63 @@ export default function CatalogPage() {
                 </select>
               </div>
               <div className="catalog-filter-group">
-                <label className="form-label">Rango de precio</label>
-                <div className="d-flex gap-2">
+                <label className="catalog-filter-label">💰 {t("catalog.priceRange")}</label>
+                <div className="catalog-price-inputs">
                   <input
                     type="number"
                     min="0"
                     className="form-control"
                     value={priceFrom}
                     onChange={(event) => setPriceFrom(event.target.value)}
-                    placeholder={`Desde ${priceLimits.min}`}
+                    placeholder={t("catalog.priceFrom")}
                   />
+                  <span className="catalog-price-separator">—</span>
                   <input
                     type="number"
                     min="0"
                     className="form-control"
                     value={priceTo}
                     onChange={(event) => setPriceTo(event.target.value)}
-                    placeholder={`Hasta ${priceLimits.max}`}
+                    placeholder={t("catalog.priceTo")}
                   />
                 </div>
               </div>
-              <div className="form-check mt-3">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="catalog-stock"
-                  checked={inStockOnly}
-                  onChange={(event) => setInStockOnly(event.target.checked)}
-                />
-                <label className="form-check-label" htmlFor="catalog-stock">
-                  Solo productos con stock
+              <div className="catalog-filter-group">
+                <label className="catalog-stock-toggle">
+                  <input
+                    type="checkbox"
+                    className="form-check-input"
+                    checked={inStockOnly}
+                    onChange={(event) => setInStockOnly(event.target.checked)}
+                  />
+                  <span>📦 {t("catalog.inStockOnly")}</span>
                 </label>
               </div>
+              {(search || selectedCategory !== "all" || inStockOnly) && (
+                <div className="catalog-active-filters">
+                  <span className="catalog-active-filters__label">{t("catalog.activeFilters")}:</span>
+                  {search && <span className="catalog-active-tag" onClick={() => setSearch("")}>{t("catalog.search")}: "{search}" ✕</span>}
+                  {selectedCategory !== "all" && <span className="catalog-active-tag" onClick={() => setSelectedCategory("all")}>{selectedCategory} ✕</span>}
+                  {inStockOnly && <span className="catalog-active-tag" onClick={() => setInStockOnly(false)}>{t("catalog.inStockOnly")} ✕</span>}
+                </div>
+              )}
             </aside>
 
             <section className="catalog-products">
               <header className="catalog-products__header">
                 <div>
-                  <h1>Catálogo de productos</h1>
+                  <h1>{t("catalog.title")}</h1>
                   <p className="text-muted mb-0">
                     {loading
-                      ? "Cargando productos..."
-                      : `${filteredProducts.length} de ${products.length} productos`}
+                      ? t("catalog.loading")
+                      : `${filteredProducts.length} ${t("catalog.of")} ${products.length} ${t("catalog.products")}`}
                   </p>
                 </div>
               </header>
 
               {error && <div className="alert alert-danger">{error}</div>}
               {!loading && !error && filteredProducts.length === 0 && (
-                <div className="alert alert-info">No encontramos productos que coincidan con tu búsqueda.</div>
+                <div className="alert alert-info">{t("catalog.noResults")}</div>
               )}
 
               <div className="catalog-products__grid">
@@ -236,7 +256,7 @@ export default function CatalogPage() {
                       </Link>
                       <div className="catalog-card__body">
                         <h3>{product.nombre}</h3>
-                        <p className="catalog-card__description">{product.descripcion || "Sin descripción"}</p>
+                        <p className="catalog-card__description">{product.descripcion || t("catalog.noDescription")}</p>
                         {product.rating && (
                           <div className="catalog-card__rating">
                             <span className="catalog-card__stars">
@@ -248,12 +268,12 @@ export default function CatalogPage() {
                         )}
                         <div className="catalog-card__meta">
                           <span>{formatearPrecio(product.precio)}</span>
-                          <span>{stock > 0 ? `${stock} en stock` : "Sin stock"}</span>
+                          <span>{stock > 0 ? `${stock} ${t("catalog.inStock")}` : t("catalog.outOfStock")}</span>
                         </div>
                       </div>
                       <div className="catalog-card__actions">
                         <Link to={`/producto/${product.id}`} className="btn btn-outline-secondary catalog-card__btn">
-                          Ver detalle
+                          {t("catalog.viewDetail")}
                         </Link>
                         <button
                           type="button"
@@ -261,7 +281,7 @@ export default function CatalogPage() {
                           disabled={outOfStock}
                           onClick={() => addToCart(product.id)}
                         >
-                          {outOfStock ? "Agotado" : "Añadir al carrito"}
+                          {outOfStock ? t("catalog.soldOut") : t("catalog.addToCart")}
                         </button>
                       </div>
                     </article>
@@ -272,11 +292,11 @@ export default function CatalogPage() {
 
             <aside className="catalog-cart">
               <div className="catalog-cart__header">
-                <h2>Tu carrito</h2>
-                <span>{totalItems} producto{totalItems === 1 ? "" : "s"}</span>
+                <h2>{t("catalog.yourCart")}</h2>
+                <span>{totalItems} {totalItems === 1 ? t("catalog.product") : t("catalog.products")}</span>
               </div>
               {cartItems.length === 0 ? (
-                <p className="text-muted mb-0">No tienes productos agregados.</p>
+                <p className="text-muted mb-0">{t("catalog.emptyCart")}</p>
               ) : (
                 <ul className="catalog-cart__list">
                   {cartItems.map((item) => (
@@ -298,7 +318,7 @@ export default function CatalogPage() {
                   <strong>{formatearPrecio(total)}</strong>
                 </div>
                 <Link to="/carrito" className="btn btn-warning w-100">
-                  Ir al carrito
+                  {t("catalog.goToCart")}
                 </Link>
               </div>
             </aside>
