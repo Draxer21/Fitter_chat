@@ -33,6 +33,72 @@ nlu:
 
     - abdomen
 
+    - core
+
+    - fullbody
+
+    - cardio
+
+    '
+- lookup: objetivo
+  examples: '- bajar_grasa
+
+    - bajar grasa
+
+    - perder peso
+
+    - hipertrofia
+
+    - ganar masa
+
+    - ganar musculo
+
+    - tonificar
+
+    - definicion
+
+    - resistencia
+
+    - rendimiento
+
+    - fuerza
+
+    - equilibrada
+
+    - mantenimiento
+
+    - recomposicion
+
+    '
+- lookup: equipamiento
+  examples: '- gimnasio
+
+    - casa
+
+    - mancuernas
+
+    - bandas
+
+    - barra
+
+    - TRX
+
+    - kettlebell
+
+    - peso corporal
+
+    - ninguno
+
+    - maquinas
+
+    '
+- lookup: nivel
+  examples: '- principiante
+
+    - intermedio
+
+    - avanzado
+
     '
 - intent: actualizar_perfil
   examples: '- me gustaria ajustar el perfil agregando los objetivos 2024
@@ -10880,39 +10946,111 @@ nlu:
 
     - buenas estoy en el computador, quiero el acceso seguro hacia de configuraciones en el portal oficial'
 - intent: saludar
-  examples: '- hola
-
+  examples: |
+    - hola
     - buenas
-
     - buenas tardes
-
     - buenos dias
-
     - buenas noches
-
     - que tal
-
     - que onda
-
     - hola hola
-
     - hey
-
     - holi
-
     - wenas
-
     - saludos
-
     - hola, que tal
-
     - hola, como estas
-
     - hola, buen dia
-
     - holaa
-
-    - hola!!!'
+    - hola!!!
+    - que hubo
+    - alo
+    - holis
+    - como andas
+    - como va todo
+    - que pasa
+    - hey que tal
+    - hola buenas
+    - hola buenas tardes
+    - hola buenas noches
+    - hola buenos dias
+    - buen dia
+    - buenas buenas
+    - hola amigo
+    - hola fitter
+    - hey fitter
+    - que hay
+    - como te va
+    - hola que onda
+    - muy buenas
+    - hola a todos
+    - hola hola hola
+    - ei
+    - epa
+    - ey
+    - wena
+    - weena
+    - hola wena
+    - que cuentas
+    - como estas
+    - hola bot
+    - hola chatbot
+    - hi
+    - hello
+    - hey hey
+    - hola que hay
+    - que pasa fitter
+    - buenas noches fitter
+    - buenos dias fitter
+    - como estas fitter
+    - hola, necesito ayuda
+    - hola, estoy aca
+    - hola, vengo a consultar
+    - oye hola
+    - mira hola
+    - aloha
+    - buenas a todos
+    - ahi estoy
+    - estoy aqui
+    - hola estoy de vuelta
+    - hola otra vez
+    - hola de nuevo
+    - que tal fitter
+    - hola disculpa
+    - disculpa hola
+    - hola perdon
+    - hola me puedes ayudar
+    - hola necesito consultar algo
+    - hola quiero preguntar algo
+    - buenas quiero consultar
+    - hola tengo una duda
+    - hola vine a preguntar
+    - hola, vine por una consulta
+    - hola todo bien
+    - bienvenido
+    - hola crack
+    - hola genio
+    - wenas wenas
+    - hola que mas
+    - que dice
+    - hola ke ase
+    - hola k tal
+    - ola
+    - ola k ase
+    - hola mundo
+    - hola hermano
+    - hola compa
+    - hola master
+    - hola capo
+    - hola titan
+    - hola campeon
+    - hola maquina
+    - muy buenas tardes
+    - muy buenos dias
+    - hola a ver
+    - salu2
+    - sludo
 - intent: solicitar_dieta
   examples: '- sugerir dieta
 
@@ -12994,15 +13132,105 @@ nlu:
 
     - buenas necesito que soporte revise soporte onboarding porque mi perfil quedo bloqueado'
 - intent: handoff_human
-  examples: '- hablar con un asesor
-
+  examples: |
+    - hablar con un asesor
     - necesito hablar con una persona
-
     - derivame con un humano
-
     - quiero soporte humano
-
-    - pasame a un asesor'
+    - pasame a un asesor
+    - quiero hablar con alguien real
+    - necesito atencion humana
+    - pasame con un agente
+    - conectame con una persona
+    - quiero un asesor
+    - necesito un humano
+    - hablar con persona real
+    - me puedes pasar con alguien
+    - quiero que me atienda una persona
+    - derivar a humano
+    - necesito soporte en persona
+    - pasame con soporte
+    - contactar un asesor
+    - hablar con atencion al cliente
+    - quiero atencion personalizada
+    - no quiero hablar con un bot
+    - prefiero hablar con una persona
+    - me puedes derivar con alguien
+    - necesito hablar con soporte
+    - pasame con un representante
+    - quiero hablar con un representante
+    - contactar con soporte humano
+    - necesito asistencia de una persona
+    - quiero ser atendido por un humano
+    - derivar con asesor humano
+    - conectame con soporte
+    - pasame a soporte humano
+    - necesito que me atienda alguien
+    - quiero contactar un asesor
+    - hablar con agente humano
+    - necesito asesor en vivo
+    - quiero chat con persona
+    - pasame con atencion humana
+    - me puede atender un humano por favor
+    - necesito hablar con alguien que no sea robot
+    - quiero hablar con un agente real
+    - pasame con un asesor por favor
+    - derivame a atencion humana
+    - necesito un agente humano
+    - contactar agente humano
+    - quiero hablar con un asesor humano
+    - me puedes conectar con un humano
+    - necesito asistencia humana
+    - pasame con alguien de soporte
+    - quiero ser derivado a un humano
+    - hablar con alguien de soporte
+    - me gustaria hablar con una persona
+    - podrias pasarme con un asesor
+    - necesito que me derive con alguien
+    - quiero atencion de un asesor
+    - hablar con soporte en vivo
+    - necesito chat con humano
+    - pasame a atencion al cliente
+    - quiero un agente en vivo
+    - conectar con persona real
+    - derivar a soporte humano
+    - necesito hablar con alguien de verdad
+    - pasame a un agente humano
+    - quiero soporte en vivo
+    - hablar con alguien
+    - pasame con una persona
+    - ayuda de un humano
+    - quiero ayuda humana
+    - necesito ayuda de una persona real
+    - agente humano por favor
+    - humano
+    - persona real
+    - soporte humano
+    - asesor
+    - representante
+    - me pueden derivar
+    - derivar
+    - escalame
+    - escalar a humano
+    - escalar caso
+    - hablar con supervisor
+    - necesito un supervisor
+    - quiero hablar con el encargado
+    - pasame con el jefe
+    - necesito escalar esto
+    - no me sirve el bot
+    - el bot no me ayuda
+    - esto no funciona pasame con alguien
+    - tu no puedes ayudarme necesito un humano
+    - no entiendes lo que necesito derivame
+    - quiero que me contacte un asesor
+    - necesito que alguien me llame
+    - pueden contactarme
+    - quiero que me atienda un profesional
+    - pasame con alguien que pueda ayudarme
+    - necesito hablar con alguien que sepa
+    - quiero soporte personalizado
+    - atencion personalizada por favor
 - intent: soporte_mfa
   examples: '- oye el codigo de 1Password me marca expirado
 
@@ -16049,13 +16277,58 @@ nlu:
 
     - mejor cancelar'
 - intent: nlu_fallback
-  examples: '- me sirve para volar al espacio?
-
+  examples: |
+    - me sirve para volar al espacio?
     - quiero viajar al espacio
-
     - puedes hackear la nasa por mi
-
-    - dime el numero ganador del loto'
+    - dime el numero ganador del loto
+    - cual es el sentido de la vida
+    - puedes hacer mi tarea de matematicas
+    - necesito un pasaje de avion
+    - cuanto cuesta un auto
+    - que hora es en japon
+    - como se hace una bomba
+    - dime una receta de pastel
+    - quien gano el mundial
+    - puedes pedir una pizza
+    - necesito un uber
+    - como hackeo una cuenta
+    - enseñame a programar en python
+    - hazme un curriculum
+    - cuanto vale el dolar hoy
+    - que peliculas estan en el cine
+    - donde queda el aeropuerto
+    - puedes llamar a mi mama
+    - necesito un abogado
+    - que clima hace hoy
+    - puedes buscarme pareja
+    - dime un chiste
+    - cuantos planetas hay
+    - quien es el presidente
+    - como arreglo mi auto
+    - necesito un plomero
+    - como se hace queso
+    - puedes escribir un poema
+    - cuando es navidad
+    - eres inteligente?
+    - puedes pensar?
+    - tienes sentimientos?
+    - que opinas de la politica
+    - dame los numeros de la loteria
+    - como me hago rico rapido
+    - puedes leer mi mente
+    - predice mi futuro
+    - lee mi horoscopo
+    - asdfghjkl
+    - jajajaja
+    - xdxdxd
+    - skjdhfksjdhf
+    - 123456789
+    - ...
+    - ???
+    - mmm
+    - ok no se
+    - que random
 
 - intent: activar_modo_demo
   examples: |
@@ -16080,3 +16353,48 @@ nlu:
     - salir del demo
     - modo normal
     - apagar modo demo
+
+- intent: cancelar_reserva
+  examples: |
+    - quiero cancelar mi reserva
+    - cancelar reserva
+    - anular mi reserva
+    - no puedo ir a la clase
+    - quiero anular mi reserva
+    - cancelar mi clase
+    - ya no puedo ir a la clase
+    - necesito cancelar la reserva
+    - deseo cancelar mi reserva
+    - cancela la reserva
+    - anula mi reserva
+    - no voy a poder ir, cancela
+    - tengo que cancelar mi clase
+    - quiero eliminar mi reserva
+    - borra mi reserva
+    - me arrepenti de la reserva
+    - ya no quiero la clase
+    - quiero darme de baja de la clase
+    - cancela mi cupo
+    - libera mi cupo
+    - quiero soltar mi cupo
+    - no podre asistir, cancela
+    - necesito anular la clase
+    - quiero sacar mi reserva
+    - no ire a la clase, cancelala
+    - anular cupo reservado
+    - quiero cancelar la clase de [spinning](clase)
+    - cancela mi reserva de [yoga](clase)
+    - anula mi clase del [lunes](fecha)
+    - cancela la reserva del [martes](fecha)
+    - no puedo ir el [viernes](fecha) cancela
+    - quiero cancelar mi cupo de las [19:00](hora)
+    - cancela mi clase de las [08:00](hora)
+    - ya no voy al [spinning](clase) del [jueves](fecha)
+    - cancela mi reserva de [funcional](clase)
+    - no puedo ir a [pilates](clase) manana
+    - cancelar cupo
+    - eliminar reserva
+    - dar de baja la reserva
+    - cancelar la hora
+    - cancelar hora reservada
+    - anular hora

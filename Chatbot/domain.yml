@@ -17,6 +17,7 @@ intents:
   - dolor_lesion
   - consultar_reserva
   - crear_reserva
+  - cancelar_reserva
   - enviar_rutina_correo
   - mostrar_rutina_pantalla
   - suscripcion_alta
