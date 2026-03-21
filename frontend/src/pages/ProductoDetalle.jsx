@@ -225,7 +225,7 @@ export default function ProductoDetalle() {
             <div className="product-summary__actions">
               <button
                 type="button"
-                className="btn btn-dark btn-lg"
+                className="btn btn-dark"
                 disabled={sinStock}
                 onClick={() => {
                   if (!sinStock) add();
@@ -233,7 +233,7 @@ export default function ProductoDetalle() {
               >
                 {sinStock ? "No disponible" : "Agregar al carrito"}
               </button>
-              <Link to="/carrito" className="btn btn-outline-secondary btn-lg">
+              <Link to="/carrito" className="btn btn-outline-secondary">
                 Ir al carrito
               </Link>
             </div>
@@ -293,7 +293,7 @@ export default function ProductoDetalle() {
                   </span>
                   <button
                     type="button"
-                    className="btn btn-outline-dark btn-sm"
+                    className="btn btn-outline-dark"
                     disabled={stock <= 0}
                     onClick={() => addRelated(item.id)}
                   >

@@ -1,0 +1,119 @@
+.analytics-page {
+  min-height: 60vh;
+}
+
+.analytics-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.analytics-header h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.analytics-actions {
+  display: flex;
+  align-items: center;
+}
+
+/* KPI Cards */
+.analytics-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.analytics-kpi {
+  background: var(--surface, var(--bs-body-bg, #fff));
+  border: 1px solid var(--border, var(--bs-border-color, #dee2e6));
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.analytics-kpi--warn { border-left: 4px solid #ffc107; }
+.analytics-kpi--info { border-left: 4px solid #0dcaf0; }
+.analytics-kpi--danger { border-left: 4px solid #dc3545; }
+
+.analytics-kpi__label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+}
+
+.analytics-kpi__value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.analytics-kpi__unit {
+  font-size: 0.75rem;
+  font-weight: 400;
+  margin-left: 0.25rem;
+  opacity: 0.6;
+}
+
+/* Bar Chart */
+.analytics-chart {
+  background: var(--surface, var(--bs-body-bg, #fff));
+  border: 1px solid var(--border, var(--bs-border-color, #dee2e6));
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+}
+
+.analytics-chart__title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.analytics-chart__bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.analytics-bar {
+  display: grid;
+  grid-template-columns: 60px 1fr 60px;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.analytics-bar__label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: right;
+}
+
+.analytics-bar__track {
+  height: 24px;
+  background: var(--surface, var(--bs-tertiary-bg, #f0f0f0));
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.analytics-bar__fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.analytics-bar__fill--success { background: #198754; }
+.analytics-bar__fill--warn { background: #ffc107; }
+.analytics-bar__fill--danger { background: #dc3545; }
+.analytics-bar__fill--default { background: #6c757d; }
+
+.analytics-bar__value {
+  font-size: 0.85rem;
+  font-weight: 600;
+}

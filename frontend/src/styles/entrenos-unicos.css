@@ -42,12 +42,16 @@
 .entreno-card-image {
   height: 200px;
   overflow: hidden;
+  touch-action: manipulation;
 }
 
 .entreno-card-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-touch-callout: none;
 }
 
 .entreno-card-body {
@@ -104,99 +108,6 @@
   color: var(--text);
 }
 
-.entreno-detail-hero-container {
-  position: relative;
-  width: 100%;
-  max-width: none;
-}
-
-.entreno-detail-hero {
-  position: relative;
-  width: 100%;
-  padding-bottom: 125%;
-  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-  border-radius: 1rem;
-  overflow: hidden;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.entreno-detail-hero:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
-}
-
-.entreno-detail-hero img {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.entreno-detail-badge {
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.85) 100%);
-  color: white;
-  display: grid;
-  place-items: center;
-  font-weight: 700;
-  font-size: 1.3rem;
-  letter-spacing: 0.05em;
-  border-radius: 0 0.75rem 0.75rem 0;
-  backdrop-filter: blur(4px);
-  transition: background 0.3s ease;
-}
-
-.entreno-detail-hero:hover .entreno-detail-badge {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(37, 99, 235, 0.95) 100%);
-}
-
-.entreno-detail-content h1 {
-  font-size: clamp(1.75rem, 5vw, 2.5rem);
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.02em;
-}
-
-.entreno-detail-content .profile-subtitle {
-  font-size: clamp(0.95rem, 3vw, 1.1rem);
-  font-weight: 500;
-  color: var(--muted);
-}
-
-.entreno-detail-content > p {
-  font-size: 1rem;
-  line-height: 1.7;
-  color: var(--text);
-  margin-top: 0.5rem;
-}
-
-.badge.bg-primary-subtle {
-  background-color: rgba(59, 130, 246, 0.1) !important;
-  border: 1px solid rgba(59, 130, 246, 0.25);
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-@media (max-width: 768px) {
-  .entreno-detail-hero-container {
-    max-width: 320px;
-    margin: 0 auto;
-  }
-
-  .entreno-detail-content h1 {
-    font-size: 1.5rem;
-  }
-
-  .entreno-detail-badge {
-    font-size: 1.1rem;
-  }
-}
-
-
 .entreno-preview-details ul {
   margin-bottom: 0;
   padding-left: 18px;
@@ -244,474 +155,85 @@
 .entrenos-hero-actions {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
   margin-top: 1rem;
 }
 
-/* Detail Page Sections Styling */
-.entreno-detail-section {
-  margin-bottom: 3rem;
-}
-
-.entreno-detail-section-title {
-  font-size: 1.375rem;
-  font-weight: 700;
-  margin-bottom: 1.25rem;
-  color: var(--text);
-  text-transform: capitalize;
-}
-
-.entreno-detail-section-text {
-  font-size: 1rem;
-  line-height: 1.7;
-  color: var(--text);
-  margin-bottom: 1rem;
-}
-
-.entreno-detail-subsection-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-top: 0.75rem;
-  margin-bottom: 0.75rem;
-  color: var(--text);
-}
-
-.entreno-detail-list {
-  margin-left: 1.5rem;
-  margin-bottom: 1rem;
-  list-style-type: disc;
-  padding: 0;
-}
-
-.entreno-detail-list li {
-  margin-bottom: 0.75rem;
-  color: var(--text);
-  line-height: 1.65;
-}
-
-.entreno-detail-list li strong {
-  color: var(--text);
-  font-weight: 600;
-}
-
-.entreno-detail-page section {
-  margin-bottom: 3rem;
-}
-
-.entreno-detail-page section h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 2px solid var(--border);
-  color: var(--text);
-}
-
-.entreno-detail-page section h3 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-top: 1rem;
-  margin-bottom: 0.75rem;
-  color: var(--text);
-}
-
-.entreno-detail-page section ul {
-  margin-left: 1.5rem;
-  margin-bottom: 1rem;
-  list-style-type: disc;
-}
-
-.entreno-detail-page section ul li {
-  margin-bottom: 0.75rem;
-  color: var(--text);
-  line-height: 1.6;
-}
-
-.entreno-detail-page section ul li strong {
-  color: var(--text);
-  font-weight: 600;
-}
-
-.entreno-detail-page .profile-header {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%);
-  border-radius: 16px;
-  padding: 2rem;
-  margin-bottom: 2rem;
-}
-
-.entreno-detail-page .profile-header .row {
-  margin: 0;
-}
-
-.entreno-shell .profile-header {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(99, 102, 241, 0.05) 100%);
-}
-
-/* Contenedor principal */
-.image-hover-container {
-  position: relative;
-  overflow: hidden; /* Importante para que el texto no se salga */
-  cursor: pointer;
-}
-
-/* La capa de información (oculta por defecto) */
-.image-overlay-info {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.75); /* Fondo oscuro semitransparente */
-  opacity: 0; /* Totalmente invisible */
-  transition: opacity 0.4s ease, transform 0.4s ease; /* Animación suave */
-  transform: translateY(10px); /* Ligero movimiento hacia abajo */
-  pointer-events: none; /* Evita que el overlay interfiera con clicks si no es necesario */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1rem;
-  text-align: center;
-  padding: 1rem;
-}
-
-/* Estado al pasar el mouse (Hover) */
-.image-hover-container:hover .image-overlay-info {
-  opacity: 1; /* Se vuelve visible */
-  transform: translateY(0); /* Sube a su posición original */
-  pointer-events: auto;
-}
-
-/* Opcional: Zoom suave en la imagen al hacer hover */
-.image-hover-container:hover img {
-  transform: scale(1.05);
-  transition: transform 0.6s ease;
-}
-
-.image-hover-container img {
-  transition: transform 0.6s ease;
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-}
-
-/* Carrusel styles */
-
-
-
-.carousel-btn {
-  background: var(--neutral-0);
-  border: 1px solid var(--neutral-200);
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 1.2rem;
-  color: var(--neutral-900);
-}
-
-.carousel-btn:hover {
-  border-color: var(--accent-500);
-  color: var(--accent-500);
-}
-
-@media (max-width: 576px) {
-  .entreno-detail-page section {
-    margin-bottom: 2rem;
-  }
-
-  .entreno-detail-page section h2 {
-    font-size: 1.25rem;
-  }
-
-  .entreno-detail-hero-container {
-    max-width: 100%;
-    padding: 0 1rem;
-  }
-
-  .entreno-detail-section-title {
-    font-size: 1.15rem;
-  }
-}
 
 .entrenos-pad-left {
   padding-left: 1.25rem;
+}
+
+/* ── Meal Carousel ─────────────────────────────────── */
+
+.meal-carousel {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.meal-carousel-btn {
+  border: 1px solid var(--border, #dee2e6);
+  background: var(--surface, #f8f9fa);
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  font-size: 1.2rem;
+  color: var(--text, #212529);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.meal-carousel-btn:hover {
+  border-color: var(--accent-500, #0d6efd);
+  color: var(--accent-500, #0d6efd);
+}
+
+.meal-carousel-track {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.meal-carousel-card {
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--surface, #f8f9fa);
+  border: 1px solid var(--border, #dee2e6);
+  text-align: center;
+}
+
+.meal-carousel-card img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.meal-carousel-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 6px;
+  color: var(--text, #212529);
+}
+
+@media (max-width: 600px) {
+  .meal-carousel-track {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
   .entrenos-pad-left {
     padding-left: 0.5rem;
   }
-}
-
-
-:root {
-  --text: #0f172a;
-  --muted: #64748b;
-  --surface: #ffffff;
-  --border: #e2e8f0;
-  --bg: #f8fafc;
-  --neutral-0: #ffffff;
-  --neutral-200: #e2e8f0;
-  --neutral-900: #0f172a;
-  --accent-500: #3b82f6;
-  --accent-600: #2563eb;
-  --primary: #3b82f6;
-}
-
-/* ==========================================================================
-   RESETEOS Y UTILIDADES GLOBALES
-   ========================================================================== */
-* { box-sizing: border-box; }
-
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-  background-color: var(--bg);
-  color: var(--text);
-}
-
-a { text-decoration: none; color: inherit; }
-ul { list-style: none; padding: 0; margin: 0; }
-button { border: none; background: none; cursor: pointer; padding: 0; }
-
-.container-fluid { width: 100%; }
-.shadow-sm { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); }
-.overflow-hidden { overflow: hidden; }
-.bg-white { background-color: rgb(17, 16, 16) !important; }
-.text-muted { color: var(--muted) !important; }
-.mb-2 { margin-bottom: 0.5rem; }
-.mb-3 { margin-bottom: 0.75rem; }
-.mb-4 { margin-bottom: 1.25rem; }
-.mb-5 { margin-bottom: 3rem; }
-.py-5 { padding-top: 3rem; padding-bottom: 3rem; }
-.d-flex { display: flex; }
-.flex-column { flex-direction: column; }
-.justify-content-center { justify-content: center; }
-.align-items-stretch { align-items: stretch; }
-.gap-3 { gap: 1rem; }
-.p-0 { padding: 0 !important; }
-
-/* ==========================================================================
-   COMPONENTES BASE DE LA PÁGINA
-   ========================================================================== */
-.main.entrenos-page { padding-top: 80px; }
-
-.profile-shell {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.profile-header {
-  border-bottom: 1px solid var(--border);
-  position: relative;
-}
-
-/* Texto de la cabecera */
-.display-5 { font-size: 3rem; }
-.fw-bold { font-weight: 700; }
-.lh-1 { line-height: 1.1; }
-.lh-lg { line-height: 1.75; }
-.fs-5 { font-size: 1.125rem; }
-
-/* Botones y Badges */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  padding: 0.5rem 1rem;
-}
-
-.btn-primary {
-  background-color: var(--primary);
-  color: white;
-}
-
-.btn-primary:hover { background-color: var(--accent-600); }
-
-.btn-outline-primary {
-  border: 1px solid var(--primary);
-  color: var(--primary);
-}
-
-.btn-outline-primary:hover {
-  background-color: rgba(59, 130, 246, 0.05);
-}
-
-.badge {
-  display: inline-block;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 999px;
-  padding: 0.35rem 0.65rem;
-}
-
-.bg-primary-subtle {
-  background-color: rgba(59, 130, 246, 0.1) !important;
-  color: var(--primary) !important;
-}
-
-/* ==========================================================================
-   DISEÑO INTERMEDIO (RUTINA Y DIETA)
-   ========================================================================== */
-.card {
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.bg-light { background-color: #0a0b0b !important; }
-
-.h3 { font-size: 1.75rem; }
-.h5 { font-size: 1.15rem; }
-.h6 { font-size: 1rem; font-weight: 600; }
-
-.text-uppercase { text-transform: uppercase; letter-spacing: 0.05em; }
-
-/* Dieta (Modo Oscuro) */
-.bg-dark {
-  background-color: #0f172a !important;
-  color: white !important;
-}
-
-.bg-dark .text-primary { color: #3b82f6 !important; }
-
-.list-group-item {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-}
-
-.list-group-item:last-child { border-bottom: none !important; }
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table-hover tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.03);
-}
-
-.table-responsive {
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid var(--neutral-200);
-}
-
-
-.mt-5 { margin-top: 3rem; }
-
-.rounded-bottom { border-radius: 0 0 12px 12px; }
-
-.border-top { border-top: 4px solid !important; }
-.border-danger { border-color: #ef4444 !important; }
-.border-success { border-color: #22c55e !important; }
-.text-danger { color: #ef4444 !important; }
-.text-success { color: #22c55e !important; }
-
-/* ==========================================================================
-   NUEVO: FUNCIONALIDAD DE ZOOM  
-   ========================================================================== */
-.entreno-retail-zoom-container {
-  position: relative;
-  overflow: hidden;
-  height: 100%;
-  width: 100%;
-  cursor: zoom-in; /* Indica que se puede hacer zoom */
-}
-
-
-.entreno-hero-img-base {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-  min-height: 450px;
-  transition: opacity 0.3s ease; 
-}
-
-/* 2. Imagen Ampliada (La que se mueve y rastrea el mouse) */
-.entreno-hero-img-zoom {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0; 
-  pointer-events: none; 
-  transition: opacity 0.3s ease; 
-}
-
-.entreno-retail-zoom-container.is-zoomed .entreno-hero-img-base {
-  opacity: 0.15; 
-}
-
-.entreno-retail-zoom-container.is-zoomed .entreno-hero-img-zoom {
-  opacity: 1;
-}
-
-@media (max-width: 991px) {
-  .entreno-retail-zoom-container .entreno-hero-img-base,
-  .entreno-retail-zoom-container .entreno-hero-img-zoom {
-    min-height: 350px; 
-  }
-}
-
-@media (max-width: 576px) {
-  .entreno-retail-zoom-container .entreno-hero-img-base,
-  .entreno-retail-zoom-container .entreno-hero-img-zoom {
-    min-height: 280px; 
-  }
-  
-  .entreno-detail-content {
-    padding: 2rem 1.5rem !important; 
-  }
-}
-
-
-
-/* Estilos para el carrusel de comidas */
-.entrenos-carousel-container {
-  position: relative; /* Necesario para posicionar los botones dentro */
-}
-
-.carousel-btn {
-  position: absolute;
-  top: 50%; /* Centrado verticalmente */
-  transform: translateY(-50%);
-  background-color: rgba(255, 255, 255, 0.7); /* Fondo semi-transparente */
-  color: #333;
-  border: none;
-  font-size: 2rem;
-  padding: 0 15px;
-  cursor: pointer;
-  border-radius: 50%;
-  transition: background-color 0.2s;
-  z-index: 10; /* Asegura que esté encima de la imagen */
-}
-
-.carousel-btn:hover {
-  background-color: rgba(255, 255, 255, 0.9);
-}
-
-.carousel-btn-prev {
-  left: 15px; /* Pegado a la izquierda */
-}
-
-.carousel-btn-next {
-  right: 15px; /* Pegado a la derecha */
-}
-
-.carousel-indicator {
-  position: absolute;
-  bottom: 15px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
 }

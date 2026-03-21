@@ -6,7 +6,7 @@ from typing import Optional
 from flask import Blueprint, jsonify, request, session
 
 from ..extensions import db
-from .models import ClassSession, FitnessClass
+from .models import ClassBooking, ClassSession, FitnessClass
 
 bp = Blueprint("classes", __name__)
 
@@ -337,3 +337,69 @@ def delete_session(session_id: int):
     db.session.delete(session_item)
     db.session.commit()
     return jsonify({"message": "Sesion eliminada."}), 200
+
+
+# ---------------------------------------------------------------------------
+# Booking routes
+# ---------------------------------------------------------------------------
+
+@bp.post("/book/<int:session_id>")
+def book_class(session_id: int):
+    uid = session.get("uid")
+    if not uid:
+        return jsonify({"error": "Inicio de sesion requerido."}), 401
+
+    class_session = db.session.get(ClassSession, session_id)
+    if not class_session:
+        return jsonify({"error": "Sesion no encontrada."}), 404
+
+    existing = ClassBooking.query.filter_by(
+        session_id=session_id, user_id=uid, cancelled_at=None
+    ).first()
+    if existing:
+        return jsonify({"error": "Ya tienes una reserva para esta sesion."}), 409
+
+    active_count = ClassBooking.query.filter_by(
+        session_id=session_id, cancelled_at=None
+    ).count()
+    if active_count >= class_session.effective_capacity():
+        return jsonify({"error": "Sesion llena."}), 409
+
+    booking = ClassBooking(session_id=session_id, user_id=uid)
+    db.session.add(booking)
+    db.session.commit()
+    return jsonify({"booking": booking.to_dict()}), 201
+
+
+@bp.delete("/booking/<int:booking_id>")
+def cancel_booking(booking_id: int):
+    uid = session.get("uid")
+    if not uid:
+        return jsonify({"error": "Inicio de sesion requerido."}), 401
+
+    booking = db.session.get(ClassBooking, booking_id)
+    if not booking:
+        return jsonify({"error": "Reserva no encontrada."}), 404
+    if booking.user_id != uid:
+        return jsonify({"error": "No autorizado."}), 403
+    if booking.cancelled_at is not None:
+        return jsonify({"error": "Reserva ya cancelada."}), 400
+
+    booking.cancelled_at = datetime.utcnow()
+    db.session.commit()
+    return jsonify({"booking": booking.to_dict()}), 200
+
+
+@bp.get("/my-bookings")
+def my_bookings():
+    uid = session.get("uid")
+    if not uid:
+        return jsonify({"error": "Inicio de sesion requerido."}), 401
+
+    bookings = (
+        ClassBooking.query
+        .filter_by(user_id=uid, cancelled_at=None)
+        .order_by(ClassBooking.booked_at.desc())
+        .all()
+    )
+    return jsonify({"bookings": [b.to_dict() for b in bookings]}), 200

@@ -1,6 +1,7 @@
 import { Link, useParams, useNavigate } from "react-router-dom";
-import "../styles/entrenos-unicos.css";
-import React, { useState, useRef } from "react"; 
+import { useLocale } from "../contexts/LocaleContext";
+import "../styles/entreno-detalle.css";
+import React, { useState } from "react";
 
 const PLAN_CONTENT = {
   superman_corenswet: {
@@ -59,17 +60,17 @@ const PLAN_CONTENT = {
         "Comida 1: Avena con 2 claras de huevo, canela y fruta.",
         "Comida 2: 1.5 a 2 tazas de arroz con 150g de Jurel y ensalada.",
         "Snack: Pan con 2 huevos duros o pasta de jurel.",
-        "Comida 3: 1 cuarto trasero de pollo al horno con 2 papas cocidas."
+        "Comida 3: 1 cuarto trasero de pollo al horno con 2 papas cocidas.",
       ],
-    mealimages:[
-      "/agua-limon.jpg",
-      "/arroz-atun.jpg",
-      "/avena.jpg",
-      "/cafe.jpg",
-      "/pan-integral.jpg",
-      "/patata.jpg",
-      "/pollo-horno.jpg",
-    ]
+      mealImages: [
+        "/agua-limon.jpg",
+        "/arroz-atun.jpg",
+        "/avena.jpg",
+        "/cafe.jpg",
+        "/pan-integral.jpg",
+        "/patata.jpg",
+        "/pollo-horno.JPG",
+      ],
     },
     warnings: [
       "Problemas Cardíacos: El esfuerzo eleva la presión arterial.",
@@ -84,66 +85,10 @@ const PLAN_CONTENT = {
   },
 };
 
-// --- COMPONENTE INTERNO PARA EL ZOOM  ---
-function RetailZoomImage({ src, alt, zoomLevel = 3.5 }) {
-  const [zoomStyle, setZoomStyle] = useState({});
-  const [isHovering, setIsHovering] = useState(false);
-  const containerRef = useRef(null);
-
-  const handleMouseMove = (e) => {
-    if (!containerRef.current) return;
-
-    const { left, top, width, height } = containerRef.current.getBoundingClientRect();
-    const x = ((e.clientX - left) / width) * 100;
-    const y = ((e.clientY - top) / height) * 100;
-
-    // Calculamos el desfase (offset) para que el mouse actúe como una lente.
-    const xOffset = -(x - 50) * (zoomLevel / 2);
-    const yOffset = -(y - 50) * (zoomLevel / 2);
-
-    setZoomStyle({
-      transformOrigin: `${x}% ${y}%`,
-      transform: `scale(${zoomLevel}) translate(${xOffset}px, ${yOffset}px)`,
-    });
-  };
-
-  const handleMouseEnter = () => {
-    setIsHovering(true);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovering(false);
-    setZoomStyle({}); // Reseteamos los estilos al salir
-  };
-
-  return (
-    <div
-      ref={containerRef}
-      className={`entreno-retail-zoom-container ${isHovering ? "is-zoomed" : ""}`}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <img
-        src={src}
-        alt={alt}
-        className="entreno-hero-img-base"
-        loading="lazy"
-      />
-      <img
-        src={src}
-        alt={`${alt} zoomed`}
-        className="entreno-hero-img-zoom"
-        style={zoomStyle}
-      />
-    </div>
-  );
-}
-// ---------------------------------------------------
-
 export default function EntrenoDetalle() {
   const { planKey } = useParams();
   const navigate = useNavigate();
+  const { t } = useLocale();
   const plan = PLAN_CONTENT[planKey];
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
@@ -151,61 +96,54 @@ export default function EntrenoDetalle() {
     return (
       <main className="profile-page entrenos-page" style={{ paddingTop: 80 }}>
         <div className="profile-shell text-center">
-          <h1 className="profile-title">Plan no encontrado</h1>
-          <Link className="btn btn-primary" to="/entrenos-unicos">Volver a la lista</Link>
+          <h1 className="profile-title">{t("entrenos.detail.notFound")}</h1>
+          <Link className="btn btn-primary" to="/entrenos-unicos">{t("entrenos.detail.backToList")}</Link>
         </div>
       </main>
     );
   }
 
-  const nextImage = () => {
-    setCurrentImageIndex((prevIndex) => prevIndex ===  plan.diet.mealimages.length - 1 ? 0: prevIndex + 1);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prevIndex) => prevIndex === 0 ?  plan.diet.mealimages.length - 1 : prevIndex - 1);
-  };
+  const images = plan.diet.mealImages || [];
+  const nextImage = () => setCurrentImageIndex((i) => (i + 1) % images.length);
+  const prevImage = () => setCurrentImageIndex((i) => (i - 1 + images.length) % images.length);
 
   return (
-    <main className="profile-page entrenos-page entreno-detail-page" style={{ paddingTop: 80 }}>
-      <div className="profile-shell p-0 overflow-hidden"> 
+    <main className="profile-page entrenos-page ed-page">
+      <div className="profile-shell p-0 overflow-hidden">
         {/* HEADER */}
-        <header className="profile-header bg-white border-bottom shadow-sm">
+        <header className="ed-header">
           <div className="row g-0 align-items-stretch">
-            {/* Imagen: Con la lógica de retail integrada */}
             <div className="col-lg-5 col-md-5 overflow-hidden">
-              <RetailZoomImage 
-                src={plan.img || "/superman-david.jpg"} 
-                alt={plan.title} 
-                zoomLevel={3.0} //  ajustar el nivel de zoom aquí
+              <img
+                src={plan.img || "/superman-david.jpg"}
+                alt={plan.title}
+                className="ed-hero-img"
+                draggable={false}
               />
             </div>
-            {/* Texto */}
             <div className="col-lg-7 col-md-7 p-4 p-md-5 d-flex flex-column justify-content-center">
-              <div className="entreno-detail-content">
-                <span className="badge bg-primary-subtle text-primary mb-3 px-3 py-2">{plan.duration}</span>
-                <h1 className="profile-title display-5 fw-bold mb-2">{plan.title}</h1>
-                <h4 className="profile-subtitle text-muted mb-4">{plan.subtitle}</h4>
-                <p className="text-muted lh-lg fs-5">{plan.overview}</p>
-                <div className="d-flex gap-3 mt-4">
-                  <button className="btn btn-outline-primary px-4 py-2" onClick={() => navigate(-1)}>← Volver</button>
-                  <Link className="btn btn-primary px-4 py-2" to="/entrenos-unicos">Explorar otros planes</Link>
-                </div>
+              <span className="ed-badge">{plan.duration}</span>
+              <h1 className="ed-title">{plan.title}</h1>
+              <h4 className="ed-subtitle">{plan.subtitle}</h4>
+              <p className="ed-overview">{plan.overview}</p>
+              <div className="d-flex gap-3 mt-4 flex-wrap">
+                <button className="btn btn-outline-primary" onClick={() => navigate(-1)}>← {t("entrenos.detail.back")}</button>
+                <Link className="btn btn-primary" to="/entrenos-unicos">{t("entrenos.detail.explorePlans")}</Link>
               </div>
             </div>
           </div>
         </header>
 
-        {/* CONTENIDO INTERMEDIO */}
-        <div className="container-fluid px-4 px-md-5 py-5">
+        {/* CONTENIDO */}
+        <div className="ed-content">
           {/* Rutina */}
           <section className="mb-5">
-            <h2 className="h3 border-start border-primary border-4 ps-3 mb-4 fw-bold">Plan de Entrenamiento</h2>
+            <h2 className="ed-section-title">{t("entrenos.detail.trainingPlan")}</h2>
             <div className="row g-4">
               {plan.routine.map((block) => (
                 <div key={block.title} className="col-md-4">
-                  <div className="card h-100 border-0 shadow-sm p-4 bg-light text-dark">
-                    <h3 className="h6 fw-bold text-primary text-uppercase mb-3">{block.title}</h3>
+                  <div className="ed-routine-card">
+                    <h3 className="ed-routine-card-title">{block.title}</h3>
                     <ul className="ps-3 mb-0 small">
                       {block.items.map((item) => <li key={item} className="mb-2">{item}</li>)}
                     </ul>
@@ -216,71 +154,63 @@ export default function EntrenoDetalle() {
           </section>
 
           {/* Dieta */}
-          <section className="mb-5 p-4 p-md-5 rounded-4 bg-dark text-white shadow">
-            <h2 className="h3 mb-4 text-primary fw-bold">{plan.diet.title}</h2>
-            <p className="mb-5 opacity-75">{plan.diet.overview}</p>
-            
+          <section className="ed-diet-section">
+            <h2 className="ed-diet-title">{plan.diet.title}</h2>
+            <p className="ed-diet-overview">{plan.diet.overview}</p>
+
             <div className="row g-5">
               <div className="col-md-5">
-                <h3 className="h5 fw-bold mb-3">Lista de Compras</h3>
-                <ul className="opacity-75">
+                <h3 className="ed-diet-subtitle">{t("entrenos.detail.shoppingList")}</h3>
+                <ul className="ed-diet-list">
                   {plan.diet.shopping.map((item) => <li key={item} className="mb-2">{item}</li>)}
                 </ul>
               </div>
               <div className="col-md-7">
-                <h3 className="h5 fw-bold mb-3">Menú Diario Detallado</h3>
-                <div className="list-group list-group-flush">
+                <h3 className="ed-diet-subtitle">{t("entrenos.detail.dailyMenu")}</h3>
+                <div className="ed-menu-list">
                   {plan.diet.dailyMenu.map((item, idx) => (
-                    <div key={idx} className="list-group-item bg-transparent text-white border-secondary px-0 py-3 small">
-                      {item}
-                    </div>
+                    <div key={idx} className="ed-menu-item">{item}</div>
                   ))}
                 </div>
               </div>
             </div>
-            {/* Carrusel de Imágenes de Comidas */}
-            {plan.diet.mealimages && plan.diet.mealimages.length > 0 && (
-              <div className="mt-5 pt-4 border-top border-secondary">
-                <h4 className="h6 fw-bold text-primary text-uppercase text-center">Visualiza tus comidas</h4>
-                <div className="entrenos-carousel-container relative rounded-3 overflow-hidden shadow-sm bg-white">
+
+            {/* Carrusel de Comidas */}
+            {images.length > 0 && (
+              <div className="ed-meal-carousel-wrap">
+                <h4 className="ed-meal-carousel-title">{t("entrenos.preview.meals")}</h4>
+                <div className="ed-meal-carousel">
+                  <button className="ed-meal-carousel-btn ed-meal-carousel-btn--prev" onClick={prevImage} aria-label={t("entrenos.preview.mealPrev")}>‹</button>
                   <img
-                      src={plan.diet.mealimages[currentImageIndex]}
-                      alt={`Comida ${currentImageIndex + 1}`}
-                      className="d-block w-100 object-fit-cover"
-                      style={{ height: "300px" }}
+                    src={images[currentImageIndex]}
+                    alt={`Comida ${currentImageIndex + 1}`}
+                    className="ed-meal-carousel-img"
+                    draggable={false}
                   />
-                  <button
-                    onClick={prevImage}
-                    classname="carousel-btn carousel-btn-prev"
-                    aria-label="Imagen Anterior">
-                  </button>
-                  <button
-                    onClick={nextImage}
-                    classname="carousel-btn carousel-btn-next"
-                    aria-label="Imagen Siguiente">
-                  </button>
-                  <div className="carousel-indicator small px-2 py-1 rounded bg-dark text-white opacity-75">
-                    {currentImageIndex + 1} / {plan.diet.mealimages.length}
+                  <button className="ed-meal-carousel-btn ed-meal-carousel-btn--next" onClick={nextImage} aria-label={t("entrenos.preview.mealNext")}>›</button>
+                  <div className="ed-meal-carousel-indicator">
+                    {currentImageIndex + 1} / {images.length}
                   </div>
                 </div>
               </div>
             )}
+
             {/* Tabla Nutricional */}
             <div className="table-responsive mt-5">
-              <table className="table table-dark table-hover align-middle border-secondary">
+              <table className="ed-nutrition-table">
                 <thead>
                   <tr>
-                    <th className="text-primary">Momento</th>
-                    <th className="text-primary">Objetivo</th>
-                    <th className="text-primary">Acción</th>
+                    <th>{t("entrenos.detail.moment")}</th>
+                    <th>{t("entrenos.detail.goal")}</th>
+                    <th>{t("entrenos.detail.action")}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {plan.diet.nutritionalGuide.map((row, i) => (
                     <tr key={i}>
                       <td className="fw-bold">{row.momento}</td>
-                      <td><span className="badge bg-primary w-100">{row.objetivo}</span></td>
-                      <td className="small opacity-75">{row.accion}</td>
+                      <td><span className="ed-nutrition-badge">{row.objetivo}</span></td>
+                      <td className="ed-nutrition-action">{row.accion}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -288,21 +218,21 @@ export default function EntrenoDetalle() {
             </div>
           </section>
 
-          {/* ADVERTENCIAS Y CONSEJOS (AL FINAL) */}
+          {/* Advertencias y Consejos */}
           <section className="row g-4 mt-5">
             <div className="col-md-6">
-              <div className="h-100 p-4 border-top border-danger border-4 bg-white shadow-sm rounded-bottom">
-                <h5 className="text-danger fw-bold mb-3">⚠️ Contraindicaciones</h5>
-                <ul className="small mb-0 text-muted">
-                  {plan.warnings.map(w => <li key={w} className="mb-2">{w}</li>)}
+              <div className="ed-warn-card ed-warn-card--danger">
+                <h5 className="ed-warn-card-title ed-warn-card-title--danger">⚠️ {t("entrenos.detail.warnings")}</h5>
+                <ul className="small mb-0">
+                  {plan.warnings.map((w) => <li key={w} className="mb-2">{w}</li>)}
                 </ul>
               </div>
             </div>
             <div className="col-md-6">
-              <div className="h-100 p-4 border-top border-success border-4 bg-white shadow-sm rounded-bottom">
-                <h5 className="text-success fw-bold mb-3">💡 Consejos de Superman</h5>
-                <ul className="small mb-0 text-muted">
-                  {plan.tips.map(t => <li key={t} className="mb-2">{t}</li>)}
+              <div className="ed-warn-card ed-warn-card--success">
+                <h5 className="ed-warn-card-title ed-warn-card-title--success">💡 {t("entrenos.detail.tips")}</h5>
+                <ul className="small mb-0">
+                  {plan.tips.map((tip) => <li key={tip} className="mb-2">{tip}</li>)}
                 </ul>
               </div>
             </div>

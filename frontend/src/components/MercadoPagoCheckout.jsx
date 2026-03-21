@@ -66,7 +66,7 @@ const MercadoPagoCheckout = ({ orderId, userInfo }) => {
       <button
         onClick={handlePayment}
         disabled={loading}
-        className="btn btn-primary btn-lg"
+        className="btn btn-primary"
       >
         {loading ? (
           <>

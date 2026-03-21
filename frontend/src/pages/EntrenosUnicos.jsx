@@ -13,6 +13,17 @@ export default function EntrenosUnicos() {
   const [statusMessage, setStatusMessage] = useState("");
   const [statusError, setStatusError] = useState("");
   const [savedPlan, setSavedPlan] = useState(null);
+  const [mealCarouselIdx, setMealCarouselIdx] = useState(0);
+
+  const mealImages = [
+    { src: "/avena.jpg", label: "Avena" },
+    { src: "/arroz-atun.jpg", label: "Arroz con atún" },
+    { src: "/pollo-horno.JPG", label: "Pollo al horno" },
+    { src: "/patata.jpg", label: "Patata" },
+    { src: "/pan-integral.jpg", label: "Pan integral" },
+    { src: "/cafe.jpg", label: "Café" },
+    { src: "/agua-limon.jpg", label: "Agua con limón" },
+  ];
 
   const handleScrollToPlans = () => {
     const target = document.getElementById("planes-disponibles");
@@ -27,7 +38,7 @@ export default function EntrenosUnicos() {
     setStatusError("");
     setSavedPlan(null);
     if (!isAuthenticated) {
-      setStatusError("Inicia sesión para recibir el plan en tu perfil.");
+      setStatusError(t("entrenos.status.loginRequired"));
       return;
     }
     try {
@@ -55,9 +66,9 @@ export default function EntrenosUnicos() {
         source: "web",
       });
       setSavedPlan(response?.plan || null);
-      setStatusMessage("Plan guardado en tu perfil. Puedes verlo en tu cuenta.");
+      setStatusMessage(t("entrenos.status.saved"));
     } catch (err) {
-      setStatusError(err?.message || "No pude guardar el plan. Intentalo otra vez.");
+      setStatusError(err?.message || t("entrenos.status.saveFailed"));
     }
   };
 
@@ -81,7 +92,7 @@ export default function EntrenosUnicos() {
       link.remove();
       URL.revokeObjectURL(url);
     } catch (err) {
-      setStatusError(err?.message || "No pude descargar el plan.");
+      setStatusError(err?.message || t("entrenos.status.downloadFailed"));
     }
   };
 
@@ -690,6 +701,15 @@ export default function EntrenosUnicos() {
         "Post-entreno: 2 huevos revueltos con pan.",
         "Cena: Cuarto trasero de pollo al horno con papas o arroz.",
       ],
+      mealImages: [
+        "/agua-limon.jpg",
+        "/arroz-atun.jpg",
+        "/avena.jpg",
+        "/cafe.jpg",
+        "/pan-integral.jpg",
+        "/patata.jpg",
+        "/pollo-horno.JPG",
+      ],
       sources: [
         "https://www.gq.com/story/david-corenswet-superman-legacy-workout-1",
         "https://www.eonline.com/news/1419758/supermans-david-corenswet-details-diet-and-workout-transformation",
@@ -862,19 +882,19 @@ export default function EntrenosUnicos() {
     <main className="profile-page entrenos-page">
       <div className="profile-shell">
         <header className="profile-header text-center mb-4">
-          <h1 className="profile-title">Entrenos únicos</h1>
+          <h1 className="profile-title">{t("entrenos.title")}</h1>
           <h4 className="profile-subtitle">
-            Duración definida, guía nutricional e instrucciones generales para lograr físicos icónicos.
+            {t("entrenos.subtitle")}
           </h4>
           <div className="entrenos-hero-actions">
-            <button className="btn btn-primary" onClick={handleScrollToPlans}>Explorar planes</button>
-            <a className="btn btn-outline-secondary" href="/registro">Inscribirme</a>
+            <button className="btn btn-primary btn-lg" onClick={handleScrollToPlans}>{t("entrenos.explorePlans")}</button>
+            <a className="btn btn-primary btn-lg" href="/registro">{t("entrenos.signUp")}</a>
           </div>
         </header>
         <div className="profile-highlight mb-4 entrenos-pad-left">
           <div>
-            <h2 className="profile-highlight-title">Acceso y seguimiento</h2>
-            <p className="mb-0">Guarda tu plan y revísalo desde tu perfil cuando quieras.</p>
+            <h2 className="profile-highlight-title">{t("entrenos.access.title")}</h2>
+            <p className="mb-0">{t("entrenos.access.desc")}</p>
           </div>
           <div className="profile-highlight-icon" aria-hidden="true">
             <span className="bi bi-lightning-charge" />
@@ -882,8 +902,8 @@ export default function EntrenosUnicos() {
         </div>
 
         <section className="mb-4 entrenos-pad-left" id="planes-disponibles">
-          <h2 className="mb-2">Planes disponibles</h2>
-          <p className="text-muted">Explora los planes en el carrusel y previsualiza el estilo antes de inscribirte.</p>
+          <h2 className="mb-2">{t("entrenos.plans.title")}</h2>
+          <p className="text-muted">{t("entrenos.plans.desc")}</p>
           {(statusMessage || statusError) && (
             <div className="entrenos-alerts">
               {statusMessage && <div className="alert alert-success">{statusMessage}</div>}
@@ -891,7 +911,7 @@ export default function EntrenosUnicos() {
             </div>
           )}
           <div className="entrenos-carousel">
-            <button className="entrenos-carousel-btn" onClick={handlePrevPlan} aria-label="Plan anterior">
+            <button className="entrenos-carousel-btn" onClick={handlePrevPlan} aria-label={t("entrenos.prevPlan")}>
               ‹
             </button>
             <div className="entrenos-carousel-track">
@@ -918,21 +938,21 @@ export default function EntrenosUnicos() {
                     </div>
                     <div className="entreno-card-footer">
                       <button className={`btn ${selectedPreview === plan.key ? "btn-outline-primary" : "btn-primary"}`} onClick={(e) => { e.stopPropagation(); setSelectedPreview(plan.key); }}>
-                        {selectedPreview === plan.key ? "Seleccionado" : "Ver vista"}
+                        {selectedPreview === plan.key ? t("entrenos.selected") : t("entrenos.viewPreview")}
                       </button>
                     </div>
                   </article>
                 );
               })}
             </div>
-            <button className="entrenos-carousel-btn" onClick={handleNextPlan} aria-label="Plan siguiente">
+            <button className="entrenos-carousel-btn" onClick={handleNextPlan} aria-label={t("entrenos.nextPlan")}>
               ›
             </button>
           </div>
 
           <div className="entreno-preview mt-4">
-            <h3 className="h5">Vista previa seleccionada</h3>
-            {!selectedPreview && <p className="text-muted">Haz clic en una tarjeta para ver una vista ampliada del tipo de cuerpo asociado al plan.</p>}
+            <h3 className="h5">{t("entrenos.preview.title")}</h3>
+            {!selectedPreview && <p className="text-muted">{t("entrenos.preview.hint")}</p>}
             {selectedPreview && (
               (() => {
                 const p = plans.find(pl => pl.key === selectedPreview);
@@ -943,27 +963,58 @@ export default function EntrenosUnicos() {
                   <div className="card shadow-sm border-0">
                     <div className="row g-0">
                       <div className="col-md-5">
-                        <img src={p.img} alt={`${p.title} large preview`} className="img-fluid h-100 w-100" style={{ objectFit: "cover" }} />
+                        <img src={p.img} alt={`${p.title} large preview`} className="img-fluid h-100 w-100" style={{ objectFit: "cover", pointerEvents: "none", userSelect: "none" }} draggable={false} />
                       </div>
                       <div className="col-md-7">
                         <div className="card-body">
                           <h4 className="card-title">{p.title} — {p.duration}</h4>
                           <p className="card-text">{p.description}</p>
-                          <p className="card-text"><strong>Tipo de cuerpo objetivo:</strong> {p.bodyType}</p>
+                          <p className="card-text"><strong>{t("entrenos.preview.bodyType")}:</strong> {p.bodyType}</p>
                           <div className="entreno-preview-details">
                             <div>
-                              <strong>Entrenamiento:</strong>
-                              <p className="mb-2">{details.training || "Consulta la guía completa del plan para el detalle."}</p>
+                              <strong>{t("entrenos.preview.training")}:</strong>
+                              <p className="mb-2">{details.training || t("entrenos.preview.trainingFallback")}</p>
                             </div>
                             <div>
-                              <strong>Nutrición:</strong>
-                              <p className="mb-2">{details.diet || "Incluye guía de macros y ejemplo de comidas."}</p>
+                              <strong>{t("entrenos.preview.nutrition")}:</strong>
+                              <p className="mb-2">{details.diet || t("entrenos.preview.nutritionFallback")}</p>
                             </div>
-                            {details.calories && <p className="mb-2"><strong>Calorías:</strong> {details.calories}</p>}
-                            {details.macros && <p className="mb-2"><strong>Macros:</strong> {details.macros}</p>}
+                            {details.calories && <p className="mb-2"><strong>{t("entrenos.preview.calories")}:</strong> {details.calories}</p>}
+                            {details.macros && <p className="mb-2"><strong>{t("entrenos.preview.macros")}:</strong> {details.macros}</p>}
                             {(details.meals || []).length > 0 && (
                               <div className="mb-2">
-                                <strong>Ejemplos de comidas:</strong>
+                                <strong>{t("entrenos.preview.meals")}</strong>
+                                {details.mealImages && details.mealImages.length > 0 && (() => {
+                                  const imgs = details.mealImages;
+                                  const labels = mealImages;
+                                  return (
+                                    <div className="meal-carousel mt-2 mb-2">
+                                      <button
+                                        className="meal-carousel-btn"
+                                        onClick={() => setMealCarouselIdx((i) => (i - 1 + imgs.length) % imgs.length)}
+                                        aria-label={t("entrenos.preview.mealPrev")}
+                                      >‹</button>
+                                      <div className="meal-carousel-track">
+                                        {[0, 1, 2].map((offset) => {
+                                          const idx = (mealCarouselIdx + offset) % imgs.length;
+                                          const src = imgs[idx];
+                                          const labelObj = labels.find((l) => l.src === src);
+                                          return (
+                                            <div className="meal-carousel-card" key={`meal-${offset}-${src}`}>
+                                              <img src={src} alt={labelObj?.label || `${t("entrenos.preview.mealLabel")} ${idx + 1}`} draggable={false} />
+                                              <span className="meal-carousel-label">{labelObj?.label || `${t("entrenos.preview.mealLabel")} ${idx + 1}`}</span>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                      <button
+                                        className="meal-carousel-btn"
+                                        onClick={() => setMealCarouselIdx((i) => (i + 1) % imgs.length)}
+                                        aria-label={t("entrenos.preview.mealNext")}
+                                      >›</button>
+                                    </div>
+                                  );
+                                })()}
                                 <ul className="mb-0">
                                   {details.meals.map((meal) => (
                                     <li key={`${p.key}-meal-${meal}`}>{meal}</li>
@@ -973,7 +1024,7 @@ export default function EntrenosUnicos() {
                             )}
                             {(details.guidelines || []).length > 0 && (
                               <div>
-                                <strong>Instrucciones generales:</strong>
+                                <strong>{t("entrenos.preview.guidelines")}:</strong>
                                 <ul className="mb-0">
                                   {details.guidelines.map((note) => (
                                     <li key={`${p.key}-guide-${note}`}>{note}</li>
@@ -983,7 +1034,7 @@ export default function EntrenosUnicos() {
                             )}
                             {workoutPlan.length > 0 && (
                               <div className="mt-3">
-                                <strong>Plan de ejercicios sugerido:</strong>
+                                <strong>{t("entrenos.preview.workout")}:</strong>
                                 <ul className="mb-2">
                                   {workoutPlan.map((session) => (
                                     <li key={`${p.key}-${session.day}`}>
@@ -998,19 +1049,19 @@ export default function EntrenosUnicos() {
                                     </li>
                                   ))}
                                 </ul>
-                                <p className="mb-0"><strong>Progresión:</strong> {progressionModel}</p>
+                                <p className="mb-0"><strong>{t("entrenos.preview.progression")}:</strong> {progressionModel}</p>
                               </div>
                             )}
                           </div>
-                          <p className="text-muted">Selecciona este estilo si te identifica el tipo de cuerpo mostrado y tus objetivos.</p>
+                          <p className="text-muted">{t("entrenos.preview.selectHint")}</p>
                           <div className="d-flex flex-wrap gap-2">
-                            <button className="btn btn-primary" onClick={() => handleEnrollPlan(p)}>Recibir plan</button>
-                            <Link className="btn btn-outline-secondary" to={`/entrenos-unicos/detalle/${p.key}`}>Más detalles</Link>
-                            {!isAuthenticated && <a className="btn btn-outline-secondary" href="/registro">Registrarme</a>}
+                            <button className="btn btn-primary" onClick={() => handleEnrollPlan(p)}>{t("entrenos.preview.enroll")}</button>
+                            <Link className="btn btn-outline-secondary" to={`/entrenos-unicos/detalle/${p.key}`}>{t("entrenos.preview.moreDetails")}</Link>
+                            {!isAuthenticated && <a className="btn btn-outline-secondary" href="/registro">{t("entrenos.preview.register")}</a>}
                             {savedPlan?.id && savedPlan?.plan_key === p.key && (
-                              <button className="btn btn-outline-primary" onClick={() => handleDownload(savedPlan.id)}>Descargar PDF</button>
+                              <button className="btn btn-outline-primary" onClick={() => handleDownload(savedPlan.id)}>{t("entrenos.preview.download")}</button>
                             )}
-                            <button className="btn btn-outline-secondary" onClick={() => setSelectedPreview(null)}>Cerrar vista</button>
+                            <button className="btn btn-outline-secondary" onClick={() => setSelectedPreview(null)}>{t("entrenos.preview.close")}</button>
                           </div>
                         </div>
                       </div>

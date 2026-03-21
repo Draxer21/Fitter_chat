@@ -42,6 +42,12 @@ export default function ProfileSectionNav() {
       >
         {t("profile.nav.diets")}
       </NavLink>
+      <NavLink
+        to="/cuenta/suscripcion"
+        className={({ isActive }) => `profile-section-tab ${isActive ? "is-active" : ""}`}
+      >
+        {t("profile.nav.subscription")}
+      </NavLink>
     </nav>
   );
 }

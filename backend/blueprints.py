@@ -74,6 +74,16 @@ _BLUEPRINTS: Iterable[BlueprintSpec] = (
         url_prefix="/api",
         attr="plans_bp",
     ),
+    BlueprintSpec(
+        label="subscriptions",
+        import_path="backend.subscriptions.routes",
+        url_prefix="/subscriptions",
+    ),
+    BlueprintSpec(
+        label="handoff",
+        import_path="backend.handoff.routes",
+        url_prefix="/handoff",
+    ),
 )
 
 
