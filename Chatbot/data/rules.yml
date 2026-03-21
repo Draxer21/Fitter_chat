@@ -96,11 +96,6 @@ rules:
           - offline_notified: false
       - action: utter_demo_off
 
-  - rule: Mostrar capacidades
-    steps:
-      - intent: ayuda
-      - action: utter_capabilities
-
   - rule: Aviso offline una sola vez en demo
     condition:
       - slot_was_set:
@@ -408,6 +403,11 @@ rules:
       - intent: informar
       - action: action_consultar_reserva
       - action: utter_reserva_estado
+
+  - rule: cancelar reserva
+    steps:
+      - intent: cancelar_reserva
+      - action: action_cancelar_reserva
 
   - rule: suscripcion alta
     steps:
