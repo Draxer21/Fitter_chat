@@ -958,27 +958,99 @@ export default function Chatbot(props = {}) {
       role="region"
       aria-label="Chat con asistente FITTER"
     >
-      {/* Consent overlay: si no acepta, bloquea la interacción */}
+      {/* Consent modal: T&C completos, scroll obligatorio para aceptar */}
       {!consent && (
-        <div className="chatbot-consent-overlay" role="dialog" aria-label="Consentimiento chatbot">
-          <div className="chatbot-consent-panel">
-            <label style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <input
-                type="checkbox"
-                checked={consent}
-                onChange={(e) => onConsentChange(e.target.checked)}
-                aria-label="Aceptar condiciones de uso del chatbot"
-              />
-              <span style={{ fontSize: "0.95rem" }}>Acepto las condiciones de uso del chatbot y autorizo el procesamiento de los datos necesarios para su funcionamiento.</span>
-            </label>
-            <div style={{ marginTop: 12 }}>
+        <div className="chatbot-consent-overlay" role="dialog" aria-modal="true" aria-label="Términos y Condiciones del Chatbot">
+          <div className="chatbot-consent-modal">
+            <div className="chatbot-consent-header">
+              <h2>Términos y Condiciones de Uso</h2>
+              <p className="chatbot-consent-subtitle">Lee los términos completos para poder usar el chatbot</p>
+            </div>
+            <div
+              className="chatbot-consent-body"
+              onScroll={(e) => {
+                const el = e.currentTarget;
+                const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 30;
+                if (atBottom) {
+                  const btn = el.parentElement.querySelector(".chatbot-consent-accept");
+                  if (btn) btn.disabled = false;
+                }
+              }}
+            >
+              <section>
+                <h3>1. Aceptación de los Términos</h3>
+                <p>Al registrarte, acceder o utilizar cualquiera de los servicios de Fitter, confirmas que has leído, comprendido y aceptas estos Términos en su totalidad. Si no estás de acuerdo, por favor, no utilices la plataforma.</p>
+                <p>Debes ser mayor de 18 años o, si eres menor, contar con el consentimiento de un tutor legal.</p>
+              </section>
+              <section>
+                <h3>2. Descripción del Servicio</h3>
+                <p>Fitter es una aplicación full-stack que ofrece rutinas de ejercicio personalizadas, recomendaciones de estilo de vida, un chatbot asistido por IA, una tienda en línea y gestión de usuarios.</p>
+                <p>Las rutinas y recomendaciones no constituyen asesoramiento médico profesional. Fitter no reemplaza la evaluación de un profesional de la salud.</p>
+              </section>
+              <section>
+                <h3>3. Registro y Cuentas de Usuario</h3>
+                <p>Para acceder a servicios personalizados, debes registrarte proporcionando información precisa, incluyendo nombre, correo electrónico, datos físicos y preferencias.</p>
+                <ul>
+                  <li>Mantener la confidencialidad de tus credenciales y códigos MFA.</li>
+                  <li>Notificar a soporte@fitter.cl ante accesos no autorizados.</li>
+                  <li>Responsabilizarse por las actividades realizadas bajo su cuenta.</li>
+                </ul>
+              </section>
+              <section>
+                <h3>4. Privacidad y Protección de Datos</h3>
+                <p>Fitter se compromete a proteger la privacidad conforme a la normativa aplicable (Ley N° 21.719). Datos recopilados: información personal (nombre, email, datos físicos, condiciones médicas), datos de uso y preferencias.</p>
+                <p>Protección: datos sensibles se cifran con AES-128 (Fernet), se almacenan en servidores seguros y se anonimizan en logs.</p>
+                <p>Derechos: acceso, rectificación, eliminación o portabilidad. Solicítalo a privacidad@fitter.cl.</p>
+              </section>
+              <section>
+                <h3>5. Uso Aceptable</h3>
+                <ul>
+                  <li>Usar la plataforma para fines personales y no comerciales.</li>
+                  <li>No violar leyes ni derechos de terceros.</li>
+                  <li>No intentar hackear, inyectar código malicioso o sobrecargar servidores.</li>
+                  <li>No utilizar el chatbot para actividades ilícitas o perjudiciales.</li>
+                </ul>
+              </section>
+              <section>
+                <h3>6. Propiedad Intelectual</h3>
+                <p>Todo el contenido de Fitter (código, diseños, logos, textos, imágenes, algoritmos y bases de datos) es propiedad exclusiva de Fitter SpA o sus licenciadores.</p>
+              </section>
+              <section>
+                <h3>7. Pagos y Compras</h3>
+                <p>La tienda permite comprar productos con carrito, pagos seguros y boletas electrónicas. Los precios incluyen IVA. Pagos se procesan a través de pasarelas seguras. Fitter no almacena datos de tarjetas.</p>
+                <p>Productos defectuosos: derecho a devolución dentro de 7 días conforme a la Ley del Consumidor.</p>
+              </section>
+              <section>
+                <h3>8. Descargos de Responsabilidad</h3>
+                <p>Las rutinas y recomendaciones son generales y no constituyen asesoramiento médico. Fitter no asume responsabilidad por lesiones o daños. No garantizamos servicio 100% ininterrumpido.</p>
+              </section>
+              <section>
+                <h3>9. Terminación</h3>
+                <p>Los Términos permanecen vigentes mientras uses la plataforma. Puedes terminar eliminando tu cuenta. Fitter puede terminar por incumplimiento, notificando con 30 días de antelación.</p>
+              </section>
+              <section>
+                <h3>10. Modificaciones</h3>
+                <p>Fitter puede actualizar estos Términos por cambios normativos, técnicos o de servicio. Avisaremos con 15 días de antelación. El uso continuado implica aceptación.</p>
+              </section>
+              <section>
+                <h3>11. Ley Aplicable</h3>
+                <p>Estos Términos se rigen por la legislación de la República de Chile, en particular la Ley N° 19.496 y la Ley N° 21.719. Cualquier disputa será sometida a los tribunales competentes de Chile.</p>
+              </section>
+              <section>
+                <h3>12. Contacto</h3>
+                <p>Para consultas: soporte@fitter.cl o privacidad@fitter.cl.</p>
+              </section>
+            </div>
+            <div className="chatbot-consent-footer">
+              <p className="chatbot-consent-scroll-hint">Desplázate hasta el final para aceptar</p>
               <button
                 type="button"
+                disabled
+                className="chatbot-consent-accept"
                 onClick={() => onConsentChange(true)}
-                className="chatbot-send-button"
-                aria-label="Aceptar y continuar"
+                aria-label="Acepto los Términos y Condiciones"
               >
-                Aceptar y continuar
+                Acepto los Términos y Condiciones
               </button>
             </div>
           </div>
