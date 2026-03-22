@@ -32,6 +32,7 @@ export default function Chatbot(props = {}) {
   const CONSENT_KEY = "fitter_chat_consent";
   const CONSENT_VERSION = "2025-11-22";
   const [consent, setConsent] = useState(() => localStorage.getItem(CONSENT_KEY) === "1");
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
   const consentSyncedRef = useRef(false);
 
   const syncConsent = async (given) => {
@@ -971,9 +972,8 @@ export default function Chatbot(props = {}) {
               onScroll={(e) => {
                 const el = e.currentTarget;
                 const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 30;
-                if (atBottom) {
-                  const btn = el.parentElement.querySelector(".chatbot-consent-accept");
-                  if (btn) btn.disabled = false;
+                if (atBottom && !hasScrolledToBottom) {
+                  setHasScrolledToBottom(true);
                 }
               }}
             >
@@ -1045,7 +1045,7 @@ export default function Chatbot(props = {}) {
               <p className="chatbot-consent-scroll-hint">Desplázate hasta el final para aceptar</p>
               <button
                 type="button"
-                disabled
+                disabled={!hasScrolledToBottom}
                 className="chatbot-consent-accept"
                 onClick={() => onConsentChange(true)}
                 aria-label="Acepto los Términos y Condiciones"
