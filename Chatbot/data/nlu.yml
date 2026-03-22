@@ -8826,6 +8826,216 @@ nlu:
 
     - Entreno con [barra y discos](equipamiento)
 
+    - Tengo [bandas elasticas](equipamiento)
+
+    - Cuento con [pesas rusas](equipamiento)
+
+    - Uso [kettlebells](equipamiento)
+
+    - Tengo [TRX](equipamiento)
+
+    - Solo cuento con [peso corporal](equipamiento)
+
+    - Tengo [banco y mancuernas](equipamiento)
+
+    - Cuento con [barra olimpica](equipamiento)
+
+    - Equipamiento [gimnasio completo](equipamiento)
+
+    - Entreno con [polea](equipamiento)
+
+    - Tengo [maquinas de gimnasio](equipamiento)
+
+    - Solo tengo [colchoneta](equipamiento)
+
+    - Cuento con [cuerda de saltar](equipamiento)
+
+    - Tengo [bicicleta fija](equipamiento)
+
+    - Uso [ligas de resistencia](equipamiento)
+
+    - Mi equipo es [mancuernas y barra](equipamiento)
+
+    - Tengo [pelota de pilates](equipamiento)
+
+    - Solo uso [mi propio peso](equipamiento)
+
+    - Cuento con [discos y barra](equipamiento)
+
+    - Tengo [rueda abdominal](equipamiento)
+
+    - Mi objetivo es [perder peso](objetivo)
+
+    - Objetivo [ganar musculo](objetivo)
+
+    - Quiero [tonificar](objetivo)
+
+    - Mi meta es [definir](objetivo)
+
+    - Busco [resistencia](objetivo)
+
+    - Mi objetivo es [bajar de peso](objetivo)
+
+    - Quiero [masa muscular](objetivo)
+
+    - Mi meta es [fuerza maxima](objetivo)
+
+    - Objetivo [acondicionamiento fisico](objetivo)
+
+    - Busco [flexibilidad](objetivo)
+
+    - Mi objetivo es [mejorar resistencia](objetivo)
+
+    - Quiero [cardio](objetivo)
+
+    - Busco [volumen muscular](objetivo)
+
+    - Mi meta es [mantenimiento](objetivo)
+
+    - Objetivo [recomposicion corporal](objetivo)
+
+    - Quiero [adelgazar](objetivo)
+
+    - Mi objetivo es [potencia](objetivo)
+
+    - Soy [principiante](nivel)
+
+    - Soy [intermedio](nivel)
+
+    - Soy [avanzado](nivel)
+
+    - Mi nivel es [principiante](nivel)
+
+    - Mi nivel es [intermedio](nivel)
+
+    - Mi nivel es [avanzado](nivel)
+
+    - Nivel [basico](nivel)
+
+    - Soy nivel [basico](nivel)
+
+    - Soy de nivel [medio](nivel)
+
+    - Nivel [medio](nivel)
+
+    - Soy nivel [alto](nivel)
+
+    - Nivel [alto](nivel)
+
+    - Recien empiezo, soy [principiante](nivel)
+
+    - Llevo tiempo, soy [avanzado](nivel)
+
+    - Tengo algo de experiencia, [intermedio](nivel)
+
+    - No tengo experiencia, [principiante](nivel)
+
+    - Llevo años entrenando, [avanzado](nivel)
+
+    - Tengo [25](edad) anos
+
+    - Tengo [30](edad) anos
+
+    - Tengo [35](edad) anos
+
+    - Tengo [40](edad) anos
+
+    - Tengo [50](edad) anos
+
+    - Tengo [22](edad) anos
+
+    - Tengo [18](edad) anos
+
+    - Tengo [55](edad) anos
+
+    - Tengo [60](edad) anos
+
+    - Tengo [33](edad) anos
+
+    - Mi edad es [27](edad)
+
+    - Mi edad es [42](edad)
+
+    - Mi edad es [19](edad)
+
+    - Mi edad es [48](edad)
+
+    - Edad [31](edad)
+
+    - Edad [23](edad)
+
+    - Edad [37](edad)
+
+    - [20](edad) anos
+
+    - [44](edad) anos
+
+    - [56](edad) anos
+
+    - Cumpli [36](edad)
+
+    - Cumpli [41](edad)
+
+    - Cumpli [24](edad)
+
+    - Dispongo de [20](tiempo_disponible) minutos
+
+    - Dispongo de [40](tiempo_disponible) minutos
+
+    - Dispongo de [50](tiempo_disponible) minutos
+
+    - Dispongo de [90](tiempo_disponible) minutos
+
+    - Tengo [30](tiempo_disponible) minutos
+
+    - Tengo [45](tiempo_disponible) minutos
+
+    - Tengo [60](tiempo_disponible) minutos
+
+    - Tengo [75](tiempo_disponible) minutos
+
+    - Tengo [120](tiempo_disponible) minutos
+
+    - Cuento con [30](tiempo_disponible) minutos
+
+    - Cuento con [45](tiempo_disponible) minutos
+
+    - Cuento con [60](tiempo_disponible) minutos
+
+    - [30](tiempo_disponible) minutos tengo
+
+    - [45](tiempo_disponible) minutos disponibles
+
+    - [60](tiempo_disponible) minutos para entrenar
+
+    - Puedo entrenar [40](tiempo_disponible) minutos
+
+    - Me da el tiempo para [50](tiempo_disponible) minutos
+
+    - Como maximo [90](tiempo_disponible) minutos
+
+    - formato [correo electronico](formato)
+
+    - formato [email](formato)
+
+    - formato [pdf detallado](formato)
+
+    - formato [resumen](formato)
+
+    - formato [lista](formato)
+
+    - mandamelo por [correo](formato)
+
+    - lo quiero en [pdf](formato)
+
+    - prefiero en [tabla](formato)
+
+    - enviamelo como [texto](formato)
+
+    - lo quiero ver en [pantalla](formato)
+
+    - por [email](formato) por favor
+
     - bajar grasa
 
     - mantener
@@ -16329,6 +16539,57 @@ nlu:
     - mmm
     - ok no se
     - que random
+    - cuando juega la seleccion
+    - que hay en netflix
+    - como cocino arroz
+    - puedo hablar con alexa
+    - que signo soy
+    - traduce esto al ingles
+    - quien invento el telefono
+    - cuanto mide la luna
+    - que significa sonar con agua
+    - necesito un taxi
+    - puedes prestarme dinero
+    - como me mudo de pais
+    - que musica recomiendas
+    - puedes comprarme algo
+    - donde venden mascotas
+    - cual es tu color favorito
+    - como se llama tu creador
+    - cuanto pesas
+    - tienes novio
+    - sabes bailar
+    - eres un robot
+    - donde vives
+    - que edad tienes
+    - de que pais eres
+    - hablas chino
+    - como esta el trafico
+    - necesito un doctor
+    - donde esta el banco mas cercano
+    - cuantos años tiene la tierra
+    - puedes jugar ajedrez
+    - como descargo musica
+    - quien fue einstein
+    - que es la relatividad
+    - puedes hacer memes
+    - dibujame algo
+    - cual es la mejor serie
+    - como instalo windows
+    - que version de android tengo
+    - puedes enviar un whatsapp
+    - reserva una mesa en un restaurante
+    - comprame un boleto de cine
+    - como hago una fogata
+    - tengo hambre
+    - estoy aburrido
+    - dime algo interesante
+    - sorprendeme
+    - hmmm no se que quiero
+    - bla bla bla
+    - lalalala
+    - qwerty
+    - ñlkjhg
 
 - intent: activar_modo_demo
   examples: |
@@ -16341,6 +16602,81 @@ nlu:
     - modo sin backend
     - modo offline demo
     - activa el modo demo por favor
+    - pon el modo demo
+    - quiero probar en modo demo
+    - activame el demo
+    - ponme el modo offline
+    - activa el demo
+    - poner modo demo
+    - necesito el modo demo
+    - habilitar modo demo
+    - habilita el demo
+    - enciende modo demo
+    - enciende el demo
+    - prende el modo demo
+    - inicia modo demo
+    - inicia el modo demo
+    - iniciar demo
+    - arrancar modo demo
+    - arrancar demo
+    - probar en modo demo
+    - cambiar a modo demo
+    - cambiate a demo
+    - pasate a modo demo
+    - ponerse en modo demo
+    - activa modo offline
+    - quiero el modo sin conexion
+    - activar modo sin servidor
+    - quiero funcionar sin backend
+    - ir a modo demo
+    - vamos al modo demo
+    - activar prueba offline
+    - pon modo de prueba
+    - modo de prueba
+    - habilitar demo
+    - entrar al demo
+    - ponme en demo
+    - quiero demo
+    - pon demo
+    - pasar a demo
+    - iniciar modo offline
+    - entra al modo demo
+    - activa la demo
+    - encender demo
+    - prender demo
+    - modo demo por favor
+    - podrias activar el modo demo
+    - me activas el modo demo
+    - podrias poner el modo demo
+    - quisiera el modo demo
+    - puedes poner modo demo
+    - activa modo demo por favor
+    - pon el modo demo por favor
+    - habilita modo demo por favor
+    - quiero el modo demo activado
+    - activar el modo de demostracion
+    - modo demostracion
+    - quiero modo de demostracion
+    - demo mode
+    - quiero usar el demo
+    - dejame usar el demo
+    - cambiar al modo de prueba offline
+    - ponme sin conexion
+    - funcionar offline
+    - quiero funcionar en modo offline
+    - operar en demo
+    - cambia a offline
+    - pon el sistema en demo
+    - sistema en modo demo
+    - configurar modo demo
+    - cambiar configuracion a demo
+    - test mode
+    - offline mode
+    - modo test
+    - pon modo test
+    - activa modo test
+    - habilita modo test
+    - quiero modo test
 
 - intent: desactivar_modo_demo
   examples: |
@@ -16353,6 +16689,80 @@ nlu:
     - salir del demo
     - modo normal
     - apagar modo demo
+    - quitar el modo demo
+    - saca el modo demo
+    - sacame del modo demo
+    - quitame el demo
+    - deshabilitar modo demo
+    - deshabilita el demo
+    - apaga el demo
+    - apagar el modo demo
+    - apagar demo
+    - ya no quiero modo demo
+    - no quiero mas el demo
+    - terminar modo demo
+    - termina el demo
+    - finalizar demo
+    - finaliza modo demo
+    - cerrar modo demo
+    - cierra el demo
+    - parar modo demo
+    - para el demo
+    - detener modo demo
+    - detener demo
+    - volver a modo online
+    - pasate a modo online
+    - volver online
+    - modo online
+    - cambiar a modo online
+    - cambiar a modo normal
+    - regresa al modo normal
+    - regresar a modo normal
+    - restaurar modo normal
+    - restaura modo normal
+    - modo con conexion
+    - volver a conectar
+    - conectar al servidor
+    - volver al modo con backend
+    - quiero modo con backend
+    - activar modo online
+    - activa el modo normal
+    - quiero el modo normal
+    - pon el modo normal
+    - ponme en modo normal
+    - habilita modo normal
+    - habilitar modo online
+    - salir de la demo
+    - fuera del demo
+    - quiero salir de demo
+    - sacame de modo offline
+    - quitar modo offline
+    - ya no necesito el demo
+    - desactiva la demo
+    - desactivar la demostracion
+    - terminar la demostracion
+    - finalizar la demostracion
+    - salir del modo de prueba
+    - quitar modo de prueba
+    - apagar modo de prueba
+    - desactivar modo offline
+    - modo normal por favor
+    - podrias desactivar el demo
+    - me desactivas el demo
+    - podrias volver al modo normal
+    - quisiera modo normal
+    - puedes quitar el demo
+    - desactiva modo demo por favor
+    - pon modo normal por favor
+    - deshabilita modo demo por favor
+    - normal mode
+    - online mode
+    - modo real
+    - volver al modo real
+    - quiero modo real
+    - desactivar modo test
+    - quitar modo test
+    - salir de modo test
 
 - intent: cancelar_reserva
   examples: |
@@ -16398,3 +16808,72 @@ nlu:
     - cancelar la hora
     - cancelar hora reservada
     - anular hora
+    - quiero cancelar la reserva que hice
+    - cancela la reserva que tengo
+    - necesito cancelar mi clase reservada
+    - quiero quitar mi reserva de clase
+    - sacame de la clase que reserve
+    - ya no voy a la clase que reserve
+    - no voy a asistir a mi clase
+    - necesito liberar mi cupo de clase
+    - quiero dejar mi lugar en la clase
+    - ya no puedo ir a la clase reservada
+    - cancela mi lugar en la clase
+    - quiero retirar mi reserva de clase
+    - deseo retirar mi reserva
+    - retira mi reserva por favor
+    - quita mi reserva de la clase
+    - sacame de la clase
+    - ya no necesito la clase
+    - elimina mi cupo de la clase
+    - borra mi cupo de la clase
+    - cancela mi inscripcion a la clase
+    - quiero desinscribirme de la clase
+    - desinscribirme de la clase
+    - retirar inscripcion de clase
+    - anular inscripcion a clase
+    - ya no quiero ir a la clase reservada
+    - me arrepenti de reservar la clase
+    - cancelo la clase que reserve
+    - no podre ir a mi clase reservada
+    - me surgio algo y no puedo ir a clase
+    - tengo un imprevisto y necesito cancelar la clase
+    - cambio de planes, cancela mi clase
+    - cancela lo que reserve
+    - eliminar lo que reserve
+    - anular lo que reserve
+    - quitar lo que reserve
+    - me quiero bajar de la clase
+    - no me apuntes a la clase
+    - quitame de la clase reservada
+    - desapuntarme de la clase
+    - quiero desapuntarme de la clase
+    - retirar mi nombre de la clase
+    - saca mi nombre de la reserva
+    - necesito cancelar mi cupo de [crossfit](clase)
+    - cancela mi clase de [zumba](clase)
+    - ya no voy a [boxeo](clase)
+    - quita mi reserva de [pilates](clase)
+    - sacame de [yoga](clase) del [miercoles](fecha)
+    - no ire a [spinning](clase) de las [10:00](hora)
+    - cancela mi cupo de [funcional](clase)
+    - anula mi clase de [stretching](clase)
+    - retira mi reserva del [sabado](fecha)
+    - cancela lo del [domingo](fecha)
+    - no puedo el [lunes](fecha) a las [07:00](hora)
+    - cancela mi reserva de [crossfit](clase) del [martes](fecha)
+    - quita mi cupo de [yoga](clase) de las [18:00](hora)
+    - ya no puedo asistir al [spinning](clase)
+    - cancela [boxeo](clase) del [jueves](fecha) a las [20:00](hora)
+    - cancela mi hora de clase
+    - deseo anular mi cupo reservado
+    - quiero cancelar el cupo que reserve
+    - por favor cancela mi reserva de clase
+    - podrias cancelar mi reserva
+    - me podrias cancelar la clase
+    - seria posible cancelar mi reserva
+    - se puede cancelar mi clase
+    - hay forma de cancelar mi reserva
+    - como cancelo mi reserva de clase
+    - como anulo mi reserva de clase
+    - quiero saber como cancelar mi reserva
