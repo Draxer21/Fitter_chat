@@ -39,15 +39,15 @@ pipeline:
   - name: RegexEntityExtractor
     use_regexes: true
     use_lookup_tables: true
-    overwrite_existing_extracted_entities: true
+    overwrite_existing_extracted_entities: false
   - name: ResponseSelector
     epochs: 20
     embedding_dimension: 16
     batch_size: 8
     constrain_similarities: true
   - name: FallbackClassifier
-    threshold: 0.15
-    ambiguity_threshold: 0.05
+    threshold: 0.40
+    ambiguity_threshold: 0.10
 
 policies:
   - name: MemoizationPolicy

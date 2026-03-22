@@ -99,6 +99,42 @@ nlu:
 
     - avanzado
 
+    - basico
+
+    - medio
+
+    - alto
+
+    '
+- lookup: formato
+  examples: '- correo
+
+    - email
+
+    - pdf
+
+    - tabla
+
+    - texto
+
+    - pantalla
+
+    - resumen
+
+    - lista
+
+    '
+- regex: tiempo_disponible
+  examples: '- \b\d{1,3}\s*(minutos|min|mins|horas|hrs|hora)\b
+
+    '
+- regex: edad
+  examples: '- \b\d{1,2}\s*(anos|años|a[ñn]os)\b
+
+    '
+- regex: objetivo
+  examples: '- (bajar[_ ]grasa|perder[_ ]peso|hipertrofia|ganar[_ ]m[uú]sculo|tonificar|definir|definici[oó]n|resistencia|fuerza|mantenimiento|recomposici[oó]n|volumen|cardio|adelgazar|potencia|masa muscular)
+
     '
 - intent: actualizar_perfil
   examples: '- me gustaria ajustar el perfil agregando los objetivos 2024
@@ -11383,7 +11419,67 @@ nlu:
 
     - Me gustaria una guia alimenticia para mejorar mi digestion; recuerda que practico ayuno intermitente
 
-    - Quiero un menu sin azucar anadida que me ayude a subir masa sin grasa, considerando que tengo gastritis'
+    - Quiero un menu sin azucar anadida que me ayude a subir masa sin grasa, considerando que tengo gastritis
+
+    - hazme un plan de alimentacion
+
+    - necesito un plan de alimentacion
+
+    - quiero que me hagas una dieta personalizada
+
+    - crea una dieta para mi
+
+    - genera una dieta para mi
+
+    - generame una dieta
+
+    - creame una dieta
+
+    - diseñame una dieta
+
+    - quiero un plan de comidas
+
+    - necesito un plan de comidas
+
+    - dame un plan de comidas
+
+    - arma un plan de comidas para mi
+
+    - quiero un plan alimenticio personalizado
+
+    - necesito un plan alimenticio para entrenar
+
+    - dame un plan nutricional para mi
+
+    - quiero una dieta personalizada
+
+    - necesito una dieta personalizada
+
+    - quiero que me armes una dieta
+
+    - podrias armarme una dieta
+
+    - me podrias hacer una dieta
+
+    - puedes crearme una dieta
+
+    - quiero consultar sobre una dieta
+
+    - me interesa una dieta
+
+    - busco una dieta
+
+    - quiero mejorar mi alimentacion
+
+    - necesito mejorar mi alimentacion
+
+    - ayudame con una dieta
+
+    - dame una dieta nueva
+
+    - arma una nueva dieta para mi
+
+    - planifica mi alimentacion'
 - intent: solicitar_rutina
   examples: '- rutina
 
@@ -16233,7 +16329,69 @@ nlu:
 
     - pasarme al plan mensual
 
-    - quiero el plan premium'
+    - quiero el plan premium
+
+    - cambiar plan de suscripcion a otro
+
+    - me quiero mover a otro plan de suscripcion
+
+    - necesito un cambio de plan de suscripcion
+
+    - como cambio mi plan de suscripcion
+
+    - quiero hacer un cambio de plan
+
+    - solicito cambio de plan de suscripcion
+
+    - me interesa cambiar mi plan de suscripcion
+
+    - podrias cambiar mi plan de suscripcion
+
+    - puedo cambiar mi plan de suscripcion
+
+    - es posible cambiar mi plan de suscripcion
+
+    - hay forma de cambiar mi plan de suscripcion
+
+    - necesito hacer un upgrade de mi suscripcion
+
+    - quiero hacer un downgrade de mi suscripcion
+
+    - como hago para cambiar mi plan de suscripcion
+
+    - quiero cambiar mi plan de gym
+
+    - necesito cambiar mi plan del gimnasio
+
+    - quiero migrar mi plan de suscripcion
+
+    - cambiar mi plan mensual a anual
+
+    - cambiar mi plan anual a mensual
+
+    - quiero pasar de plan mensual a trimestral
+
+    - deseo cambiar de plan mensual a anual
+
+    - cambio de plan por favor
+
+    - me gustaria cambiar de plan de suscripcion
+
+    - quisiera cambiar mi plan de suscripcion actual
+
+    - puedo hacer un cambio de plan
+
+    - quiero ver opciones para cambiar mi plan
+
+    - solicitar cambio de plan
+
+    - tramitar un cambio de plan
+
+    - gestionar cambio de plan
+
+    - quiero renovar con otro plan
+
+    - cambiar a un plan diferente'
 - intent: afirmar
   examples: '- si, confirma por favor
 
@@ -16594,175 +16752,128 @@ nlu:
 - intent: activar_modo_demo
   examples: |
     - activar modo demo
-    - modo demo
     - activa modo demo
     - activar demo
-    - demo
-    - entrar a modo demo
-    - modo sin backend
-    - modo offline demo
     - activa el modo demo por favor
     - pon el modo demo
-    - quiero probar en modo demo
+    - quiero activar el modo demo
     - activame el demo
-    - ponme el modo offline
     - activa el demo
-    - poner modo demo
-    - necesito el modo demo
+    - necesito activar el modo demo
     - habilitar modo demo
     - habilita el demo
     - enciende modo demo
     - enciende el demo
     - prende el modo demo
+    - prende el demo
     - inicia modo demo
-    - inicia el modo demo
-    - iniciar demo
+    - iniciar el demo
     - arrancar modo demo
-    - arrancar demo
-    - probar en modo demo
-    - cambiar a modo demo
-    - cambiate a demo
-    - pasate a modo demo
-    - ponerse en modo demo
+    - entrar a modo demo
+    - entrar al modo demo
+    - quiero entrar al modo demo
     - activa modo offline
-    - quiero el modo sin conexion
+    - activar modo offline
+    - activa el modo sin conexion
     - activar modo sin servidor
-    - quiero funcionar sin backend
-    - ir a modo demo
-    - vamos al modo demo
+    - activa el modo sin backend
+    - quiero activar el modo offline
+    - enciende el modo offline
+    - prende el modo offline
+    - habilita el modo offline
+    - pon el modo de prueba
+    - activa el modo de prueba
+    - habilitar modo de prueba
     - activar prueba offline
-    - pon modo de prueba
-    - modo de prueba
-    - habilitar demo
-    - entrar al demo
-    - ponme en demo
-    - quiero demo
-    - pon demo
-    - pasar a demo
-    - iniciar modo offline
-    - entra al modo demo
-    - activa la demo
-    - encender demo
-    - prender demo
-    - modo demo por favor
+    - activa la demostracion
+    - activar la demostracion
+    - enciende la demostracion
     - podrias activar el modo demo
     - me activas el modo demo
-    - podrias poner el modo demo
-    - quisiera el modo demo
-    - puedes poner modo demo
-    - activa modo demo por favor
-    - pon el modo demo por favor
-    - habilita modo demo por favor
-    - quiero el modo demo activado
-    - activar el modo de demostracion
-    - modo demostracion
-    - quiero modo de demostracion
-    - demo mode
-    - quiero usar el demo
-    - dejame usar el demo
-    - cambiar al modo de prueba offline
-    - ponme sin conexion
-    - funcionar offline
-    - quiero funcionar en modo offline
-    - operar en demo
-    - cambia a offline
-    - pon el sistema en demo
-    - sistema en modo demo
-    - configurar modo demo
-    - cambiar configuracion a demo
-    - test mode
-    - offline mode
-    - modo test
-    - pon modo test
-    - activa modo test
-    - habilita modo test
-    - quiero modo test
+    - podrias activar el demo
+    - puedes activar el modo demo
+    - por favor activa el demo
+    - enciende el demo por favor
+    - prende el demo por favor
+    - habilita el demo por favor
+    - activa el modo test
+    - enciende el modo test
+    - habilita el modo test
+    - activar test mode
 
 - intent: desactivar_modo_demo
   examples: |
     - desactivar modo demo
-    - salir del modo demo
     - desactiva modo demo
-    - quitar modo demo
-    - volver al modo normal
     - desactivar demo
+    - desactiva el demo
+    - desactiva el modo demo por favor
+    - quiero desactivar el modo demo
+    - salir del modo demo
     - salir del demo
-    - modo normal
-    - apagar modo demo
-    - quitar el modo demo
-    - saca el modo demo
+    - salir de la demo
+    - quiero salir del modo demo
+    - quiero salir del demo
     - sacame del modo demo
+    - sacame del demo
+    - saca el modo demo
+    - quitar modo demo
+    - quitar el modo demo
     - quitame el demo
+    - quita el demo
+    - apagar modo demo
+    - apagar el demo
+    - apaga el demo
+    - apaga el modo demo
     - deshabilitar modo demo
     - deshabilita el demo
-    - apaga el demo
-    - apagar el modo demo
-    - apagar demo
-    - ya no quiero modo demo
-    - no quiero mas el demo
+    - deshabilita el modo demo
     - terminar modo demo
     - termina el demo
     - finalizar demo
-    - finaliza modo demo
+    - finaliza el demo
     - cerrar modo demo
     - cierra el demo
     - parar modo demo
     - para el demo
     - detener modo demo
-    - detener demo
-    - volver a modo online
-    - pasate a modo online
-    - volver online
-    - modo online
-    - cambiar a modo online
-    - cambiar a modo normal
+    - detener el demo
+    - volver al modo normal
+    - volver a modo normal
+    - regresar al modo normal
     - regresa al modo normal
-    - regresar a modo normal
     - restaurar modo normal
-    - restaura modo normal
-    - modo con conexion
-    - volver a conectar
-    - conectar al servidor
+    - volver al modo online
+    - volver online
+    - cambiar a modo normal
+    - cambiar a modo online
     - volver al modo con backend
-    - quiero modo con backend
-    - activar modo online
-    - activa el modo normal
-    - quiero el modo normal
-    - pon el modo normal
-    - ponme en modo normal
-    - habilita modo normal
-    - habilitar modo online
-    - salir de la demo
-    - fuera del demo
-    - quiero salir de demo
-    - sacame de modo offline
-    - quitar modo offline
+    - volver al modo con conexion
+    - ya no quiero modo demo
+    - no quiero mas el demo
     - ya no necesito el demo
-    - desactiva la demo
+    - desactivar modo offline
+    - desactiva el modo offline
+    - apagar modo offline
+    - quitar modo offline
+    - salir del modo offline
     - desactivar la demostracion
+    - desactiva la demostracion
     - terminar la demostracion
     - finalizar la demostracion
     - salir del modo de prueba
     - quitar modo de prueba
     - apagar modo de prueba
-    - desactivar modo offline
-    - modo normal por favor
     - podrias desactivar el demo
     - me desactivas el demo
-    - podrias volver al modo normal
-    - quisiera modo normal
-    - puedes quitar el demo
-    - desactiva modo demo por favor
-    - pon modo normal por favor
-    - deshabilita modo demo por favor
-    - normal mode
-    - online mode
-    - modo real
-    - volver al modo real
-    - quiero modo real
-    - desactivar modo test
+    - puedes desactivar el demo
+    - por favor desactiva el demo
+    - apaga el demo por favor
+    - quita el demo por favor
+    - desactiva el modo test
+    - apagar modo test
     - quitar modo test
-    - salir de modo test
+    - salir del modo test
 
 - intent: cancelar_reserva
   examples: |
