@@ -20,6 +20,30 @@ from ..extensions import db
 from .models import User
 bp = Blueprint("login", __name__)
 
+# ---------- Rate-limit por endpoint (proteccion anti-DDoS / brute-force) ----------
+# Se aplican solo si flask-limiter esta instalado.
+try:
+    from flask_limiter import Limiter
+    _has_limiter = True
+except ImportError:
+    _has_limiter = False
+
+
+def _apply_rate_limits(app):
+    """Aplica limites estrictos a endpoints sensibles de autenticacion."""
+    limiter = getattr(app, "limiter", None)
+    if limiter is None:
+        return
+    # Login: 10 intentos/min — mitiga brute-force
+    limiter.limit("10/minute")(do_login)
+    # Register: 5/min — evita creacion masiva de cuentas
+    limiter.limit("5/minute")(register)
+    # Google OAuth: 10/min
+    limiter.limit("10/minute")(google_login)
+    # MFA setup/confirm: 10/min
+    limiter.limit("10/minute")(mfa_setup)
+    limiter.limit("10/minute")(mfa_confirm)
+
 
 USERNAME_PATTERN = re.compile(r"^[a-z0-9_-]{3,32}$")
 EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")

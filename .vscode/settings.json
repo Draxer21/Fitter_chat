@@ -1,3 +1,21 @@
 {
-    "python-envs.pythonProjects": []
+    "python-envs.pythonProjects": [],
+    "python.defaultInterpreterPath": "${workspaceFolder}\\.venv\\Scripts\\python.exe",
+    "python.terminal.activateEnvironment": true,
+    "python.terminal.activateEnvInCurrentTerminal": true,
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "args": ["-NoExit", "-Command", "& '${workspaceFolder}\\.venv\\Scripts\\Activate.ps1'"]
+        },
+        "Command Prompt": {
+            "path": "cmd.exe",
+            "args": ["/K", "${workspaceFolder}\\.venv\\Scripts\\activate.bat"]
+        },
+        "Git Bash": {
+            "source": "Git Bash",
+            "args": ["--init-file", "${workspaceFolder}/.venv/Scripts/activate"]
+        }
+    }
 }

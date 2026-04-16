@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 import random
 
-from .common import build_health_notes, parse_allergy_list, parse_health_flags, equip_key_norm
+from .common import build_health_notes, parse_allergy_list, parse_health_flags, equip_key_norm, EQUIPOS_MIXTO_PREFERENCIA
 
 SCHEMES: Dict[str, Dict[str, Dict[str, Any]]] = {
     "fuerza": {
@@ -21,11 +21,13 @@ SCHEMES: Dict[str, Dict[str, Dict[str, Any]]] = {
     },
     "bajar_grasa": {
         "principiante": {"series": (3, 4), "reps": (10, 15), "rires": "RIR 2–3", "rpe": "RPE 6–7"},
-        "intermedio":   {"series": (3, 4), "reps": (12, 15), "rires": "RIR 2–3", "rpe": "RPE 6–7"}
+        "intermedio":   {"series": (3, 4), "reps": (12, 15), "rires": "RIR 2–3", "rpe": "RPE 6–7"},
+        "avanzado":     {"series": (4, 5), "reps": (15, 20), "rires": "RIR 1–2", "rpe": "RPE 7–8"}
     },
     "resistencia": {
         "principiante": {"series": (3, 4), "reps": (12, 20), "rires": "RIR 2–3", "rpe": "RPE 6–7"},
-        "intermedio":   {"series": (3, 4), "reps": (12, 20), "rires": "RIR 2-3", "rpe": "RPE 6-7"}
+        "intermedio":   {"series": (3, 4), "reps": (15, 20), "rires": "RIR 2-3", "rpe": "RPE 6-7"},
+        "avanzado":     {"series": (4, 5), "reps": (20, 25), "rires": "RIR 1–2", "rpe": "RPE 7–8"}
     }
 }
 
@@ -195,28 +197,6 @@ CATALOGO: Dict[str, Dict[str, List[Tuple[str, str, str]]]] = {
 
 }
 
-# Esquemas de series/reps/RPE por objetivo-nivel
-SCHEMES: Dict[str, Dict[str, Dict[str, Any]]] = {
-    "fuerza": {
-        "principiante": {"series": (3, 4), "reps": (4, 6), "rires": "RIR 2", "rpe": "RPE 8"},
-        "intermedio":   {"series": (4, 5), "reps": (3, 5), "rires": "RIR 1-2", "rpe": "RPE 8-9"},
-        "avanzado":     {"series": (5, 6), "reps": (2, 4), "rires": "RIR 0-1", "rpe": "RPE 9-9.5"}
-    },
-    "hipertrofia": {
-        "principiante": {"series": (3, 4), "reps": (8, 12), "rires": "RIR 2", "rpe": "RPE 7–8"},
-        "intermedio":   {"series": (3, 5), "reps": (6, 12), "rires": "RIR 1–2", "rpe": "RPE 7–9"},
-        "avanzado":     {"series": (4, 6), "reps": (6, 10), "rires": "RIR 0–1", "rpe": "RPE 8–9"}
-    },
-    "bajar_grasa": {
-        "principiante": {"series": (3, 4), "reps": (10, 15), "rires": "RIR 2–3", "rpe": "RPE 6–7"},
-        "intermedio":   {"series": (3, 4), "reps": (12, 15), "rires": "RIR 2–3", "rpe": "RPE 6–7"}
-    },
-    "resistencia": {
-        "principiante": {"series": (3, 4), "reps": (12, 20), "rires": "RIR 2–3", "rpe": "RPE 6–7"},
-        "intermedio":   {"series": (3, 4), "reps": (12, 20), "rires": "RIR 2-3", "rpe": "RPE 6-7"}
-    }
-}
-
 HERO_PROGRAMS: Dict[str, Dict[str, str]] = {
     "shonen": {
         "title": "Shonen Power",
@@ -238,6 +218,55 @@ HERO_PROGRAMS: Dict[str, Dict[str, str]] = {
         "focus": "Resistencia progresiva y trabajo aeróbico estructurado",
         "body_type": "Robusto y resistente",
         "training": "Ciclos largos con cardio guiado, fuerza básica y sesiones de recuperación activa.",
+    },
+    "batman_bale": {
+        "title": "Batman Bale — Guerrero Funcional",
+        "duration": "10 semanas",
+        "focus": "Fuerza funcional, artes marciales y acondicionamiento total",
+        "body_type": "Delgado, denso y funcional",
+        "training": "Combina trabajo de fuerza con barra y peso corporal, circuitos de artes marciales, agilidad y sesiones de resistencia con saco. 5 días a la semana.",
+    },
+    "batman_affleck": {
+        "title": "Batman Affleck — Masa y Poder",
+        "duration": "12 semanas",
+        "focus": "Hipertrofia máxima + fuerza de base",
+        "body_type": "Grande, musculoso y imponente",
+        "training": "Programa de hipertrofia de alta frecuencia: press, dominadas pesadas, sentadilla y peso muerto. 5-6 días a la semana con volumen progresivo.",
+    },
+    "batman_pattinson": {
+        "title": "Batman Pattinson — Estético y Ágil",
+        "duration": "8 semanas",
+        "focus": "Definición estética, movilidad y resistencia muscular",
+        "body_type": "Estético, definido y ágil",
+        "training": "Mesociclos de definición con series de alto volumen, cardio HIIT y trabajo de movilidad. 4-5 sesiones semanales.",
+    },
+    "capitan_america_evans": {
+        "title": "Capitán América Evans — Súper Soldado",
+        "duration": "12 semanas",
+        "focus": "Fuerza + hipertrofia equilibrada en todo el cuerpo",
+        "body_type": "Atlético, simétrico y poderoso",
+        "training": "Entrenamiento de cuerpo completo periodizado: press de banca, sentadilla, peso muerto, dominadas lastradas y sprints. 5 días a la semana.",
+    },
+    "superman_cavill": {
+        "title": "Superman Cavill — El Hombre de Acero",
+        "duration": "14 semanas",
+        "focus": "Hipertrofia máxima + definición final",
+        "body_type": "Masivo, definido y simétrico",
+        "training": "Fases de volumen seguidas de definición: levantamientos olímpicos, aislamiento muscular y cardio metabólico de alta intensidad. 6 días a la semana.",
+    },
+    "superman_corenswet": {
+        "title": "Superman Corenswet — Nueva Era",
+        "duration": "10 semanas",
+        "focus": "Fuerza explosiva + masa muscular moderna",
+        "body_type": "Musculoso, explosivo y estético",
+        "training": "Bloques de fuerza explosiva con cargadas, press militar, sentadilla frontal y trabajo de potencia. 5 días a la semana con énfasis en explosividad.",
+    },
+    "wolverine_jackman": {
+        "title": "Wolverine Jackman — Ferocidad Total",
+        "duration": "12 semanas",
+        "focus": "Fuerza bruta + densidad muscular + definición",
+        "body_type": "Denso, duro y definido",
+        "training": "Entrenamiento pesado de estilo powerlifting combinado con accesorios de hipertrofia y cardio funcional. 5-6 sesiones semanales con progresión lineal en grandes levantamientos.",
     },
 }
 
@@ -386,48 +415,163 @@ DIET_BASES: Dict[str, Dict[str, Any]] = {
 
 def _build_bank_por_prioridad(grupo: str, equip: str) -> List[Tuple[str, str]]:
     """
-    Construye un pool de ejercicios (nombre, url) según prioridad:
-    1) grupo + equip
-    2) grupo + cualquier equip disponible
-    3) fallback: fullbody + mancuernas
+    Construye un pool de ejercicios (nombre, url):
+    - equip == "mixto": mezcla balanceada de todos los equipos disponibles para el grupo.
+    - equip específico: prioriza ese equipo y completa con el resto si hace falta.
+    - fallback final: fullbody + mancuernas.
     """
     g = (grupo or "").strip().lower()
     e = equip_key_norm(equip)
 
     pool: List[Tuple[str, str]] = []
+    seen: set = set()
 
-    # 1) grupo + equip
-    if g in CATALOGO and e in CATALOGO[g]:
-        pool += [(n, u) for (n, u, _src) in CATALOGO[g][e]]
+    def _add(items: List[Tuple[str, str, str]]) -> None:
+        for n, u, _src in items:
+            if n not in seen:
+                seen.add(n)
+                pool.append((n, u))
 
-    # 2) grupo + otros equip si 1) quedó corto
-    if g in CATALOGO:
-        for e2, lista in CATALOGO[g].items():
-            if e2 == e:
-                continue
-            pool += [(n, u) for (n, u, _src) in lista]
+    if e == "mixto":
+        # Modo mixto: recoge 1-2 ejercicios de cada tipo de equipo disponible,
+        # respetando el orden de preferencia, para garantizar variedad real.
+        if g in CATALOGO:
+            equip_disponible = list(CATALOGO[g].keys())
+            # Primero los que están en la lista de preferencia, en ese orden
+            orden = [eq for eq in EQUIPOS_MIXTO_PREFERENCIA if eq in equip_disponible]
+            # Luego los que no están en la lista de preferencia
+            orden += [eq for eq in equip_disponible if eq not in orden]
+            for eq in orden:
+                _add(CATALOGO[g][eq])
+        # fallback
+        if "fullbody" in CATALOGO:
+            for eq in EQUIPOS_MIXTO_PREFERENCIA:
+                if eq in CATALOGO["fullbody"]:
+                    _add(CATALOGO["fullbody"][eq])
+    else:
+        # Equipo específico: primero el equipo solicitado
+        if g in CATALOGO and e in CATALOGO[g]:
+            _add(CATALOGO[g][e])
 
-    # 3) fallback adicional (se suma al final)
-    if "fullbody" in CATALOGO and "mancuernas" in CATALOGO["fullbody"]:
-        pool += [(n, u) for (n, u, _src) in CATALOGO["fullbody"]["mancuernas"]]
+        # Luego el resto para completar si hay pocos ejercicios
+        if g in CATALOGO:
+            for e2, lista in CATALOGO[g].items():
+                if e2 != e:
+                    _add(lista)
 
-    # deduplicar por nombre
-    seen = set()
-    unique_pool: List[Tuple[str, str]] = []
-    for n, u in pool:
-        if n not in seen:
-            seen.add(n)
-            unique_pool.append((n, u))
-    return unique_pool
+        # fallback
+        if "fullbody" in CATALOGO and "mancuernas" in CATALOGO["fullbody"]:
+            _add(CATALOGO["fullbody"]["mancuernas"])
+
+    return pool
+
+
+def _pick_mixto_balanceado(grupo: str, n: int) -> List[Tuple[str, str]]:
+    """
+    Para modo mixto: selecciona ejercicios en round-robin por equipo para
+    garantizar variedad real (no todos del mismo tipo).
+    """
+    g = (grupo or "").strip().lower()
+    if g not in CATALOGO:
+        return []
+
+    equip_disponible = list(CATALOGO[g].keys())
+    orden = [eq for eq in EQUIPOS_MIXTO_PREFERENCIA if eq in equip_disponible]
+    orden += [eq for eq in equip_disponible if eq not in orden]
+
+    # Construye listas aleatorias por equipo
+    buckets: List[List[Tuple[str, str]]] = []
+    for eq in orden:
+        items = [(name, url) for name, url, _ in CATALOGO[g][eq]]
+        random.shuffle(items)
+        buckets.append(items)
+
+    # Round-robin: 1 ejercicio de cada equipo en ciclos
+    result: List[Tuple[str, str]] = []
+    seen: set = set()
+    idx = [0] * len(buckets)
+    cycle = 0
+    while len(result) < n:
+        added_in_cycle = 0
+        for b, bucket in enumerate(buckets):
+            if len(result) >= n:
+                break
+            while idx[b] < len(bucket):
+                name, url = bucket[idx[b]]
+                idx[b] += 1
+                if name not in seen:
+                    seen.add(name)
+                    result.append((name, url))
+                    added_in_cycle += 1
+                    break
+        cycle += 1
+        if added_in_cycle == 0:
+            break  # todos los buckets agotados
+
+    return result
 
 
 def pick_exercises(grupo: str, equip: str, n: int) -> List[Tuple[str, str]]:
-    """Devuelve n ejercicios (nombre, url) priorizando el banco más relevante, sin duplicados."""
+    """Devuelve n ejercicios (nombre, url).
+    En modo mixto usa round-robin por equipo para garantizar variedad.
+    Con equipo específico prioriza ese equipo y completa con el resto.
+    """
+    e = equip_key_norm(equip)
+    if e == "mixto":
+        result = _pick_mixto_balanceado(grupo, n)
+        if result:
+            return result
     pool = _build_bank_por_prioridad(grupo, equip)
     if not pool:
         return []
     random.shuffle(pool)
     return pool[:max(0, n)]
+
+
+def _build_conversational_rules(
+    health_flags: Dict[str, bool],
+    allergy_list: List[str],
+    condiciones: Optional[str],
+) -> List[str]:
+    """Genera reglas en lenguaje natural segun las condiciones del usuario."""
+    rules: List[str] = []
+    if health_flags.get("hipertension"):
+        rules.append(
+            "Se redujo la intensidad maxima (RPE <= 7) porque la hipertension "
+            "requiere evitar picos de presion arterial durante el esfuerzo."
+        )
+    if health_flags.get("cardiaco"):
+        rules.append(
+            "Se limito la intensidad y se recomienda validacion medica previa "
+            "debido a los antecedentes cardiacos reportados."
+        )
+    if health_flags.get("diabetes"):
+        rules.append(
+            "Se incluyo la recomendacion de monitorear glucosa porque el ejercicio "
+            "intenso puede provocar hipoglucemia en personas con diabetes."
+        )
+    if health_flags.get("asma"):
+        rules.append(
+            "Se sugirio un calentamiento mas largo y progresivo para reducir "
+            "el riesgo de broncoespasmo inducido por ejercicio."
+        )
+    if allergy_list:
+        rules.append(
+            f"Las alergias declaradas ({', '.join(allergy_list)}) se registraron "
+            f"para ser consideradas en recomendaciones nutricionales complementarias."
+        )
+    if not rules:
+        if condiciones and condiciones.strip().lower() not in ("", "ninguna", "no", "ninguno"):
+            rules.append(
+                f"Se evaluaron las condiciones reportadas ({condiciones}) y no se "
+                f"identificaron restricciones que requieran ajustes adicionales."
+            )
+        else:
+            rules.append(
+                "No se reportaron condiciones medicas ni alergias, por lo que "
+                "no fue necesario aplicar restricciones adicionales a la rutina."
+            )
+    return rules
 
 
 def generate_workout_plan(
@@ -447,7 +591,7 @@ def generate_workout_plan(
     objetivo_norm = (objetivo or "fuerza").strip().lower()
     nivel_norm = (nivel or "intermedio").strip().lower()
     musculo_norm = (musculo or "fullbody").strip().lower()
-    equip_norm = equipamiento or "mancuernas"
+    equip_norm = equipamiento or "mixto"
 
     plan = SCHEMES.get(objetivo_norm, {}).get(nivel_norm) or SCHEMES.get("fuerza", {}).get("intermedio")
     if not plan:
@@ -494,9 +638,16 @@ def generate_workout_plan(
         )
 
     routine_id = f"rutina-{int(datetime.now().timestamp())}"
+
+    # Descripción de equipamiento para el header
+    if equip_key_norm(equip_norm) == "mixto":
+        equip_label = "equipamiento variado (barra, mancuernas, peso corporal y más)"
+    else:
+        equip_label = equip_norm
+
     header_lines: List[str] = [
         f"Rutina - {musculo_norm.title()} - nivel {nivel_norm} - objetivo {objetivo_norm}{fallback_notice}",
-        f"Sesion aproximada {tiempo_min} min | {ejercicios_num} ejercicios | Equipo: {equip_norm}",
+        f"Sesion aproximada {tiempo_min} min | {ejercicios_num} ejercicios | Equipo: {equip_label}",
         f"Progresion sugerida: +2.5-5% carga o +1 rep/serie manteniendo {rir_text}.",
     ]
     if profile_data:
@@ -528,6 +679,74 @@ def generate_workout_plan(
         "\n\n" + "\n".join(bloques) if bloques else "\n\n(No se encontraron ejercicios en el catalogo.)"
     )
 
+    # --- Razonamiento conversacional (XAI) ---
+    razonamiento: List[str] = []
+
+    # Explicar por que se eligieron esas series/reps
+    razonamiento.append(
+        f"Elegí {s_min}-{s_max} series de {r_min}-{r_max} repeticiones porque "
+        f"para un objetivo de {objetivo_norm} en nivel {nivel_norm}, "
+        f"este rango es el que mejor estimula las adaptaciones que buscas. "
+        f"El esfuerzo objetivo es {rpe_text} ({rir_text}), lo que significa que "
+        f"deberias terminar cada serie sintiendo que te quedan aproximadamente "
+        f"{rir_text.lower().replace('rir ', '')} repeticiones en reserva."
+    )
+
+    # Explicar seleccion de ejercicios
+    if fallback_notice:
+        razonamiento.append(
+            f"No encontre ejercicios especificos de {musculo_norm} con {equip_label} "
+            f"en el catalogo, asi que seleccione ejercicios de cuerpo completo como alternativa."
+        )
+    elif equip_key_norm(equip_norm) == "mixto":
+        razonamiento.append(
+            f"Como no especificaste un equipo en particular, seleccione {len(ejercicios)} ejercicios "
+            f"de {musculo_norm} usando distintos tipos de equipamiento (barra, mancuernas, peso corporal, etc.) "
+            f"para darte mayor variedad y que puedas adaptar la sesion segun lo que tengas disponible. "
+            f"Si prefieres entrenar con un solo tipo de equipo, solo dímelo y ajusto la rutina."
+        )
+    else:
+        razonamiento.append(
+            f"Seleccione {len(ejercicios)} ejercicios enfocados en {musculo_norm} "
+            f"que se pueden realizar con {equip_label}, priorizando movimientos "
+            f"compuestos que trabajan mas fibras musculares."
+        )
+
+    # Explicar ajustes por salud
+    if health_flags.get("hipertension") or health_flags.get("cardiaco"):
+        razonamiento.append(
+            "Dado que reportaste hipertension o antecedentes cardiacos, "
+            "reduje la intensidad maxima a RPE <= 7 y aumente el RIR a 2. "
+            "Esto significa que no deberias llegar al fallo muscular en ninguna serie, "
+            "ya que el esfuerzo maximo puede elevar peligrosamente la presion arterial. "
+            "Es importante que evites bloquear la respiracion (maniobra de Valsalva) durante los ejercicios."
+        )
+    if health_flags.get("diabetes"):
+        razonamiento.append(
+            "Como indicaste diabetes, te recomiendo revisar tu glucosa antes y despues "
+            "de entrenar. Si esta por debajo de 100 mg/dL, consume un snack con carbohidratos "
+            "antes de empezar. El ejercicio de fuerza ayuda a mejorar la sensibilidad a la insulina."
+        )
+    if health_flags.get("asma"):
+        razonamiento.append(
+            "Considerando que tienes asma, incluí un calentamiento mas progresivo. "
+            "Ten siempre tu inhalador disponible y evita ambientes con aire frio o seco."
+        )
+
+    # Explicar alergias si aplican
+    if allergy_list:
+        razonamiento.append(
+            f"Tus alergias ({', '.join(allergy_list)}) fueron registradas y se "
+            f"consideraran si generas un plan de dieta complementario."
+        )
+
+    # Progresion
+    razonamiento.append(
+        f"Para progresar, te sugiero aumentar la carga un 2.5-5% o agregar 1 repeticion "
+        f"por serie cada semana, siempre manteniendo {rir_text}. Si no puedes mantener la "
+        f"tecnica, reduce el peso — la forma correcta es mas importante que la carga."
+    )
+
     explanation = {
         "datos_usados": {
             "objetivo": objetivo_norm,
@@ -540,16 +759,18 @@ def generate_workout_plan(
             "condiciones": condiciones,
             "alergias": alergias,
         },
+        "razonamiento": razonamiento,
         "criterios": [
-            "Series/repeticiones basadas en esquema objetivo-nivel.",
-            "Ejercicios seleccionados del catalogo priorizando grupo y equipamiento.",
-            "Progresion propuesta con sobrecarga gradual.",
+            f"El esquema de {s_min}-{s_max} series x {r_min}-{r_max} reps esta basado en la evidencia para {objetivo_norm} en nivel {nivel_norm}.",
+            f"Los ejercicios fueron seleccionados del catalogo priorizando el grupo muscular ({musculo_norm}) y el equipamiento disponible ({equip_norm}).",
+            f"La progresion sigue el principio de sobrecarga progresiva gradual.",
         ],
-        "reglas": [
-            "Ajustes aplicados por banderas de salud." if health_flags else "Sin restricciones medicas adicionales.",
-            "Se consideraron alergias registradas." if allergy_list else "Sin alergias declaradas.",
+        "reglas": _build_conversational_rules(health_flags, allergy_list, condiciones),
+        "fuentes": [
+            "Catalogo de ejercicios ExRx.net (base de datos validada por profesionales del deporte).",
+            "Directrices de actividad fisica de la OMS (2020).",
+            "Principios de periodizacion y progresion de la NSCA (National Strength and Conditioning Association).",
         ],
-        "fuentes": ["Catálogo interno (ExRx y recursos validados)."],
     }
 
     routine_summary = {

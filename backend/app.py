@@ -106,15 +106,25 @@ def create_app() -> Flask:
     if socketio is not None:
         socketio.init_app(app, cors_allowed_origins="*", async_mode="threading")
 
+    limiter = None
     rate_limit_config = build_rate_limit_config()
     if Limiter and get_remote_address:
         limiter_kwargs = rate_limit_config.to_kwargs()
+
+        def _get_client_ip():
+            """Obtiene la IP real del cliente, considerando proxies reversos."""
+            forwarded = request.headers.get("X-Forwarded-For", "")
+            if forwarded:
+                # X-Forwarded-For: client, proxy1, proxy2 — tomamos la primera
+                return forwarded.split(",")[0].strip()
+            return get_remote_address()
+
         try:
             # v3 style
-            limiter = Limiter(get_remote_address, app=app, **limiter_kwargs)
+            limiter = Limiter(_get_client_ip, app=app, **limiter_kwargs)
         except TypeError:
             # v2 style
-            limiter = Limiter(key_func=get_remote_address, app=app, **limiter_kwargs)
+            limiter = Limiter(key_func=_get_client_ip, app=app, **limiter_kwargs)
         if rate_limit_config.uses_memory_storage:
             app.logger.warning("RATELIMIT_STORAGE_URI no esta definido. Se usa memoria en proceso.")
         app.limiter = limiter  # por si luego quieres usar decorators
@@ -150,6 +160,10 @@ def create_app() -> Flask:
 
     # ---------------- Blueprints ----------------
     register_blueprints(app)
+
+    # ---------------- Rate-limits por endpoint (anti-DDoS / brute-force) --------
+    from .login.routes import _apply_rate_limits
+    _apply_rate_limits(app)
 
     # ---------------- Realtime (SocketIO) ----------------
     from .realtime.events import init_realtime
@@ -190,6 +204,9 @@ def create_app() -> Flask:
             "ts": datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
         }, 200
 
+    if limiter:
+        limiter.exempt(health)
+
     @app.get("/ready")
     def ready():
         if not chat_service.check_database_ready():
@@ -207,9 +224,15 @@ def create_app() -> Flask:
             "service": app.config.get("SERVICE_NAME", "fitter-backend"),
         }, 200
 
+    if limiter:
+        limiter.exempt(ready)
+
     @app.get("/metrics")
     def operational_metrics():
         return jsonify(app.operational_metrics.snapshot()), 200
+
+    if limiter:
+        limiter.exempt(operational_metrics)
 
     @app.post("/chat/send")
     def chat_send():

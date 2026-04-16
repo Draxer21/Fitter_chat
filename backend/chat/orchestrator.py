@@ -63,37 +63,73 @@ def _chunk_text(text: str, chunk_size: int = 900, overlap: int = 120) -> List[st
 
 
 def format_explanation_block(payload: Dict[str, Any]) -> str:
+    """Genera una explicacion conversacional de por que se hizo esta recomendacion.
+
+    En vez de listar campos crudos, construye parrafos en lenguaje natural
+    que el usuario pueda leer como si un entrenador le explicara su decision.
+    """
     datos = payload.get("datos_usados") or payload.get("datos") or {}
     criterios = payload.get("criterios") or []
     reglas = payload.get("reglas") or []
     fuentes = payload.get("fuentes") or []
+    razonamiento = payload.get("razonamiento") or []
 
-    def _fmt_dict(d: Dict[str, Any]) -> str:
-        if not d:
-            return "-"
-        return "; ".join([f"{k}: {v}" for k, v in d.items() if v not in (None, "", [], {})]) or "-"
+    parts: List[str] = []
 
-    def _fmt_list(values: Iterable[Any]) -> str:
-        items = []
-        for v in values:
-            if isinstance(v, dict):
-                items.append(_fmt_dict(v))
-            elif v is None:
-                continue
-            else:
-                items.append(str(v))
-        return "; ".join(items) if items else "-"
+    # --- Datos usados: parrafo conversacional ---
+    datos_filtrados = {k: v for k, v in datos.items()
+                       if v not in (None, "", [], {}) and k != "profile"}
+    if datos_filtrados:
+        parts.append(
+            "Para elaborar esta recomendacion tome en cuenta la siguiente informacion: "
+            + ", ".join(f"{_humanize_key(k)} es {v}" for k, v in datos_filtrados.items())
+            + "."
+        )
+    else:
+        parts.append("No se proporcionaron datos especificos, asi que use valores por defecto.")
 
-    return (
-        "Datos usados: "
-        + _fmt_dict(datos)
-        + "\nCriterios: "
-        + _fmt_list(criterios)
-        + "\nReglas: "
-        + _fmt_list(reglas)
-        + "\nFuentes: "
-        + _fmt_list(fuentes)
-    )
+    # --- Razonamiento: explica el POR QUE (nuevo campo conversacional) ---
+    if razonamiento:
+        parts.append("\n".join(str(r) for r in razonamiento if r))
+
+    # --- Criterios: por que se eligieron esos parametros ---
+    criterios_limpios = [str(c) for c in criterios if c]
+    if criterios_limpios:
+        parts.append(
+            "Los parametros se definieron asi porque: " + " ".join(criterios_limpios)
+        )
+
+    # --- Reglas: que restricciones se aplicaron ---
+    reglas_limpias = [str(r) for r in reglas if r]
+    if reglas_limpias:
+        parts.append(
+            "En cuanto a restricciones y precauciones: " + " ".join(reglas_limpias)
+        )
+
+    # --- Fuentes ---
+    fuentes_limpias = [str(f).rstrip(".") for f in fuentes if f]
+    if fuentes_limpias:
+        parts.append(
+            "Esta recomendacion esta basada en: " + ", ".join(fuentes_limpias) + "."
+        )
+
+    return "\n\n".join(parts)
+
+
+def _humanize_key(key: str) -> str:
+    """Convierte claves de dict en etiquetas legibles."""
+    _MAP = {
+        "objetivo": "tu objetivo",
+        "nivel": "tu nivel",
+        "musculo": "el grupo muscular",
+        "equipamiento": "el equipamiento disponible",
+        "tiempo_min": "el tiempo disponible (minutos)",
+        "ejercicios": "la cantidad de ejercicios",
+        "condiciones": "las condiciones de salud reportadas",
+        "alergias": "las alergias declaradas",
+        "dislikes": "los alimentos que prefieres evitar",
+    }
+    return _MAP.get(key, key)
 
 
 class KnowledgeStore:
@@ -416,16 +452,27 @@ class ToolCatalog:
         return {"result": payload, "responses": [response]}
 
     def _do_log_progress(self, args: Dict[str, Any], manager: ChatContextManager) -> Dict[str, Any]:
+        metric = args.get("metric")
+        value = args.get("value")
+        note = args.get("note")
         entry = {
             "type": "progress_log",
-            "metric": args.get("metric"),
-            "value": args.get("value"),
-            "note": args.get("note"),
+            "metric": metric,
+            "value": value,
+            "note": note,
         }
         try:
-            manager.add_history_entry(entry)
+            manager.log_progress(
+                metric=str(metric) if metric is not None else None,
+                value=str(value) if value is not None else None,
+                note=str(note) if note is not None else None,
+            )
         except Exception:
-            pass
+            # Fallback: al menos guardamos en historial JSON
+            try:
+                manager.add_history_entry(entry)
+            except Exception:
+                pass
         explanation = {
             "datos_usados": {"metric": args.get("metric"), "value": args.get("value")},
             "criterios": ["Se registra texto libre solicitado por el usuario."],

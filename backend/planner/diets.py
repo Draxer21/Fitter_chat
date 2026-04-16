@@ -509,6 +509,82 @@ def generate_diet_plan(
     if hydration:
         lines.append(f"Hidratacion recomendada: {hydration}")
 
+    # --- Razonamiento conversacional (XAI) ---
+    razonamiento: List[str] = []
+
+    macros_info = plan.get("macros", {})
+    calorias_info = plan.get("calorias", "")
+    razonamiento.append(
+        f"Diseñe este plan con un enfoque de {plan_label} porque es lo que indicaste como objetivo. "
+        f"Las calorias estan orientadas a {calorias_info.lower() if calorias_info else 'equilibrio energetico'}, "
+        f"con una distribucion de macronutrientes de "
+        f"proteinas ({macros_info.get('proteinas', 'N/A')}), "
+        f"carbohidratos ({macros_info.get('carbohidratos', 'N/A')}) y "
+        f"grasas ({macros_info.get('grasas', 'N/A')})."
+    )
+
+    if allergy_list:
+        excluded_meals = [h.get("meal", "?") for h in allergen_hits] if allergen_hits else []
+        if excluded_meals:
+            razonamiento.append(
+                f"Detecte que tienes alergia o intolerancia a {', '.join(allergy_list)}, "
+                f"por lo que excluí las comidas que contenian esos ingredientes "
+                f"({', '.join(excluded_meals)}). Te recomiendo reemplazarlas con "
+                f"alternativas seguras que mantengan el aporte calorico y de macros."
+            )
+        else:
+            razonamiento.append(
+                f"Tus alergias ({', '.join(allergy_list)}) fueron consideradas, "
+                f"pero ninguna comida del plan base contenia esos ingredientes."
+            )
+
+    if dislike_list:
+        razonamiento.append(
+            f"Tambien tome en cuenta que prefieres evitar {', '.join(dislike_list)}, "
+            f"asi que excluí recetas que los contengan."
+        )
+
+    if health_flags.get("hipertension") or health_flags.get("cardiaco"):
+        razonamiento.append(
+            "Dado que reportaste hipertension o condiciones cardiacas, "
+            "el plan enfatiza reducir el sodio: se recomienda condimentar con "
+            "hierbas naturales en vez de sal, y evitar embutidos y alimentos ultraprocesados."
+        )
+    if health_flags.get("diabetes"):
+        razonamiento.append(
+            "Considerando tu diabetes, distribuí los carbohidratos complejos en "
+            "porciones moderadas cada 3-4 horas para evitar picos de glucosa. "
+            "Evita azucares simples y prioriza fuentes como avena, legumbres y quinoa."
+        )
+    if health_flags.get("asma"):
+        razonamiento.append(
+            "Incluí alimentos antiinflamatorios ricos en omega-3 (como pescados grasos "
+            "y semillas de chia) que pueden ayudar a reducir la inflamacion de las vias respiratorias."
+        )
+
+    if not health_flags and not allergy_list and not dislike_list:
+        razonamiento.append(
+            "No reportaste condiciones medicas, alergias ni preferencias alimentarias, "
+            "asi que el plan sigue las recomendaciones estandar sin restricciones adicionales."
+        )
+
+    diet_rules: List[str] = []
+    if allergy_list:
+        diet_rules.append(
+            f"Se excluyeron del menu los ingredientes que contienen {', '.join(allergy_list)} "
+            f"para prevenir reacciones alergicas."
+        )
+    else:
+        diet_rules.append("No se declararon alergias, por lo que no se excluyeron ingredientes.")
+    if dislike_list:
+        diet_rules.append(
+            f"Se respetaron las preferencias alimentarias excluyendo {', '.join(dislike_list)} de las recetas."
+        )
+    else:
+        diet_rules.append("No se indicaron preferencias excluyentes.")
+    if adjustments:
+        diet_rules.extend(adjustments)
+
     explanation = {
         "datos_usados": {
             "objetivo": plan_label,
@@ -518,16 +594,21 @@ def generate_diet_plan(
             "condiciones": condiciones,
             "profile": profile_data or {},
         },
+        "razonamiento": razonamiento,
         "criterios": [
-            "Macros base definidas por objetivo.",
-            "Aplicacion de ajustes por salud declarada.",
-            "Opcional: composicion de comidas desde catalogo propio.",
+            f"Los macronutrientes ({macros_info.get('proteinas', 'N/A')} proteina, "
+            f"{macros_info.get('carbohidratos', 'N/A')} carbohidratos, "
+            f"{macros_info.get('grasas', 'N/A')} grasas) se definieron segun las "
+            f"necesidades del objetivo {plan_label}.",
+            "Se aplicaron ajustes especificos segun las condiciones de salud declaradas." if health_flags else "No se requirieron ajustes por salud.",
+            "Las comidas se compusieron desde el catalogo de alimentos verificado." if enable_catalog else "Se uso el menu base predefinido como referencia.",
         ],
-        "reglas": [
-            "Alergias excluidas del menu." if allergy_list else "Sin alergias declaradas.",
-            "Preferencias alimentarias respetadas." if dislike_list else "Sin preferencias excluyentes.",
+        "reglas": diet_rules,
+        "fuentes": [
+            "Guias internas Fitter basadas en evidencia nutricional.",
+            "Directrices de la OMS sobre alimentacion saludable (2020).",
+            "Guias Alimentarias para la poblacion chilena (MINSAL).",
         ],
-        "fuentes": ["Guías internas Fitter, OMS 2020, Guías Alimentarias Chile."],
     }
 
     diet_payload["explanation"] = explanation

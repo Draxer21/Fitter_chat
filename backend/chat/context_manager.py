@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
-from .models import ChatUserContext
+from .models import ChatUserContext, ProgressLog
 
 
 @dataclass
@@ -23,6 +23,29 @@ class ChatContextManager:
 
     def add_history_entry(self, entry: Dict[str, Any]) -> None:
         self.context.append_history(entry)
+
+    def log_progress(
+        self,
+        metric: Optional[str],
+        value: Optional[str],
+        note: Optional[str] = None,
+    ) -> None:
+        """Persiste la métrica en la tabla progress_log y también en el historial JSON."""
+        ProgressLog.record(
+            sender_id=self.context.sender_id,
+            metric=metric,
+            value=value,
+            note=note,
+            user_id=self.context.user_id,
+        )
+        self.context.append_history(
+            {
+                "type": "progress_log",
+                "metric": metric,
+                "value": value,
+                "note": note,
+            }
+        )
 
     def set_allergies(self, value: Optional[Any]) -> None:
         raw = value

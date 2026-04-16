@@ -231,7 +231,10 @@ class RateLimitConfig:
 
 def build_rate_limit_config(env: Optional[Env] = None) -> RateLimitConfig:
     env = os.environ if env is None else env
-    default_limit = env.get("RATE_LIMIT_DEFAULT", "60/minute") or "60/minute"
+    # Limite global: 200 req/min por IP — proteccion base anti-DDoS.
+    # Endpoints sensibles (login, register) tienen limites propios mas estrictos.
+    # Endpoints de infra (/health, /ready, /metrics) estan exentos.
+    default_limit = env.get("RATE_LIMIT_DEFAULT", "200/minute") or "200/minute"
     storage_uri = env.get("RATELIMIT_STORAGE_URI") or None
     strategy = env.get("RATELIMIT_STRATEGY") or None
     return RateLimitConfig(

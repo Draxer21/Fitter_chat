@@ -42,12 +42,28 @@ def equip_key_norm(equip: str) -> str:
     """Normaliza claves de equipamiento."""
     e = (equip or "").strip().lower()
     mapping = {
+        # peso corporal
         "peso corporal": "peso_corporal",
         "peso_corporal": "peso_corporal",
         "sin equipo": "peso_corporal",
         "sin equipamiento": "peso_corporal",
         "cuerpo libre": "peso_corporal",
         "nada": "peso_corporal",
+        # máquinas
         "maquinas": "máquinas",
+        # mixto — el usuario no especificó o quiere variedad
+        "mixto": "mixto",
+        "general": "mixto",
+        "cualquier": "mixto",
+        "cualquiera": "mixto",
+        "todos": "mixto",
+        "variado": "mixto",
+        "cualquier equipamiento": "mixto",
+        "no importa": "mixto",
     }
     return mapping.get(e, e)
+
+
+EQUIPOS_MIXTO_PREFERENCIA: List[str] = [
+    "barra", "mancuernas", "peso_corporal", "máquinas", "bandas", "kettlebell"
+]
