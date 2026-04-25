@@ -165,6 +165,11 @@ def create_app() -> Flask:
     from .login.routes import _apply_rate_limits
     _apply_rate_limits(app)
 
+    # Rate limit específico para demo pública (más estricto al ser público)
+    if limiter:
+        from .chat.routes import demo_send
+        limiter.limit("30/hour")(demo_send)   # 30 mensajes/hora por IP
+
     # ---------------- Realtime (SocketIO) ----------------
     from .realtime.events import init_realtime
     init_realtime(app)
