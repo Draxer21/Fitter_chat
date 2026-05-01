@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Chatbot from "../Chatbot";
 import { useAuth } from "../contexts/AuthContext";
 import "../styles/ChatPage.css";
@@ -11,6 +11,9 @@ export default function ChatPage() {
   const [conversations, setConversations] = useState([]);
   const [activeConversationId, setActiveConversationId] = useState(null);
   const [activeMessages, setActiveMessages] = useState([]);
+
+  // Ref siempre actualizado: evita stale closure dentro de callbacks async
+  const activeConvIdRef = useRef(null);
 
   // Cargar conversaciones del localStorage
   useEffect(() => {
@@ -35,7 +38,12 @@ export default function ChatPage() {
     loadConversations();
   }, []);
 
-  // Crear nueva conversación
+  // Mantener ref sincronizado con el estado
+  useEffect(() => {
+    activeConvIdRef.current = activeConversationId;
+  }, [activeConversationId]);
+
+  // Crear nueva conversación — devuelve el id creado para uso inmediato
   const createNewConversation = () => {
     const newConv = {
       id: Date.now(),
@@ -43,18 +51,24 @@ export default function ChatPage() {
       messages: [],
       preview: "Nueva conversación"
     };
-    
-    const updatedConvs = [newConv, ...conversations].slice(0, MAX_CONVERSATIONS);
-    setConversations(updatedConvs);
+
+    activeConvIdRef.current = newConv.id;
     setActiveConversationId(newConv.id);
     setActiveMessages([]);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedConvs));
+    setConversations(prev => {
+      const updated = [newConv, ...prev].slice(0, MAX_CONVERSATIONS);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+
+    return newConv.id;
   };
 
   // Seleccionar conversación existente
   const selectConversation = (convId) => {
     const conv = conversations.find(c => c.id === convId);
     if (conv) {
+      activeConvIdRef.current = convId;
       setActiveConversationId(convId);
       setActiveMessages(conv.messages || []);
     }
@@ -62,44 +76,52 @@ export default function ChatPage() {
 
   // Eliminar conversación
   const deleteConversation = (convId, event) => {
-    event.stopPropagation(); // Evitar que se seleccione la conversación al hacer click en eliminar
-    
-    const updatedConvs = conversations.filter(c => c.id !== convId);
-    setConversations(updatedConvs);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedConvs));
-    
-    // Si se eliminó la conversación activa, seleccionar otra o limpiar
-    if (convId === activeConversationId) {
-      if (updatedConvs.length > 0) {
-        setActiveConversationId(updatedConvs[0].id);
-        setActiveMessages(updatedConvs[0].messages || []);
-      } else {
-        setActiveConversationId(null);
-        setActiveMessages([]);
+    event.stopPropagation();
+
+    const wasActive = convId === activeConvIdRef.current;
+
+    setConversations(prev => {
+      const updated = prev.filter(c => c.id !== convId);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+
+      if (wasActive) {
+        if (updated.length > 0) {
+          activeConvIdRef.current = updated[0].id;
+          setActiveConversationId(updated[0].id);
+          setActiveMessages(updated[0].messages || []);
+        } else {
+          activeConvIdRef.current = null;
+          setActiveConversationId(null);
+          setActiveMessages([]);
+        }
       }
-    }
+
+      return updated;
+    });
   };
 
-  // Actualizar conversación activa con nuevo mensaje
-  const updateActiveConversation = (newMessage) => {
-    const updatedConvs = conversations.map(conv => {
-      if (conv.id === activeConversationId) {
-        const updatedMessages = [...(conv.messages || []), newMessage];
+  // Agregar un mensaje a la conversación activa.
+  // Usa setConversations(prev => ...) para evitar stale closure cuando
+  // onNewMessage y onBotMessage se disparan en secuencia async.
+  const appendMessageToConversation = (convId, newMessage) => {
+    setConversations(prev => {
+      const updated = prev.map(conv => {
+        if (conv.id !== convId) return conv;
+        const messages = [...(conv.messages || []), newMessage];
+        const previewText = newMessage.from === "user"
+          ? newMessage.text?.substring(0, 50)
+          : conv.preview; // mantener preview del último mensaje de usuario
         return {
           ...conv,
-          messages: updatedMessages,
-          preview: newMessage.text?.substring(0, 50) || "Conversación",
+          messages,
+          preview: previewText || conv.preview || "Conversación",
           timestamp: new Date().toISOString()
         };
-      }
-      return conv;
+      });
+      updated.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
     });
-
-    // Ordenar por timestamp más reciente
-    updatedConvs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-    
-    setConversations(updatedConvs);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedConvs));
   };
 
   return (
@@ -213,22 +235,21 @@ export default function ChatPage() {
               <Chatbot
                 initialMessages={activeMessages}
                 onNewMessage={(msg) => {
-                  // Si no hay conversación activa, crear una
-                  if (!activeConversationId) {
-                    createNewConversation();
+                  // Asegurar conversación activa (sync via ref)
+                  let convId = activeConvIdRef.current;
+                  if (!convId) {
+                    convId = createNewConversation();
                   }
-                  
-                  // Actualizar la conversación activa con mensaje del usuario
-                  updateActiveConversation({
+                  appendMessageToConversation(convId, {
                     text: msg,
-                    timestamp: new Date().toISOString(),
-                    from: "user"
+                    from: "user",
+                    timestamp: new Date().toISOString()
                   });
                 }}
                 onBotMessage={(botMsg) => {
-                  // Guardar también las respuestas del bot
-                  if (activeConversationId) {
-                    updateActiveConversation(botMsg);
+                  const convId = activeConvIdRef.current;
+                  if (convId) {
+                    appendMessageToConversation(convId, botMsg);
                   }
                 }}
               />
