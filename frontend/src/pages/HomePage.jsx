@@ -6,6 +6,9 @@ import HomeHero from "../components/HomeHero";
 import Memberships from "../components/Memberships";
 import WaveDivider from "../components/WaveDivider";
 import Logo from "../components/Logo";
+import HowItWorks from "../components/sections/HowItWorks";
+import FaqSection from "../components/sections/FaqSection";
+import TestimonialsSection from "../components/sections/TestimonialsSection";
 import { formatearPrecio } from "../utils/formatPrice";
 import { useLocale } from "../contexts/LocaleContext";
 import { useCart } from "../contexts/CartContext";
@@ -202,6 +205,15 @@ export default function HomePage() {
       </section>
 
       <Memberships />
+
+      <WaveDivider fill="var(--bg)" variant="gentle" height={50} />
+      <HowItWorks />
+
+      <WaveDivider fill="var(--surface)" variant="gentle" height={50} />
+      <TestimonialsSection />
+
+      <WaveDivider fill="var(--bg)" variant="gentle" height={50} />
+      <FaqSection />
     </main>
   );
 }

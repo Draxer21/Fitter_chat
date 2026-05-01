@@ -13,12 +13,14 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import SideControls from "./components/SideControls";
 import ToastContainer from "./components/ToastContainer";
+import FitterToastContainer from "./components/FitterToastContainer";
 import { LocaleProvider, useLocale } from "./contexts/LocaleContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { FontSizeProvider } from "./contexts/FontSizeContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
+import { ToastProvider } from "./contexts/ToastContext";
 import LegacyStylesLayout from "./layouts/LegacyStylesLayout";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -53,6 +55,7 @@ const ClassCalendarPage = lazy(() => import("./pages/ClassCalendarPage"));
 const SubscriptionPage = lazy(() => import("./pages/SubscriptionPage"));
 const AdminHandoffPage = lazy(() => import("./pages/AdminHandoffPage"));
 const MisComprasPage = lazy(() => import("./pages/MisComprasPage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -62,15 +65,6 @@ function ScrollToTop() {
   return null;
 }
 
-function NotFound() {
-  const { t } = useLocale();
-  return (
-    <div style={{ padding: 24 }}>
-      <h2>{t("notFound.title")}</h2>
-      <a href="/">{t("notFound.back")}</a>
-    </div>
-  );
-}
 
 function AppContent() {
   const { t } = useLocale();
@@ -120,7 +114,7 @@ function AppContent() {
             <Route path="/cuenta/dietas/:id" element={<DietPlanDetailPage />} />
             <Route path="/cuenta/suscripcion" element={<SubscriptionPage />} />
             <Route path="/cuenta/mis-compras" element={<MisComprasPage />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
       </main>
@@ -128,6 +122,7 @@ function AppContent() {
 
       <SideControls />
       <ToastContainer />
+      <FitterToastContainer />
     </BrowserRouter>
   );
 }
@@ -140,7 +135,9 @@ export default function App() {
           <AuthProvider>
             <NotificationProvider>
               <CartProvider>
-                <AppContent />
+                <ToastProvider>
+                  <AppContent />
+                </ToastProvider>
               </CartProvider>
             </NotificationProvider>
           </AuthProvider>
