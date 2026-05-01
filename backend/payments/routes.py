@@ -170,7 +170,7 @@ def webhook():
         else:
             return jsonify({'status': 'ignored'}), 200
 
-    except Exception as e:
+    except Exception:
         current_app.logger.error("Error en webhook de MercadoPago")
         return jsonify({'error': 'Error procesando webhook'}), 500
 

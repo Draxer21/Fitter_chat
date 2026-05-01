@@ -763,7 +763,7 @@ def generate_workout_plan(
         "criterios": [
             f"El esquema de {s_min}-{s_max} series x {r_min}-{r_max} reps esta basado en la evidencia para {objetivo_norm} en nivel {nivel_norm}.",
             f"Los ejercicios fueron seleccionados del catalogo priorizando el grupo muscular ({musculo_norm}) y el equipamiento disponible ({equip_norm}).",
-            f"La progresion sigue el principio de sobrecarga progresiva gradual.",
+            "La progresion sigue el principio de sobrecarga progresiva gradual.",
         ],
         "reglas": _build_conversational_rules(health_flags, allergy_list, condiciones),
         "fuentes": [
