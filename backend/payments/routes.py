@@ -177,8 +177,14 @@ def webhook():
 
 @payments_bp.route('/public-key', methods=['GET'])
 def get_public_key():
-    """Devuelve la public key de MP para el frontend."""
-    return jsonify({'public_key': current_app.config.get('MERCADOPAGO_PUBLIC_KEY', '')})
+    """Devuelve la public key de MP y si estamos en modo sandbox (test)."""
+    access_token = current_app.config.get('MERCADOPAGO_ACCESS_TOKEN', '')
+    public_key = current_app.config.get('MERCADOPAGO_PUBLIC_KEY', '')
+    is_test_mode = access_token.startswith('TEST-') or public_key.startswith('TEST-')
+    return jsonify({
+        'public_key': public_key,
+        'is_test_mode': is_test_mode,
+    })
 
 
 # Palabras clave para identificar el tipo de plan en el nombre del producto

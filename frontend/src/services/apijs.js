@@ -92,7 +92,7 @@ export const API = {
     remove:  (id)=> fetch(`${BASE}/carrito/eliminar/${id}`,{ method:"POST", credentials:"include" }).then(j),
     clear:   () => fetch(`${BASE}/carrito/limpiar`,       { method:"POST", credentials:"include" }).then(j),
     validar: () => fetch(`${BASE}/carrito/validar`,       { method:"POST", credentials:"include" }).then(j),
-    pagar:   (paymentData) => fetch(`${BASE}/carrito/pagar`, { method:"POST", headers: { "Content-Type": "application/json" }, credentials:"include", body: JSON.stringify(paymentData) }).then(j),
+    pagar:   async (paymentData) => fetch(`${BASE}/carrito/pagar`, { method:"POST", headers: await csrfHeaders({ "Content-Type": "application/json" }), credentials:"include", body: JSON.stringify(paymentData) }).then(j),
     boleta:  (orderId) => {
       const url = orderId ? `${BASE}/carrito/boleta_json?order=${orderId}` : `${BASE}/carrito/boleta_json`;
       return fetch(url, { credentials:"include" }).then(j);

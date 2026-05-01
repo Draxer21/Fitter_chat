@@ -5,10 +5,11 @@ import { formatearPrecio } from "../utils/formatPrice";
 import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
 import CheckoutForm from "../components/CheckoutForm";
+import { API } from "../services/apijs";
 
 export default function CarritoPage() {
   const { items, total, refresh, addItem, decrementItem, removeItem, clearCart, status, error } = useCart();
-  const { isAuthenticated, refresh: refreshAuth } = useAuth();
+  const { isAuthenticated, refresh: refreshAuth, user } = useAuth();
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [actionError, setActionError] = useState("");
   const [checkoutState, setCheckoutState] = useState(null); // null | { orderId, total } | 'success' | 'pending'
@@ -47,26 +48,21 @@ export default function CarritoPage() {
       setActionError("");
       setPaymentError("");
 
-      // Crear la orden en el backend
-      const response = await fetch('/carrito/pagar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({}),
-      });
+      // Incluir name/email del usuario autenticado (requerido por el backend)
+      const currentUser = user || {};
+      const orderBody = {
+        name: currentUser.nombre || currentUser.full_name || currentUser.name || '',
+        email: currentUser.email || '',
+      };
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        setActionError(data.error || 'Error al crear la orden');
-        return;
-      }
+      const data = await API.carrito.pagar(orderBody);
 
       // Abrir el formulario de pago con el order_id y total
       setCheckoutState({ orderId: data.order_id, total: data.total });
 
     } catch (err) {
-      setActionError(err?.message || 'Error al procesar la compra');
+      const msg = err?.payload?.error || err?.message || 'Error al procesar la compra.';
+      setActionError(msg);
     }
   };
 
