@@ -148,8 +148,8 @@
 }
 
 .theme-dark .custom-navbar {
-  background: var(--neutral-900);
-  border-bottom: 1px solid var(--neutral-800);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
 }
 
 .footer {

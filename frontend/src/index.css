@@ -42,10 +42,10 @@ body.theme-dark {
   --bg: #0a1a0e;
   --text: var(--neutral-200);
   --muted: var(--neutral-400);
-  --border: var(--neutral-800);
+  --border: #1e3a22;
   --primary: var(--brand-500);
   --primary-press: var(--brand-600);
-  --surface: var(--neutral-900);
+  --surface: #0f2414;
   --user-bubble: #1a3a2e;
   --bot-bubble: #0f1a0e;
 }
