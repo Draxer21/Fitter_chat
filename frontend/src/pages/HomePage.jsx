@@ -4,10 +4,12 @@ import { API } from "../services/apijs";
 import "../styles/legacy/producto/style_index.css";
 import HomeHero from "../components/HomeHero";
 import Memberships from "../components/Memberships";
+import WaveDivider from "../components/WaveDivider";
 import Logo from "../components/Logo";
 import { formatearPrecio } from "../utils/formatPrice";
 import { useLocale } from "../contexts/LocaleContext";
 import { useCart } from "../contexts/CartContext";
+import { useScrollReveal } from "../hooks/useScrollReveal";
 
 const stockDisponible = (valor) => {
   const n = Number(valor);
@@ -15,6 +17,7 @@ const stockDisponible = (valor) => {
 };
 
 export default function HomePage() {
+  useScrollReveal();
   const { search, hash } = useLocation();
   const categoria = useMemo(() => new URLSearchParams(search).get("categoria") || "", [search]);
   const { t } = useLocale();
@@ -121,8 +124,10 @@ export default function HomePage() {
     <main className="flex-grow-1">
       <HomeHero />
 
+      <WaveDivider fill="var(--bg)" variant="gentle" height={50} />
+
       <section id="offers" className="home-offers-section py-5">
-        <div className="container text-center">
+        <div className="container text-center reveal">
           <h2 style={{ margin: "20px 0 30px 0" }}>
             {t("home.offers.title")}
             {categoria ? ` ${t("home.offers.in")} ${categoria}` : ""}

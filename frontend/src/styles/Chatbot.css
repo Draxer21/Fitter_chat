@@ -79,11 +79,11 @@
 .message-bubble {
   display: inline-block;
   padding: 8px 12px;
-  /* allow bubbles to expand more horizontally within the wider container */
   max-width: 90%;
   white-space: pre-wrap;
   word-break: break-word;
   transition: background-color 200ms ease, color 200ms ease;
+  animation: messagePop 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;
 }
 
 .message-bubble.user-bubble {
@@ -116,6 +116,14 @@
 
 .theme-dark .chatbot-loading {
   color: var(--neutral-400);
+}
+
+.chatbot-typing-indicator {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 14px;
+  animation: none; /* override messagePop for typing indicator */
 }
 
 .chatbot-error {

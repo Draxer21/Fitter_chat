@@ -14,6 +14,15 @@ export default function HomeHero() {
   return (
     <header className="home-hero" style={style} role="banner" aria-label="Página principal">
       <div className="hero-overlay" aria-hidden="true" />
+      {/* Animated background orbs */}
+      <div className="hero-orb hero-orb-1" aria-hidden="true" />
+      <div className="hero-orb hero-orb-2" aria-hidden="true" />
+      <div className="hero-orb hero-orb-3" aria-hidden="true" />
+      <div className="hero-orb hero-orb-4" aria-hidden="true" />
+      <div className="hero-particle hero-particle-1" aria-hidden="true" />
+      <div className="hero-particle hero-particle-2" aria-hidden="true" />
+      <div className="hero-particle hero-particle-3" aria-hidden="true" />
+      <div className="hero-particle hero-particle-4" aria-hidden="true" />
       <div className="hero-inner">
         <div className="hero-content">
           <h1 className="hero-title">

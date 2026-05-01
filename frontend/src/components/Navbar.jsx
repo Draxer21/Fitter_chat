@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Logo from '../components/Logo';
 import { useLocale } from '../contexts/LocaleContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -65,6 +65,20 @@ export default function Navbar() {
 
 
   const currentUserLabel = user?.username || user?.full_name || user?.email || 'Usuario';
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const nav = document.querySelector('.custom-navbar');
+      if (!nav) return;
+      if (window.scrollY > 50) {
+        nav.classList.add('navbar-scrolled');
+      } else {
+        nav.classList.remove('navbar-scrolled');
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <>

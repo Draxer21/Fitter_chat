@@ -1062,7 +1062,15 @@ export default function Chatbot(props = {}) {
             <Bubble from={m.from}>{renderMessageContent(m)}</Bubble>
           </div>
         ))}
-        {loading && <div className="chatbot-loading">Escribiendo…</div>}
+        {loading && (
+          <div className="chatbot-message bot-message">
+            <div className="message-bubble bot-bubble chatbot-typing-indicator" aria-label="El bot está escribiendo">
+              <span className="typing-dot" />
+              <span className="typing-dot" />
+              <span className="typing-dot" />
+            </div>
+          </div>
+        )}
       </div>
 
       {errorText && (
