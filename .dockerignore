@@ -1,0 +1,45 @@
+# Python
+.venv/
+.venv_linux/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/test-results/
+
+# Git & IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Environment (secrets — never bake into image)
+.env
+frontend/.env
+
+# Rasa models (mounted as volume)
+Chatbot/models/
+Chatbot/.rasa/
+
+# Logs & backups
+backend/logs/
+*.dump
+*.sql
+*.bak
+
+# Docker
+docker-compose.yml
+docker-compose.*.yml
+infra/
+
+# Docs & misc
+docs/
+tests/
+*.md
+LICENSE
+.claude/

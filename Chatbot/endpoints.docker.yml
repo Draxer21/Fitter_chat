@@ -1,0 +1,11 @@
+# Docker-specific endpoints configuration.
+# Used inside the Rasa container — service names resolve via Docker DNS.
+
+action_endpoint:
+  url: "http://actions:5055/webhook"
+  timeout: 60
+
+tracker_store:
+  type: SQL
+  dialect: "postgresql"
+  url: "${RASA_TRACKER_DB}"
