@@ -3,13 +3,47 @@ from __future__ import annotations
 from datetime import datetime
 
 from flask import Blueprint, jsonify, request, session
+from sqlalchemy.exc import ProgrammingError
 
 from ..extensions import db
-from .models import Subscription
+from .models import MembershipPlan, Subscription, seed_membership_plans
 
 bp = Blueprint("subscriptions", __name__)
 
 VALID_PLANS = {"basic", "premium", "black"}
+
+
+# ---------------------------------------------------------------------------
+# GET /subscriptions/plans  — catálogo público de planes de membresía
+# ---------------------------------------------------------------------------
+
+@bp.get("/plans")
+def list_membership_plans():
+    """Devuelve todos los planes activos, ordenados por sort_order.
+    No requiere autenticación (información pública del gimnasio).
+    Si la tabla aún no existe (primera ejecución), devuelve los defaults.
+    """
+    try:
+        plans = (
+            MembershipPlan.query
+            .filter_by(is_active=True)
+            .order_by(MembershipPlan.sort_order)
+            .all()
+        )
+        if not plans:
+            # Tabla vacía: sembrar y reintentar
+            seed_membership_plans()
+            plans = (
+                MembershipPlan.query
+                .filter_by(is_active=True)
+                .order_by(MembershipPlan.sort_order)
+                .all()
+            )
+        return jsonify({"plans": [p.to_dict() for p in plans]}), 200
+    except ProgrammingError:
+        # Tabla no existe todavía; devuelve defaults en memoria
+        from .models import _DEFAULT_PLANS
+        return jsonify({"plans": _DEFAULT_PLANS, "fallback": True}), 200
 
 
 @bp.get("/")

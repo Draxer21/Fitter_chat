@@ -161,6 +161,14 @@ def create_app() -> Flask:
     # ---------------- Blueprints ----------------
     register_blueprints(app)
 
+    # ---------------- Seed datos iniciales ----------------
+    try:
+        with app.app_context():
+            from .subscriptions.models import seed_membership_plans
+            seed_membership_plans()
+    except Exception as seed_exc:
+        app.logger.warning("No se pudo hacer seed de membership_plans: %s", seed_exc)
+
     # ---------------- Rate-limits por endpoint (anti-DDoS / brute-force) --------
     from .login.routes import _apply_rate_limits
     _apply_rate_limits(app)

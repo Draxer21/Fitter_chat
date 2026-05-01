@@ -234,6 +234,7 @@ export const API = {
     }).then(j),
   },
   subscriptions: {
+    plans: () => fetch(`${BASE}/subscriptions/plans`).then(j),
     current: () => fetch(`${BASE}/subscriptions/`, { credentials: "include" }).then(j),
     create: async (data) => fetch(`${BASE}/subscriptions/`, {
       method: "POST",
