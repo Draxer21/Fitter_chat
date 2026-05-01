@@ -52,6 +52,7 @@ const AnalyticsDashboardPage = lazy(() => import("./pages/AnalyticsDashboardPage
 const ClassCalendarPage = lazy(() => import("./pages/ClassCalendarPage"));
 const SubscriptionPage = lazy(() => import("./pages/SubscriptionPage"));
 const AdminHandoffPage = lazy(() => import("./pages/AdminHandoffPage"));
+const MisComprasPage = lazy(() => import("./pages/MisComprasPage"));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -118,6 +119,7 @@ function AppContent() {
             <Route path="/cuenta/dietas" element={<DietPlansPage />} />
             <Route path="/cuenta/dietas/:id" element={<DietPlanDetailPage />} />
             <Route path="/cuenta/suscripcion" element={<SubscriptionPage />} />
+            <Route path="/cuenta/mis-compras" element={<MisComprasPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

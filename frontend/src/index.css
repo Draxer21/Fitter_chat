@@ -39,7 +39,7 @@
 /* Dark theme */
 .theme-dark,
 body.theme-dark {
-  --bg: #0b1020;
+  --bg: #0a1a0e;
   --text: var(--neutral-200);
   --muted: var(--neutral-400);
   --border: var(--neutral-800);
@@ -47,7 +47,7 @@ body.theme-dark {
   --primary-press: var(--brand-600);
   --surface: var(--neutral-900);
   --user-bubble: #1a3a2e;
-  --bot-bubble: #131d2d;
+  --bot-bubble: #0f1a0e;
 }
 
 html, body, #root {
@@ -224,7 +224,7 @@ body {
   .fw-chat-bubble--user{background:#1a3a2e; color:var(--neutral-200)}
   .fw-chat-input{background:var(--neutral-900); border-color:var(--neutral-800); color:var(--neutral-200)}
   .fw-chat-send{background:var(--brand-500)}
-  .fw-chat-header{background:var(--accent-500)}
+  .fw-chat-header{background:var(--brand-500)}
   .fw-chat-error{background:#7f1d1d; border-color:#991b1b; color:var(--danger-200)}
 }
 

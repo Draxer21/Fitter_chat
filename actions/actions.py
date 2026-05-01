@@ -57,6 +57,45 @@ CHAT_DIET_CATALOG = os.getenv("CHAT_DIET_CATALOG", "0").strip() in {"1", "true",
 BACKEND_HEALTH_PATH = (os.getenv("BACKEND_HEALTH_PATH", "/health") or "/health").strip()
 BACKEND_HEALTH_TIMEOUT = float(os.getenv("BACKEND_HEALTH_TIMEOUT", "0.8"))
 
+# Training prescription schemes: objetivo → nivel → {series, reps, rpe, rires}
+# series/reps are (min, max) tuples; rpe/rires are display strings.
+_SCHEME_FUERZA = {
+    "principiante": {"series": (3, 4), "reps": (5,  8),  "rpe": "RPE 7",   "rires": "RIR 2-3"},
+    "intermedio":   {"series": (4, 5), "reps": (3,  6),  "rpe": "RPE 8",   "rires": "RIR 1-2"},
+    "avanzado":     {"series": (5, 6), "reps": (1,  5),  "rpe": "RPE 8-9", "rires": "RIR 0-1"},
+}
+_SCHEME_HIPERTROFIA = {
+    "principiante": {"series": (3, 4), "reps": (10, 15), "rpe": "RPE 7",   "rires": "RIR 2-3"},
+    "intermedio":   {"series": (3, 4), "reps": (8,  12), "rpe": "RPE 8",   "rires": "RIR 1-2"},
+    "avanzado":     {"series": (4, 5), "reps": (6,  12), "rpe": "RPE 8-9", "rires": "RIR 1"},
+}
+_SCHEME_BAJAR_GRASA = {
+    "principiante": {"series": (3, 4), "reps": (12, 20), "rpe": "RPE 6-7", "rires": "RIR 3"},
+    "intermedio":   {"series": (3, 4), "reps": (12, 20), "rpe": "RPE 7",   "rires": "RIR 2"},
+    "avanzado":     {"series": (4, 5), "reps": (15, 20), "rpe": "RPE 7-8", "rires": "RIR 1-2"},
+}
+_SCHEME_RESISTENCIA = {
+    "principiante": {"series": (2, 3), "reps": (15, 25), "rpe": "RPE 6",   "rires": "RIR 3-4"},
+    "intermedio":   {"series": (3, 4), "reps": (15, 25), "rpe": "RPE 7",   "rires": "RIR 2-3"},
+    "avanzado":     {"series": (4, 5), "reps": (20, 30), "rpe": "RPE 7-8", "rires": "RIR 1-2"},
+}
+SCHEMES: dict = {
+    # primary keys
+    "fuerza":      _SCHEME_FUERZA,
+    "hipertrofia": _SCHEME_HIPERTROFIA,
+    "bajar grasa": _SCHEME_BAJAR_GRASA,
+    "resistencia": _SCHEME_RESISTENCIA,
+    # common aliases that arrive via the slot
+    "definicion":   _SCHEME_BAJAR_GRASA,
+    "bajar_grasa":  _SCHEME_BAJAR_GRASA,
+    "perder peso":  _SCHEME_BAJAR_GRASA,
+    "definir":      _SCHEME_BAJAR_GRASA,
+    "ganar masa":   _SCHEME_HIPERTROFIA,
+    "volumen":      _SCHEME_HIPERTROFIA,
+    "rendimiento":  _SCHEME_RESISTENCIA,
+    "deporte":      _SCHEME_RESISTENCIA,
+}
+
 
 def backend_health_status(
     *,
@@ -1948,6 +1987,8 @@ class ActionGenerarRutina(Action):
 
         condiciones = _slot(tracker, "condiciones_salud") or (profile_data.get("medical_conditions") if profile_data else None) or "ninguna"
         alergias = _slot(tracker, "alergias") or (profile_data.get("allergies") if profile_data else None) or "ninguna"
+        ctx_dislikes = ctx.get("dislikes") if ctx else None
+        dislikes = _slot(tracker, "no_gusta") or ctx_dislikes
         health_flags = parse_health_flags(condiciones)
         health_notes = build_health_notes(health_flags)
         allergy_list = parse_allergy_list(alergias)
@@ -2057,33 +2098,6 @@ class ActionGenerarRutina(Action):
 
         dispatcher.utter_message(json_message=routine_summary)
 
-        plan_id = None
-        if not offline_backend:
-            plan_id = persist_plan(
-                ctx,
-                path="/api/routine-plans",
-                payload={
-                    "title": routine_summary.get("header") or "Rutina generada",
-                    "objective": objetivo,
-                    "content": routine_summary,
-                },
-            )
-        if plan_id:
-            dispatcher.utter_message(text=f"Rutina guardada. ID: {plan_id}\nVer detalle: /cuenta/rutinas/{plan_id}")
-
-        # Send the routine as an attached PDF to the user's email in background
-        # (do not block the action thread to avoid connector timeouts)
-        try:
-            if EMAIL_ROUTINE_ENABLED and ctx:
-                threading.Thread(
-                    target=maybe_send_routine_email,
-                    args=(ctx,),
-                    kwargs={"routine_data": routine_summary, "attach": True},
-                    daemon=True,
-                ).start()
-        except Exception as exc:
-            logger.warning("No se pudo iniciar thread para enviar rutina por correo: %s", exc)
-
         context_payload: Dict[str, Any] = {}
         if condiciones and condiciones.lower() not in {"", "ninguna", "ninguno", "no"}:
             context_payload["medical_conditions"] = condiciones
@@ -2091,8 +2105,27 @@ class ActionGenerarRutina(Action):
             context_payload["allergies"] = alergias
         if dislikes and str(dislikes).strip():
             context_payload["dislikes"] = dislikes
-        if context_payload:
-            send_context_update(tracker.sender_id, context_payload)
+
+        # persist_plan, email y send_context_update son fire-and-forget
+        if not offline_backend:
+            def _bg_persist_rutina():
+                plan_id = persist_plan(
+                    ctx,
+                    path="/api/routine-plans",
+                    payload={
+                        "title": routine_summary.get("header") or "Rutina generada",
+                        "objective": objetivo,
+                        "content": routine_summary,
+                    },
+                )
+                if EMAIL_ROUTINE_ENABLED and ctx:
+                    try:
+                        maybe_send_routine_email(ctx, routine_data=routine_summary, attach=True)
+                    except Exception as exc:
+                        logger.warning("No se pudo enviar rutina por correo: %s", exc)
+                if context_payload:
+                    send_context_update(tracker.sender_id, context_payload)
+            threading.Thread(target=_bg_persist_rutina, daemon=True).start()
 
         return offline_events + [
             SlotSet("ultima_rutina", routine_summary),
@@ -2128,7 +2161,15 @@ class ActionGenerarDieta(Action):
 
         # prefer explicit slot, then profile, then sensible default
         objetivo_slot = _slot(tracker, "objetivo")
-        objetivo = (objetivo_slot or profile_goal or "equilibrada").lower()
+        _raw_objetivo = (objetivo_slot or profile_goal or "equilibrada").lower().strip()
+        _DIET_ALIASES = {
+            "bajar grasa": "bajar_grasa", "bajar_grasa": "bajar_grasa",
+            "perder grasa": "bajar_grasa", "perder_grasa": "bajar_grasa",
+            "perder peso": "bajar_grasa", "definicion": "bajar_grasa", "definir": "bajar_grasa",
+            "ganar masa": "hipertrofia", "ganar_masa": "hipertrofia", "volumen": "hipertrofia",
+            "rendimiento": "resistencia", "deporte": "resistencia",
+        }
+        objetivo = _DIET_ALIASES.get(_raw_objetivo, _raw_objetivo)
         inferred_level = infer_training_level(profile_data)
         nivel = (_slot(tracker, "nivel") or inferred_level or "intermedio").lower()
         alergias = _slot(tracker, "alergias") or (profile_data.get("allergies") if profile_data else None) or "ninguna"
@@ -2431,20 +2472,8 @@ class ActionGenerarDieta(Action):
         dispatcher.utter_message(text=text_response)
         dispatcher.utter_message(json_message=diet_payload)
 
-        diet_id = None
-        if not offline_backend:
-            diet_id = persist_plan(
-                ctx,
-                path="/api/diet-plans",
-                payload={
-                    "title": f"Dieta {plan_label}".strip(),
-                    "goal": plan_label,
-                    "content": diet_payload,
-                },
-            )
-        if diet_id:
-            dispatcher.utter_message(text=f"Dieta guardada. ID: {diet_id}\nVer detalle: /cuenta/dietas/{diet_id}")
-
+        # persist_plan y send_context_update son fire-and-forget: se ejecutan en
+        # background para no bloquear la respuesta al usuario.
         context_payload: Dict[str, Any] = {}
         if condiciones and condiciones.lower() not in {"", "ninguna", "ninguno", "no"}:
             context_payload["medical_conditions"] = condiciones
@@ -2452,14 +2481,90 @@ class ActionGenerarDieta(Action):
             context_payload["allergies"] = alergias
         if dislikes and str(dislikes).strip():
             context_payload["dislikes"] = dislikes
-        if context_payload:
-            send_context_update(tracker.sender_id, context_payload)
+
+        if not offline_backend:
+            def _bg_persist():
+                diet_id = persist_plan(
+                    ctx,
+                    path="/api/diet-plans",
+                    payload={
+                        "title": f"Dieta {plan_label}".strip(),
+                        "goal": plan_label,
+                        "content": diet_payload,
+                    },
+                )
+                if context_payload:
+                    send_context_update(tracker.sender_id, context_payload)
+                return diet_id
+            threading.Thread(target=_bg_persist, daemon=True).start()
 
         return offline_events + [
             SlotSet("ultima_dieta", diet_payload),
             SlotSet("servicio_pendiente", None),
         ]
 
+
+
+class ActionExcluirAlimento(Action):
+    """Extrae el alimento mencionado, actualiza el slot `no_gusta`
+    acumulando los valores anteriores, y regenera la dieta."""
+
+    def name(self) -> Text:
+        return "action_excluir_alimento"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+
+        # -- Extraer entidad detectada en el mensaje actual --
+        nuevo_alimento: Optional[str] = None
+        for ent in tracker.latest_message.get("entities", []):
+            if ent.get("entity") in ("no_gusta", "alimentos_no_gustan"):
+                nuevo_alimento = ent.get("value", "").strip().lower()
+                break
+
+        # Si no encontramos entidad, intentar extraer del texto completo como fallback
+        if not nuevo_alimento:
+            texto = tracker.latest_message.get("text", "")
+            # Palabras clave que suelen preceder al alimento
+            for kw in ("quita el ", "quita la ", "saca el ", "saca la ",
+                        "elimina el ", "elimina la ", "sin ", "no quiero ",
+                        "no pongas ", "no incluyas "):
+                if kw in texto.lower():
+                    parte = texto.lower().split(kw, 1)[-1].strip()
+                    # tomar hasta primer espacio + preposición que indique fin
+                    for stop in (" de ", " del ", " en ", " por ", " que ", "\n"):
+                        if stop in parte:
+                            parte = parte.split(stop)[0].strip()
+                    nuevo_alimento = parte if parte else None
+                    break
+
+        # -- Acumular con los dislikes previos del slot --
+        prev = _slot(tracker, "no_gusta") or ""
+        prev_list = [x.strip().lower() for x in prev.split(",") if x.strip()] if prev else []
+
+        if nuevo_alimento and nuevo_alimento not in prev_list:
+            prev_list.append(nuevo_alimento)
+
+        nuevo_valor = ", ".join(prev_list) if prev_list else None
+
+        if not nuevo_alimento:
+            dispatcher.utter_message(
+                text="No entendí bien qué alimento quieres quitar. ¿Puedes decirme de nuevo? Ejemplo: 'quita el pan integral'."
+            )
+            return []
+
+        # Confirmar al usuario
+        dispatcher.utter_message(response="utter_dieta_modificada")
+
+        # Actualizar slot y disparar regeneración de dieta
+        return [
+            SlotSet("no_gusta", nuevo_valor),
+            FollowupAction("action_generar_dieta"),
+        ]
 
 
 class ActionInscribirEntrenoUnico(Action):

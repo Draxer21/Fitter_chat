@@ -55,15 +55,27 @@ class MercadoPagoService:
             "payment_methods": {
                 "installments": 12,  # Hasta 12 cuotas
             },
-            "notification_url": current_app.config.get('MERCADOPAGO_NOTIFICATION_URL'),
         }
+
+        # Solo agregar notification_url si es una URL de producción válida (no localhost, no ngrok)
+        notification_url = (current_app.config.get('MERCADOPAGO_NOTIFICATION_URL') or "").strip()
+        _invalid_hosts = ("localhost", "127.0.0.1", "ngrok", "ngrok-free.app", "0.0.0.0")
+        if notification_url and not any(h in notification_url for h in _invalid_hosts):
+            preference_data["notification_url"] = notification_url
 
         # Agregar información del pagador si está disponible
         if payer_info:
+            payer_email = payer_info.get('email', '')
+            # En sandbox, evitar que el email del pagador coincida con el merchant
+            # (MP bloquea autopagos). Usar email neutro de prueba.
+            access_token = current_app.config.get('MERCADOPAGO_ACCESS_TOKEN', '')
+            is_test_mode = access_token.startswith('TEST-')
+            if is_test_mode:
+                payer_email = 'test_user_buyer@testuser.com'
             preference_data["payer"] = {
-                "name": payer_info.get('name'),
-                "surname": payer_info.get('surname'),
-                "email": payer_info.get('email'),
+                "name": payer_info.get('name') or 'Test',
+                "surname": payer_info.get('surname') or 'User',
+                "email": payer_email,
             }
 
         # URLs de retorno - SIEMPRE configurarlas
@@ -107,6 +119,44 @@ class MercadoPagoService:
             }
         else:
             raise Exception(f"Error al crear preferencia: {preference_response}")
+
+    def create_payment(self, token, transaction_amount, installments,
+                       payment_method_id, issuer_id, payer_email,
+                       payer_identification, order_id):
+        """
+        Crear un pago directo con Checkout API (sin redirección).
+        """
+        # En sandbox, el email del pagador NO puede coincidir con el del merchant
+        access_token = current_app.config.get('MERCADOPAGO_ACCESS_TOKEN', '')
+        is_test_mode = access_token.startswith('TEST-')
+        effective_email = 'test_user_buyer@testuser.com' if is_test_mode else payer_email
+
+        # CLP no tiene decimales — MP rechaza si se envían centavos
+        amount = int(transaction_amount) if is_test_mode else float(transaction_amount)
+
+        payment_data = {
+            "transaction_amount": amount,
+            "token": token,
+            "description": "Fitter",
+            "installments": int(installments),
+            "payment_method_id": payment_method_id,
+            "payer": {
+                "email": effective_email,
+                "identification": payer_identification or {},
+            },
+            "external_reference": str(order_id),
+            "statement_descriptor": "FITTER",
+        }
+
+        if issuer_id:
+            payment_data["issuer_id"] = issuer_id
+
+        notification_url = (current_app.config.get('MERCADOPAGO_NOTIFICATION_URL') or "").strip()
+        _invalid_hosts = ("localhost", "127.0.0.1", "ngrok", "ngrok-free.app", "0.0.0.0")
+        if notification_url and not any(h in notification_url for h in _invalid_hosts):
+            payment_data["notification_url"] = notification_url
+
+        return self.sdk.payment().create(payment_data)
 
     def get_payment_info(self, payment_id):
         """
@@ -169,6 +219,15 @@ class MercadoPagoService:
                                 if order:
                                     order.payment_status = 'paid'
                                     order.status = 'confirmed'
+                                    # Auto-activar suscripción si corresponde
+                                    try:
+                                        from backend.payments.routes import _maybe_activate_subscription
+                                        from backend.login.models import User
+                                        user = User.query.get(order.user_id) if order.user_id else None
+                                        if user:
+                                            _maybe_activate_subscription(order, user)
+                                    except Exception as sub_exc:
+                                        current_app.logger.warning("No se pudo activar suscripción desde webhook: %s", sub_exc)
 
                             elif payment.status in ['rejected', 'cancelled']:
                                 # Actualizar estado de la orden

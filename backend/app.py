@@ -165,10 +165,34 @@ def create_app() -> Flask:
     from .login.routes import _apply_rate_limits
     _apply_rate_limits(app)
 
-    # Rate limit específico para demo pública (más estricto al ser público)
+    # ── /chat/demo/send — planificador público sin autenticación ──
+    import uuid as _uuid_mod
+
+    @app.post("/chat/demo/send")
+    def chat_demo_send():
+        from .chat.demo_service import process_demo_message
+        data = request.get_json(force=True, silent=True) or {}
+        message = str(data.get("message") or "").strip()
+        if not message:
+            return jsonify({"error": "Mensaje vacío."}), 400
+        session_id = str(data.get("session_id") or "").strip()
+        if not session_id or len(session_id) > 64:
+            session_id = str(_uuid_mod.uuid4())
+        try:
+            result = process_demo_message(session_id=session_id, message=message)
+        except Exception as exc:
+            app.logger.exception("Error en chat_demo_send: %s", exc)
+            return jsonify({"error": "Error interno en la demo."}), 500
+        return jsonify({
+            "responses":  result["responses"],
+            "session_id": session_id,
+            "turns_left": result["turns_left"],
+            "exhausted":  result["exhausted"],
+        }), 200
+
+    # Rate limit para demo pública (30 mensajes/hora por IP)
     if limiter:
-        from .chat.routes import demo_send
-        limiter.limit("30/hour")(demo_send)   # 30 mensajes/hora por IP
+        limiter.limit("30/hour")(chat_demo_send)
 
     # ---------------- Realtime (SocketIO) ----------------
     from .realtime.events import init_realtime
@@ -264,6 +288,16 @@ def create_app() -> Flask:
         try:
             result = chat_service.send_message(data, request.headers, flask_session)
         except ChatServiceError as exc:
+            # Si Rasa está caído (502) caemos al planificador local
+            if exc.status_code == 502:
+                try:
+                    from .chat.demo_service import process_demo_message
+                    sender_fb = str(data.get("sender", "web-user"))
+                    message_fb = str(data.get("message", "")).strip()
+                    fb_result = process_demo_message(session_id=sender_fb, message=message_fb)
+                    return jsonify(fb_result["responses"]), 200
+                except Exception:
+                    app.logger.exception("Fallback al planificador también falló")
             status = "error"
             status_code = exc.status_code
             elapsed_ms = (time.perf_counter() - started) * 1000
@@ -426,5 +460,5 @@ if __name__ == "__main__":
     app.run(
         host="0.0.0.0",
         port=int(os.getenv("PORT", "5000")),
-        debug=os.getenv("FLASK_DEBUG", "1") == "1"
+        debug=os.getenv("FLASK_DEBUG", "0") == "1"
     )

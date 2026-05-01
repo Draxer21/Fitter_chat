@@ -19,12 +19,18 @@ def chat_send():
         r = requests.post(
             f"{current_app.config['RASA_BASE_URL']}/webhooks/rest/webhook",
             json={"sender": sender, "message": message},
-            timeout=15
+            timeout=5,
         )
         r.raise_for_status()
         return jsonify(r.json()), 200
     except requests.RequestException:
-        return jsonify([{"text": "No se pudo conectar al motor conversacional."}]), 502
+        # Rasa no disponible → usar planificador local como fallback
+        try:
+            result = process_demo_message(session_id=sender, message=message)
+            return jsonify(result["responses"]), 200
+        except Exception as exc:
+            current_app.logger.exception("Error en fallback del planificador: %s", exc)
+            return jsonify([{"text": "Lo siento, el asistente no está disponible en este momento. Intenta más tarde."}]), 200
 
 
 @bp.post("/demo/send")

@@ -35,10 +35,10 @@ def _parse_list(raw: Optional[str], default: Optional[List[str]] = None) -> List
 
 @dataclass
 class AppConfig:
-    SECRET_KEY: str = "change-me"
-    SQLALCHEMY_DATABASE_URI: str = (
-        "postgresql+psycopg2://rasa_user:rasa123@127.0.0.1:5432/rasa_db"
-    )
+    # No se definen valores por defecto para secretos críticos.
+    # Deben proveerse obligatoriamente mediante variables de entorno.
+    SECRET_KEY: str = ""
+    SQLALCHEMY_DATABASE_URI: str = ""
     SQLALCHEMY_TRACK_MODIFICATIONS: bool = False
     RASA_BASE_URL: str = "http://localhost:5005"
     RASA_REST_WEBHOOK: str = "/webhooks/rest/webhook"
@@ -68,6 +68,7 @@ class AppConfig:
     MERCADOPAGO_ACCESS_TOKEN: str = ""
     MERCADOPAGO_PUBLIC_KEY: str = ""
     MERCADOPAGO_NOTIFICATION_URL: str = ""
+    MERCADOPAGO_WEBHOOK_SECRET: str = ""
     FRONTEND_URL: str = "http://localhost:3000"
     GOOGLE_CLIENT_IDS: List[str] = field(default_factory=list)
     GOOGLE_AUTH_VERIFY_MODE: str = "google"
@@ -75,11 +76,22 @@ class AppConfig:
     @classmethod
     def from_env(cls, env: Optional[Env] = None) -> "AppConfig":
         env = os.environ if env is None else env
+        secret_key = env.get("SECRET_KEY", "").strip()
+        if not secret_key:
+            raise RuntimeError(
+                "SECRET_KEY no está definido. "
+                "Define la variable de entorno SECRET_KEY antes de arrancar la aplicación. "
+                "Genera un valor seguro con: python -c \"import secrets; print(secrets.token_urlsafe(32))\""
+            )
+        db_uri = env.get("SQLALCHEMY_DATABASE_URI", "").strip()
+        if not db_uri:
+            raise RuntimeError(
+                "SQLALCHEMY_DATABASE_URI no está definido. "
+                "Define la variable de entorno SQLALCHEMY_DATABASE_URI antes de arrancar la aplicación."
+            )
         return cls(
-            SECRET_KEY=env.get("SECRET_KEY", cls.SECRET_KEY),
-            SQLALCHEMY_DATABASE_URI=env.get(
-                "SQLALCHEMY_DATABASE_URI", cls.SQLALCHEMY_DATABASE_URI
-            ),
+            SECRET_KEY=secret_key,
+            SQLALCHEMY_DATABASE_URI=db_uri,
             RASA_BASE_URL=env.get("RASA_BASE_URL", cls.RASA_BASE_URL).rstrip("/"),
             RASA_REST_WEBHOOK=env.get(
                 "RASA_REST_WEBHOOK", cls.RASA_REST_WEBHOOK
@@ -133,6 +145,9 @@ class AppConfig:
             ),
             MERCADOPAGO_NOTIFICATION_URL=env.get(
                 "MERCADOPAGO_NOTIFICATION_URL", cls.MERCADOPAGO_NOTIFICATION_URL
+            ),
+            MERCADOPAGO_WEBHOOK_SECRET=env.get(
+                "MERCADOPAGO_WEBHOOK_SECRET", cls.MERCADOPAGO_WEBHOOK_SECRET
             ),
             FRONTEND_URL=env.get("FRONTEND_URL", cls.FRONTEND_URL),
             GOOGLE_CLIENT_IDS=_parse_list(env.get("GOOGLE_CLIENT_IDS")),

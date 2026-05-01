@@ -11479,7 +11479,52 @@ nlu:
 
     - arma una nueva dieta para mi
 
-    - planifica mi alimentacion'
+    - planifica mi alimentacion
+    - quiero comer mejor para mis entrenamientos
+    - qué debo comer para bajar de peso
+    - qué debo comer para ganar músculo
+    - qué debo comer para tener más energía
+    - dieta para perder grasa
+    - dieta para subir masa muscular
+    - dieta para resistencia
+    - dieta para fuerza
+    - quiero una dieta equilibrada
+    - quiero comer más sano
+    - necesito una guía de alimentación
+    - qué como antes de entrenar
+    - qué como después de entrenar
+    - cómo debo alimentarme para mis objetivos
+    - necesito un menú semanal
+    - quiero un menú para esta semana
+    - hazme un menú de lunes a domingo
+    - quiero un plan de comidas semanal
+    - dame un menú con alto contenido proteico
+    - dieta alta en proteínas para ganar músculo
+    - quiero una dieta para bajar 5 kilos
+    - necesito bajar de peso con dieta
+    - dieta para diabéticos que entrenan
+    - plan alimenticio para hipertensos
+    - qué dieta puedo hacer con intolerancia a la lactosa
+    - dieta sin gluten para entrenar
+    - soy vegano y quiero una dieta para ganar masa
+    - soy vegetariano y quiero bajar grasa
+    - dieta sin carne para deportistas
+    - quiero una dieta keto
+    - quiero probar la dieta cetogénica
+    - quiero una dieta baja en carbohidratos
+    - quiero una dieta mediterránea
+    - quiero una dieta alta en proteínas
+    - quiero una dieta con más fibra
+    - quiero una dieta para la noche
+    - quiero consejos de alimentación
+    - qué me recomiendas comer
+    - dame recomendaciones de alimentación
+    - cómo mejorar mi nutrición
+    - quiero optimizar mi nutrición
+    - el plan premium incluye recomendaciones nutricionales
+    - quiero aprovechar el beneficio de nutrición del plan premium
+    - tengo el plan anual y quiero el plan nutricional completo
+    - quiero el plan nutricional que incluye el plan anual'
 - intent: solicitar_rutina
   examples: '- rutina
 
@@ -13537,6 +13582,56 @@ nlu:
     - necesito hablar con alguien que sepa
     - quiero soporte personalizado
     - atencion personalizada por favor
+    - quiero hablar con una persona de verdad
+    - necesito un humano real
+    - por favor ponme con alguien
+    - quiero atención humana
+    - necesito atención de una persona
+    - no quiero hablar con IA
+    - no quiero un bot
+    - quiero que me atienda alguien
+    - necesito soporte humano
+    - quiero soporte de una persona
+    - me puedes conectar con alguien
+    - transfiereme con un agente
+    - transfiereme con alguien
+    - pasame a un agente
+    - quiero hablar con el administrador
+    - necesito hablar con el manager
+    - quiero hablar con el dueño
+    - necesito hablar con alguien del gym
+    - quiero contactar a alguien del equipo
+    - necesito contactar a un representante
+    - me puedes dar un número de teléfono
+    - quiero llamar a alguien
+    - hay alguien con quien hablar
+    - el bot no me entiende quiero un humano
+    - no estoy satisfecho con las respuestas
+    - quiero escalar mi caso
+    - necesito escalar esto
+    - me comunicas con soporte
+    - quiero soporte real
+    - necesito soporte inmediato
+    - quiero que me ayude una persona ahora
+    - hay alguien disponible para atenderme
+    - quiero que me contacten
+    - necesito que me contacten hoy
+    - que me llamen por favor
+    - quiero un llamado de vuelta
+    - el chatbot no resuelve mi problema
+    - el bot no puede ayudarme en esto
+    - me deriva con alguien capacitado
+    - quiero hablar con un entrenador humano
+    - necesito hablar con alguien de Rey Gym
+    - quiero contactar con la recepción
+    - conéctame con recepción
+    - quiero hablar con el encargado del gym
+    - necesito hablar con el equipo de ventas
+    - quiero contactar ventas
+    - necesito hablar con alguien sobre mi suscripción
+    - que me llame un asesor de suscripciones
+    - quiero hablar con alguien de membresías
+    - quiero soporte de membresías en persona
 - intent: soporte_mfa
   examples: '- oye el codigo de 1Password me marca expirado
 
@@ -16004,6 +16099,58 @@ nlu:
     - entreno unico de anime
     - entrenamiento de actor
     - workout de pelicula
+    - quiero hacer un entrenamiento puntual
+    - dame una sesión de entrenamiento hoy
+    - quiero entrenar hoy sin programa largo
+    - solo quiero una sesión
+    - dame ejercicios para hoy
+    - una sesión de hoy nada más
+    - quiero entrenar ahora una sola vez
+    - dame un entrenamiento exprés
+    - entrenamiento express para hoy
+    - quiero una rutina corta para hoy
+    - necesito una sesión de emergencia
+    - una sesión rápida hoy
+    - solo por hoy dame una rutina
+    - quiero una sesión sin compromiso
+    - quiero una rutina de un día
+    - solo hoy quiero entrenar
+    - dame algo para hacer hoy
+    - una sesión de [piernas](musculo) para hoy
+    - sesión express de [pecho](musculo)
+    - entreno de [espalda](musculo) para esta tarde
+    - sesión de [brazos](musculo) hoy
+    - quiero trabajar [core](musculo) hoy
+    - una sesión de [hombros](musculo) para hoy
+    - sesión de cardio para hoy
+    - entrenamiento de [fullbody](musculo) hoy
+    - dame un entreno completo para ahora
+    - quiero hacer algo de ejercicio hoy
+    - un entreno sin equipamiento para hoy
+    - sesión con [mancuernas](equipamiento) para hoy
+    - entreno con [peso corporal](equipamiento) hoy
+    - quiero una sesión de fuerza hoy
+    - una sesión de cardio corta
+    - un entreno de 30 minutos para hoy
+    - quiero entrenar 45 minutos hoy
+    - dame una sesión de [20](tiempo_disponible) minutos
+    - sesión de [30](tiempo_disponible) minutos hoy
+    - quiero algo rápido para entrenar
+    - entrenamiento de alta intensidad para hoy
+    - hiit para hoy
+    - dame una sesión de hiit
+    - quiero hacer tabata hoy
+    - sesión de fuerza explosiva para hoy
+    - quiero entrenar piernas esta noche
+    - sesión de espalda ahora
+    - algo para quemar calorías hoy
+    - quiero entrenar en casa hoy
+    - sesión en casa con lo que tengo
+    - dame algo para hacer en casa ahora
+    - quiero una sesión sin ir al gym
+    - entrenamiento en el parque para hoy
+    - rutina para hacer afuera hoy
+    - algo para entrenar en la oficina
 - intent: faq/horarios
   examples: |
     - ¿Cuál es el horario de atención?
@@ -16039,6 +16186,97 @@ nlu:
     - Horario domingo
     - Hora de apertura
     - Hora de cierre
+    - a qué hora está abierto el gimnasio
+    - me dices el horario de Rey Gym
+    - cuál es el horario de hoy
+    - qué horario tienen
+    - hasta cuándo están abiertos
+    - abren en la mañana temprano
+    - a qué hora empieza a funcionar el gym
+    - qué días abren
+    - tienen horario corrido
+    - cierran al mediodía
+    - abren los días festivos
+    - hay clases los domingos
+    - a qué hora es la última clase
+    - hay horario extendido
+    - abren antes de las 7 am
+    - cierran tarde los viernes
+    - el sábado a qué hora abren
+    - el gym abre hoy
+    - qué días no abren
+    - cuáles son los días hábiles
+    - horario para navidad
+    - horario para año nuevo
+    - funcionan los días lunes
+    - el gym cierra en verano
+    - hay algún día que no abran
+    - puedo ir a entrenar el domingo en la mañana
+    - qué pasa con el horario en feriados
+    - el gimnasio está abierto ahora
+    - tienen horario reducido en fines de semana
+    - horario de clases para mañana
+    - tienen clases en la tarde
+    - a qué hora es la primera clase del día
+    - hasta qué hora hay clases
+    - el gym cierra a las 10 pm
+    - se puede ir después de las 9 pm
+    - hay horario nocturno
+    - cuántas horas al día está abierto
+    - el lunes a qué hora cierran
+    - abren antes de las 6
+    - cuándo está más tranquilo el gym
+    - hay clases los días de semana en la mañana
+    - tienen horario de mañana y tarde
+    - van a cerrar pronto hoy
+    - están abiertos los martes por la noche
+    - qué horario tienen en verano
+    - hay horario de invierno
+    - pueden decirme el horario completo
+    - quiero saber los horarios de atención
+    - el domingo abren temprano
+    - hay clases a las 7 am
+    - a qué hora puedo ir mañana
+    - funciona el gym el viernes por la noche
+    - el gym está abierto hoy
+    - cuál es el horario de apertura esta semana
+    - qué días de la semana abren
+    - abren todos los días
+    - abren de lunes a domingo
+    - cuándo está disponible el gimnasio
+    - puedo entrenar a las 6 de la mañana
+    - a qué hora empieza la primera clase
+    - hay algo disponible a las 7 pm
+    - hay clases después de las 8 pm
+    - el gym cierra a medianoche
+    - hay atención los domingos
+    - el sábado a qué hora cierran
+    - qué pasa si llego tarde
+    - puedo entrar después del horario
+    - cuál es el último horario disponible
+    - hay clases de mañana a mediodía
+    - hay clases vespertinas
+    - horario vespertino del gym
+    - hay entrenadores disponibles a las 7 am
+    - cuándo hay entrenador disponible
+    - puedo ir por las mañanas temprano
+    - el gym tiene horario extendido los viernes
+    - el horario cambia en vacaciones de verano
+    - el horario de semana santa es diferente
+    - hay horario especial en diciembre
+    - cierran en navidad
+    - cierran en año nuevo
+    - abren el 18 de septiembre
+    - horario para el 1 de mayo
+    - está disponible la recepción a las 7 am
+    - hay personal disponible todo el día
+    - cuánto dura cada sesión de clase
+    - puedo quedarme entrenando sin horario fijo
+    - hay acceso libre sin clases
+    - puedo ir sin reserva
+    - puedo acceder al gym sin clase
+    - hay sala de pesas disponible todo el día
+    - la sala de pesas está disponible ahora
 - intent: faq/pagos
   examples: |
     - ¿Qué medios de pago aceptan?
@@ -16080,6 +16318,119 @@ nlu:
     - ¿Aceptan tarjetas de débito?
     - ¿Puedo pagar con tarjeta de débito?
     - ¿Aceptan débito para pagar la membresía?
+    - cuánto cuesta el plan básico
+    - cuánto vale el plan premium
+    - cuánto cuesta el plan anual
+    - cuál es el precio mensual
+    - precio del plan básico
+    - precio del plan premium
+    - precio del plan anual
+    - el plan básico cuesta 12900
+    - me cuesta 24900 el premium
+    - cuánto es la membresía mensual
+    - hay descuento en el plan anual
+    - cuánto ahorro con el plan anual
+    - qué incluye el plan básico
+    - qué incluye el plan premium
+    - qué incluye el plan anual
+    - diferencia entre plan básico y premium
+    - qué diferencia hay entre los planes
+    - cuántas rutinas incluye el plan básico
+    - el plan básico da 5 rutinas al mes
+    - el premium tiene rutinas ilimitadas
+    - tienen garantía de devolución
+    - cuál es la garantía del servicio
+    - tienen garantía de 30 días
+    - puedo probar y pedir reembolso
+    - si no me gusta me devuelven la plata
+    - tienen prueba gratis
+    - ofrecen período de prueba
+    - cuánto cuesta suscribirse
+    - quiero saber el precio antes de suscribirme
+    - qué plan me recomiendan
+    - el plan anual es más barato que el mensual
+    - cuánto ahorro si pago anual
+    - el anual sale 199900 pesos
+    - hay descuento pagando anual
+    - el plan anual tiene 2 meses gratis
+    - qué ventaja tiene el plan anual
+    - el premium incluye nutrición
+    - el básico incluye seguimiento de progreso
+    - hay planes corporativos
+    - tienen planes para grupos
+    - me pueden detallar los precios
+    - qué plan tiene ajustes automáticos
+    - quiero comparar los planes
+    - cómo puedo pagar mi suscripción
+    - puedo cancelar en cualquier momento
+    - hay cobro de permanencia
+    - puedo pagar mensual aunque quiera
+    - el cobro es automático
+    - se descuenta automático el plan
+    - cómo se cobra la membresía
+    - tienen factura electrónica
+    - puedo pedir boleta
+    - aceptan pago en efectivo
+    - solo aceptan pago digital
+    - se puede pagar con webpay
+    - aceptan redcompra
+    - tienen convenio con bancos
+    - cómo pago si soy nuevo
+    - quiero saber los precios
+    - me puedes decir los precios
+    - cuáles son los precios de los planes
+    - qué planes tienen y cuánto cuestan
+    - el plan más económico cuánto cuesta
+    - el plan más completo cuánto vale
+    - cuánto es la mensualidad
+    - tienen planes con descuento
+    - hay descuento si pago de una vez
+    - qué pasa si cancelo antes del mes
+    - puedo pausar mi suscripción
+    - puedo pausar el pago un mes
+    - el cobro se hace automático
+    - cómo funciona el cobro mensual
+    - me avisan antes de cobrar
+    - puedo pagar manual cada mes
+    - hay cobro extra por algo
+    - hay cargos ocultos
+    - el precio incluye todo
+    - qué no está incluido en el precio
+    - hay costo adicional por clases
+    - las clases tienen costo extra
+    - el plan básico incluye todo
+    - qué no tiene el plan básico
+    - el premium qué tiene que no tiene el básico
+    - el anual tiene todos los beneficios del premium
+    - cuántos meses gratis da el plan anual
+    - el anual me da 2 meses sin costo
+    - cuánto ahorro eligiendo el plan anual
+    - 199900 por año versus 24900 por mes conviene
+    - conviene el plan anual o el mensual
+    - qué conviene pagar mensual o anual
+    - puedo cambiar de plan después
+    - si pago básico puedo subir después
+    - el precio puede cambiar
+    - me bloquean si no pago
+    - qué pasa si no pago a tiempo
+    - el plan se renueva automático
+    - cómo cancelo el cobro automático
+    - se puede desactivar el cobro automático
+    - hay factura disponible
+    - me pueden emitir factura
+    - emiten boleta por el pago
+    - el pago es seguro
+    - cómo protegen mi información de pago
+    - es seguro pagar online acá
+    - aceptan criptomonedas
+    - aceptan bitcoin
+    - hay prueba gratis antes de pagar
+    - puedo probar 30 días gratis
+    - la garantía de 30 días cómo funciona
+    - si no me gusta en 30 días me devuelven la plata
+    - cómo pido el reembolso
+    - cuánto tarda la devolución
+    - cuáles son los términos de la garantía
 - intent: crear_reserva
   examples: '- quiero apartar un cupo para [spinning](clase) a las [19:00](hora)
 
@@ -16199,7 +16550,72 @@ nlu:
 
     - quiero agendar una hora con un coach
 
-    - quiero agendar una hora'
+    - quiero agendar una hora
+    - reservar clase de [boxeo](clase)
+    - quiero ir a [zumba](clase) el [martes](fecha)
+    - me puedes reservar [yoga](clase) para el [jueves](fecha) a las [18:00](hora)
+    - quiero tomar la clase de [spinning](clase) de mañana
+    - quiero ir a [pilates](clase) el [sábado](fecha) a las [10:00](hora)
+    - agendar cupo para [funcional](clase) a las [07:30](hora)
+    - inscríbeme en [yoga](clase) mañana
+    - quiero reservar para [spinning](clase) esta tarde
+    - necesito cupo para la clase de [pilates](clase) del [viernes](fecha)
+    - apartar lugar en [boxeo](clase) para el [miércoles](fecha)
+    - quiero ir al [funcional](clase) del [lunes](fecha)
+    - quiero asistir a [yoga](clase) hoy a las [19:00](hora)
+    - apúntame a la clase de [zumba](clase) del [jueves](fecha)
+    - necesito cupo para [pilates](clase) a las [08:00](hora)
+    - reservar el [spinning](clase) del [martes](fecha) a las [19:00](hora)
+    - me puedes guardar un lugar en [yoga](clase) el [lunes](fecha)
+    - quiero ir a [boxeo](clase) mañana a las [18:30](hora)
+    - guárdame un cupo en [funcional](clase) el [miércoles](fecha)
+    - necesito hacer una reserva para hoy
+    - quiero inscribirme en la próxima clase disponible
+    - tengo que reservar una clase para esta semana
+    - puedo agendar una clase de [spinning](clase) para hoy
+    - reserva para mañana a las [07:00](hora)
+    - quiero un cupo en la clase de las [17:00](hora)
+    - quiero reservar un cupo en la clase de las [20:00](hora)
+    - cupo para la clase de mañana por la mañana
+    - inscribirme en clase de hoy
+    - agendar para el [domingo](fecha) a las [11:00](hora)
+    - quiero asistir a una clase esta tarde
+    - reservar para esta noche
+    - cupo para el [lunes](fecha) en la tarde
+    - quiero ir al gym mañana con clase incluida
+    - necesito lugar en la clase de hoy a las [18:00](hora)
+    - puedo reservar para [funcional](clase) esta semana
+    - quiero reservar la clase del [jueves](fecha) por la tarde
+    - apartar cupo en la clase de [zumba](clase) del [miércoles](fecha)
+    - quiero inscribirme en [pilates](clase) el próximo [lunes](fecha)
+    - necesito cupo en [yoga](clase) para hoy en la tarde
+    - quiero una clase de [spinning](clase) para esta semana
+    - quiero tomar una clase mañana a las [08:00](hora)
+    - reservar clase para el [viernes](fecha) en la noche
+    - necesito cupo en la clase nocturna del [jueves](fecha)
+    - reservar para mañana en la mañana
+    - agendar clase para el próximo [martes](fecha)
+    - quiero una clase de [boxeo](clase) esta semana
+    - inscribirme en [funcional](clase) para mañana
+    - agendar una sesión de [yoga](clase) para el [sábado](fecha)
+    - me puedes agendar algo para el [lunes](fecha) por la mañana
+    - reservar clase de mañana temprano
+    - quiero un cupo disponible para hoy
+    - hay cupo disponible para hoy
+    - hay cupo para mañana
+    - qué clases hay disponibles hoy
+    - qué clases hay mañana
+    - qué hay disponible para esta tarde
+    - hay algo disponible ahora
+    - inscríbeme en lo que haya disponible ahora
+    - quiero una clase disponible para esta semana
+    - reservar para cuando haya cupo
+    - ponme en lista de espera para [spinning](clase)
+    - anotar en lista de espera
+    - quiero entrar a la lista de espera del [yoga](clase)
+    - hay lista de espera para [pilates](clase)
+    - anótame en la lista si hay cupo
+    - me avisan si se libera un cupo'
 - intent: suscripcion_cambio_plan
   examples: '- cambiar plan
 
@@ -16391,7 +16807,40 @@ nlu:
 
     - quiero renovar con otro plan
 
-    - cambiar a un plan diferente'
+    - cambiar a un plan diferente
+    - quiero pasarme del básico al premium
+    - quiero subir del básico al anual
+    - quiero bajar del premium al básico
+    - cambiar de básico a premium
+    - cambiar de premium a anual
+    - quiero el plan anual en vez del mensual
+    - pasarme al plan de 199900 al año
+    - quiero cambiar al plan con nutrición incluida
+    - me interesa el plan premium ahora
+    - quiero actualizar desde el básico
+    - quiero el plan anual porque es más económico
+    - cambiarme al plan que tiene rutinas ilimitadas
+    - quiero el plan con ajustes automáticos
+    - cambiar al plan con plan nutricional completo
+    - quiero el plan con sesiones con entrenador
+    - cambiarme porque quiero más rutinas al mes
+    - quiero cambiar porque mi plan básico ya no me alcanza
+    - tengo el básico y quiero subir al premium
+    - tengo el premium y quiero el anual
+    - actualizar mi plan al que tiene soporte VIP
+    - cambiar al plan con acceso prioritario
+    - quiero más rutinas de las que tengo ahora
+    - mi plan no incluye nutrición y la quiero
+    - quiero el plan que tiene 2 meses gratis
+    - cambiarme al plan anual que ahorra 33 por ciento
+    - quiero actualizarme al plan más completo
+    - me quiero cambiar de plan porque quiero más beneficios
+    - tengo el mensual y me quiero pasar al anual
+    - cambiar de plan para tener XAI completo
+    - quiero el plan con seguimiento avanzado con gráficos
+    - actualizar al plan con más funcionalidades
+    - quiero el plan que incluye plan nutricional
+    - cambiar al plan que tiene soporte VIP dedicado'
 - intent: afirmar
   examples: '- si, confirma por favor
 
@@ -16521,7 +16970,71 @@ nlu:
 
     - genial
 
-    - continuemos'
+    - continuemos
+    - sí claro
+    - sí, eso mismo
+    - excelente, confirmo
+    - sí, quiero eso
+    - sí, hazlo
+    - correcto, así es
+    - exacto
+    - efectivamente
+    - en efecto
+    - así es
+    - sí, exactamente
+    - sí, procede
+    - procede
+    - anda
+    - anda nomás
+    - ya pues
+    - ya
+    - ya, dale
+    - ya, ok
+    - ya claro
+    - ya está bien
+    - sip
+    - sipo
+    - ya po
+    - dale po
+    - bueno
+    - bueno sí
+    - bueno, adelante
+    - positivo
+    - de acuerdo con eso
+    - sí, de una
+    - sí, sin problema
+    - sin problema
+    - sí, para adelante
+    - para adelante
+    - confirmado, gracias igual
+    - sí, lo confirmo ahora
+    - quiero confirmar
+    - ok bueno
+    - ok listo entonces
+    - listo para confirmar
+    - confirmo todo
+    - de acuerdo, listo
+    - ok, vamos
+    - vamos
+    - sí, vamos
+    - eso mismo quiero
+    - claro que sí, confirmar
+    - sí, eso es lo que quiero
+    - me parece bien
+    - me parece perfecto
+    - todo bien, confirmar
+    - sí, todo bien
+    - ok, todo correcto
+    - correcto, confirmar
+    - afirmo
+    - sí lo quiero
+    - quiero eso
+    - sí, sin problema
+    - si, estoy de acuerdo
+    - sí, acepto los términos
+    - ok confirmo la operación
+    - confirmado, proceder
+    - perfecto, proceder'
 - intent: negar
   examples: '- no, mejor cancela
 
@@ -16643,7 +17156,63 @@ nlu:
 
     - no por ahora
 
-    - mejor cancelar'
+    - mejor cancelar
+    - no, no quiero
+    - no quiero eso
+    - no es lo que quiero
+    - no gracias, otra vez
+    - no por ahora gracias
+    - prefiero no
+    - mejor no hacerlo
+    - no lo quiero
+    - no en este momento
+    - ahora no
+    - dejémoslo para después
+    - después lo veo
+    - no, lo pienso
+    - no, lo pensaré
+    - nopo
+    - nope
+    - nel
+    - ni hablar
+    - no, definitivamente no
+    - no, gracias de todas formas
+    - no me interesa
+    - no quiero confirmar eso
+    - mejor lo dejo
+    - no, dejémoslo así
+    - no, no sigo
+    - no continúo
+    - prefiero parar
+    - no, parar
+    - mejor paro aquí
+    - no lo hagas
+    - no hagas eso
+    - cancela la operación
+    - cancela el proceso
+    - no, cancela el proceso
+    - no, salir
+    - quiero salir
+    - salir de aquí
+    - no, volver
+    - mejor vuelvo
+    - no, me arrepentí
+    - me arrepentí
+    - no es lo que pedí
+    - ese no es mi caso
+    - no aplica para mí
+    - no, eso no es lo que busco
+    - no, no era eso
+    - no quiero eso que dijiste
+    - no, diferente
+    - no, eso no
+    - rechazado
+    - no acepto
+    - no lo acepto
+    - no confirmo nada
+    - no estoy de acuerdo
+    - en desacuerdo
+    - prefiero no continuar'
 - intent: nlu_fallback
   examples: |
     - me sirve para volar al espacio?
@@ -16800,6 +17369,52 @@ nlu:
     - enciende el modo test
     - habilita el modo test
     - activar test mode
+    - activa modo simulado
+    - activar modo simulado
+    - activa el modo sin internet
+    - activa modo sin red
+    - quiero ver cómo funciona sin conexión
+    - modo demostracion por favor
+    - quiero activar el modo de ejemplo
+    - activa el modo ejemplo
+    - pon el modo de ejemplo
+    - pon en modo prueba
+    - habilita modo de prueba
+    - modo prueba activar
+    - demo activar
+    - quiero el modo demo
+    - dame el modo demo
+    - necesito el demo activo
+    - prende la demo
+    - activa la demo
+    - habilitar la demo
+    - iniciar la demo
+    - comenzar demo
+    - quiero comenzar el demo
+    - arranca el modo demo
+    - enciende el modo de demostracion
+    - coloca el modo demo
+    - me pones el modo demo
+    - actívame el demo
+    - habilítame el modo demo
+    - inicializa el modo demo
+    - quiero ver el demo
+    - poner modo demo
+    - entrar a demo
+    - ejecutar demo
+    - iniciar modo demo ahora
+    - necesito modo offline
+    - prefiero el modo sin backend
+    - activa sin servidor
+    - prueba sin conexión activar
+    - quiero el modo offline activo
+    - activa modo desconectado
+    - pon modo desconectado
+    - habilitar modo desconectado
+    - activa el modo local
+    - demo local activar
+    - modo local por favor
+    - activa para probar sin red
 
 - intent: desactivar_modo_demo
   examples: |
@@ -16872,6 +17487,57 @@ nlu:
     - quita el demo por favor
     - desactiva el modo test
     - apagar modo test
+    - salir del modo test
+    - quitar modo test
+    - cerrar modo test
+    - quiero salir del demo
+    - ya no quiero el demo
+    - sacar el demo
+    - saca el modo demo por favor
+    - apaga el modo demo por favor
+    - quita el modo demo por favor
+    - desactívame el demo
+    - désactiva el modo demo
+    - necesito salir del modo demo
+    - quiero volver al modo normal
+    - regresar a modo normal
+    - conectarme de nuevo
+    - volver a conectarme
+    - salir del offline
+    - salir del modo offline por favor
+    - desactivar el modo desconectado
+    - quitar el modo desconectado
+    - volver al modo con red
+    - volver a modo con red
+    - reconectar
+    - ya quiero reconectarme
+    - quiero modo online ahora
+    - activar modo online
+    - pon modo online
+    - habilitar modo online
+    - volver a modo online
+    - salir de la demostracion por favor
+    - terminar con el demo
+    - cerrar el demo
+    - quiero cerrar el demo
+    - me sacas del demo
+    - me desactivas el modo demo
+    - quiero desactivar esto
+    - necesito desactivar el modo prueba
+    - salir de la prueba
+    - terminar la prueba
+    - cerrar modo de prueba
+    - quitar la demostracion
+    - desactivar la demo ahora
+    - cerrar la demo
+    - apagar la demo
+    - dejar de usar el demo
+    - ya terminé con el demo
+    - el demo ya no lo necesito
+    - apaga el demo que ya no lo uso
+    - listo con el demo
+    - ya probé, salir del demo
+    - quiero usar el sistema real ahora
     - quitar modo test
     - salir del modo test
 
@@ -16988,3 +17654,35 @@ nlu:
     - como cancelo mi reserva de clase
     - como anulo mi reserva de clase
     - quiero saber como cancelar mi reserva
+
+- intent: excluir_alimento
+  examples: |
+    - quita el [pan integral](no_gusta) de la dieta
+    - saca el [pan integral](no_gusta) de la dieta
+    - quita la [palta](no_gusta) de las comidas
+    - sin [palta](no_gusta) por favor
+    - sin [arroz](no_gusta)
+    - elimina el [arroz](no_gusta) de mi dieta
+    - no quiero [pollo](no_gusta) en la dieta
+    - no me gusta el [atun](no_gusta), sacalo
+    - borra el [queso](no_gusta) de mis comidas
+    - quita el [huevo](no_gusta)
+    - saca el [huevo](no_gusta) de mis comidas
+    - no pongas [avena](no_gusta) en mi plan
+    - elimina la [avena](no_gusta) de mi dieta
+    - sin [lacteos](no_gusta) en mi plan alimenticio
+    - quiero que quites el [salmon](no_gusta)
+    - no incluyas [lentejas](no_gusta) en la dieta
+    - saca las [lentejas](no_gusta)
+    - no quiero [brocoli](no_gusta) en mis comidas
+    - quita el [brocoli](no_gusta) de mi dieta
+    - elimina la [palta](no_gusta) del plan
+    - sin [mariscos](no_gusta) por favor
+    - no incluyas [nueces](no_gusta)
+    - quiero que no pongas [tofu](no_gusta)
+    - saca el [tomate](no_gusta) de mis platos
+    - no me gusta el [pepino](no_gusta), sacalo de la dieta
+    - quita cualquier plato con [coliflor](no_gusta)
+    - sin [gluten](no_gusta) en mi dieta
+    - elimina el [pan](no_gusta) de todas mis comidas
+    - nada con [carne roja](no_gusta) por favor

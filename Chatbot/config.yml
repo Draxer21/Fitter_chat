@@ -24,17 +24,17 @@ pipeline:
     min_ngram: 1
     max_ngram: 3
   - name: DIETClassifier
-    epochs: 20
-    transformer_size: 16
-    number_of_transformer_layers: 1
+    epochs: 100
+    transformer_size: 64
+    number_of_transformer_layers: 2
     embedding_dimension: 64
     batch_strategy: "sequence"
-    batch_size: 8
-    learning_rate: 0.002
+    batch_size: 16
+    learning_rate: 0.001
     constrain_similarities: true
-    evaluate_on_number_of_examples: 50
-    evaluate_every_number_of_epochs: 10
-    early_stopping_patience: 10
+    evaluate_on_number_of_examples: 100
+    evaluate_every_number_of_epochs: 20
+    early_stopping_patience: 15
   - name: EntitySynonymMapper
   - name: RegexEntityExtractor
     use_regexes: true

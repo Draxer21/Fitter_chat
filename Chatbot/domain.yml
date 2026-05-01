@@ -34,6 +34,7 @@ intents:
   - detener_formulario
   - faq
   - nlu_fallback
+  - excluir_alimento
 
 entities:
   - objetivo
@@ -450,6 +451,11 @@ responses:
   utter_suscripcion_baja:
     - text: "Puedo cancelar o pausar tu suscripción. Cuéntame cómo prefieres proceder y lo hago enseguida."
 
+  utter_dieta_modificada:
+    - text: "Listo, ya quité ese alimento de tu plan 🙅. Regenerando tu dieta sin él..."
+    - text: "De acuerdo, excluyendo ese ingrediente y actualizando tu dieta ahora mismo..."
+    - text: "Entendido, saco ese alimento y te armo una nueva dieta sin él ✅."
+
   utter_fuera_de_alcance:
     - text: "Lo siento, aún no puedo ayudarte con eso. ¿Te parece si lo intentamos de otra manera o me das más detalles, amigo?"
 
@@ -669,6 +675,7 @@ actions:
   - validate_reserva_form
   - validate_rutina_form
   - validate_hero_form
+  - action_excluir_alimento
 
 session_config:
   session_expiration_time: 60

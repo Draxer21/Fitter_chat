@@ -1,0 +1,34 @@
+name: Backup BD a RDS
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Todos los días a las 3AM hora Chile
+  workflow_dispatch:       # También permite ejecutarlo manualmente
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Instalar PostgreSQL client
+        run: sudo apt-get install -y postgresql-client
+
+      - name: Hacer dump de BD local
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD_LOCAL }}
+        run: |
+          pg_dump -h ${{ secrets.DB_LOCAL_HOST }} \
+                  -U postgres \
+                  -d rasa_db \
+                  -F c \
+                  -f backup.dump
+
+      - name: Restaurar en RDS
+        env:
+          PGPASSWORD: ${{ secrets.DB_PASSWORD_RDS }}
+        run: |
+          pg_restore -h ${{ secrets.RDS_HOST }} \
+                     -U postgres \
+                     -d rasa_db \
+                     -c --no-owner \
+                     backup.dump

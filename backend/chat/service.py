@@ -468,7 +468,7 @@ class ChatService:
 
             self.db.session.commit()
             return ServiceResponse({"ok": True, "context": manager.to_dict()}, 200)
-        except ChatServiceError:
+        except Exception:
             self.db.session.rollback()
             raise
 

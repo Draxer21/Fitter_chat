@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
 import "../styles/legacy/carrito/style_carrito.css";
+import "../styles/checkout-form.css";
 import { formatearPrecio } from "../utils/formatPrice";
 import { useCart } from "../contexts/CartContext";
 import { useAuth } from "../contexts/AuthContext";
+import CheckoutForm from "../components/CheckoutForm";
 
 export default function CarritoPage() {
   const { items, total, refresh, addItem, decrementItem, removeItem, clearCart, status, error } = useCart();
   const { isAuthenticated, refresh: refreshAuth } = useAuth();
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [actionError, setActionError] = useState("");
+  const [checkoutState, setCheckoutState] = useState(null); // null | { orderId, total } | 'success' | 'pending'
+  const [paymentError, setPaymentError] = useState("");
 
   useEffect(() => {
     refresh().catch(() => {});
@@ -39,39 +43,41 @@ export default function CarritoPage() {
         setShowLoginPrompt(true);
         return;
       }
-      
-      // Llamar al endpoint de pago con MercadoPago
+
       setActionError("");
+      setPaymentError("");
+
+      // Crear la orden en el backend
       const response = await fetch('/carrito/pagar', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          // El backend tomará el nombre y email de la sesión
-        }),
+        body: JSON.stringify({}),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        setActionError(data.error || 'Error al procesar la compra');
+        setActionError(data.error || 'Error al crear la orden');
         return;
       }
 
-      // Redirigir a MercadoPago
-      const paymentUrl = data.sandbox_payment_url || data.payment_url;
-      if (paymentUrl) {
-        window.location.href = paymentUrl;
-      } else {
-        setActionError('No se pudo obtener la URL de pago');
-      }
+      // Abrir el formulario de pago con el order_id y total
+      setCheckoutState({ orderId: data.order_id, total: data.total });
 
     } catch (err) {
       setActionError(err?.message || 'Error al procesar la compra');
-      setShowLoginPrompt(false);
     }
+  };
+
+  const handlePaymentSuccess = (result) => {
+    setCheckoutState(result.pending ? 'pending' : 'success');
+    refresh().catch(() => {});
+  };
+
+  const handlePaymentError = (msg) => {
+    setPaymentError(msg);
+    setCheckoutState(null);
   };
 
   const isLoading = status === "loading";
@@ -200,6 +206,54 @@ export default function CarritoPage() {
               </button>
             </div>
           </aside>
+        </div>
+      )}
+
+      {/* Modal de pago con Checkout API */}
+      {checkoutState && typeof checkoutState === 'object' && (
+        <CheckoutForm
+          orderId={checkoutState.orderId}
+          total={checkoutState.total}
+          onSuccess={handlePaymentSuccess}
+          onError={handlePaymentError}
+          onClose={() => setCheckoutState(null)}
+        />
+      )}
+
+      {/* Pago aprobado */}
+      {checkoutState === 'success' && (
+        <div className="checkout-form-overlay">
+          <div className="checkout-form-modal text-center py-4">
+            <i className="fa-solid fa-circle-check fa-3x text-success mb-3" />
+            <h4 className="fw-bold">¡Pago aprobado!</h4>
+            <p className="text-muted">Tu orden fue confirmada exitosamente.</p>
+            <button className="btn btn-success mt-2" onClick={() => { setCheckoutState(null); window.location.href = '/perfil'; }}>
+              Ver mis órdenes
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Pago pendiente */}
+      {checkoutState === 'pending' && (
+        <div className="checkout-form-overlay">
+          <div className="checkout-form-modal text-center py-4">
+            <i className="fa-solid fa-clock fa-3x text-warning mb-3" />
+            <h4 className="fw-bold">Pago en proceso</h4>
+            <p className="text-muted">Tu pago está siendo procesado. Te notificaremos cuando se confirme.</p>
+            <button className="btn btn-primary mt-2" onClick={() => setCheckoutState(null)}>
+              Entendido
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Error de pago */}
+      {paymentError && (
+        <div className="alert alert-danger mx-3 mt-3" role="alert">
+          <i className="fa-solid fa-triangle-exclamation me-2" />
+          {paymentError}
+          <button className="btn-close float-end" onClick={() => setPaymentError("")} />
         </div>
       )}
 

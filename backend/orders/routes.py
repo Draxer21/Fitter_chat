@@ -42,6 +42,23 @@ def _order_allowed(order: Order) -> bool:
     return False
 
 
+@bp.get("/orders/my")
+def my_orders():
+    """Devuelve el historial de compras del usuario autenticado."""
+    user_id = session.get("uid")
+    if not user_id:
+        return jsonify({"error": "No autorizado"}), 401
+
+    limit = min(int(request.args.get("limit", 50)), 200)
+    orders = (
+        Order.query.filter_by(user_id=int(user_id))
+        .order_by(Order.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+    return jsonify({"orders": [o.to_dict() for o in orders]}), 200
+
+
 @bp.get("/orders/<int:order_id>")
 def get_order(order_id: int):
     order = db.session.get(Order, order_id)

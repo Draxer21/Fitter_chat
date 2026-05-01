@@ -241,42 +241,15 @@ def procesar_pago():
 
         current_app.logger.info(f"Orden creada: {order.id}, total: {order.total_amount}")
 
-        # Preparar items para MercadoPago
-        items = []
-        for item_data in snapshot.get("items", {}).values():
-            items.append({
-                'name': item_data.get('nombre', 'Producto'),
-                'quantity': item_data.get('cantidad', 1),
-                'price': float(item_data.get('precio_unitario', 0))
-            })
-
-        current_app.logger.info(f"Items para MercadoPago: {items}")
-
-        # Crear preferencia de MercadoPago
-        mp_service = MercadoPagoService()
-        payer_info = {
-            'email': email,
-            'name': name.split()[0] if name else '',
-            'surname': ' '.join(name.split()[1:]) if len(name.split()) > 1 else ''
-        }
-
-        result = mp_service.create_preference(
-            order_id=order.id,
-            items=items,
-            payer_info=payer_info
-        )
-
-        # Limpiar el carrito
+        # Limpiar el carrito y guardar en sesión
         carrito.limpiar()
         session["last_order_id"] = order.id
 
-        # Devolver URL de MercadoPago
+        # Devolver order_id — el frontend procesa el pago con Checkout API
         return jsonify({
-            "exito": "Orden creada. Redirigiendo a MercadoPago...",
+            "exito": "Orden creada.",
             "order_id": order.id,
-            "payment_url": result.get("init_point"),
-            "sandbox_payment_url": result.get("sandbox_init_point"),
-            "preference_id": result.get("preference_id")
+            "total": float(order.total_amount),
         }), 200
 
     except ValueError as exc:

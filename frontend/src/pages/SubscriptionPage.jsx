@@ -24,8 +24,9 @@ export default function SubscriptionPage() {
     setError("");
     Promise.all([API.subscriptions.current(), API.subscriptions.history()])
       .then(([current, hist]) => {
-        setSubscription(current || null);
-        setHistory(Array.isArray(hist) ? hist : []);
+        // El backend devuelve { subscription: {...} } y { subscriptions: [...] }
+        setSubscription(current?.subscription || null);
+        setHistory(Array.isArray(hist?.subscriptions) ? hist.subscriptions : []);
         setStatus("ready");
       })
       .catch((err) => {

@@ -67,3 +67,4 @@ docker-compose.override.yml
 backend/logs/
 
 .vscode
+.claude/

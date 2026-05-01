@@ -145,21 +145,23 @@ export default function TablaProductos() {
                     </td>
                     <td className="text-center align-middle">
                       <div className="d-flex justify-content-center align-items-center gap-2">
-                        <Link 
-                          to={`/admin/productos/${pr.id}/editar`} 
+                        <Link
+                          to={`/admin/productos/${pr.id}/editar`}
                           className="btn btn-warning btn-action"
                           aria-label={`Editar ${pr.nombre}`}
                           title="Editar"
                         >
-                          <i className="fa-solid fa-pen-to-square" aria-hidden="true" />
+                          <i className="fa-solid fa-pen-to-square me-1" aria-hidden="true" />
+                          Editar
                         </Link>
-                        <button 
-                          className="btn btn-danger btn-action" 
-                          onClick={() => del(pr.id)} 
+                        <button
+                          className="btn btn-danger btn-action"
+                          onClick={() => del(pr.id)}
                           aria-label={`Eliminar ${pr.nombre}`}
                           title="Eliminar"
                         >
-                          <i className="fa-solid fa-trash-can" aria-hidden="true" />
+                          <i className="fa-solid fa-trash-can me-1" aria-hidden="true" />
+                          Eliminar
                         </button>
                       </div>
                     </td>

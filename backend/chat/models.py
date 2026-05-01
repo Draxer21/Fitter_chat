@@ -132,50 +132,6 @@ class ChatUserContext(db.Model):
         self.last_interaction_result = result.strip()[:32] if isinstance(result, str) and result.strip() else None
         self.touch()
 
-
-class ProgressLog(db.Model):
-    """Registro persistente de métricas de progreso del usuario (peso, reps, notas)."""
-
-    __tablename__ = "progress_log"
-
-    id = db.Column(db.Integer, primary_key=True)
-    sender_id = db.Column(db.String(80), nullable=False, index=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True, index=True)
-    metric = db.Column(db.String(80), nullable=True)   # e.g. "peso", "sentadilla", "presion"
-    value = db.Column(db.String(120), nullable=True)   # valor registrado (texto libre)
-    note = db.Column(db.Text, nullable=True)           # nota adicional del usuario
-    recorded_at = db.Column(db.DateTime, nullable=False, default=_now)
-    created_at = db.Column(db.DateTime, nullable=False, default=_now)
-
-    @classmethod
-    def record(
-        cls,
-        sender_id: str,
-        metric: Optional[str],
-        value: Optional[str],
-        note: Optional[str] = None,
-        user_id: Optional[int] = None,
-    ) -> "ProgressLog":
-        entry = cls(
-            sender_id=(sender_id or "")[:80],
-            user_id=user_id,
-            metric=(metric or "")[:80] if metric else None,
-            value=str(value)[:120] if value is not None else None,
-            note=note,
-        )
-        db.session.add(entry)
-        return entry
-
-    def to_dict(self) -> Dict[str, Any]:
-        return {
-            "id": self.id,
-            "sender_id": self.sender_id,
-            "metric": self.metric,
-            "value": self.value,
-            "note": self.note,
-            "recorded_at": self.recorded_at.isoformat() if self.recorded_at else None,
-        }
-
     def to_dict(self) -> Dict[str, Any]:
         return {
             "sender_id": self.sender_id,
@@ -224,4 +180,48 @@ class ProgressLog(db.Model):
             "consent_version": self.consent_version,
             "recent_history": meta_history,
             "last_explanation": last_explanation,
+        }
+
+
+class ProgressLog(db.Model):
+    """Registro persistente de métricas de progreso del usuario (peso, reps, notas)."""
+
+    __tablename__ = "progress_log"
+
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.String(80), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True, index=True)
+    metric = db.Column(db.String(80), nullable=True)   # e.g. "peso", "sentadilla", "presion"
+    value = db.Column(db.String(120), nullable=True)   # valor registrado (texto libre)
+    note = db.Column(db.Text, nullable=True)           # nota adicional del usuario
+    recorded_at = db.Column(db.DateTime, nullable=False, default=_now)
+    created_at = db.Column(db.DateTime, nullable=False, default=_now)
+
+    @classmethod
+    def record(
+        cls,
+        sender_id: str,
+        metric: Optional[str],
+        value: Optional[str],
+        note: Optional[str] = None,
+        user_id: Optional[int] = None,
+    ) -> "ProgressLog":
+        entry = cls(
+            sender_id=(sender_id or "")[:80],
+            user_id=user_id,
+            metric=(metric or "")[:80] if metric else None,
+            value=str(value)[:120] if value is not None else None,
+            note=note,
+        )
+        db.session.add(entry)
+        return entry
+
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "id": self.id,
+            "sender_id": self.sender_id,
+            "metric": self.metric,
+            "value": self.value,
+            "note": self.note,
+            "recorded_at": self.recorded_at.isoformat() if self.recorded_at else None,
         }

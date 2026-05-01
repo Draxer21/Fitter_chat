@@ -552,6 +552,11 @@ rules:
       - action: utter_mostrar_perfil
       - action: utter_perfil_resumen
 
+  - rule: excluir alimento de la dieta
+    steps:
+      - intent: excluir_alimento
+      - action: action_excluir_alimento
+
   - rule: manejar fallback
     steps:
       - intent: nlu_fallback

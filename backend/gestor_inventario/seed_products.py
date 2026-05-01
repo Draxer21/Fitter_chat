@@ -27,6 +27,7 @@ class ProductPayload:
     descripcion: str
     stock: int
     imagen_filename: str | None = None
+    highlights: Sequence[str] | None = None
 
 
 BASE_PRODUCTS: Tuple[ProductPayload, ...] = (
@@ -126,6 +127,51 @@ BASE_PRODUCTS: Tuple[ProductPayload, ...] = (
         descripcion="Reloj con GPS integrado, sensor de frecuencia cardiaca y seguimiento de VO2 max.",
         stock=18,
     ),
+    # ── Planes de membresía ──────────────────────────────────────────────────
+    ProductPayload(
+        nombre="Membresía Básica",
+        categoria="Membership",
+        categorias=("Membership",),
+        precio="29990.00",
+        descripcion="Perfecto para comenzar tu camino fitness.",
+        stock=9999,
+        highlights=(
+            "Acceso ilimitado a todas las sedes",
+            "Entrenamiento libre",
+            "Clases grupales",
+            "Acceso a sauna y duchas",
+        ),
+    ),
+    ProductPayload(
+        nombre="Membresía Premium",
+        categoria="Membership",
+        categorias=("Membership",),
+        precio="49990.00",
+        descripcion="Lleva tu entrenamiento al siguiente nivel.",
+        stock=9999,
+        highlights=(
+            "Todo lo del plan Básico",
+            "Entrenamiento personalizado",
+            "Acceso a zona VIP",
+            "Bebidas energéticas ilimitadas",
+            "Descuentos en suplementos",
+        ),
+    ),
+    ProductPayload(
+        nombre="Membresía Black",
+        categoria="Membership",
+        categorias=("Membership",),
+        precio="69990.00",
+        descripcion="La experiencia definitiva sin límites.",
+        stock=9999,
+        highlights=(
+            "Todo lo del plan Premium",
+            "Acceso 24/7",
+            "Masajista personal",
+            "Nutricionista incluido",
+            "Invitados ilimitados",
+        ),
+    ),
 )
 
 
@@ -149,6 +195,8 @@ def _apply_payload(producto: Producto, payload: ProductPayload) -> None:
     producto.stock = int(payload.stock)
     if payload.imagen_filename is not None:
         producto.imagen_filename = payload.imagen_filename or None
+    if payload.highlights is not None:
+        producto.highlights = list(payload.highlights)
     _assign_categories(producto, payload.categorias)
 
 

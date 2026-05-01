@@ -71,19 +71,19 @@ export const API = {
   productos: {
     list: (q="") => fetch(`${BASE}/producto/${q}`, { credentials:"include" }).then(j),
     get:  (id) => fetch(`${BASE}/producto/${id}`, { credentials:"include" }).then(j),
-    create:(d)=> {
+    create: async (d) => {
       if (d instanceof FormData) {
-        return fetch(`${BASE}/producto/`, { method:"POST", credentials:"include", body: d }).then(j);
+        return fetch(`${BASE}/producto/`, { method:"POST", credentials:"include", headers: await csrfHeaders(), body: d }).then(j);
       }
-      return fetch(`${BASE}/producto/`, { method:"POST", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify(d) }).then(j);
+      return fetch(`${BASE}/producto/`, { method:"POST", headers: await csrfHeaders({ "Content-Type":"application/json" }), credentials:"include", body: JSON.stringify(d) }).then(j);
     },
-    update:(id,d)=> {
+    update: async (id, d) => {
       if (d instanceof FormData) {
-        return fetch(`${BASE}/producto/${id}`, { method:"PUT", credentials:"include", body: d }).then(j);
+        return fetch(`${BASE}/producto/${id}`, { method:"PUT", credentials:"include", headers: await csrfHeaders(), body: d }).then(j);
       }
-      return fetch(`${BASE}/producto/${id}`, { method:"PUT", headers:{ "Content-Type":"application/json" }, credentials:"include", body: JSON.stringify(d) }).then(j);
+      return fetch(`${BASE}/producto/${id}`, { method:"PUT", headers: await csrfHeaders({ "Content-Type":"application/json" }), credentials:"include", body: JSON.stringify(d) }).then(j);
     },
-    del:  (id) => fetch(`${BASE}/producto/${id}`, { method:"DELETE", credentials:"include" }).then(j),
+    del: async (id) => fetch(`${BASE}/producto/${id}`, { method:"DELETE", headers: await csrfHeaders(), credentials:"include" }).then(j),
   },
   carrito: {
     estado:  () => fetch(`${BASE}/carrito/estado`, { credentials:"include" }).then(j),
@@ -210,6 +210,7 @@ export const API = {
     },
   },
   orders: {
+    my: (limit = 50) => fetch(`${BASE}/orders/my?limit=${limit}`, { credentials:"include" }).then(j),
     get: (id) => fetch(`${BASE}/orders/${id}`, { credentials:"include" }).then(j),
     summary: (params="") => fetch(`${BASE}/admin/orders/summary${params ? `?${params}` : ""}`, { credentials:"include" }).then(j),
     list: (params="") => fetch(`${BASE}/admin/orders${params ? `?${params}` : ""}`, { credentials:"include" }).then(j),

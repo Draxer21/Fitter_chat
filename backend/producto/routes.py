@@ -1,13 +1,39 @@
 # backend/producto/routes.py
-from flask import Blueprint, jsonify, request, current_app
+from flask import Blueprint, jsonify, request, current_app, session
 import json
 import os
 import uuid
 from werkzeug.utils import secure_filename
 from ..extensions import db
 from ..gestor_inventario.models import Producto
+from ..login.models import User
+from ..security.csrf import validate_csrf
 
 bp = Blueprint("producto", __name__)
+
+ALLOWED_IMAGE_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.webp', '.gif'}
+
+
+def _current_user():
+    uid = session.get("uid")
+    if not uid:
+        return None
+    return db.session.get(User, uid)
+
+
+def _require_admin():
+    """Devuelve (user, None) si es admin, o (None, response_error) si no."""
+    if not validate_csrf():
+        return None, (jsonify({"error": "CSRF token invalido"}), 400)
+    user = _current_user()
+    if not user or not user.is_admin:
+        return None, (jsonify({"error": "No autorizado"}), 403)
+    return user, None
+
+
+def _allowed_image(filename: str) -> bool:
+    ext = os.path.splitext(secure_filename(filename))[1].lower()
+    return ext in ALLOWED_IMAGE_EXTENSIONS
 
 # -----------------------
 # LISTAR TODOS
@@ -16,7 +42,11 @@ bp = Blueprint("producto", __name__)
 
 @bp.get("/")
 def listar_productos():
-    productos = Producto.query.all()
+    categoria = request.args.get("categoria", "").strip()
+    q = Producto.query
+    if categoria:
+        q = q.filter(Producto.categoria == categoria)
+    productos = q.order_by(Producto.id).all()
     return jsonify([p.to_dict() for p in productos])
 
 # -----------------------
@@ -36,6 +66,9 @@ def obtener_producto(producto_id):
 
 @bp.post("/")
 def crear_producto():
+    _, err = _require_admin()
+    if err:
+        return err
     # Soportar tanto JSON como multipart/form-data con archivo 'imagen'
     is_multipart = request.content_type and request.content_type.startswith('multipart/form-data')
     data = {}
@@ -108,6 +141,8 @@ def crear_producto():
     # Manejar subida de imagen si existe
     imagen = request.files.get('imagen')
     if imagen:
+        if not _allowed_image(imagen.filename):
+            return jsonify({"error": "Tipo de archivo no permitido. Use jpg, jpeg, png, webp o gif"}), 400
         uploads = os.path.join(current_app.static_folder or 'static', 'uploads')
         os.makedirs(uploads, exist_ok=True)
         filename = secure_filename(imagen.filename)
@@ -129,6 +164,9 @@ def crear_producto():
 
 @bp.put("/<int:producto_id>")
 def actualizar_producto(producto_id):
+    _, err = _require_admin()
+    if err:
+        return err
     p = Producto.query.get_or_404(producto_id)
     # Soportar actualización por JSON o multipart/form-data (incluye nueva imagen)
     if request.content_type and request.content_type.startswith('multipart/form-data'):
@@ -168,6 +206,8 @@ def actualizar_producto(producto_id):
             p.highlights = _parse_json_field(form.get("highlights"))
         imagen = request.files.get('imagen')
         if imagen:
+            if not _allowed_image(imagen.filename):
+                return jsonify({"error": "Tipo de archivo no permitido. Use jpg, jpeg, png, webp o gif"}), 400
             uploads = os.path.join(current_app.static_folder or 'static', 'uploads')
             os.makedirs(uploads, exist_ok=True)
             filename = secure_filename(imagen.filename)
@@ -221,6 +261,9 @@ def actualizar_producto(producto_id):
 
 @bp.delete("/<int:producto_id>")
 def eliminar_producto(producto_id):
+    _, err = _require_admin()
+    if err:
+        return err
     p = Producto.query.get_or_404(producto_id)
     db.session.delete(p)
     db.session.commit()

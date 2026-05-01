@@ -1,6 +1,8 @@
 """
 Rutas para el módulo de pagos con MercadoPago
 """
+import hashlib
+import hmac
 from typing import Optional
 from flask import Blueprint, request, jsonify, current_app, session
 from backend.extensions import db
@@ -8,6 +10,8 @@ from backend.payments.service import MercadoPagoService
 from backend.payments.models import Payment
 from backend.orders.models import Order, OrderItem
 from backend.login.models import User
+from backend.subscriptions.models import Subscription
+from backend.gestor_inventario.models import Producto
 
 payments_bp = Blueprint('payments', __name__, url_prefix='/api/payments')
 
@@ -103,11 +107,57 @@ def create_preference():
         return jsonify({'error': 'Error al crear preferencia de pago'}), 500
 
 
+def _verify_mp_signature() -> bool:
+    """
+    Verifica la firma HMAC-SHA256 enviada por MercadoPago en el webhook.
+    Documentación: https://www.mercadopago.com.ar/developers/es/docs/your-integrations/notifications/webhooks
+    Si MERCADOPAGO_WEBHOOK_SECRET no está configurado, rechaza la solicitud.
+    """
+    secret = current_app.config.get("MERCADOPAGO_WEBHOOK_SECRET", "").strip()
+    if not secret:
+        current_app.logger.warning(
+            "MERCADOPAGO_WEBHOOK_SECRET no configurado — webhook rechazado. "
+            "Define la variable de entorno para habilitar notificaciones de pago."
+        )
+        return False
+
+    # MercadoPago envía: x-signature: ts=<timestamp>,v1=<hmac>
+    # y x-request-id en los headers
+    x_signature = request.headers.get("x-signature", "")
+    x_request_id = request.headers.get("x-request-id", "")
+
+    ts = ""
+    v1 = ""
+    for part in x_signature.split(","):
+        if part.startswith("ts="):
+            ts = part[3:]
+        elif part.startswith("v1="):
+            v1 = part[3:]
+
+    if not ts or not v1:
+        return False
+
+    # El data.id viene del query string o del body
+    data_id = request.args.get("data.id", "")
+    if not data_id:
+        body = request.get_json(silent=True) or {}
+        data_id = str((body.get("data") or {}).get("id", ""))
+
+    manifest = f"id:{data_id};request-id:{x_request_id};ts:{ts};"
+    expected = hmac.new(secret.encode(), manifest.encode(), hashlib.sha256).hexdigest()
+    return hmac.compare_digest(expected, v1)
+
+
 @payments_bp.route('/webhook', methods=['POST'])
 def webhook():
     """
-    Webhook para recibir notificaciones de MercadoPago
+    Webhook para recibir notificaciones de MercadoPago.
+    Verifica la firma HMAC-SHA256 antes de procesar cualquier notificación.
     """
+    if not _verify_mp_signature():
+        current_app.logger.warning("Webhook rechazado: firma inválida o ausente")
+        return jsonify({'error': 'Firma inválida'}), 401
+
     try:
         data = request.get_json()
 
@@ -121,8 +171,169 @@ def webhook():
             return jsonify({'status': 'ignored'}), 200
 
     except Exception as e:
-        current_app.logger.error(f"Error en webhook: {str(e)}")
+        current_app.logger.error("Error en webhook de MercadoPago")
         return jsonify({'error': 'Error procesando webhook'}), 500
+
+
+@payments_bp.route('/public-key', methods=['GET'])
+def get_public_key():
+    """Devuelve la public key de MP para el frontend."""
+    return jsonify({'public_key': current_app.config.get('MERCADOPAGO_PUBLIC_KEY', '')})
+
+
+# Palabras clave para identificar el tipo de plan en el nombre del producto
+_PLAN_KEYWORDS = {
+    "black":   ["black", "negro", "élite", "elite"],
+    "premium": ["premium", "pro", "avanzado"],
+    "basic":   ["basic", "básico", "basico", "básica", "basica", "starter", "inicial"],
+}
+
+_SUBSCRIPTION_CATEGORIES = {
+    "suscripcion", "suscripción", "subscription",
+    "plan", "membresia", "membresía",
+    "membership",   # categoria usada en seed
+}
+
+
+def _detect_plan_type(product_name: str, categoria: str) -> Optional[str]:
+    """Detecta el tipo de plan a partir del nombre y categoría del producto."""
+    name_lower = (product_name or "").lower()
+    for plan, keywords in _PLAN_KEYWORDS.items():
+        if any(kw in name_lower for kw in keywords):
+            return plan
+    return None
+
+
+def _is_subscription_product(producto: Producto) -> bool:
+    """Devuelve True si el producto es un plan de suscripción."""
+    cat = (producto.categoria or "").lower().strip()
+    if cat in _SUBSCRIPTION_CATEGORIES:
+        return True
+    # Fallback: detectar por nombre si contiene palabras de plan
+    return _detect_plan_type(producto.nombre, cat) is not None
+
+
+def _maybe_activate_subscription(order: Order, user: User) -> None:
+    """Si la orden incluye productos de suscripción, activa el plan correspondiente."""
+    from datetime import timedelta
+    if not user:
+        return
+    for item in order.items:
+        if not item.product_id:
+            continue
+        producto = db.session.get(Producto, item.product_id)
+        if not producto or not _is_subscription_product(producto):
+            continue
+        plan_type = _detect_plan_type(producto.nombre, producto.categoria or "")
+        if not plan_type:
+            plan_type = "basic"
+        # Cancelar suscripción activa previa (upgrade/cambio de plan)
+        existing = Subscription.query.filter_by(user_id=user.id, status="active").first()
+        if existing:
+            existing.status = "upgraded"
+            existing.cancelled_at = __import__("datetime").datetime.utcnow()
+        # Crear nueva suscripción con vencimiento a 30 días
+        from datetime import datetime as _dt2
+        now = _dt2.utcnow()
+        new_sub = Subscription(
+            user_id=user.id,
+            plan_type=plan_type,
+            status="active",
+            start_date=now,
+            end_date=now + timedelta(days=30),
+            auto_renew=True,
+        )
+        db.session.add(new_sub)
+        current_app.logger.info(
+            "Suscripción '%s' activada para usuario %s desde orden %s",
+            plan_type, user.id, order.id,
+        )
+        break  # Solo un plan por orden
+
+
+@payments_bp.route('/process-card', methods=['POST'])
+def process_card():
+    """
+    Procesar pago con Checkout API (tarjeta tokenizada).
+    Recibe el token generado por MP.js en el frontend.
+    """
+    current_user, error = _require_auth()
+    if error:
+        return error
+
+    data = request.get_json(force=True, silent=True) or {}
+    token = data.get('token')
+    payment_method_id = data.get('payment_method_id')
+    issuer_id = data.get('issuer_id')
+    installments = data.get('installments', 1)
+    transaction_amount = data.get('transaction_amount')
+    order_id = data.get('order_id')
+    payer = data.get('payer', {})
+
+    if not all([token, payment_method_id, transaction_amount, order_id]):
+        return jsonify({'error': 'Faltan campos requeridos: token, payment_method_id, transaction_amount, order_id'}), 400
+
+    order = Order.query.get(order_id)
+    if not order or order.user_id != current_user.id:
+        return jsonify({'error': 'Orden no encontrada'}), 404
+
+    try:
+        mp_service = MercadoPagoService()
+        response = mp_service.create_payment(
+            token=token,
+            transaction_amount=float(transaction_amount),
+            installments=int(installments),
+            payment_method_id=payment_method_id,
+            issuer_id=issuer_id,
+            payer_email=payer.get('email') or current_user.email,
+            payer_identification=payer.get('identification', {}),
+            order_id=order_id,
+        )
+
+        if response['status'] not in (200, 201):
+            current_app.logger.error(f"MP rechazó el pago: {response}")
+            return jsonify({'error': 'Pago rechazado por MercadoPago', 'detail': response.get('response', {})}), 400
+
+        mp_data = response['response']
+
+        from datetime import datetime as _dt
+        import uuid as _uuid
+        payment = Payment(
+            order_id=order_id,
+            preference_id=f"direct-{order_id}-{_uuid.uuid4().hex[:8]}",
+            payment_id=str(mp_data.get('id', '')),
+            transaction_amount=float(transaction_amount),
+            currency_id='CLP',
+            status=mp_data.get('status', 'pending'),
+            payment_method_id=mp_data.get('payment_method_id'),
+            payment_type_id=mp_data.get('payment_type_id'),
+            external_reference=str(order_id),
+            payer_email=payer.get('email') or current_user.email,
+        )
+        db.session.add(payment)
+
+        if mp_data.get('status') == 'approved':
+            order.payment_status = 'paid'
+            order.status = 'confirmed'
+            payment.approved_at = _dt.utcnow()
+            # Auto-crear suscripción si algún ítem de la orden es un plan
+            _maybe_activate_subscription(order, current_user)
+        elif mp_data.get('status') == 'rejected':
+            order.payment_status = 'failed'
+
+        db.session.commit()
+
+        return jsonify({
+            'status': mp_data.get('status'),
+            'status_detail': mp_data.get('status_detail'),
+            'order_id': order_id,
+            'payment_id': mp_data.get('id'),
+        }), 200
+
+    except Exception:
+        current_app.logger.exception("Error en /api/payments/process-card")
+        db.session.rollback()
+        return jsonify({'error': 'Error interno al procesar el pago'}), 500
 
 
 @payments_bp.route('/status/<int:payment_id>', methods=['GET'])

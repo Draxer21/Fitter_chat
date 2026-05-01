@@ -48,6 +48,12 @@ export default function ProfileSectionNav() {
       >
         {t("profile.nav.subscription")}
       </NavLink>
+      <NavLink
+        to="/cuenta/mis-compras"
+        className={({ isActive }) => `profile-section-tab ${isActive ? "is-active" : ""}`}
+      >
+        Mis compras
+      </NavLink>
     </nav>
   );
 }

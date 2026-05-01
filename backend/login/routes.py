@@ -188,8 +188,7 @@ def register():
     username_input = data.get("username") or data.get("user")
     username, username_error = _validate_username(username_input, required=True)
     password = data.get("password") or ""
-    is_admin = bool(data.get("is_admin"))
-
+    # is_admin nunca se acepta del cliente — siempre False en registro público
     if not full_name or not email or not password:
         return jsonify({"error": "Nombre, usuario, correo y password son obligatorios"}), 400
 
@@ -199,7 +198,7 @@ def register():
         return jsonify({"error": username_error}), 400
 
     try:
-        user = User.create(email=email, username=username, password=password, full_name=full_name, is_admin=is_admin)
+        user = User.create(email=email, username=username, password=password, full_name=full_name, is_admin=False)
         db.session.commit()
     except IntegrityError:
         db.session.rollback()
