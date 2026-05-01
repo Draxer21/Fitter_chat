@@ -1,0 +1,130 @@
+version: "3.9"
+
+services:
+  # ── PostgreSQL local (primario) ──
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-rasa_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-rasa123}
+      POSTGRES_DB: ${DB_NAME:-rasa_db}
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - fitter_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-rasa_user} -d ${DB_NAME:-rasa_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Frontend (Nginx + React build) ──
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ""
+        VITE_GOOGLE_CLIENT_ID: ${VITE_GOOGLE_CLIENT_ID:-}
+        VITE_CHAT_CONTEXT_KEY: ${VITE_CHAT_CONTEXT_KEY:-}
+        VITE_MP_PUBLIC_KEY: ${VITE_MP_PUBLIC_KEY:-}
+        VITE_FACEBOOK_CLIENT_ID: ${VITE_FACEBOOK_CLIENT_ID:-}
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/nginx.conf:/etc/nginx/nginx.conf:ro
+      # Uncomment for Let's Encrypt:
+      # - ./infra/certs:/etc/letsencrypt:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+      rasa:
+        condition: service_healthy
+    networks:
+      - fitter_network
+    healthcheck:
+      test: ["CMD", "wget", "-qO", "/dev/null", "http://localhost/nginx-health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  # ── Backend Flask (Gunicorn) ──
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      SQLALCHEMY_DATABASE_URI: postgresql+psycopg2://${DB_USER:-rasa_user}:${DB_PASSWORD:-rasa123}@db:5432/${DB_NAME:-rasa_db}
+      RASA_BASE_URL: http://rasa:5005
+      BACKEND_BASE_URL: http://backend:5000
+      CORS_ORIGINS: "http://localhost,http://frontend,${FRONTEND_URL:-http://localhost}"
+      FLASK_DEBUG: "0"
+    depends_on:
+      db:
+        condition: service_healthy
+      actions:
+        condition: service_healthy
+    networks:
+      - fitter_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+
+  # ── Rasa Chatbot Server ──
+  rasa:
+    build:
+      context: ./Chatbot
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      RASA_TRACKER_DB: postgresql://${DB_USER:-rasa_user}:${DB_PASSWORD:-rasa123}@db:5432/${DB_NAME:-rasa_db}
+    volumes:
+      - ./Chatbot/models:/app/models
+    depends_on:
+      db:
+        condition: service_healthy
+      actions:
+        condition: service_healthy
+    networks:
+      - fitter_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5005/status"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+
+  # ── Rasa Actions Server ──
+  actions:
+    build:
+      context: .
+      dockerfile: actions/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      BACKEND_BASE_URL: http://backend:5000
+    networks:
+      - fitter_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5055/health"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+volumes:
+  db_data:
+
+networks:
+  fitter_network:
+    driver: bridge
