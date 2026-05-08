@@ -524,7 +524,7 @@ export default function PagoPage() {
 
               <div className="payment-help">
                 <h3>Necesitas ayuda?</h3>
-                <p>Escribenos a soporte@fitter.com o llama al +56 9 1234 5678 para asistencia inmediata.</p>
+                <p>Escribenos a soporte@fitter.com o llama al +56 9 7675 9726 para asistencia inmediata.</p>
                 <button type="button" className="payment-secondary-btn" onClick={() => navigate("/carrito")}>
                   Revisar carrito
                 </button>

@@ -37,7 +37,7 @@ export default function Footer() {
                     Av. Sta. Rosa 10480 <br /> La Granja, 8801016 <br /> Región Metropolitana
                   </a>
                 </li>
-                <li><a href="#!">+56 9 5011 7527 / +56 2 7279 1541</a></li>
+                <li><a href="tel:+56976759726">+56 9 7675 9726</a></li>
               </ul>
             </div>
 

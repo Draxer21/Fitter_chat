@@ -259,15 +259,15 @@ export default function Navbar() {
             </div>
             <div className='modal-body'>
               <strong>
-                <a href='https://api.whatsapp.com/send/?phone=56950117527&text&type=phone_number&app_absent=0' style={{ textDecoration: 'none' }}>
-                  <i className='fa-brands fa-whatsapp' /> +56 9 5011-7527 (WhatsApp)
+                <a href='https://api.whatsapp.com/send/?phone=56976759726&text&type=phone_number&app_absent=0' style={{ textDecoration: 'none' }}>
+                  <i className='fa-brands fa-whatsapp' /> +56 9 7675 9726 (WhatsApp)
                 </a>
               </strong>
               <br />
               <br />
               <strong>
-                <a href='tel:+56972791541' style={{ textDecoration: 'none' }}>
-                  <i className='fa-solid fa-phone' /> +56 9 7279 1541 24/7
+                <a href='tel:+56976759726' style={{ textDecoration: 'none' }}>
+                  <i className='fa-solid fa-phone' /> +56 9 7675 9726
                 </a>
               </strong>
               <br />
