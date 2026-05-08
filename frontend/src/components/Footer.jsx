@@ -44,9 +44,8 @@ export default function Footer() {
             <div className="footer-links">
               <h4>Redes Sociales</h4>
               <div className="social-links">
-                <a href="#!" aria-label="Facebook"><i className="bi bi-facebook" /></a>
-                <a href="#!" aria-label="Instagram"><i className="bi bi-instagram" /></a>
-                <a href="#!" aria-label="Twitter"><i className="bi bi-twitter" /></a>
+                <a href="https://www.facebook.com/profile.php?id=61555373840540&utm_source=ig&utm_medium=social&utm_content=link_in_bio" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i className="bi bi-facebook" /></a>
+                <a href="https://www.instagram.com/rey_gym11/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i className="bi bi-instagram" /></a>
               </div>
             </div>
           </div>
