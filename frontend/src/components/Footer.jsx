@@ -29,8 +29,12 @@ export default function Footer() {
               <h4>Dirección y Contacto</h4>
               <ul>
                 <li>
-                  <a href="https://www.google.com/maps/place/Av.+Observatorio+1934,+La+Pintana,+Región+Metropolitana/@-33.5616978,-70.6335762,15z/data=!4m6!3m5!1s0x9662da1832296fb3:0x9dc1e819b6d95231!8m2!3d-33.5640081!4d-70.6428511!16s%2Fg%2F11knl2fylp?entry=ttu&g_ep=EgoyMDI1MTExNy4wIKXMDSoASAFQAw%3D%3D">
-                    Avenida Observatorio 1934 <br /> La Pintana <br /> Región Metropolitana
+                  <a
+                    href="https://www.google.com/maps/search/Av.+Santa+Rosa+10480,+La+Granja,+Región+Metropolitana"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Av. Sta. Rosa 10480 <br /> La Granja, 8801016 <br /> Región Metropolitana
                   </a>
                 </li>
                 <li><a href="#!">+56 9 5011 7527 / +56 2 7279 1541</a></li>
