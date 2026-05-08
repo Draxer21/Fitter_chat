@@ -14,7 +14,7 @@ const TESTIMONIALS = [
     quote:
       '"En 3 meses bajé 8 kg sin sentir que estaba haciendo dieta. La IA se adapta perfectamente a mis horarios caóticos."',
     name: "María Rodríguez",
-    role: "Socio Premium — Madrid",
+    role: "Socio Premium — Santiago",
     delay: 0,
   },
   {
@@ -24,7 +24,7 @@ const TESTIMONIALS = [
     quote:
       '"Como entrenador profesional, uso FITTER para complementar las sesiones con mis clientes. La calidad de las rutinas es excepcional."',
     name: "Carlos Gómez",
-    role: "Entrenador Certificado — Barcelona",
+    role: "Entrenador Certificado — Viña del Mar",
     delay: 0.15,
   },
   {
@@ -34,7 +34,7 @@ const TESTIMONIALS = [
     quote:
       '"Recuperé la movilidad de mi rodilla gracias a las rutinas adaptativas. Nunca pensé que una app pudiera ser tan personalizada."',
     name: "Ana López",
-    role: "Usuario desde 2025 — Valencia",
+    role: "Usuario desde 2025 — Concepción",
     delay: 0.3,
   },
 ];
