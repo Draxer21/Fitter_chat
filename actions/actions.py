@@ -2913,3 +2913,45 @@ class ActionSuscripcionCambioPlan(Action):
 
         dispatcher.utter_message(text="¿A qué plan te gustaría cambiarte? (Mensual, Trimestral, Anual)")
         return []
+
+
+# =========================================================
+# Terminología fitness
+# =========================================================
+_TERMINOS_ENTRENAMIENTO = {
+    "rpe", "rir", "rm", "tut", "hiit", "liss", "superserie",
+    "dropset", "fullbody", "ppl", "push pull legs", "progresión de carga",
+    "progresion de carga", "series", "repeticiones", "reps",
+}
+_TERMINOS_NUTRICION = {
+    "macros", "macronutrientes", "proteína", "proteina", "carbohidratos",
+    "carbos", "grasas", "déficit calórico", "deficit calorico",
+    "superávit calórico", "superavit calorico", "tdee", "imc",
+}
+_TERMINOS_CUERPO = {
+    "hipertrofia", "definición", "definicion", "recomposición", "recomposicion",
+    "masa magra", "masa grasa", "ectomorfo", "mesomorfo", "endomorfo", "somatotipo",
+}
+
+
+class ActionTerminologia(Action):
+    def name(self) -> Text:
+        return "action_terminologia"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        termino = next(tracker.get_latest_entity_values("termino"), None)
+        termino_norm = termino.lower().strip() if termino else ""
+
+        if termino_norm in _TERMINOS_ENTRENAMIENTO:
+            dispatcher.utter_message(response="utter_terminologia_entrenamiento")
+        elif termino_norm in _TERMINOS_NUTRICION:
+            dispatcher.utter_message(response="utter_terminologia_nutricion")
+        elif termino_norm in _TERMINOS_CUERPO:
+            dispatcher.utter_message(response="utter_terminologia_cuerpo")
+        else:
+            dispatcher.utter_message(response="utter_terminologia_general")
+
+        return []

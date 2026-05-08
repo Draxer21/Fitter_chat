@@ -557,6 +557,12 @@ rules:
       - intent: excluir_alimento
       - action: action_excluir_alimento
 
+  # ── Terminología ──
+  - rule: consultar terminologia
+    steps:
+      - intent: consultar_terminologia
+      - action: action_terminologia
+
   - rule: manejar fallback
     steps:
       - intent: nlu_fallback

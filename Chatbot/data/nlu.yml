@@ -17686,3 +17686,96 @@ nlu:
     - sin [gluten](no_gusta) en mi dieta
     - elimina el [pan](no_gusta) de todas mis comidas
     - nada con [carne roja](no_gusta) por favor
+
+- intent: consultar_terminologia
+  examples: |
+    - ¿qué significa RPE?
+    - qué es RIR en el entrenamiento
+    - explícame qué es una superserie
+    - qué son los macros
+    - no entiendo qué es el déficit calórico
+    - qué significa HIIT
+    - qué es LISS
+    - qué es hipertrofia
+    - explícame qué es la recomposición corporal
+    - qué significa RM en gym
+    - qué es TUT
+    - qué es progresión de carga
+    - qué significa PPL
+    - qué es fullbody
+    - qué es un dropset
+    - qué es TDEE
+    - qué es IMC
+    - explícame el somatotipo
+    - qué es ectomorfo
+    - qué es mesomorfo
+    - qué es endomorfo
+    - no entiendo los términos del gym
+    - explícame términos de entrenamiento
+    - glosario de fitness
+    - qué significa superávit calórico
+    - qué quiere decir masa magra
+    - no entiendo qué es series y reps
+    - cuál es la diferencia entre series y repeticiones
+    - qué significa RPE 8
+    - qué es RIR 2
+    - qué es definición muscular
+    - qué significa bajar de grasa
+    - explícame los términos de nutrición
+    - términos de composición corporal
+    - qué significa push pull legs
+    - cómo funciona el HIIT
+    - en qué consiste el LISS
+    - qué es el cardio de baja intensidad
+    - qué es el cardio por intervalos
+    - qué significa la progresión
+    - qué es [RPE](termino)
+    - qué significa [RIR](termino)
+    - explícame [hipertrofia](termino)
+    - qué es [HIIT](termino)
+    - qué significa [déficit calórico](termino)
+    - qué es [superserie](termino)
+    - qué es [TDEE](termino)
+    - qué significa [dropset](termino)
+    - qué es [fullbody](termino)
+    - qué es [recomposición](termino)
+    - explicame [macros](termino)
+    - qué son los [macronutrientes](termino)
+    - no sé qué es [TUT](termino)
+    - qué significa [RM](termino) en el gym
+    - qué es [PPL](termino)
+    - qué significa [masa magra](termino)
+
+- lookup: termino
+  examples: |
+    - RPE
+    - RIR
+    - RM
+    - TUT
+    - HIIT
+    - LISS
+    - TDEE
+    - IMC
+    - PPL
+    - hipertrofia
+    - definición
+    - recomposición
+    - déficit calórico
+    - superávit calórico
+    - macros
+    - macronutrientes
+    - proteína
+    - carbohidratos
+    - grasas
+    - masa magra
+    - masa grasa
+    - superserie
+    - dropset
+    - fullbody
+    - progresión de carga
+    - series
+    - repeticiones
+    - ectomorfo
+    - mesomorfo
+    - endomorfo
+    - somatotipo

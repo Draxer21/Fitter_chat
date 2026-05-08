@@ -35,6 +35,7 @@ intents:
   - faq
   - nlu_fallback
   - excluir_alimento
+  - consultar_terminologia
 
 entities:
   - objetivo
@@ -56,6 +57,7 @@ entities:
   - fecha
   - hora
   - edad
+  - termino
 
 slots:
   objetivo:
@@ -628,6 +630,63 @@ responses:
   utter_form_cancelado:
     - text: "De acuerdo, no actualizare tu perfil por ahora. Si cambias de idea avisame."
 
+  utter_terminologia_entrenamiento:
+    - text: |
+        📚 *Términos de entrenamiento*:
+
+        • **Series / Reps**: Una *serie* es un bloque de repeticiones seguidas. Una *rep* (repetición) es una ejecución completa del ejercicio (ej. 3 series × 10 reps).
+        • **RM** (Repetición Máxima): El peso máximo que puedes mover una sola vez en un ejercicio.
+        • **RPE** (Rate of Perceived Exertion): Escala del 1-10 de cuán duro te sientes. RPE 8 = te quedan ~2 reps en el tanque.
+        • **RIR** (Reps In Reserve): Cuántas reps te quedan antes de fallar. RIR 2 = podrías hacer 2 más.
+        • **Superserie**: Dos ejercicios distintos ejecutados uno tras otro sin descanso.
+        • **Dropset**: Bajas el peso al fallo y continúas sin descanso.
+        • **TUT** (Time Under Tension): Tiempo total que el músculo está bajo carga.
+        • **Progresión de carga**: Aumentar peso, reps o series semana a semana para seguir mejorando.
+        • **HIIT**: Cardio de intervalos de alta intensidad (ej. 30s sprint / 30s descanso).
+        • **LISS**: Cardio de baja intensidad sostenida (ej. caminar 45 min).
+        • **Fullbody / PPL**: Fullbody = entrenas todo el cuerpo cada sesión. PPL = dividido en Push, Pull y Piernas.
+
+        ¿Quieres que te explique algún término en más detalle?
+
+  utter_terminologia_nutricion:
+    - text: |
+        📚 *Términos de nutrición*:
+
+        • **Macros** (Macronutrientes): Proteínas, carbohidratos y grasas — los tres bloques base de tu dieta.
+        • **Proteínas**: Construyen y reparan músculo. Meta común: ~1.6–2.2 g por kg de peso corporal.
+        • **Carbohidratos**: Principal fuente de energía para el entrenamiento.
+        • **Grasas**: Regulan hormonas y absorben vitaminas. No las elimines.
+        • **Déficit calórico**: Comer menos calorías de las que gastas → bajas grasa.
+        • **Superávit calórico**: Comer más calorías de las que gastas → ganas masa.
+        • **TDEE** (Total Daily Energy Expenditure): Calorías totales que quemas en un día (metabolismo + actividad).
+        • **IMC** (Índice de Masa Corporal): Relación peso/altura. Útil como referencia, pero no refleja composición corporal.
+
+        ¿Quieres que te explique algún término en más detalle?
+
+  utter_terminologia_cuerpo:
+    - text: |
+        📚 *Términos de composición corporal*:
+
+        • **Hipertrofia**: Crecimiento muscular por entrenamiento de fuerza con volumen moderado-alto.
+        • **Definición**: Reducir grasa corporal mientras conservas masa muscular (requiere déficit calórico).
+        • **Recomposición**: Bajar grasa y ganar músculo a la vez — posible en principiantes o con mucha paciencia.
+        • **Masa magra**: Todo lo que no es grasa (músculos, huesos, agua, órganos).
+        • **Ectomorfo**: Metabolismo rápido, delgado por naturaleza, le cuesta ganar masa.
+        • **Mesomorfo**: Gana músculo y pierde grasa con relativa facilidad.
+        • **Endomorfo**: Metabolismo más lento, tiende a acumular grasa, pero también gana músculo bien.
+
+        ¿Quieres que te explique algún término en más detalle?
+
+  utter_terminologia_general:
+    - text: |
+        ¡Claro! Puedo explicarte términos de:
+
+        💪 *Entrenamiento* — RPE, RIR, series, reps, superserie, HIIT, LISS, progresión de carga...
+        🥗 *Nutrición* — macros, déficit calórico, TDEE, proteínas, carbos...
+        🏋️ *Composición corporal* — hipertrofia, definición, recomposición, somatotipos...
+
+        Dime sobre qué área quieres aprender, o pregúntame directamente por un término específico.
+
 forms:
   reserva_form:
     required_slots:
@@ -676,6 +735,7 @@ actions:
   - validate_rutina_form
   - validate_hero_form
   - action_excluir_alimento
+  - action_terminologia
 
 session_config:
   session_expiration_time: 60
