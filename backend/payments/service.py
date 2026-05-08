@@ -166,7 +166,11 @@ class MercadoPagoService:
         }
 
         if issuer_id:
-            payment_data["issuer_id"] = issuer_id
+            # MP expects issuer_id as int, not string
+            try:
+                payment_data["issuer_id"] = int(issuer_id)
+            except (TypeError, ValueError):
+                payment_data["issuer_id"] = issuer_id
 
         notification_url = (current_app.config.get('MERCADOPAGO_NOTIFICATION_URL') or "").strip()
         _invalid_hosts = ("localhost", "127.0.0.1", "ngrok", "ngrok-free.app", "0.0.0.0")

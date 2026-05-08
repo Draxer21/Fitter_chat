@@ -296,11 +296,42 @@ def process_card():
             order_id=order_id,
         )
 
-        if response['status'] not in (200, 201):
-            current_app.logger.error(f"MP rechazó el pago: {response}")
-            return jsonify({'error': 'Pago rechazado por MercadoPago', 'detail': response.get('response', {})}), 400
+        http_status = response.get('status')
+        mp_body     = response.get('response', {})
 
-        mp_data = response['response']
+        if http_status not in (200, 201):
+            # MP returned an HTTP error (bad request, invalid users, etc.)
+            mp_message = (
+                mp_body.get('message')
+                or mp_body.get('error')
+                or f"HTTP {http_status}"
+            )
+            current_app.logger.error(
+                "MP rechazó el pago (HTTP %s): %s | payload: %s",
+                http_status, mp_body, payment_data,
+            )
+
+            # Detect sandbox / test-user issue specifically
+            is_test = current_app.config.get('MERCADOPAGO_ACCESS_TOKEN', '').startswith('TEST-')
+            invalid_users = 'invalid users' in mp_message.lower() or 'invalid_users' in mp_message.lower()
+            if is_test and (invalid_users or http_status == 400):
+                user_hint = (
+                    "Estás en modo sandbox. El email del pagador debe ser un "
+                    "test-user de MercadoPago. Crea uno en mercadopago.com/developers "
+                    "y configura MP_TEST_BUYER_EMAIL en el servidor."
+                )
+                return jsonify({
+                    'error': f'MercadoPago sandbox: {mp_message}',
+                    'hint': user_hint,
+                    'detail': mp_body,
+                }), 400
+
+            return jsonify({
+                'error': f'MercadoPago rechazó el pago: {mp_message}',
+                'detail': mp_body,
+            }), 400
+
+        mp_data = mp_body
 
         from datetime import datetime as _dt
         import uuid as _uuid
@@ -318,22 +349,47 @@ def process_card():
         )
         db.session.add(payment)
 
-        if mp_data.get('status') == 'approved':
+        mp_status        = mp_data.get('status')
+        mp_status_detail = mp_data.get('status_detail', '')
+
+        if mp_status == 'approved':
             order.payment_status = 'paid'
             order.status = 'confirmed'
             payment.approved_at = _dt.utcnow()
-            # Auto-crear suscripción si algún ítem de la orden es un plan
             _maybe_activate_subscription(order, current_user)
-        elif mp_data.get('status') == 'rejected':
+        elif mp_status == 'rejected':
             order.payment_status = 'failed'
+            current_app.logger.warning(
+                "Pago rechazado por MP — order %s, status_detail: %s",
+                order_id, mp_status_detail,
+            )
 
         db.session.commit()
 
+        # Translate common MP rejection codes into Spanish for the UI
+        _STATUS_DETAIL_ES = {
+            'cc_rejected_bad_filled_security_code': 'CVV incorrecto.',
+            'cc_rejected_bad_filled_date':          'Fecha de vencimiento incorrecta.',
+            'cc_rejected_bad_filled_card_number':   'Número de tarjeta incorrecto.',
+            'cc_rejected_bad_filled_other':         'Datos de tarjeta incorrectos.',
+            'cc_rejected_blacklist':                'Tarjeta rechazada por el banco.',
+            'cc_rejected_call_for_authorize':       'Llama a tu banco para autorizar el pago.',
+            'cc_rejected_card_disabled':            'Tarjeta desactivada. Contacta tu banco.',
+            'cc_rejected_duplicated_payment':       'Pago duplicado detectado.',
+            'cc_rejected_high_risk':                'Pago rechazado por riesgo. Usa otra tarjeta.',
+            'cc_rejected_insufficient_amount':      'Saldo insuficiente.',
+            'cc_rejected_invalid_installments':     'Cuotas no disponibles para esta tarjeta.',
+            'cc_rejected_max_attempts':             'Demasiados intentos. Espera un momento.',
+            'cc_rejected_other_reason':             'Tarjeta rechazada. Intenta con otra.',
+        }
+        detail_es = _STATUS_DETAIL_ES.get(mp_status_detail, mp_status_detail)
+
         return jsonify({
-            'status': mp_data.get('status'),
-            'status_detail': mp_data.get('status_detail'),
-            'order_id': order_id,
-            'payment_id': mp_data.get('id'),
+            'status':        mp_status,
+            'status_detail': mp_status_detail,
+            'status_detail_es': detail_es,
+            'order_id':      order_id,
+            'payment_id':    mp_data.get('id'),
         }), 200
 
     except Exception:

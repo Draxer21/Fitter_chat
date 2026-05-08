@@ -121,7 +121,10 @@ export default function CheckoutForm({ orderId, total, onSuccess, onError, onClo
       const result = await res.json();
 
       if (!res.ok) {
-        onError(result.error || 'El pago fue rechazado.');
+        // Show the real MP error + any hint the backend provides
+        const msg  = result.error || 'El pago fue rechazado.';
+        const hint = result.hint ? `\n${result.hint}` : '';
+        onError(`${msg}${hint}`);
         return;
       }
 
@@ -130,7 +133,9 @@ export default function CheckoutForm({ orderId, total, onSuccess, onError, onClo
       } else if (result.status === 'in_process' || result.status === 'pending') {
         onSuccess({ ...result, pending: true });
       } else {
-        onError(`Pago ${result.status}: ${result.status_detail || 'intenta con otro medio.'}`);
+        // Use the Spanish translation the backend provides, fall back to raw detail
+        const detail = result.status_detail_es || result.status_detail || 'intenta con otro medio de pago.';
+        onError(`Pago rechazado: ${detail}`);
       }
     } catch {
       onError('Error de conexión al procesar el pago.');
