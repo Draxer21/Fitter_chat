@@ -37,6 +37,9 @@ async function csrfHeaders(extra = {}) {
 
 // ════════════════════════════════════════════════
 export default function CheckoutForm({ orderId, total, onSuccess, onError, onClose }) {
+  // Normalize total to a positive number — MP Brick rejects strings, 0, null, undefined
+  const safeAmount = Math.max(0, Number(total) || 0);
+
   const [ready, setReady]           = useState(false);
   const [processing, setProcessing] = useState(false);
   const [publicKey, setPublicKey]   = useState(null);
@@ -75,13 +78,17 @@ export default function CheckoutForm({ orderId, total, onSuccess, onError, onClo
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Initialize MP SDK once per key ──
+  // We wait 300 ms before marking ready so the SDK has time to load
+  // its Secure Fields iframes. Rendering CardPayment synchronously after
+  // initMercadoPago causes "The integration with Secure Fields failed".
   useEffect(() => {
     if (!publicKey) return;
     if (mpInitializedKey !== publicKey) {
       initMercadoPago(publicKey, { locale: 'es-CL' });
       mpInitializedKey = publicKey;
     }
-    setReady(true);
+    const t = setTimeout(() => setReady(true), 300);
+    return () => clearTimeout(t);
   }, [publicKey]);
 
   // ── Handle CardPayment Brick submit ──
@@ -94,7 +101,7 @@ export default function CheckoutForm({ orderId, total, onSuccess, onError, onClo
       payment_method_id:  d.payment_method_id ?? d.paymentMethodId,
       issuer_id:          d.issuer_id ?? d.issuerId ?? null,
       installments:       d.installments ?? 1,
-      transaction_amount: total,
+      transaction_amount: safeAmount,
       order_id:           orderId,
       payer: {
         email:          d.payer?.email,
@@ -226,18 +233,28 @@ export default function CheckoutForm({ orderId, total, onSuccess, onError, onClo
         )}
 
         {/* CardPayment Brick */}
-        {ready && publicKey && !processing && (
+        {safeAmount <= 0 && !processing && publicKey && (
+          <div className="alert alert-warning text-center py-3">
+            El monto del pedido no es válido. Vuelve al carrito y reintenta.
+          </div>
+        )}
+        {ready && publicKey && !processing && safeAmount > 0 && (
           <CardPayment
-            initialization={{ amount: total }}
+            initialization={{ amount: safeAmount }}
             customization={customization}
             onSubmit={handleSubmit}
             onError={(err) => {
-              const msg = err?.message || '';
-              // Hint extra cuando el error es de tokenización en modo test
-              const hint = isTestMode && msg.toLowerCase().includes('token')
-                ? ' (En modo prueba usa una tarjeta de test — ver tabla arriba)'
+              const msg = err?.message || String(err) || 'Error desconocido';
+              // "Secure Fields failed" suele ser clave inválida o monto 0
+              const isSecureFieldsErr = msg.toLowerCase().includes('secure fields');
+              const secureHint = isSecureFieldsErr
+                ? ' Verifica que VITE_MP_PUBLIC_KEY coincida con el país de tu cuenta MP.'
                 : '';
-              onError(`Error en el formulario de pago: ${msg}${hint}`);
+              // Hint extra cuando el error es de tokenización en modo test
+              const testHint = isTestMode && (msg.toLowerCase().includes('token') || isSecureFieldsErr)
+                ? ' En modo prueba usa una tarjeta de test de la tabla arriba.'
+                : '';
+              onError(`Error en el formulario de pago: ${msg}${secureHint}${testHint}`);
               if (!showTestCards && isTestMode) setShowTestCards(true);
             }}
           />

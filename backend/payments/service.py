@@ -66,12 +66,12 @@ class MercadoPagoService:
         # Agregar información del pagador si está disponible
         if payer_info:
             payer_email = payer_info.get('email', '')
-            # En sandbox, evitar que el email del pagador coincida con el merchant
-            # (MP bloquea autopagos). Usar email neutro de prueba.
             access_token = current_app.config.get('MERCADOPAGO_ACCESS_TOKEN', '')
             is_test_mode = access_token.startswith('TEST-')
             if is_test_mode:
-                payer_email = 'test_user_buyer@testuser.com'
+                test_buyer_email = current_app.config.get('MP_TEST_BUYER_EMAIL', '').strip()
+                if test_buyer_email:
+                    payer_email = test_buyer_email
             preference_data["payer"] = {
                 "name": payer_info.get('name') or 'Test',
                 "surname": payer_info.get('surname') or 'User',
@@ -126,10 +126,27 @@ class MercadoPagoService:
         """
         Crear un pago directo con Checkout API (sin redirección).
         """
-        # En sandbox, el email del pagador NO puede coincidir con el del merchant
         access_token = current_app.config.get('MERCADOPAGO_ACCESS_TOKEN', '')
         is_test_mode = access_token.startswith('TEST-')
-        effective_email = 'test_user_buyer@testuser.com' if is_test_mode else payer_email
+        if is_test_mode:
+            # En sandbox, MP recomienda usar un test-user comprador real.
+            # Si MP_TEST_BUYER_EMAIL está configurado, lo usamos; si no,
+            # usamos el email del pagador (el pago puede ser rechazado por MP
+            # pero no rompe el backend).
+            test_buyer_email = current_app.config.get('MP_TEST_BUYER_EMAIL', '').strip()
+            if test_buyer_email:
+                effective_email = test_buyer_email
+            else:
+                current_app.logger.warning(
+                    "MP_TEST_BUYER_EMAIL no configurado. En modo sandbox MP puede rechazar "
+                    "el pago si el email '%s' no es un test-user. "
+                    "Crea un usuario de prueba en mercadopago.com/developers y configura "
+                    "MP_TEST_BUYER_EMAIL para evitar rechazos.",
+                    payer_email,
+                )
+                effective_email = payer_email
+        else:
+            effective_email = payer_email
 
         # CLP no tiene decimales — MP rechaza si se envían centavos
         amount = int(transaction_amount) if is_test_mode else float(transaction_amount)
