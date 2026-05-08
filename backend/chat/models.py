@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from decimal import Decimal, InvalidOperation
 from typing import Any, Dict, Iterable, Optional
 
 from ..extensions import db
@@ -191,9 +192,11 @@ class ProgressLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.String(80), nullable=False, index=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True, index=True)
-    metric = db.Column(db.String(80), nullable=True)   # e.g. "peso", "sentadilla", "presion"
-    value = db.Column(db.String(120), nullable=True)   # valor registrado (texto libre)
-    note = db.Column(db.Text, nullable=True)           # nota adicional del usuario
+    metric = db.Column(db.String(80), nullable=True)
+    value = db.Column(db.String(120), nullable=True)
+    numeric_value = db.Column(db.Numeric(10, 2), nullable=True)
+    unit = db.Column(db.String(16), nullable=True)
+    note = db.Column(db.Text, nullable=True)
     recorded_at = db.Column(db.DateTime, nullable=False, default=_now)
     created_at = db.Column(db.DateTime, nullable=False, default=_now)
 
@@ -205,12 +208,21 @@ class ProgressLog(db.Model):
         value: Optional[str],
         note: Optional[str] = None,
         user_id: Optional[int] = None,
+        unit: Optional[str] = None,
     ) -> "ProgressLog":
+        numeric = None
+        if value is not None:
+            try:
+                numeric = Decimal(str(value))
+            except (InvalidOperation, ValueError):
+                pass
         entry = cls(
             sender_id=(sender_id or "")[:80],
             user_id=user_id,
             metric=(metric or "")[:80] if metric else None,
             value=str(value)[:120] if value is not None else None,
+            numeric_value=numeric,
+            unit=(unit or "")[:16] if unit else None,
             note=note,
         )
         db.session.add(entry)
@@ -222,6 +234,8 @@ class ProgressLog(db.Model):
             "sender_id": self.sender_id,
             "metric": self.metric,
             "value": self.value,
+            "numeric_value": float(self.numeric_value) if self.numeric_value is not None else None,
+            "unit": self.unit,
             "note": self.note,
             "recorded_at": self.recorded_at.isoformat() if self.recorded_at else None,
         }

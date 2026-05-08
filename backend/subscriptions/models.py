@@ -75,6 +75,7 @@ class Subscription(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False, index=True)
+    order_id = db.Column(db.Integer, db.ForeignKey("order.id", ondelete="SET NULL"), nullable=True, index=True)
     plan_type = db.Column(db.String(32), nullable=False)  # basic, premium, black
     status = db.Column(db.String(32), nullable=False, default="active")
     start_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
@@ -85,11 +86,13 @@ class Subscription(db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = db.relationship("User", backref=db.backref("subscriptions", lazy="dynamic"))
+    order = db.relationship("Order", backref=db.backref("subscription", uselist=False))
 
     def to_dict(self) -> dict:
         return {
             "id": self.id,
             "user_id": self.user_id,
+            "order_id": self.order_id,
             "plan_type": self.plan_type,
             "status": self.status,
             "start_date": self.start_date.isoformat() if self.start_date else None,

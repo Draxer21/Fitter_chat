@@ -101,7 +101,7 @@ class OrderItem(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     order_id = db.Column(db.Integer, db.ForeignKey("order.id", ondelete="CASCADE"), nullable=False, index=True)
-    product_id = db.Column(db.Integer, nullable=True)
+    product_id = db.Column(db.Integer, db.ForeignKey("producto.id", ondelete="SET NULL"), nullable=True)
     product_name = db.Column(db.String(255), nullable=False)
     quantity = db.Column(db.Integer, nullable=False, default=1)
     unit_price = db.Column(db.Numeric(12, 2), nullable=False)
