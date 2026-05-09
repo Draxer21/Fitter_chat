@@ -42,24 +42,42 @@ def equip_key_norm(equip: str) -> str:
     """Normaliza claves de equipamiento."""
     e = (equip or "").strip().lower()
     mapping = {
-        # peso corporal
-        "peso corporal": "peso_corporal",
-        "peso_corporal": "peso_corporal",
-        "sin equipo": "peso_corporal",
-        "sin equipamiento": "peso_corporal",
-        "cuerpo libre": "peso_corporal",
-        "nada": "peso_corporal",
+        # peso corporal / sin equipo / casa
+        "peso corporal":     "peso_corporal",
+        "peso_corporal":     "peso_corporal",
+        "sin equipo":        "peso_corporal",
+        "sin equipamiento":  "peso_corporal",
+        "cuerpo libre":      "peso_corporal",
+        "bodyweight":        "peso_corporal",
+        "nada":              "peso_corporal",
+        "casa":              "peso_corporal",
+        "en casa":           "peso_corporal",
+        "home":              "peso_corporal",
+        "en el hogar":       "peso_corporal",
+        "domicilio":         "peso_corporal",
+        # bandas → se tratan como peso corporal (catálogo no las distingue aún)
+        "bandas":            "peso_corporal",
+        "bandas elasticas":  "peso_corporal",
+        "banda elastica":    "peso_corporal",
+        "bandas de resistencia": "peso_corporal",
+        # kettlebell → mancuernas (mismos ejercicios de tracción unilateral)
+        "kettlebell":        "mancuernas",
+        "pesa rusa":         "mancuernas",
+        # singular
+        "mancuerna":         "mancuernas",
         # máquinas
-        "maquinas": "máquinas",
+        "maquinas":          "máquinas",
         # mixto — el usuario no especificó o quiere variedad
-        "mixto": "mixto",
-        "general": "mixto",
-        "cualquier": "mixto",
-        "cualquiera": "mixto",
-        "todos": "mixto",
-        "variado": "mixto",
+        "mixto":             "mixto",
+        "general":           "mixto",
+        "cualquier":         "mixto",
+        "cualquiera":        "mixto",
+        "todos":             "mixto",
+        "variado":           "mixto",
         "cualquier equipamiento": "mixto",
-        "no importa": "mixto",
+        "no importa":        "mixto",
+        "gym":               "mixto",
+        "gimnasio":          "mixto",
     }
     return mapping.get(e, e)
 

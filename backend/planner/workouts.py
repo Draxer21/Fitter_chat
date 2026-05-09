@@ -511,17 +511,35 @@ def _pick_mixto_balanceado(grupo: str, n: int) -> List[Tuple[str, str]]:
     return result
 
 
-def pick_exercises(grupo: str, equip: str, n: int) -> List[Tuple[str, str]]:
+def pick_exercises(
+    grupo: str,
+    equip: str,
+    n: int,
+    exclude: Optional[List[str]] = None,
+) -> List[Tuple[str, str]]:
     """Devuelve n ejercicios (nombre, url).
     En modo mixto usa round-robin por equipo para garantizar variedad.
     Con equipo específico prioriza ese equipo y completa con el resto.
+
+    Args:
+        grupo:   Grupo muscular (pecho, espalda, piernas, …)
+        equip:   Equipamiento (barra, mancuernas, peso_corporal, mixto, …)
+        n:       Número de ejercicios a devolver.
+        exclude: Lista de nombres de ejercicios a omitir (insensible a mayúsculas).
     """
+    exclude_set: set = {x.lower().strip() for x in (exclude or [])}
+
+    def _filter(lst: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
+        if not exclude_set:
+            return lst
+        return [(name, url) for name, url in lst if name.lower() not in exclude_set]
+
     e = equip_key_norm(equip)
     if e == "mixto":
-        result = _pick_mixto_balanceado(grupo, n)
+        result = _filter(_pick_mixto_balanceado(grupo, n + len(exclude_set)))
         if result:
-            return result
-    pool = _build_bank_por_prioridad(grupo, equip)
+            return result[:n]
+    pool = _filter(_build_bank_por_prioridad(grupo, equip))
     if not pool:
         return []
     random.shuffle(pool)
