@@ -40,7 +40,10 @@ FAREWELL_MESSAGE = (
 # Palabras clave para detectar intent sin Rasa
 _RUTINA_KW = re.compile(
     r"\b(rutina|ejercicio|entren|workout|gym|pesas|musculo|fuerza|"
-    r"hipertrofia|cardio|bajar grasa|perder peso|ganar masa|serie|rep)\b",
+    r"hipertrofia|cardio|bajar grasa|perder peso|ganar masa|serie|rep|"
+    r"nivel|objetivo|cambia|cambiar|cambiame|rendimiento|resistencia|"
+    r"principiante|intermedio|avanzado|fullbody|pecho|espalda|pierna|"
+    r"hombro|brazo|core)\b",
     re.I,
 )
 _DIETA_KW = re.compile(
@@ -121,22 +124,37 @@ def _extract_preferences(message: str, session: DemoSession) -> None:
     # Objetivo
     if any(k in msg for k in ("fuerza", "powerlifting", "levantar")):
         session.objetivo = "fuerza"
-    elif any(k in msg for k in ("hipertrofia", "masa muscular", "musculo", "volumen")):
+    elif any(k in msg for k in ("hipertrofia", "masa muscular", "musculo", "volumen",
+                                 "ganar masa", "ganar musculo")):
         session.objetivo = "hipertrofia"
-    elif any(k in msg for k in ("bajar grasa", "perder grasa", "adelgazar", "definir", "quemar")):
+    elif any(k in msg for k in ("bajar grasa", "perder grasa", "adelgazar", "definir",
+                                  "quemar", "bajar de peso", "perder peso")):
         session.objetivo = "bajar_grasa"
-    elif any(k in msg for k in ("resistencia", "cardio", "correr", "fondo")):
+    elif any(k in msg for k in ("resistencia", "cardio", "correr", "fondo",
+                                  "rendimiento", "atletismo", "deporte")):
         session.objetivo = "resistencia"
     # Nivel
-    if any(k in msg for k in ("principiante", "nunca he", "recien empiezo", "nuevo")):
+    if any(k in msg for k in ("principiante", "nunca he", "recien empiezo", "nuevo",
+                                "soy nuevo", "empezando", "inicio", "basico")):
         session.nivel = "principiante"
-    elif any(k in msg for k in ("avanzado", "años entrenando", "experiencia")):
+    elif any(k in msg for k in ("avanzado", "años entrenando", "mucha experiencia",
+                                  "elite", "competidor")):
         session.nivel = "avanzado"
-    elif any(k in msg for k in ("intermedio", "algo de experiencia")):
+    elif any(k in msg for k in ("intermedio", "algo de experiencia", "moderado")):
         session.nivel = "intermedio"
-    # Músculo
-    for grupo in ("pecho", "espalda", "piernas", "hombros", "brazos", "core", "fullbody", "cardio"):
-        if grupo in msg:
+    # Músculo — buscar coincidencias en orden de especificidad
+    _MUSCULO_MAP = [
+        ("fullbody", ("fullbody", "cuerpo completo", "todo el cuerpo", "cuerpo entero")),
+        ("pecho",    ("pecho", "pectorales", "pectoral")),
+        ("espalda",  ("espalda", "dorsales", "dorsal", "espalda alta", "espalda baja")),
+        ("piernas",  ("piernas", "pierna", "cuadriceps", "femoral", "gluteos", "glúteos")),
+        ("hombros",  ("hombros", "hombro", "deltoides", "deltoide")),
+        ("brazos",   ("brazos", "brazo", "biceps", "bíceps", "triceps", "tríceps")),
+        ("core",     ("core", "abdomen", "abdominal", "abdominales", "cintura")),
+        ("cardio",   ("cardio", "cardiovascular")),
+    ]
+    for grupo, keywords in _MUSCULO_MAP:
+        if any(k in msg for k in keywords):
             session.musculo = grupo
             break
     # Condiciones
@@ -183,9 +201,19 @@ def _build_cta_message() -> Dict[str, Any]:
 def process_demo_message(
     session_id: str,
     message: str,
+    *,
+    show_cta: bool = True,
 ) -> Dict[str, Any]:
     """
     Procesa un mensaje de demo y devuelve una lista de respuestas.
+
+    Args:
+        session_id: Identificador de sesión del cliente.
+        message:    Texto enviado por el usuario.
+        show_cta:   Si es False, omite el mensaje de registro (CTA).
+                    Pasar False para usuarios autenticados que llegaron
+                    aquí por el fallback de Rasa.
+
     Retorna: {"responses": [...], "turns_left": int, "exhausted": bool}
     """
     session = _store.get_or_create(session_id)
@@ -268,7 +296,8 @@ def process_demo_message(
         responses = _build_otro_response(turns_left)
 
     # Inyectar CTA tras CONTENT_TURNS respuestas de contenido
-    if session.content_turns >= CONTENT_TURNS and not session.cta_sent:
+    # Solo para usuarios no autenticados (show_cta=True)
+    if show_cta and session.content_turns >= CONTENT_TURNS and not session.cta_sent:
         responses.append(_build_cta_message())
         session.cta_sent = True
 

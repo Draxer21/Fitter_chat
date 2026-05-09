@@ -617,6 +617,12 @@ class ActionFetchProfile(Action):
             events.append(SlotSet("perfil_completo", False))
             return events
 
+        # Authenticated user — demo mode must be off regardless of how slots were set
+        if tracker.get_slot("demo_offline"):
+            events.append(SlotSet("demo_offline", False))
+            events.append(SlotSet("offline_notified", False))
+            events.append(SlotSet("offline_mode", False))
+
         try:
             profile = fetch_user_profile(ctx)
         except Exception as exc:
@@ -2010,11 +2016,15 @@ class ActionGenerarRutina(Action):
         if health_flags.get("diabetes") and "Revisa glucosa" not in health_notes:
             health_notes.append("Revisa glucosa antes y despues de entrenar.")
 
-        ejercicios = pick_exercises(musculo, equip, ejercicios_num)
+        # Build exclusion list from slot (comma-separated exercise names)
+        _excluidos_raw = tracker.get_slot("ejercicios_excluidos") or ""
+        excluidos = [e.strip() for e in _excluidos_raw.split(",") if e.strip()]
+
+        ejercicios = pick_exercises(musculo, equip, ejercicios_num, exclude=excluidos)
 
         fallback_notice = ""
         if not ejercicios:
-            ejercicios = pick_exercises("fullbody", "mancuernas", ejercicios_num)
+            ejercicios = pick_exercises("fullbody", "mancuernas", ejercicios_num, exclude=excluidos)
             fallback_notice = " (fallback a fullbody por catologo no disponible)"
 
         structured_ejercicios: List[Dict[str, Any]] = []
@@ -2175,6 +2185,8 @@ class ActionGenerarDieta(Action):
         alergias = _slot(tracker, "alergias") or (profile_data.get("allergies") if profile_data else None) or "ninguna"
         dislikes = _slot(tracker, "no_gusta") or ctx_dislikes
         condiciones = _slot(tracker, "condiciones_salud") or (profile_data.get("medical_conditions") if profile_data else None) or "ninguna"
+        # Foods the user explicitly wants included — pass as a preference hint
+        alimentos_incluir = tracker.get_slot("alimentos_incluir") or ""
 
         # If essential info is missing (objetivo explicit or peso), ask like routines do
         peso_slot = tracker.get_slot("peso")
@@ -2244,6 +2256,13 @@ class ActionGenerarDieta(Action):
 
         if (allergy_list or dislike_list) and allergen_hits:
             adjustments.append("Reemplaza ingredientes en las comidas marcadas por alternativas seguras o evitadas.")
+
+        # Incorporate explicitly requested foods as a prominent note
+        if alimentos_incluir and alimentos_incluir.strip():
+            adjustments.append(
+                f"Incluye en tu plan: {alimentos_incluir}. "
+                "Sustitúyelos o añádelos en las comidas que mejor se adapten a tus objetivos."
+            )
 
         macros = plan.get("macros", {})
         hydration = plan.get("hydration")
@@ -2955,3 +2974,258 @@ class ActionTerminologia(Action):
             dispatcher.utter_message(response="utter_terminologia_general")
 
         return []
+
+
+class ActionVerificarAutenticacion(Action):
+    """
+    Maneja la activación/desactivación del modo demo según el estado de autenticación.
+
+    - Si el usuario ESTÁ autenticado (tiene sesión activa en el backend):
+        * Bloquea el modo demo y notifica que ya tiene acceso completo.
+        * Si intentaba desactivar el modo demo, confirma que ya está en modo completo.
+
+    - Si el usuario NO está autenticado:
+        * Permite activar o desactivar el modo demo normalmente.
+    """
+
+    def name(self) -> Text:
+        return "action_verificar_autenticacion"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        intent = tracker.latest_message.get("intent", {}).get("name", "")
+        wants_demo = intent == "activar_modo_demo"
+
+        # ── Check if the user has an active backend session ──
+        ctx = ensure_authenticated_context(tracker)
+        is_authenticated = ctx is not None and bool(ctx.get("user_id"))
+
+        if is_authenticated:
+            # Registered users never enter demo mode
+            if wants_demo:
+                dispatcher.utter_message(
+                    text=(
+                        "✅ Ya tienes una cuenta activa en Fitter, así que tienes acceso "
+                        "completo a todas las funciones del asistente. "
+                        "No necesitas el modo demo. ¡Pregúntame lo que quieras!"
+                    )
+                )
+            else:
+                # They tried to deactivate demo — confirm full mode
+                dispatcher.utter_message(
+                    text=(
+                        "✅ Estás usando el asistente con tu cuenta Fitter. "
+                        "Tienes acceso completo a todas las funciones."
+                    )
+                )
+            return [
+                SlotSet("demo_offline", False),
+                SlotSet("offline_notified", False),
+                SlotSet("offline_mode", False),
+                SlotSet("backend_down", False),
+            ]
+
+        # ── User is NOT authenticated — allow demo mode toggle ──
+        if wants_demo:
+            dispatcher.utter_message(response="utter_demo_on")
+            return [
+                SlotSet("demo_offline", True),
+                SlotSet("offline_notified", False),
+            ]
+        else:
+            dispatcher.utter_message(response="utter_demo_off")
+            return [
+                SlotSet("demo_offline", False),
+                SlotSet("offline_notified", False),
+            ]
+
+
+# =========================================================
+# ACCION: Cambiar equipamiento de la rutina
+# =========================================================
+_EQUIP_KEYWORDS: List[tuple] = [
+    ("mancuernas",   ["mancuernas", "mancuerna", "dumbbells", "dumbbell"]),
+    ("barra",        ["barra", "barbell", "barra olímpica"]),
+    ("bandas",       ["bandas", "banda elástica", "banda elastica", "resistance band", "bandas de resistencia"]),
+    ("kettlebell",   ["kettlebell", "pesa rusa"]),
+    ("peso_corporal",["sin equipo", "sin equipamiento", "peso corporal", "bodyweight",
+                      "solo mi cuerpo", "nada", "cuerpo libre", "casa", "en casa", "home"]),
+    ("mixto",        ["gym", "gimnasio", "todo", "variado", "cualquiera", "mixto"]),
+]
+
+_EQUIP_LABELS: Dict[str, str] = {
+    "peso_corporal": "peso corporal (sin equipo)",
+    "mancuernas":   "mancuernas",
+    "barra":        "barra",
+    "bandas":       "bandas elásticas",
+    "kettlebell":   "kettlebell",
+    "mixto":        "equipamiento variado de gimnasio",
+}
+
+
+class ActionCambiarEquipamiento(Action):
+    """Detecta el equipamiento del mensaje, actualiza el slot y regenera la rutina.
+    Si el usuario solo dijo 'en casa' sin especificar qué tiene, muestra botones."""
+
+    def name(self) -> Text:
+        return "action_cambiar_equipamiento"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        # 1. Try entity extraction first
+        equip_entity = next(tracker.get_latest_entity_values("equipamiento"), None)
+        msg = (tracker.latest_message.get("text") or "").lower()
+
+        if equip_entity:
+            equip = equip_entity.lower()
+        else:
+            # 2. Scan message for known keywords in priority order
+            equip = None
+            for key, keywords in _EQUIP_KEYWORDS:
+                if any(kw in msg for kw in keywords):
+                    equip = key
+                    break
+
+        if equip is None:
+            # Couldn't determine equipment → ask with buttons
+            dispatcher.utter_message(response="utter_ask_equipamiento_casa")
+            return []
+
+        # Special case: just "en casa / home" with no specific equipment → ask
+        if equip == "peso_corporal" and any(k in msg for k in ("casa", "home", "domicilio")):
+            # Only prompt if they didn't also mention specific gear
+            has_specific = any(
+                any(kw in msg for kw in kws)
+                for key, kws in _EQUIP_KEYWORDS
+                if key not in ("peso_corporal", "mixto")
+            )
+            if not has_specific:
+                dispatcher.utter_message(response="utter_ask_equipamiento_casa")
+                return []
+
+        label = _EQUIP_LABELS.get(equip, equip)
+        dispatcher.utter_message(
+            text=f"Entendido, usaré **{label}** para tu rutina. Generando ahora..."
+        )
+        return [
+            SlotSet("equipamiento", equip),
+            FollowupAction("action_generar_rutina"),
+        ]
+
+
+# =========================================================
+# ACCION: Excluir ejercicio de la rutina
+# =========================================================
+_EXCLUIR_PATTERNS = [
+    r"(?:quita|elimina|saca|borra|excluye|quítame|sin|no quiero(?:\s+hacer)?|no me pongas|no puedo hacer|reemplaza)\s+(?:el|la|los|las|ese|esa)?\s*(.+?)(?:\s+de la rutina|\s+del plan|\s+de los ejercicios|$)",
+    r"(?:quitar|eliminar|sacar|excluir)\s+(?:el|la|los|las)?\s*(.+?)(?:\s+de la rutina|\s+del plan|$)",
+]
+
+
+class ActionExcluirEjercicio(Action):
+    """Acumula ejercicios a excluir y regenera la rutina sin ellos."""
+
+    def name(self) -> Text:
+        return "action_excluir_ejercicio"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        # 1. Try entity
+        ejercicio = next(tracker.get_latest_entity_values("ejercicio_excluir"), None)
+
+        # 2. Fall back to regex on raw message
+        if not ejercicio:
+            msg = tracker.latest_message.get("text") or ""
+            for pattern in _EXCLUIR_PATTERNS:
+                match = re.search(pattern, msg, re.IGNORECASE)
+                if match:
+                    ejercicio = match.group(1).strip(" .,;")
+                    break
+
+        if not ejercicio:
+            dispatcher.utter_message(
+                text="¿Qué ejercicio quieres quitar? Dímelo y lo excluyo de tu próxima rutina."
+            )
+            return []
+
+        # 3. Accumulate (comma-separated, deduplicated)
+        current = tracker.get_slot("ejercicios_excluidos") or ""
+        existing = [e.strip().lower() for e in current.split(",") if e.strip()]
+        if ejercicio.lower() not in existing:
+            existing.append(ejercicio.lower())
+        updated = ", ".join(existing)
+
+        dispatcher.utter_message(
+            text=f"Listo, **{ejercicio}** quedará excluido. Regenerando tu rutina sin ese ejercicio..."
+        )
+        return [
+            SlotSet("ejercicios_excluidos", updated),
+            FollowupAction("action_generar_rutina"),
+        ]
+
+
+# =========================================================
+# ACCION: Agregar alimento a la dieta
+# =========================================================
+_INCLUIR_PATTERNS = [
+    r"(?:añade|agrega|incluye|pon|ponme|suma|incorpora|quiero que tenga|quiero más)\s+(?:el|la|los|las|más)?\s*(.+?)(?:\s+a mi dieta|\s+al plan|\s+en las comidas|\s+en mi dieta|$)",
+    r"(?:incluir|agregar|añadir)\s+(?:el|la|los|las)?\s*(.+?)(?:\s+a la dieta|\s+al plan|$)",
+]
+
+
+class ActionAgregarAlimento(Action):
+    """Acumula alimentos a incluir y regenera la dieta."""
+
+    def name(self) -> Text:
+        return "action_agregar_alimento"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        # 1. Try entity
+        alimento = next(tracker.get_latest_entity_values("alimento_incluir"), None)
+
+        # 2. Regex fallback
+        if not alimento:
+            msg = tracker.latest_message.get("text") or ""
+            for pattern in _INCLUIR_PATTERNS:
+                match = re.search(pattern, msg, re.IGNORECASE)
+                if match:
+                    alimento = match.group(1).strip(" .,;")
+                    break
+
+        if not alimento:
+            dispatcher.utter_message(
+                text="¿Qué alimento quieres añadir a tu plan? Dímelo y lo incluyo."
+            )
+            return []
+
+        # 3. Accumulate (comma-separated, deduplicated)
+        current = tracker.get_slot("alimentos_incluir") or ""
+        existing = [a.strip().lower() for a in current.split(",") if a.strip()]
+        if alimento.lower() not in existing:
+            existing.append(alimento.lower())
+        updated = ", ".join(existing)
+
+        dispatcher.utter_message(
+            text=f"Perfecto, incorporaré **{alimento}** a tu plan nutricional. Regenerando dieta..."
+        )
+        return [
+            SlotSet("alimentos_incluir", updated),
+            FollowupAction("action_generar_dieta"),
+        ]
