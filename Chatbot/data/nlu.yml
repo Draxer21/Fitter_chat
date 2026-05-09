@@ -11544,6 +11544,56 @@ nlu:
 
     - Quiero una rutina nueva
 
+    - quiero una rutina
+
+    - dame una rutina
+
+    - hazme una rutina
+
+    - crea una rutina
+
+    - genera una rutina
+
+    - arma una rutina
+
+    - quiero mi rutina
+
+    - necesito una rutina de ejercicios
+
+    - quiero un plan de ejercicios
+
+    - quiero empezar a entrenar
+
+    - dame un plan de entrenamiento
+
+    - crea un plan de entrenamiento
+
+    - necesito un plan de entrenamiento
+
+    - quiero entrenar hoy
+
+    - quiero comenzar a entrenar
+
+    - ponme una rutina
+
+    - muéstrame una rutina
+
+    - elabora una rutina
+
+    - diseña una rutina para mí
+
+    - quiero ver mi rutina
+
+    - mi rutina por favor
+
+    - una rutina por favor
+
+    - dame ejercicios
+
+    - quiero ejercicios
+
+    - necesito ejercicios para hoy
+
     - Requiero un plan rapido de 20 minutos diarios para trabajar en casa.
 
     - Quiero un plan enfocada en circuitos funcionales que combine TRX y minibands y me ayude a fortalecer mi zona lumbar
@@ -17418,6 +17468,14 @@ nlu:
 
 - intent: desactivar_modo_demo
   examples: |
+    - demo off
+    - off demo
+    - turn off demo
+    - disable demo
+    - stop demo
+    - end demo
+    - demo desactivar
+    - demo apagar
     - desactivar modo demo
     - desactiva modo demo
     - desactivar demo
@@ -17745,6 +17803,136 @@ nlu:
     - qué significa [RM](termino) en el gym
     - qué es [PPL](termino)
     - qué significa [masa magra](termino)
+
+- intent: cambiar_equipamiento_rutina
+  examples: |
+    - quiero entrenar en casa
+    - adapta la rutina para casa
+    - no tengo gimnasio
+    - entreno en casa
+    - solo tengo mancuernas
+    - tengo mancuernas en casa
+    - cambia el equipo a mancuernas
+    - cambia el equipamiento
+    - cambia la rutina a peso corporal
+    - sin equipo por favor
+    - tengo bandas elásticas
+    - solo tengo una barra en casa
+    - tengo kettlebell
+    - sin ir al gym
+    - adapta la rutina para entrenamiento en casa
+    - ajusta la rutina para usar solo peso corporal
+    - usa solo mancuernas
+    - sin equipamiento de gimnasio
+    - con lo que tengo en casa
+    - cambia a mancuernas
+    - pon la rutina para bandas elásticas
+    - solo tengo peso corporal disponible
+    - quiero cambiar el equipamiento
+    - hazla con mancuernas nada más
+    - cambia el equipo a barra
+    - tengo barra en casa
+    - usa barra
+    - usa mancuernas
+    - usa peso corporal
+    - ajusta la rutina para casa
+    - cambia el equipo a bandas
+    - modifica la rutina para hacerla sin gym
+    - entrena en casa
+    - quiero entrenarme en casa
+    - hago ejercicio en casa
+    - voy a entrenar en casa
+    - hazme una rutina en casa
+    - entrenamiento en casa
+    - ejercicios para hacer en casa
+    - rutina desde casa
+    - quiero entrenar desde casa
+
+- intent: excluir_ejercicio
+  examples: |
+    - quita [sentadillas](ejercicio_excluir) de la rutina
+    - sin [flexiones](ejercicio_excluir)
+    - elimina el [press de banca](ejercicio_excluir)
+    - no quiero hacer [dominadas](ejercicio_excluir)
+    - quita [peso muerto](ejercicio_excluir)
+    - no me gustan [las zancadas](ejercicio_excluir)
+    - saca [el remo](ejercicio_excluir)
+    - reemplaza [los fondos](ejercicio_excluir)
+    - no puedo hacer [prensa de pierna](ejercicio_excluir)
+    - quítame [el curl de bíceps](ejercicio_excluir)
+    - elimina [press militar](ejercicio_excluir)
+    - quita ese ejercicio
+    - saca [elevaciones laterales](ejercicio_excluir)
+    - sin [jalones al pecho](ejercicio_excluir)
+    - no me pongas [sentadilla goblet](ejercicio_excluir)
+    - excluye [plancha](ejercicio_excluir)
+    - borra [curl martillo](ejercicio_excluir) de la lista
+    - no quiero [zancadas](ejercicio_excluir)
+    - quita [fondos en paralelas](ejercicio_excluir)
+    - elimina el ejercicio de [face pull](ejercicio_excluir)
+
+- intent: cambiar_tiempo_rutina
+  examples: |
+    - tengo solo [30](tiempo_disponible) minutos
+    - tengo [20](tiempo_disponible) minutos hoy
+    - quiero una rutina de [45](tiempo_disponible) minutos
+    - hazla de [60](tiempo_disponible) minutos
+    - reduce el tiempo a [25](tiempo_disponible) minutos
+    - dame algo de [50](tiempo_disponible) min
+    - una rutina express de [20](tiempo_disponible) minutos
+    - tengo [15](tiempo_disponible) min
+    - quiero que dure [40](tiempo_disponible) minutos
+    - cambia la duración a [35](tiempo_disponible) minutos
+    - solo cuento con [30](tiempo_disponible) min hoy
+    - una sesión de [90](tiempo_disponible) minutos
+    - que sea de [45](tiempo_disponible) min
+    - reduce la duración
+    - tengo poco tiempo hoy
+    - hazla más corta, [25](tiempo_disponible) minutos
+    - más larga, de [75](tiempo_disponible) minutos por favor
+    - cambia el tiempo de la rutina a [50](tiempo_disponible) min
+    - que dure [60](tiempo_disponible) minutos
+
+- intent: cambiar_ejercicios_num
+  examples: |
+    - ponle [8](ejercicios_num) ejercicios
+    - quiero solo [4](ejercicios_num) ejercicios
+    - dame [10](ejercicios_num) ejercicios
+    - reduce a [5](ejercicios_num) ejercicios
+    - hazla con [6](ejercicios_num) ejercicios
+    - que tenga [7](ejercicios_num) ejercicios
+    - agrega más ejercicios, que sean [9](ejercicios_num)
+    - menos ejercicios, solo [4](ejercicios_num)
+    - más ejercicios por favor, [12](ejercicios_num)
+    - quiero [6](ejercicios_num) ejercicios por sesión
+    - cambia a [8](ejercicios_num) ejercicios
+    - con [5](ejercicios_num) ejercicios basta
+    - ponme [7](ejercicios_num)
+    - que sean [10](ejercicios_num) ejercicios en total
+    - reduce el número de ejercicios a [4](ejercicios_num)
+
+- intent: agregar_alimento
+  examples: |
+    - añade [avena](alimento_incluir) a mi dieta
+    - incluye [pollo](alimento_incluir) en mi plan
+    - agrega [huevos](alimento_incluir) a las comidas
+    - quiero que tenga [salmón](alimento_incluir)
+    - pon más [arroz integral](alimento_incluir)
+    - incorpora [atún](alimento_incluir) al plan
+    - quiero [pechuga de pollo](alimento_incluir) en mi dieta
+    - añade [batata](alimento_incluir) por favor
+    - incluye [brócoli](alimento_incluir)
+    - agrega [quinoa](alimento_incluir) a las comidas
+    - pon [proteína de suero](alimento_incluir) en el plan
+    - quiero más [legumbres](alimento_incluir)
+    - incluye [aguacate](alimento_incluir)
+    - agrega [almendras](alimento_incluir)
+    - quiero [plátano](alimento_incluir) en alguna comida
+    - añade [yogur griego](alimento_incluir)
+    - ponme [clara de huevo](alimento_incluir)
+    - incluye [espinaca](alimento_incluir) en las comidas
+    - agrega [carne magra](alimento_incluir)
+    - incorpora [frutos secos](alimento_incluir)
 
 - lookup: termino
   examples: |

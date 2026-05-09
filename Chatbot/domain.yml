@@ -36,6 +36,11 @@ intents:
   - nlu_fallback
   - excluir_alimento
   - consultar_terminologia
+  - cambiar_equipamiento_rutina
+  - excluir_ejercicio
+  - cambiar_tiempo_rutina
+  - cambiar_ejercicios_num
+  - agregar_alimento
 
 entities:
   - objetivo
@@ -58,6 +63,8 @@ entities:
   - hora
   - edad
   - termino
+  - ejercicio_excluir
+  - alimento_incluir
 
 slots:
   objetivo:
@@ -288,12 +295,19 @@ slots:
     influence_conversation: true
     initial_value: false
     mappings:
-      - type: from_intent
-        intent: activar_modo_demo
-        value: true
-      - type: from_intent
-        intent: desactivar_modo_demo
-        value: false
+      - type: custom
+
+  ejercicios_excluidos:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
+
+  alimentos_incluir:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: custom
 
   offline_mode:
     type: bool
@@ -594,6 +608,20 @@ responses:
   utter_ask_equipamiento:
     - text: "¿Con qué equipamiento cuentas? (gimnasio / casa / mancuernas / bandas / ninguno)"
 
+  utter_ask_equipamiento_casa:
+    - text: "¡Perfecto para entrenar en casa! ¿Qué tienes disponible?"
+      buttons:
+        - title: "Solo peso corporal"
+          payload: '/cambiar_equipamiento_rutina{"equipamiento": "peso_corporal"}'
+        - title: "Mancuernas"
+          payload: '/cambiar_equipamiento_rutina{"equipamiento": "mancuernas"}'
+        - title: "Bandas elásticas"
+          payload: '/cambiar_equipamiento_rutina{"equipamiento": "bandas"}'
+        - title: "Barra"
+          payload: '/cambiar_equipamiento_rutina{"equipamiento": "barra"}'
+        - title: "Kettlebell"
+          payload: '/cambiar_equipamiento_rutina{"equipamiento": "kettlebell"}'
+
   utter_ask_ejercicios_num:
     - text: "¿Cuántos ejercicios por sesión prefieres?"
 
@@ -736,6 +764,10 @@ actions:
   - validate_hero_form
   - action_excluir_alimento
   - action_terminologia
+  - action_verificar_autenticacion
+  - action_cambiar_equipamiento
+  - action_excluir_ejercicio
+  - action_agregar_alimento
 
 session_config:
   session_expiration_time: 60

@@ -81,20 +81,12 @@ rules:
   - rule: Activar modo demo
     steps:
       - intent: activar_modo_demo
-      - slot_was_set:
-          - demo_offline: true
-      - slot_was_set:
-          - offline_notified: false
-      - action: utter_demo_on
+      - action: action_verificar_autenticacion
 
   - rule: Desactivar modo demo
     steps:
       - intent: desactivar_modo_demo
-      - slot_was_set:
-          - demo_offline: false
-      - slot_was_set:
-          - offline_notified: false
-      - action: utter_demo_off
+      - action: action_verificar_autenticacion
 
   - rule: Aviso offline una sola vez en demo
     condition:
@@ -562,6 +554,39 @@ rules:
     steps:
       - intent: consultar_terminologia
       - action: action_terminologia
+
+  # ── Modificaciones de rutina ──
+  - rule: cambiar equipamiento de rutina
+    steps:
+      - intent: cambiar_equipamiento_rutina
+      - action: action_cambiar_equipamiento
+
+  - rule: excluir ejercicio de rutina
+    steps:
+      - intent: excluir_ejercicio
+      - action: action_excluir_ejercicio
+
+  - rule: cambiar tiempo de sesion
+    steps:
+      - intent: cambiar_tiempo_rutina
+      - action: action_generar_rutina
+      - slot_was_set:
+          - requested_plan: null
+          - servicio_pendiente: null
+
+  - rule: cambiar numero de ejercicios
+    steps:
+      - intent: cambiar_ejercicios_num
+      - action: action_generar_rutina
+      - slot_was_set:
+          - requested_plan: null
+          - servicio_pendiente: null
+
+  # ── Modificaciones de dieta ──
+  - rule: agregar alimento a dieta
+    steps:
+      - intent: agregar_alimento
+      - action: action_agregar_alimento
 
   - rule: manejar fallback
     steps:

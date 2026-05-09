@@ -347,29 +347,29 @@ stories:
 - story: demo mode on y luego off
   steps:
     - intent: activar_modo_demo
+    - action: action_verificar_autenticacion
     - slot_was_set:
         - demo_offline: true
-    - action: utter_demo_on
     - intent: desactivar_modo_demo
+    - action: action_verificar_autenticacion
     - slot_was_set:
         - demo_offline: false
-    - action: utter_demo_off
 
 - story: rutina en modo demo
   steps:
     - intent: activar_modo_demo
+    - action: action_verificar_autenticacion
     - slot_was_set:
         - demo_offline: true
-    - action: utter_demo_on
     - intent: solicitar_rutina
     - action: utter_offline_routine_basic
 
 - story: dieta en modo demo
   steps:
     - intent: activar_modo_demo
+    - action: action_verificar_autenticacion
     - slot_was_set:
         - demo_offline: true
-    - action: utter_demo_on
     - intent: solicitar_dieta
     - action: utter_offline_diet_basic
 
