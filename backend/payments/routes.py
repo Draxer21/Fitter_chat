@@ -16,6 +16,16 @@ from backend.gestor_inventario.models import Producto
 payments_bp = Blueprint('payments', __name__, url_prefix='/api/payments')
 
 
+def _resolve_payer_email(real_email: str) -> str:
+    """En modo sandbox reemplaza el email por el test buyer configurado."""
+    import os
+    access_token = os.environ.get('MERCADOPAGO_ACCESS_TOKEN', '')
+    test_email = os.environ.get('MP_TEST_BUYER_EMAIL', '')
+    if access_token.startswith('TEST-') and test_email:
+        return test_email
+    return real_email
+
+
 def _current_user() -> Optional[User]:
     """Obtener el usuario actual de la sesión"""
     uid = session.get("uid")
@@ -291,7 +301,7 @@ def process_card():
             installments=int(installments),
             payment_method_id=payment_method_id,
             issuer_id=issuer_id,
-            payer_email=payer.get('email') or current_user.email,
+            payer_email=_resolve_payer_email(payer.get('email') or current_user.email),
             payer_identification=payer.get('identification', {}),
             order_id=order_id,
         )
@@ -307,8 +317,8 @@ def process_card():
                 or f"HTTP {http_status}"
             )
             current_app.logger.error(
-                "MP rechazó el pago (HTTP %s): %s | payload: %s",
-                http_status, mp_body, payment_data,
+                "MP rechazó el pago (HTTP %s): %s | token: %s method: %s amount: %s",
+                http_status, mp_body, token, payment_method_id, transaction_amount,
             )
 
             # Detect sandbox / test-user issue specifically
@@ -345,7 +355,7 @@ def process_card():
             payment_method_id=mp_data.get('payment_method_id'),
             payment_type_id=mp_data.get('payment_type_id'),
             external_reference=str(order_id),
-            payer_email=payer.get('email') or current_user.email,
+            payer_email=_resolve_payer_email(payer.get('email') or current_user.email),
         )
         db.session.add(payment)
 

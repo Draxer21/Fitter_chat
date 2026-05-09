@@ -69,6 +69,7 @@ class AppConfig:
     MERCADOPAGO_PUBLIC_KEY: str = ""
     MERCADOPAGO_NOTIFICATION_URL: str = ""
     MERCADOPAGO_WEBHOOK_SECRET: str = ""
+    MP_TEST_BUYER_EMAIL: str = ""  # Requerido en sandbox: email del test-user comprador
     FRONTEND_URL: str = "http://localhost:3000"
     GOOGLE_CLIENT_IDS: List[str] = field(default_factory=list)
     GOOGLE_AUTH_VERIFY_MODE: str = "google"
@@ -148,6 +149,9 @@ class AppConfig:
             ),
             MERCADOPAGO_WEBHOOK_SECRET=env.get(
                 "MERCADOPAGO_WEBHOOK_SECRET", cls.MERCADOPAGO_WEBHOOK_SECRET
+            ),
+            MP_TEST_BUYER_EMAIL=env.get(
+                "MP_TEST_BUYER_EMAIL", cls.MP_TEST_BUYER_EMAIL
             ),
             FRONTEND_URL=env.get("FRONTEND_URL", cls.FRONTEND_URL),
             GOOGLE_CLIENT_IDS=_parse_list(env.get("GOOGLE_CLIENT_IDS")),
