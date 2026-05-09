@@ -18,6 +18,18 @@ function getOrCreateSenderId(forceNew = false) {
   return v;
 }
 
+// Defined outside Chatbot so React never sees it as a new type on re-render.
+// If it were inside, every keystroke (input state update) would recreate Bubble,
+// causing all existing message-bubbles to unmount+remount and re-trigger the
+// messagePop CSS animation on the whole chat history.
+function Bubble({ children, from }) {
+  return (
+    <div className={`message-bubble ${from === "user" ? "user-bubble" : "bot-bubble"}`}>
+      {children}
+    </div>
+  );
+}
+
 export default function Chatbot(props = {}) {
   const {
     endpoint = "/chat/send",
@@ -531,12 +543,6 @@ export default function Chatbot(props = {}) {
       alert(`No se pudo descargar la rutina en formato ${format.toUpperCase()}. Intenta de nuevo.`);
     }
   };
-
-  const Bubble = ({ children, from }) => (
-    <div className={`message-bubble ${from === "user" ? "user-bubble" : "bot-bubble"}`}>
-      {children}
-    </div>
-  );
 
   const renderMessageContent = (m) => {
     const hasRoutineLink = m?.custom?.type === "routine_link" && typeof m?.custom?.url === "string";
