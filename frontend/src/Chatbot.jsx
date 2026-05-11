@@ -37,6 +37,7 @@ export default function Chatbot(props = {}) {
     onNewMessage,
     onBotMessage,
     initialMessages: incomingInitialMessages,
+    pageMode = false,   // true cuando está en ChatPage (layout pantalla completa)
   } = props;
   const initialMessages = Array.isArray(incomingInitialMessages) ? incomingInitialMessages : [];
   const uidRef = useRef(senderId || getOrCreateSenderId());
@@ -559,14 +560,22 @@ export default function Chatbot(props = {}) {
     const hasText = typeof m.text === "string" && m.text.length > 0;
 
     const routineSummary = routineDetail?.summary || {};
-    const routineExplainParts = [];
-    if (routineSummary.objetivo) routineExplainParts.push(`objetivo ${routineSummary.objetivo}`);
-    if (routineSummary.nivel) routineExplainParts.push(`nivel ${routineSummary.nivel}`);
-    if (routineSummary.equipamiento) routineExplainParts.push(`equipo ${routineSummary.equipamiento}`);
-    if (routineSummary.tiempo_min) routineExplainParts.push(`${routineSummary.tiempo_min} min disponibles`);
-    if (Array.isArray(routineSummary.health_notes) && routineSummary.health_notes.length > 0) routineExplainParts.push("precauciones registradas");
-    if (Array.isArray(routineSummary.allergies) && routineSummary.allergies.length > 0) routineExplainParts.push(`alergias: ${routineSummary.allergies.join(", ")}`);
-    const routineExplanation = routineExplainParts.length ? `Se generó usando ${routineExplainParts.join(" · ")}.` : null;
+    // Construir razonamiento detallado de la rutina
+    const routineReasonLines = [];
+    if (routineSummary.objetivo) routineReasonLines.push(`🎯 Objetivo: ${routineSummary.objetivo}`);
+    if (routineSummary.nivel) routineReasonLines.push(`📊 Nivel: ${routineSummary.nivel}`);
+    if (routineSummary.equipamiento) routineReasonLines.push(`🏋️ Equipo disponible: ${routineSummary.equipamiento}`);
+    if (routineSummary.tiempo_min) routineReasonLines.push(`⏱️ Duración: ${routineSummary.tiempo_min} minutos`);
+    if (routineSummary.musculo) routineReasonLines.push(`💪 Músculo foco: ${routineSummary.musculo}`);
+    if (routineDetail?.summary?.somatotipo) routineReasonLines.push(`🧬 Somatotipo: ${routineDetail.summary.somatotipo}`);
+    if (routineSummary.progresion) routineReasonLines.push(`📈 Progresión: ${routineSummary.progresion}`);
+    if (Array.isArray(routineSummary.health_notes) && routineSummary.health_notes.length > 0)
+      routineReasonLines.push(`⚠️ Precauciones: ${routineSummary.health_notes.join("; ")}`);
+    if (Array.isArray(routineSummary.allergies) && routineSummary.allergies.length > 0)
+      routineReasonLines.push(`🚫 Alergias consideradas: ${routineSummary.allergies.join(", ")}`);
+    // Campo explanation explícito del backend (si viene)
+    const backendExplanation = routineDetail?.explanation || routineDetail?.explanation_text || routineDetail?.reason || null;
+    const routineExplanation = routineReasonLines.length > 0 || backendExplanation;
 
     const dietExplainParts = [];
     if (dietPlan?.objective) dietExplainParts.push(`objetivo ${dietPlan.objective}`);
@@ -596,14 +605,31 @@ export default function Chatbot(props = {}) {
         {routineDetail && (
           <>
             {(hasText || hasRoutineLink) ? <br /> : null}
+
+            {/* Razonamiento — siempre visible, sin necesidad de expandir */}
+            {routineExplanation && (
+              <div className="explain-box" style={{ marginTop: hasText || hasRoutineLink ? 8 : 4 }}>
+                <strong>¿Por qué esta rutina?</strong>
+                {backendExplanation && <p style={{ marginTop: 4 }}>{backendExplanation}</p>}
+                {routineReasonLines.length > 0 && (
+                  <ul style={{ margin: "6px 0 0 4px", padding: 0, listStyle: "none", display: "grid", gap: 2 }}>
+                    {routineReasonLines.map((line, i) => (
+                      <li key={`reason-${m.id}-${i}`} style={{ fontSize: "0.82rem" }}>{line}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+
             <button
               type="button"
               onClick={() => routineKey && toggleCard(routineKey)}
               className="message-action-button message-routine-button"
-              style={{ marginTop: hasText || hasRoutineLink ? 6 : 0 }}
+              style={{ marginTop: 8 }}
             >
-              {isRoutineExpanded ? "Ocultar rutina" : "Ver rutina aqui"}
+              {isRoutineExpanded ? "Ocultar ejercicios" : "Ver ejercicios"}
             </button>
+
             {isRoutineExpanded && (
               <div className="routine-card">
                 {routineDetail.header && <p style={{ margin: 0, fontWeight: 600 }}>{routineDetail.header}</p>}
@@ -614,13 +640,7 @@ export default function Chatbot(props = {}) {
                   <span><strong>Objetivo:</strong> {routineDetail.summary?.objetivo ?? "-"}</span>
                   <span><strong>Nivel:</strong> {routineDetail.summary?.nivel ?? "-"}</span>
                 </div>
-                {routineExplanation && (
-                  <div className="explain-box">
-                    <strong>¿Cómo se armó?</strong>
-                    <p>{routineExplanation}</p>
-                  </div>
-                )}
-                
+
                 {/* Botones de descarga */}
                 <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap" }}>
                   <button
@@ -648,22 +668,7 @@ export default function Chatbot(props = {}) {
                     📤 Enviar por correo
                   </button>
                 </div>
-                
-                {Array.isArray(routineDetail.summary?.health_notes) && routineDetail.summary.health_notes.length > 0 && (
-                  <div className="health-warning">
-                    <strong>Precauciones:</strong>
-                    <ul style={{ margin: "6px 0 0 16px", padding: 0 }}>
-                      {routineDetail.summary.health_notes.map((note, idx) => (
-                        <li key={`routine-health-${m.id}-${idx}`}>{note}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {Array.isArray(routineDetail.summary?.allergies) && routineDetail.summary.allergies.length > 0 && (
-                  <p style={{ marginTop: 6, fontSize: "0.8rem", color: "#6b7280" }}>
-                    Alergias registradas: {routineDetail.summary.allergies.join(", ")}
-                  </p>
-                )}
+
                 {routineDetail.fallback_notice && (
                   <p style={{ marginTop: 6, fontSize: "0.8rem", color: "#92400e" }}>
                     {routineDetail.fallback_notice}
@@ -684,11 +689,6 @@ export default function Chatbot(props = {}) {
                     ))}
                   </ol>
                 )}
-                {routineDetail.summary?.progresion && (
-                  <p style={{ marginTop: 8, fontSize: "0.8rem", color: "#374151" }}>
-                    {routineDetail.summary.progresion}
-                  </p>
-                )}
               </div>
             )}
           </>
@@ -696,7 +696,16 @@ export default function Chatbot(props = {}) {
         {dietPlan && (
           <>
             {(hasText || hasRoutineLink || routineDetail) ? <br /> : null}
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: hasText || hasRoutineLink || routineDetail ? 6 : 0 }}>
+
+            {/* Resumen visible antes de expandir */}
+            {dietExplanation && (
+              <div className="explain-box" style={{ marginTop: hasText || hasRoutineLink || routineDetail ? 8 : 4 }}>
+                <strong>¿Cómo se calculó tu dieta?</strong>
+                <p style={{ marginTop: 4 }}>{dietExplanation}</p>
+              </div>
+            )}
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 8 }}>
               <button
                 type="button"
                 onClick={() => dietKey && toggleCard(dietKey)}
@@ -722,12 +731,6 @@ export default function Chatbot(props = {}) {
                   {dietSummary.macros?.carbohidratos && <span><strong>Carbohidratos:</strong> {dietSummary.macros.carbohidratos}</span>}
                   {dietSummary.macros?.grasas && <span><strong>Grasas:</strong> {dietSummary.macros.grasas}</span>}
                 </div>
-                {dietExplanation && (
-                  <div className="explain-box">
-                    <strong>¿Cómo se generó?</strong>
-                    <p>{dietExplanation}</p>
-                  </div>
-                )}
                 {dietAdjustments.length > 0 && (
                   <div className="health-warning">
                     <strong>Ajustes de salud:</strong>
@@ -964,6 +967,13 @@ export default function Chatbot(props = {}) {
       className="chatbot-container"
       role="region"
       aria-label="Chat con asistente FITTER"
+      style={pageMode ? {
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        minHeight: 0,
+        overflow: "hidden",
+      } : undefined}
     >
       {/* Consent modal: T&C completos, scroll obligatorio para aceptar */}
       {!consent && (
@@ -1062,7 +1072,20 @@ export default function Chatbot(props = {}) {
           </div>
         </div>
       )}
-      <div ref={scrollRef} className="chatbot-messages" aria-live="polite">
+      <div
+        ref={scrollRef}
+        className="chatbot-messages"
+        aria-live="polite"
+        style={pageMode ? {
+          overflowY: "auto",
+          overflowX: "hidden",
+          boxSizing: "border-box",
+          /* Altura = viewport - navbar(80px) - input fijo(~72px) */
+          height: "calc(100dvh - 80px - 72px)",
+          /* padding-bottom generoso para que el último mensaje quede sobre el input */
+          padding: "28px clamp(20px, calc(50% - 430px), 50%) 160px",
+        } : undefined}
+      >
         {messages.map((m) => (
           <div key={m.id} className={`chatbot-message ${m.from === "user" ? "user-message" : "bot-message"}`}>
             <Bubble from={m.from}>{renderMessageContent(m)}</Bubble>
@@ -1085,7 +1108,22 @@ export default function Chatbot(props = {}) {
         </div>
       )}
 
-      <div className="chatbot-input-container">
+      <div
+        className="chatbot-input-container"
+        style={pageMode ? {
+          position: "fixed",
+          bottom: 0,
+          left: "220px",   /* ancho del sidebar */
+          right: 0,
+          display: "flex",
+          gap: "8px",
+          padding: "10px clamp(20px, calc(50% - 430px), 50%) 14px",
+          background: "var(--neutral-0, #fff)",
+          borderTop: "1px solid var(--neutral-200, #e5e7eb)",
+          boxSizing: "border-box",
+          zIndex: 50,
+        } : undefined}
+      >
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}

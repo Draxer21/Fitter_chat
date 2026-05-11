@@ -1735,7 +1735,31 @@ nlu:
 
     - hola por supuesto prefiero lo resolvamos por aqui todos los datos pendientes porque me resulta mas rapido
 
-    - hola claro prefiero tu lo gestiones mi informacion personal porque quiero verificar todo contigo'
+    - hola claro prefiero tu lo gestiones mi informacion personal porque quiero verificar todo contigo
+
+    - cambia mi perfil
+
+    - modifica mis datos
+
+    - actualiza mis datos
+
+    - quiero cambiar mi información
+
+    - edita mi perfil
+
+    - modifica mi perfil
+
+    - quiero modificar mis datos
+
+    - actualizar mi información personal
+
+    - cambia mis datos de perfil
+
+    - pon mis nuevos datos
+
+    - quiero poner mis medidas nuevas
+
+    - actualiza mi peso y altura'
 - intent: ayuda
   examples: '- ayuda
 
@@ -3335,7 +3359,57 @@ nlu:
 
     - Agrega sesiones para serratos usando superseries; siento que no progresan
 
-    - Agrega sesiones para gluteos usando tempo controlado; me ayuda para otro deporte'
+    - Agrega sesiones para gluteos usando tempo controlado; me ayuda para otro deporte
+
+    - entrena [pecho](musculo)
+
+    - cambia a [pierna](musculo)
+
+    - quiero trabajar [espalda](musculo)
+
+    - cambia el músculo a [hombro](musculo)
+
+    - ponme una rutina de [brazo](musculo)
+
+    - enfócate en [core](musculo)
+
+    - ahora quiero trabajar [fullbody](musculo)
+
+    - cambia el grupo muscular a [pecho](musculo)
+
+    - hazla de [pecho](musculo)
+
+    - quiero [espalda](musculo) hoy
+
+    - cambia a grupo [pierna](musculo)
+
+    - trabaja [hombro](musculo) en esta sesión
+
+    - ponme [core](musculo) por favor
+
+    - quiero hacer [pierna](musculo)
+
+    - hoy toca [pecho](musculo)
+
+    - cambia el entrenamiento a [brazo](musculo)
+
+    - enfoca la rutina en [espalda](musculo)
+
+    - quiero trabajar [brazo](musculo)
+
+    - hazlo de [hombro](musculo)
+
+    - cambia a [core](musculo)
+
+    - pon [pecho](musculo) esta semana
+
+    - prefiero entrenar [pierna](musculo)
+
+    - quiero sesión de [espalda](musculo)
+
+    - cambia el foco a [hombro](musculo)
+
+    - esta vez quiero [fullbody](musculo)'
 - intent: cambiar_nivel_rutina
   examples: '- Pasa la rutina a nivel intermedio.
 
@@ -4003,7 +4077,49 @@ nlu:
 
     - Podemos mover el plan a moderado? por todo este trimestre
 
-    - Podemos mover el plan a avanzado plus? por todo este trimestre'
+    - Podemos mover el plan a avanzado plus? por todo este trimestre
+
+    - cambia a [principiante](nivel)
+
+    - ponme nivel [avanzado](nivel)
+
+    - cámbiame a [intermedio](nivel)
+
+    - quiero nivel [principiante](nivel)
+
+    - hazla de nivel [avanzado](nivel)
+
+    - pon nivel [intermedio](nivel)
+
+    - cambia el nivel a [principiante](nivel)
+
+    - nivel [avanzado](nivel) por favor
+
+    - sube a [avanzado](nivel)
+
+    - baja a [principiante](nivel)
+
+    - ponme de [principiante](nivel)
+
+    - quiero que sea [avanzado](nivel)
+
+    - ponme a [intermedio](nivel)
+
+    - cambia el nivel
+
+    - quiero nivel básico
+
+    - hazlo más fácil
+
+    - ponme en nivel avanzado
+
+    - quiero nivel intermedio
+
+    - cambia a nivel principiante
+
+    - sube el nivel a avanzado
+
+    - baja el nivel a intermedio'
 - intent: cambiar_objetivo_rutina
   examples: '- Necesito que la rutina apunte a preparar un 10k porque regresare a competir en natacion
 
@@ -4808,7 +4924,85 @@ nlu:
 
     - Cambia mi objetivo a prepararme para trail running porque tengo una competencia pronto
 
-    - Ahora quiero que el plan busque mejorar mi postura; mis objetivos nutricionales cambiaron'
+    - Ahora quiero que el plan busque mejorar mi postura; mis objetivos nutricionales cambiaron
+
+    - cambia el objetivo a [definicion](objetivo_fitness)
+
+    - quiero [hipertrofia](objetivo_fitness)
+
+    - cambia mi objetivo a [resistencia](objetivo_fitness)
+
+    - ahora quiero [fuerza](objetivo_fitness)
+
+    - cambia a [hipertrofia](objetivo_fitness)
+
+    - pon objetivo de [fuerza](objetivo_fitness)
+
+    - quiero cambiar a [definicion](objetivo_fitness)
+
+    - mi nuevo objetivo es [resistencia](objetivo_fitness)
+
+    - cambia la meta a [hipertrofia](objetivo_fitness)
+
+    - ahora me enfoco en [fuerza](objetivo_fitness)
+
+    - quiero ganar masa, cambia a [hipertrofia](objetivo_fitness)
+
+    - cambia el objetivo a [movilidad](objetivo_fitness)
+
+    - pon [rendimiento](objetivo_fitness) como objetivo
+
+    - actualiza mi objetivo a [fuerza](objetivo_fitness)
+
+    - quiero definirme, ponme [definicion](objetivo_fitness)
+
+    - nueva meta: [resistencia](objetivo_fitness)
+
+    - cambia mi meta a [fuerza](objetivo_fitness)
+
+    - quiero cambiar mi objetivo
+
+    - cambia el objetivo a ganar masa
+
+    - pon el objetivo en resistencia
+
+    - quiero enfocarme en definición muscular
+
+    - cambia la meta a fuerza
+
+    - nuevo objetivo: hipertrofia
+
+    - quiero fuerza ahora
+
+    - cambia a objetivo de resistencia
+
+    - mi objetivo ahora es definición
+
+    - quiero ganar masa muscular ahora
+
+    - pon hipertrofia como mi objetivo
+
+    - cambia el plan para enfocarse en fuerza
+
+    - quiero ganar masa
+
+    - quiero ganar masa muscular
+
+    - prefiero ganar masa ahora
+
+    - cambia, ahora quiero ganar masa
+
+    - quiero centrarme en ganar masa
+
+    - mi objetivo es ganar masa
+
+    - ahora quiero ganar masa
+
+    - prefiero [hipertrofia](objetivo_fitness) ahora
+
+    - quiero cambiar a ganar masa muscular
+
+    - actualiza el objetivo a ganar masa'
 - intent: consultar_perfil
   examples: '- mostrar perfil
 
@@ -11297,6 +11491,13 @@ nlu:
     - hola a ver
     - salu2
     - sludo
+    - qué tal
+    - hola, buenos días
+    - hola, buenas tardes
+    - hola, buenas noches
+    - buenas, ¿cómo estás?
+    - hola ¿qué tal?
+    - hola ¿cómo te va?
 - intent: solicitar_dieta
   examples: '- sugerir dieta
 
@@ -12731,7 +12932,25 @@ nlu:
     - Necesito un entrenamiento semanal que respete mi lesion de espalda y ayude a bajar de peso.
 
     - Busco un programa de fuerza de adaptable a mis turnos de trabajo orientado a retomar el ritmo despues de una lesion
-    porque mis rodillas son sensibles'
+    porque mis rodillas son sensibles
+
+    - arma una rutina de espalda nivel intermedio para hipertrofia
+
+    - necesito una rutina con mancuernas para resistencia
+
+    - dame una rutina de pecho nivel avanzado
+
+    - quiero una rutina de pierna nivel principiante
+
+    - hazme una rutina de fuerza nivel intermedio
+
+    - genera una rutina de hipertrofia nivel avanzado
+
+    - quiero una rutina de hombro con mancuernas
+
+    - dame una rutina de core nivel principiante
+
+    - crea una rutina de fullbody para definicion'
 - intent: soporte_general
   examples: '- soporte
 
@@ -17368,237 +17587,6 @@ nlu:
     - qwerty
     - ñlkjhg
 
-- intent: activar_modo_demo
-  examples: |
-    - activar modo demo
-    - activa modo demo
-    - activar demo
-    - activa el modo demo por favor
-    - pon el modo demo
-    - quiero activar el modo demo
-    - activame el demo
-    - activa el demo
-    - necesito activar el modo demo
-    - habilitar modo demo
-    - habilita el demo
-    - enciende modo demo
-    - enciende el demo
-    - prende el modo demo
-    - prende el demo
-    - inicia modo demo
-    - iniciar el demo
-    - arrancar modo demo
-    - entrar a modo demo
-    - entrar al modo demo
-    - quiero entrar al modo demo
-    - activa modo offline
-    - activar modo offline
-    - activa el modo sin conexion
-    - activar modo sin servidor
-    - activa el modo sin backend
-    - quiero activar el modo offline
-    - enciende el modo offline
-    - prende el modo offline
-    - habilita el modo offline
-    - pon el modo de prueba
-    - activa el modo de prueba
-    - habilitar modo de prueba
-    - activar prueba offline
-    - activa la demostracion
-    - activar la demostracion
-    - enciende la demostracion
-    - podrias activar el modo demo
-    - me activas el modo demo
-    - podrias activar el demo
-    - puedes activar el modo demo
-    - por favor activa el demo
-    - enciende el demo por favor
-    - prende el demo por favor
-    - habilita el demo por favor
-    - activa el modo test
-    - enciende el modo test
-    - habilita el modo test
-    - activar test mode
-    - activa modo simulado
-    - activar modo simulado
-    - activa el modo sin internet
-    - activa modo sin red
-    - quiero ver cómo funciona sin conexión
-    - modo demostracion por favor
-    - quiero activar el modo de ejemplo
-    - activa el modo ejemplo
-    - pon el modo de ejemplo
-    - pon en modo prueba
-    - habilita modo de prueba
-    - modo prueba activar
-    - demo activar
-    - quiero el modo demo
-    - dame el modo demo
-    - necesito el demo activo
-    - prende la demo
-    - activa la demo
-    - habilitar la demo
-    - iniciar la demo
-    - comenzar demo
-    - quiero comenzar el demo
-    - arranca el modo demo
-    - enciende el modo de demostracion
-    - coloca el modo demo
-    - me pones el modo demo
-    - actívame el demo
-    - habilítame el modo demo
-    - inicializa el modo demo
-    - quiero ver el demo
-    - poner modo demo
-    - entrar a demo
-    - ejecutar demo
-    - iniciar modo demo ahora
-    - necesito modo offline
-    - prefiero el modo sin backend
-    - activa sin servidor
-    - prueba sin conexión activar
-    - quiero el modo offline activo
-    - activa modo desconectado
-    - pon modo desconectado
-    - habilitar modo desconectado
-    - activa el modo local
-    - demo local activar
-    - modo local por favor
-    - activa para probar sin red
-
-- intent: desactivar_modo_demo
-  examples: |
-    - demo off
-    - off demo
-    - turn off demo
-    - disable demo
-    - stop demo
-    - end demo
-    - demo desactivar
-    - demo apagar
-    - desactivar modo demo
-    - desactiva modo demo
-    - desactivar demo
-    - desactiva el demo
-    - desactiva el modo demo por favor
-    - quiero desactivar el modo demo
-    - salir del modo demo
-    - salir del demo
-    - salir de la demo
-    - quiero salir del modo demo
-    - quiero salir del demo
-    - sacame del modo demo
-    - sacame del demo
-    - saca el modo demo
-    - quitar modo demo
-    - quitar el modo demo
-    - quitame el demo
-    - quita el demo
-    - apagar modo demo
-    - apagar el demo
-    - apaga el demo
-    - apaga el modo demo
-    - deshabilitar modo demo
-    - deshabilita el demo
-    - deshabilita el modo demo
-    - terminar modo demo
-    - termina el demo
-    - finalizar demo
-    - finaliza el demo
-    - cerrar modo demo
-    - cierra el demo
-    - parar modo demo
-    - para el demo
-    - detener modo demo
-    - detener el demo
-    - volver al modo normal
-    - volver a modo normal
-    - regresar al modo normal
-    - regresa al modo normal
-    - restaurar modo normal
-    - volver al modo online
-    - volver online
-    - cambiar a modo normal
-    - cambiar a modo online
-    - volver al modo con backend
-    - volver al modo con conexion
-    - ya no quiero modo demo
-    - no quiero mas el demo
-    - ya no necesito el demo
-    - desactivar modo offline
-    - desactiva el modo offline
-    - apagar modo offline
-    - quitar modo offline
-    - salir del modo offline
-    - desactivar la demostracion
-    - desactiva la demostracion
-    - terminar la demostracion
-    - finalizar la demostracion
-    - salir del modo de prueba
-    - quitar modo de prueba
-    - apagar modo de prueba
-    - podrias desactivar el demo
-    - me desactivas el demo
-    - puedes desactivar el demo
-    - por favor desactiva el demo
-    - apaga el demo por favor
-    - quita el demo por favor
-    - desactiva el modo test
-    - apagar modo test
-    - salir del modo test
-    - quitar modo test
-    - cerrar modo test
-    - quiero salir del demo
-    - ya no quiero el demo
-    - sacar el demo
-    - saca el modo demo por favor
-    - apaga el modo demo por favor
-    - quita el modo demo por favor
-    - desactívame el demo
-    - désactiva el modo demo
-    - necesito salir del modo demo
-    - quiero volver al modo normal
-    - regresar a modo normal
-    - conectarme de nuevo
-    - volver a conectarme
-    - salir del offline
-    - salir del modo offline por favor
-    - desactivar el modo desconectado
-    - quitar el modo desconectado
-    - volver al modo con red
-    - volver a modo con red
-    - reconectar
-    - ya quiero reconectarme
-    - quiero modo online ahora
-    - activar modo online
-    - pon modo online
-    - habilitar modo online
-    - volver a modo online
-    - salir de la demostracion por favor
-    - terminar con el demo
-    - cerrar el demo
-    - quiero cerrar el demo
-    - me sacas del demo
-    - me desactivas el modo demo
-    - quiero desactivar esto
-    - necesito desactivar el modo prueba
-    - salir de la prueba
-    - terminar la prueba
-    - cerrar modo de prueba
-    - quitar la demostracion
-    - desactivar la demo ahora
-    - cerrar la demo
-    - apagar la demo
-    - dejar de usar el demo
-    - ya terminé con el demo
-    - el demo ya no lo necesito
-    - apaga el demo que ya no lo uso
-    - listo con el demo
-    - ya probé, salir del demo
-    - quiero usar el sistema real ahora
-    - quitar modo test
-    - salir del modo test
-
 - intent: cancelar_reserva
   examples: |
     - quiero cancelar mi reserva
@@ -17744,6 +17732,19 @@ nlu:
     - sin [gluten](no_gusta) en mi dieta
     - elimina el [pan](no_gusta) de todas mis comidas
     - nada con [carne roja](no_gusta) por favor
+    - sin [lácteos](no_gusta)
+    - sin [gluten](no_gusta)
+    - sin [carne](no_gusta)
+    - sin [cerdo](no_gusta)
+    - sin [maní](no_gusta)
+    - sin [soja](no_gusta)
+    - sin [huevo](no_gusta)
+    - sin [avena](no_gusta)
+    - quita los [lácteos](no_gusta)
+    - elimina los [lácteos](no_gusta) de mi dieta
+    - no quiero [lácteos](no_gusta)
+    - quita el [gluten](no_gusta)
+    - no incluyas [carne roja](no_gusta)
 
 - intent: consultar_terminologia
   examples: |
@@ -17870,6 +17871,25 @@ nlu:
     - no quiero [zancadas](ejercicio_excluir)
     - quita [fondos en paralelas](ejercicio_excluir)
     - elimina el ejercicio de [face pull](ejercicio_excluir)
+    - sin [dominadas](ejercicio_excluir)
+    - elimina [las sentadillas](ejercicio_excluir) de la rutina
+    - no quiero hacer [peso muerto](ejercicio_excluir)
+    - quita el ejercicio de [burpees](ejercicio_excluir)
+    - sin [burpees](ejercicio_excluir)
+    - saca [la plancha](ejercicio_excluir) de mi rutina
+    - quita [los saltos](ejercicio_excluir)
+    - no me pongas [sentadillas](ejercicio_excluir)
+    - elimina [las dominadas](ejercicio_excluir)
+    - sin [press de banca](ejercicio_excluir)
+    - no quiero [sentadillas](ejercicio_excluir) en la rutina
+    - saca [peso muerto](ejercicio_excluir) de los ejercicios
+    - quita el [remo](ejercicio_excluir) de la rutina
+    - sin [zancadas](ejercicio_excluir) por favor
+    - elimina [los fondos](ejercicio_excluir) de la lista
+    - no incluyas [burpees](ejercicio_excluir)
+    - borra [sentadilla búlgara](ejercicio_excluir) del plan
+    - quita [hip thrust](ejercicio_excluir) de la rutina
+    - sin [peso muerto](ejercicio_excluir)
 
 - intent: cambiar_tiempo_rutina
   examples: |
@@ -17892,6 +17912,38 @@ nlu:
     - más larga, de [75](tiempo_disponible) minutos por favor
     - cambia el tiempo de la rutina a [50](tiempo_disponible) min
     - que dure [60](tiempo_disponible) minutos
+    - sesión de [60](tiempo_disponible) minutos
+    - una hora de entrenamiento, [60](tiempo_disponible) minutos
+    - tengo [45](tiempo_disponible) minutos disponibles
+    - [90](tiempo_disponible) minutos de entrenamiento
+    - entrenamiento de [60](tiempo_disponible) minutos
+    - que sea de una hora
+    - hazla de una hora
+    - ponme [60](tiempo_disponible) minutos
+    - tengo disponible [30](tiempo_disponible) minutos
+    - sesión de media hora, [30](tiempo_disponible) minutos
+    - quiero una sesión de [45](tiempo_disponible) minutos
+    - cambia la duración a [60](tiempo_disponible) minutos
+    - dos horas de gym, [120](tiempo_disponible) minutos
+    - tengo [20](tiempo_disponible) minutos disponibles hoy
+    - sesión de 1 hora
+    - entreno 1 hora
+    - una sesión de una hora
+    - ponme [60](tiempo_disponible) minutos de rutina
+    - hazla de [30](tiempo_disponible) minutos
+    - quiero [45](tiempo_disponible) minutos de entrenamiento
+    - sesión de [90](tiempo_disponible) minutos por favor
+    - necesito [30](tiempo_disponible) minutos de rutina
+    - solo tengo [30](tiempo_disponible) minutos
+    - solo tengo [20](tiempo_disponible) minutos
+    - solo tengo [45](tiempo_disponible) minutos
+    - solo tengo [15](tiempo_disponible) minutos hoy
+    - tengo [45](tiempo_disponible) minutos disponibles
+    - tengo [30](tiempo_disponible) minutos disponibles
+    - tengo [60](tiempo_disponible) minutos disponibles
+    - tengo [20](tiempo_disponible) minutos disponibles
+    - dispongo de [30](tiempo_disponible) minutos
+    - cuento con [45](tiempo_disponible) minutos
 
 - intent: cambiar_ejercicios_num
   examples: |
@@ -17910,6 +17962,16 @@ nlu:
     - ponme [7](ejercicios_num)
     - que sean [10](ejercicios_num) ejercicios en total
     - reduce el número de ejercicios a [4](ejercicios_num)
+    - quiero [10](ejercicios_num) ejercicios
+    - dame [6](ejercicios_num) ejercicios en la rutina
+    - ponme [5](ejercicios_num) ejercicios
+    - pon [8](ejercicios_num) ejercicios en la rutina
+    - quiero [12](ejercicios_num) ejercicios en total
+    - dame [4](ejercicios_num) ejercicios nada más
+    - pon exactamente [6](ejercicios_num) ejercicios
+    - quiero [7](ejercicios_num) ejercicios por sesión
+    - dame solo [5](ejercicios_num) ejercicios
+    - necesito [6](ejercicios_num) ejercicios en el plan
 
 - intent: agregar_alimento
   examples: |
@@ -17933,6 +17995,21 @@ nlu:
     - incluye [espinaca](alimento_incluir) en las comidas
     - agrega [carne magra](alimento_incluir)
     - incorpora [frutos secos](alimento_incluir)
+    - agrega [arroz integral](alimento_incluir)
+    - quiero [arroz](alimento_incluir) en mi plan
+    - incluye [lentejas](alimento_incluir) en las comidas
+    - añade [tofu](alimento_incluir) a la dieta
+    - pon [papa](alimento_incluir) en el plan
+    - mete [manzana](alimento_incluir) en alguna comida
+    - agrega [proteína en polvo](alimento_incluir)
+    - incluye [nueces](alimento_incluir)
+    - añade [pasta integral](alimento_incluir)
+    - quiero [claras de huevo](alimento_incluir)
+    - pon [pescado](alimento_incluir) en mi dieta
+    - agrega [zanahoria](alimento_incluir)
+    - incluye [pavo](alimento_incluir) al plan
+    - añade [semillas de chía](alimento_incluir)
+    - quiero [coliflor](alimento_incluir) en las comidas
 
 - lookup: termino
   examples: |

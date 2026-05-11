@@ -21,7 +21,11 @@ def _resolve_payer_email(real_email: str) -> str:
     import os
     access_token = os.environ.get('MERCADOPAGO_ACCESS_TOKEN', '')
     test_email = os.environ.get('MP_TEST_BUYER_EMAIL', '')
+    import logging
+    _log = logging.getLogger(__name__)
+    _log.info(f"[MP] access_token prefix={access_token[:10]!r} test_email={test_email!r} real_email={real_email!r}")
     if access_token.startswith('TEST-') and test_email:
+        _log.info(f"[MP] Usando test email: {test_email}")
         return test_email
     return real_email
 

@@ -177,6 +177,12 @@ class MercadoPagoService:
         if notification_url and not any(h in notification_url for h in _invalid_hosts):
             payment_data["notification_url"] = notification_url
 
+        current_app.logger.warning(
+            "[MP DEBUG] Enviando pago → email=%r | test_mode=%s | config_test_email=%r",
+            effective_email,
+            is_test_mode,
+            current_app.config.get('MP_TEST_BUYER_EMAIL', ''),
+        )
         return self.sdk.payment().create(payment_data)
 
     def get_payment_info(self, payment_id):

@@ -1,40 +1,18 @@
 /* Chatbot theme-aware styles */
 
 .chatbot-container {
-  /* Integrate with the page layout: let the parent .chat-container provide
-     the blue background and use the full inner width. Remove card styling
-     so the blue area visually is the chat. */
-  border: none;
-  padding: 0;
-  border-radius: 0;
-  box-sizing: border-box;
-    width: 100%;
-        /* Allow the chatbot to expand laterally on very wide screens while
-          remaining centered and responsive. Increase max-width to give more
-          horizontal space on large desktop monitors. */
-        max-width: 1600px;
-        margin: 0 auto;
-        padding-left: 12px;
-        padding-right: 12px;
-    background: transparent;
-  box-shadow: none;
-  position: relative;
-  transition: background-color 200ms ease, border-color 200ms ease;
-  /* make the chatbot a column flex container so messages area can grow/shrink
-     without overlapping footer; input remains fixed at the bottom */
   display: flex;
   flex-direction: column;
-  height: 100%; /* ocupar toda la altura disponible */
-  min-height: 0; /* allow flex children to shrink properly */
-}
-
-/* Responsive: on narrow viewports allow full width and reduce padding */
-@media (max-width: 900px) {
-  .chatbot-container {
-    max-width: 100%;
-    padding-left: 12px;
-    padding-right: 12px;
-  }
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  padding: 0;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .theme-dark .chatbot-container {
@@ -44,17 +22,15 @@
 }
 
 .chatbot-messages {
-  /* Let the messages area fill the remaining vertical space inside the
-     .chatbot-container. This prevents it from growing to the viewport height
-     and ensures the footer remains visible. */
   flex: 1 1 auto;
-  min-height: 0; /* necessary for proper flex overflow behavior */
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   margin-bottom: 0;
-    /* Slightly larger inner padding so messages don't touch the edges when
-      the container is expanded laterally */
-    padding: 14px 18px;
+  /* El padding lo gestiona .chat-main .chatbot-messages en ChatPage.css
+     cuando está en modo página completa; aquí dejamos el valor por defecto
+     para cuando se usa en el widget flotante */
+  padding: 14px 18px;
 }
 
 .theme-dark .chatbot-messages {
@@ -145,10 +121,11 @@
 .chatbot-input-container {
   display: flex;
   gap: 8px;
-  flex-shrink: 0; /* no permitir que se encoja */
-  padding: 12px 18px;
+  flex-shrink: 0;
+  padding: 12px 18px 16px;
   background: inherit;
   border-top: 1px solid rgba(0, 0, 0, 0.08);
+  /* ChatPage.css override estiliza padding/border cuando está en chat-main */
 }
 
 .theme-dark .chatbot-input-container {
@@ -279,18 +256,31 @@
 
 .explain-box {
   margin-top: 10px;
-  padding: 10px;
+  padding: 10px 12px;
   border-radius: 8px;
-  background: rgba(59, 130, 246, 0.08);
-  border: 1px solid rgba(59, 130, 246, 0.4);
+  background: rgba(59, 130, 246, 0.07);
+  border: 1px solid rgba(59, 130, 246, 0.35);
   font-size: 0.85rem;
-  line-height: 1.3;
+  line-height: 1.4;
+}
+
+.explain-box strong {
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #2563eb;
+  display: block;
+  margin-bottom: 4px;
 }
 
 .theme-dark .explain-box {
-  background: rgba(59, 130, 246, 0.15);
-  border-color: rgba(96, 165, 250, 0.5);
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(96, 165, 250, 0.45);
   color: var(--neutral-200);
+}
+
+.theme-dark .explain-box strong {
+  color: #93c5fd;
 }
 
 /* Download buttons */

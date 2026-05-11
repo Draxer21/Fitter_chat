@@ -6,8 +6,6 @@ intents:
   - informar
   - afirmar
   - negar
-  - activar_modo_demo
-  - desactivar_modo_demo
   - solicitar_rutina
   - solicitar_rutina_corenswet
   - solicitar_dieta
@@ -290,13 +288,6 @@ slots:
           - active_loop: profile_form
             requested_slot: somatotipo
 
-  demo_offline:
-    type: bool
-    influence_conversation: true
-    initial_value: false
-    mappings:
-      - type: custom
-
   ejercicios_excluidos:
     type: text
     influence_conversation: false
@@ -543,12 +534,6 @@ responses:
   utter_offline_diet_basic:
     - text: "Dieta básica: proteína en cada comida, verduras 2–3 porciones/día, carbos según entrenamiento. ¿Quieres enfoque hipertrofia o bajar grasa?"
 
-  utter_demo_on:
-    - text: "Modo demo activado ✅ (sin backend). Puedo darte una rutina/dieta básica."
-
-  utter_demo_off:
-    - text: "Modo demo desactivado ✅. Volvemos al flujo normal."
-
   utter_capabilities:
     - text: |
         Puedo ayudarte con:
@@ -556,7 +541,6 @@ responses:
         - Dietas y calorías (si tengo peso/altura)
         - Reservas/horarios/pagos (FAQ)
         - Soporte (sesión, errores de pago, cuenta)
-        Escribe “modo demo” si quieres usarlo sin backend.
 
   utter_perfil_incompleto:
     - text: "Para continuar necesito tus datos básicos (peso, altura, edad, objetivo, somatotipo, padecimientos y preferencia de dieta). Dímelos uno por uno y los vamos registrando aquí mismo."
@@ -764,7 +748,6 @@ actions:
   - validate_hero_form
   - action_excluir_alimento
   - action_terminologia
-  - action_verificar_autenticacion
   - action_cambiar_equipamiento
   - action_excluir_ejercicio
   - action_agregar_alimento

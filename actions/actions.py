@@ -39,7 +39,7 @@ load_dotenv(os.path.join(_BASE_DIR, ".env"))
 load_dotenv()  # fallback a variables del entorno del shell
 
 BACKEND_BASE_URL = os.getenv("BACKEND_BASE_URL", "http://localhost:5000").strip().rstrip("/")
-CONTEXT_TIMEOUT = float(os.getenv("CHAT_CONTEXT_TIMEOUT", "4"))
+CONTEXT_TIMEOUT = float(os.getenv("CHAT_CONTEXT_TIMEOUT", "2.5"))
 CONTEXT_API_KEY = os.getenv("CHAT_CONTEXT_API_KEY", "").strip() or os.getenv("BACKEND_CONTEXT_KEY", "").strip()
 REQUIRE_AUTH_FOR_ROUTINE = os.getenv("CHAT_REQUIRE_AUTH", "1").lower() not in {"0", "false", "no"}
 NOTIFICATIONS_TIMEOUT = float(os.getenv("CHAT_NOTIFY_TIMEOUT", "6"))
@@ -101,7 +101,6 @@ def backend_health_status(
     *,
     sender_id: Optional[str] = None,
     intent: Optional[str] = None,
-    demo_offline: Optional[bool] = None,
 ) -> Tuple[bool, float]:
     if not BACKEND_BASE_URL:
         return False, 0.0
@@ -117,7 +116,6 @@ def backend_health_status(
             extra={
                 "sender": sender_id,
                 "intent": intent,
-                "demo_offline": demo_offline,
                 "ok": False,
                 "elapsed_ms": round(elapsed_ms, 1),
             },
@@ -130,7 +128,6 @@ def backend_health_status(
         extra={
             "sender": sender_id,
             "intent": intent,
-            "demo_offline": demo_offline,
             "ok": ok,
             "elapsed_ms": round(elapsed_ms, 1),
         },
@@ -142,9 +139,8 @@ def backend_health_ok(
     *,
     sender_id: Optional[str] = None,
     intent: Optional[str] = None,
-    demo_offline: Optional[bool] = None,
 ) -> bool:
-    ok, _ = backend_health_status(sender_id=sender_id, intent=intent, demo_offline=demo_offline)
+    ok, _ = backend_health_status(sender_id=sender_id, intent=intent)
     return ok
 
 
@@ -154,7 +150,6 @@ def mark_offline(dispatcher: CollectingDispatcher, tracker: Tracker) -> List[Dic
         extra={
             "sender": tracker.sender_id,
             "intent": tracker.latest_message.get("intent", {}).get("name"),
-            "demo_offline": tracker.get_slot("demo_offline"),
         },
     )
     events: List[Dict[Text, Any]] = [SlotSet("offline_mode", True), SlotSet("backend_down", True)]
@@ -208,6 +203,40 @@ def ensure_authenticated_context(tracker: Tracker) -> Optional[Dict[str, Any]]:
     ctx = fetch_chat_context(sender)
     if not ctx or not ctx.get("user_id"):
         return None
+    return ctx
+
+
+def _fetch_authenticated_context_or_offline(
+    tracker: Tracker,
+    dispatcher: CollectingDispatcher,
+    events: List[Dict[Text, Any]],
+) -> Any:
+    """Fetch context without a prior health-check round-trip.
+
+    Returns:
+        dict  — authenticated context (backend up, user logged in)
+        False — backend up but user not logged in (show login message)
+        None  — backend unreachable (caller should mark offline)
+    """
+    sender = (tracker.sender_id or "").strip()
+    if not sender or not BACKEND_BASE_URL:
+        events.extend(mark_offline(dispatcher, tracker))
+        return None
+    try:
+        ctx = fetch_chat_context(sender)
+    except Exception:
+        events.extend(mark_offline(dispatcher, tracker))
+        return None
+    if ctx is None:
+        # fetch_chat_context returns None on connection error OR non-200.
+        # We treat it as offline to stay safe.
+        events.extend(mark_offline(dispatcher, tracker))
+        return None
+    if not ctx.get("user_id"):
+        dispatcher.utter_message(
+            text="No pude validar tu sesion. Inicia sesion en la web y vuelve a intentarlo."
+        )
+        return False
     return ctx
 
 
@@ -602,26 +631,22 @@ class ActionFetchProfile(Action):
     ) -> List[Dict[Text, Any]]:
         events: List[Dict[Text, Any]] = []
         active_loop = tracker.active_loop_name
-        intent_name = tracker.latest_message.get("intent", {}).get("name")
-        if not backend_health_ok(sender_id=tracker.sender_id, intent=intent_name, demo_offline=tracker.get_slot("demo_offline")):
-            events.extend(mark_offline(dispatcher, tracker))
+
+        # Skip the separate health check: we infer backend health from the
+        # context/profile calls themselves. This removes one sequential HTTP
+        # round-trip and saves ~1-2s of latency.
+        ctx = _fetch_authenticated_context_or_offline(
+            tracker, dispatcher, events
+        )
+        if ctx is None:
+            # _fetch_authenticated_context_or_offline already appended events
             events.append(SlotSet("resumen_perfil", "Modo offline: no pude acceder al perfil web."))
             events.append(SlotSet("perfil_completo", False))
             return events
-
-        ctx = ensure_authenticated_context(tracker)
-        if not ctx:
-            dispatcher.utter_message(
-                text="No pude validar tu sesion. Inicia sesion en la web y vuelve a intentarlo."
-            )
+        if ctx is False:
+            # Authenticated but not logged in
             events.append(SlotSet("perfil_completo", False))
             return events
-
-        # Authenticated user — demo mode must be off regardless of how slots were set
-        if tracker.get_slot("demo_offline"):
-            events.append(SlotSet("demo_offline", False))
-            events.append(SlotSet("offline_notified", False))
-            events.append(SlotSet("offline_mode", False))
 
         try:
             profile = fetch_user_profile(ctx)
@@ -690,7 +715,7 @@ class ActionSubmitProfileForm(Action):
         domain: Dict[Text, Any],
     ) -> List[Dict[Text, Any]]:
         intent_name = tracker.latest_message.get("intent", {}).get("name")
-        if not backend_health_ok(sender_id=tracker.sender_id, intent=intent_name, demo_offline=tracker.get_slot("demo_offline")):
+        if not backend_health_ok(sender_id=tracker.sender_id, intent=intent_name):
             events = mark_offline(dispatcher, tracker)
             dispatcher.utter_message(
                 text="No pude guardar tu perfil porque el backend no está disponible. Puedo seguir con datos locales si quieres."
@@ -1941,7 +1966,7 @@ class ActionGenerarRutina(Action):
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
 
         intent_name = tracker.latest_message.get("intent", {}).get("name")
-        offline_backend = not backend_health_ok(sender_id=tracker.sender_id, intent=intent_name, demo_offline=tracker.get_slot("demo_offline"))
+        offline_backend = not backend_health_ok(sender_id=tracker.sender_id, intent=intent_name)
         offline_events: List[Dict[Text, Any]] = []
         if offline_backend:
             offline_events.extend(mark_offline(dispatcher, tracker))
@@ -1989,7 +2014,7 @@ class ActionGenerarRutina(Action):
         inferred_level = infer_training_level(profile_data)
         nivel = (_slot(tracker, "nivel") or inferred_level or "intermedio").lower()
         objetivo = (_slot(tracker, "objetivo") or profile_goal or "fuerza").lower()
-        equip = (_slot(tracker, "equipamiento") or "mancuernas").lower()
+        equip = (_slot(tracker, "equipamiento") or "máquinas").lower()
 
         condiciones = _slot(tracker, "condiciones_salud") or (profile_data.get("medical_conditions") if profile_data else None) or "ninguna"
         alergias = _slot(tracker, "alergias") or (profile_data.get("allergies") if profile_data else None) or "ninguna"
@@ -2024,8 +2049,8 @@ class ActionGenerarRutina(Action):
 
         fallback_notice = ""
         if not ejercicios:
-            ejercicios = pick_exercises("fullbody", "mancuernas", ejercicios_num, exclude=excluidos)
-            fallback_notice = " (fallback a fullbody por catologo no disponible)"
+            ejercicios = pick_exercises("fullbody", "máquinas", ejercicios_num, exclude=excluidos)
+            fallback_notice = " (fallback a fullbody por catalogo no disponible)"
 
         structured_ejercicios: List[Dict[str, Any]] = []
         bloques: List[str] = []
@@ -2080,9 +2105,99 @@ class ActionGenerarRutina(Action):
                 extra_bits.append("Alergias registradas: " + ", ".join(allergy_list))
             header_lines.append("Precaucion salud: " + " | ".join(extra_bits))
         header = "\n".join(header_lines)
-        texto = header + ("\n\n" + "\n".join(bloques) if bloques else "\n\n(No se encontraron ejercicios en el catalogo.)")
 
-        dispatcher.utter_message(text=texto)
+        # ── Explicación conversacional XAI ──────────────────────────────
+        def _build_xai_explanation() -> str:
+            parts: List[str] = []
+
+            # 1. Datos considerados
+            datos: List[str] = []
+            datos.append(f"tu objetivo es {objetivo}")
+            datos.append(f"tu nivel es {nivel}")
+            datos.append(f"el grupo muscular es {musculo}")
+            datos.append(f"el equipamiento disponible es {equip}")
+            if tiempo:
+                datos.append(f"la duración de la sesión es {tiempo} minutos")
+            if somatotipo and somatotipo not in {"no_se", "no se", "no sé", "ninguno", "ninguna", ""}:
+                datos.append(f"tu somatotipo es {somatotipo}")
+            if profile_data:
+                w = profile_data.get("weight_kg")
+                h = profile_data.get("height_cm")
+                act = profile_data.get("activity_level")
+                if w:
+                    datos.append(f"tu peso es {w} kg")
+                if h:
+                    datos.append(f"tu altura es {h} cm")
+                if act:
+                    datos.append(f"tu nivel de actividad es {act}")
+            parts.append(
+                "Para elaborar esta recomendacion tome en cuenta la siguiente informacion: "
+                + ", ".join(datos) + "."
+            )
+
+            # 2. Razonamiento series/reps
+            _OBJ_LABELS = {
+                "hipertrofia": "hipertrofia muscular",
+                "fuerza": "ganar fuerza maxima",
+                "resistencia": "mejorar la resistencia muscular",
+                "perdida_de_peso": "bajar de peso y mejorar la composicion corporal",
+                "perdida de peso": "bajar de peso y mejorar la composicion corporal",
+                "tonificacion": "tonificar y definir musculatura",
+                "rendimiento": "mejorar el rendimiento atletico",
+            }
+            obj_label = _OBJ_LABELS.get(objetivo, objetivo)
+            parts.append(
+                f"Elegi {s_min}-{s_max} series de {r_min}-{r_max} repeticiones porque "
+                f"para un objetivo de {obj_label} en nivel {nivel}, este rango es el que mejor "
+                f"estimula las adaptaciones que buscas. "
+                f"El esfuerzo objetivo es {rpe_text}, lo que significa que deberias terminar "
+                f"cada serie sintiendo que te quedan aproximadamente {rir_text.split()[1] if rir_text.split() else '1-2'} "
+                f"repeticiones en reserva."
+            )
+
+            # 3. Ajustes por salud
+            if health_flags.get("hipertension") or health_flags.get("cardiaco"):
+                cond_label = "hipertension" if health_flags.get("hipertension") else "condicion cardiaca"
+                parts.append(
+                    f"Dado que reportaste {cond_label}, reduje la intensidad maxima a RPE <= 7. "
+                    f"Esto significa que no deberias llegar al fallo muscular en ninguna serie, "
+                    f"ya que el esfuerzo maximo puede elevar peligrosamente la presion arterial. "
+                    f"Es importante que evites bloquear la respiracion (maniobra de Valsalva)."
+                )
+            if health_flags.get("diabetes"):
+                parts.append(
+                    "Debido a la diabetes, inclui recordatorio de revisar glucosa antes y despues "
+                    "del entrenamiento. Prefiere sesiones de duracion moderada y lleva siempre "
+                    "algo dulce por precaucion."
+                )
+            if health_flags.get("lesion_rodilla") or health_flags.get("rodilla"):
+                parts.append(
+                    "Por la lesion de rodilla reportada, los ejercicios con alto impacto articular "
+                    "fueron excluidos o reemplazados por variantes de menor impacto."
+                )
+            if allergy_list:
+                parts.append(
+                    f"En cuanto a alergias consideradas: {', '.join(allergy_list)}. "
+                    "Esto no afecta directamente los ejercicios, pero fue registrado para "
+                    "evitar suplementos o equipamiento que puedan contener esos alergenos."
+                )
+            if health_notes and not any(
+                health_flags.get(k) for k in ("hipertension", "cardiaco", "diabetes", "lesion_rodilla", "rodilla")
+            ):
+                parts.append(
+                    "En cuanto a restricciones y precauciones: " + " ".join(health_notes)
+                )
+
+            # 4. Fuentes
+            parts.append(
+                "Esta recomendacion esta basada en: Catalogo de ejercicios ExRx.net, "
+                "Directrices de actividad fisica de la OMS (2020), "
+                "Principios de periodizacion y progresion de la NSCA."
+            )
+            return "\n\n".join(parts)
+
+        xai_explanation = _build_xai_explanation()
+        # ────────────────────────────────────────────────────────────────
 
         routine_summary = {
             "type": "routine_detail",
@@ -2103,7 +2218,8 @@ class ActionGenerarRutina(Action):
                 "medical_conditions": condiciones if condiciones.lower() not in {"", "ninguna", "ninguno", "no"} else None,
             },
             "fallback_notice": fallback_notice.strip() or None,
-            "exercises": structured_ejercicios
+            "exercises": structured_ejercicios,
+            "explanation": xai_explanation,
         }
 
         dispatcher.utter_message(json_message=routine_summary)
@@ -2155,7 +2271,7 @@ class ActionGenerarDieta(Action):
         logger.info(f"=== DIETA CONFIG === CHAT_DIETA_CALC_MODE={CHAT_DIETA_CALC_MODE}, CHAT_DIET_CATALOG={CHAT_DIET_CATALOG}")
         
         intent_name = tracker.latest_message.get("intent", {}).get("name")
-        offline_backend = not backend_health_ok(sender_id=tracker.sender_id, intent=intent_name, demo_offline=tracker.get_slot("demo_offline"))
+        offline_backend = not backend_health_ok(sender_id=tracker.sender_id, intent=intent_name)
         offline_events: List[Dict[Text, Any]] = []
         if offline_backend:
             offline_events.extend(mark_offline(dispatcher, tracker))
@@ -2252,7 +2368,15 @@ class ActionGenerarDieta(Action):
             filtered_meals.append(meal)
 
         if not filtered_meals:
-            filtered_meals = meals
+            # Fallback: intentar al menos filtrar solo por alérgenos (no por dislikes)
+            for meal in meals:
+                joined = " ".join(meal.get("items", [])).lower()
+                if allergy_list and any(token in joined for token in allergy_list):
+                    continue
+                filtered_meals.append(meal)
+            # Si sigue vacío, usar todo (último recurso)
+            if not filtered_meals:
+                filtered_meals = meals
 
         if (allergy_list or dislike_list) and allergen_hits:
             adjustments.append("Reemplaza ingredientes en las comidas marcadas por alternativas seguras o evitadas.")
@@ -2398,11 +2522,13 @@ class ActionGenerarDieta(Action):
                     except Exception:
                         weight_val = None
 
+                    # Excluir alérgenos + alimentos no deseados del catálogo
+                    exclude_combined = list({*(allergy_list or []), *(dislike_list or [])})
                     composed = compose_diet(
                         int(target_kcal),
                         n_meals=n_meals,
                         catalog_path=catalog_path,
-                        exclude_allergens=allergy_list or None,
+                        exclude_allergens=exclude_combined or None,
                         objetivo=objetivo,
                         weight_kg=weight_val,
                     )
@@ -2412,11 +2538,16 @@ class ActionGenerarDieta(Action):
                         for meal in composed.get('meals', []):
                             items_out: List[Dict[str, Any]] = []
                             for it in meal.get('items', []):
-                                name = it.get('name') or it.get('id')
+                                name = it.get('name') or it.get('id') or ""
+                                # Filtrar item si su nombre contiene algún alimento no deseado
+                                name_lower = name.lower()
+                                if dislike_list and any(d in name_lower for d in dislike_list):
+                                    continue
                                 qty = it.get('qty_g') or it.get('qty') or 100
                                 kcal = it.get('kcal')
                                 items_out.append({'name': name, 'qty': f"{int(qty)} g", 'kcal': kcal})
-                            composed_meals.append({'name': meal.get('name'), 'items': items_out, 'notes': None})
+                            if items_out:
+                                composed_meals.append({'name': meal.get('name'), 'items': items_out, 'notes': None})
                         diet_payload['meals'] = composed_meals
                         final_meals = composed_meals  # Update final_meals with catalog data
                         logger.info(f"=== COMPOSER SUCCESS === Replaced meals with {len(composed_meals)} composed meals")
@@ -2428,7 +2559,8 @@ class ActionGenerarDieta(Action):
             # fallback to remote HTTP catalog composition if local composer not used
             if not used_composer and BACKEND_BASE_URL:
                 try:
-                    exclude_allergens_param = ",".join([a for a in (allergy_list or [])])
+                    exclude_combined_http = list({*(allergy_list or []), *(dislike_list or [])})
+                    exclude_allergens_param = ",".join(exclude_combined_http)
                     catalog_url = f"{BACKEND_BASE_URL.rstrip('/')}/notifications/catalog?limit=200"
                     if exclude_allergens_param:
                         catalog_url += f"&exclude_allergens={quote(exclude_allergens_param)}"
@@ -2487,8 +2619,6 @@ class ActionGenerarDieta(Action):
         if hydration:
             lines.append(f"Hidratacion recomendada: {hydration}")
 
-        text_response = "\n".join(lines)
-        dispatcher.utter_message(text=text_response)
         dispatcher.utter_message(json_message=diet_payload)
 
         # persist_plan y send_context_update son fire-and-forget: se ejecutan en
@@ -2974,74 +3104,6 @@ class ActionTerminologia(Action):
             dispatcher.utter_message(response="utter_terminologia_general")
 
         return []
-
-
-class ActionVerificarAutenticacion(Action):
-    """
-    Maneja la activación/desactivación del modo demo según el estado de autenticación.
-
-    - Si el usuario ESTÁ autenticado (tiene sesión activa en el backend):
-        * Bloquea el modo demo y notifica que ya tiene acceso completo.
-        * Si intentaba desactivar el modo demo, confirma que ya está en modo completo.
-
-    - Si el usuario NO está autenticado:
-        * Permite activar o desactivar el modo demo normalmente.
-    """
-
-    def name(self) -> Text:
-        return "action_verificar_autenticacion"
-
-    def run(
-        self,
-        dispatcher: CollectingDispatcher,
-        tracker: Tracker,
-        domain: Dict[Text, Any],
-    ) -> List[Dict[Text, Any]]:
-        intent = tracker.latest_message.get("intent", {}).get("name", "")
-        wants_demo = intent == "activar_modo_demo"
-
-        # ── Check if the user has an active backend session ──
-        ctx = ensure_authenticated_context(tracker)
-        is_authenticated = ctx is not None and bool(ctx.get("user_id"))
-
-        if is_authenticated:
-            # Registered users never enter demo mode
-            if wants_demo:
-                dispatcher.utter_message(
-                    text=(
-                        "✅ Ya tienes una cuenta activa en Fitter, así que tienes acceso "
-                        "completo a todas las funciones del asistente. "
-                        "No necesitas el modo demo. ¡Pregúntame lo que quieras!"
-                    )
-                )
-            else:
-                # They tried to deactivate demo — confirm full mode
-                dispatcher.utter_message(
-                    text=(
-                        "✅ Estás usando el asistente con tu cuenta Fitter. "
-                        "Tienes acceso completo a todas las funciones."
-                    )
-                )
-            return [
-                SlotSet("demo_offline", False),
-                SlotSet("offline_notified", False),
-                SlotSet("offline_mode", False),
-                SlotSet("backend_down", False),
-            ]
-
-        # ── User is NOT authenticated — allow demo mode toggle ──
-        if wants_demo:
-            dispatcher.utter_message(response="utter_demo_on")
-            return [
-                SlotSet("demo_offline", True),
-                SlotSet("offline_notified", False),
-            ]
-        else:
-            dispatcher.utter_message(response="utter_demo_off")
-            return [
-                SlotSet("demo_offline", False),
-                SlotSet("offline_notified", False),
-            ]
 
 
 # =========================================================

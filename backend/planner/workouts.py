@@ -62,6 +62,16 @@ CATALOGO: Dict[str, Dict[str, List[Tuple[str, str, str]]]] = {
             ("Fondos en paralelas", "https://exrx.net/WeightExercises/PectoralSternal/ASChestDip", "ExRx"),
             ("Plancha con toques", "https://exrx.net/WeightExercises/RectusAbdominis/BWPlank", "ExRx"),
             ("Flexiones tempo 3-1-1", "https://exrx.net/ExInfo/TempoTraining", "ExRx")
+        ],
+        "máquinas": [
+            ("Press de pecho en máquina", "https://exrx.net/WeightExercises/PectoralSternal/LVChestPress", "ExRx"),
+            ("Aperturas en pec-deck", "https://exrx.net/WeightExercises/PectoralSternal/LVFly", "ExRx"),
+            ("Press inclinado en máquina", "https://exrx.net/WeightExercises/PectoralClavicular/LVInclineChestPress", "ExRx"),
+            ("Cable cruce alto-bajo", "https://exrx.net/WeightExercises/PectoralSternal/CBDeclineStandingFly", "ExRx"),
+            ("Press en máquina Smith", "https://exrx.net/WeightExercises/PectoralSternal/SMBenchPress", "ExRx"),
+            ("Fondos en paralelas asistidos", "https://exrx.net/WeightExercises/PectoralSternal/ASChestDip", "ExRx"),
+            ("Aperturas en cable neutro", "https://exrx.net/WeightExercises/PectoralSternal/CBStandingFly", "ExRx"),
+            ("Press declinado en máquina", "https://exrx.net/WeightExercises/PectoralSternal/LVDeclineChestPress", "ExRx")
         ]
     },
     "espalda": {
@@ -84,6 +94,16 @@ CATALOGO: Dict[str, Dict[str, List[Tuple[str, str, str]]]] = {
             ("Remo pecho apoyado", "https://exrx.net/WeightExercises/BackGeneral/DBChestSupportedRow", "ExRx"),
             ("Face pull", "https://exrx.net/WeightExercises/DeltoidPosterior/CBFacePull", "ExRx"),
             ("Remo en máquina", "https://exrx.net/WeightExercises/BackGeneral/LVSeatedRow", "ExRx")
+        ],
+        "máquinas": [
+            ("Jalón al pecho en polea", "https://exrx.net/WeightExercises/LatissimusDorsi/LVFrontPulldown", "ExRx"),
+            ("Remo sentado en máquina", "https://exrx.net/WeightExercises/BackGeneral/LVSeatedRow", "ExRx"),
+            ("Jalón agarre neutro en polea", "https://exrx.net/WeightExercises/LatissimusDorsi/CBNeutralGripPulldown", "ExRx"),
+            ("Face pull en polea", "https://exrx.net/WeightExercises/DeltoidPosterior/CBFacePull", "ExRx"),
+            ("Jalón agarre cerrado en polea", "https://exrx.net/WeightExercises/LatissimusDorsi/CBClosegripFrontPulldown", "ExRx"),
+            ("Remo en polea baja", "https://exrx.net/WeightExercises/BackGeneral/CBSeatedRow", "ExRx"),
+            ("Pull-over en máquina", "https://exrx.net/WeightExercises/LatissimusDorsi/LVPullover", "ExRx"),
+            ("Remo pecho apoyado en máquina", "https://exrx.net/WeightExercises/BackGeneral/LVChestSupportedRow", "ExRx")
         ]
     },
     "piernas": {
@@ -106,6 +126,16 @@ CATALOGO: Dict[str, Dict[str, List[Tuple[str, str, str]]]] = {
             ("Sentadilla búlgara", "https://exrx.net/WeightExercises/Quadriceps/DBBulgarianSplitSquat", "ExRx"),
             ("Hip thrust mancuerna", "https://exrx.net/WeightExercises/GluteusMaximus/DBHipThrust", "ExRx"),
             ("Sissy squat asistida", "https://exrx.net/WeightExercises/Quadriceps/BWSissySquat", "ExRx")
+        ],
+        "máquinas": [
+            ("Prensa de piernas", "https://exrx.net/WeightExercises/Quadriceps/LVLegPress", "ExRx"),
+            ("Extensión de cuádriceps", "https://exrx.net/WeightExercises/Quadriceps/LVLegExtension", "ExRx"),
+            ("Curl femoral tumbado", "https://exrx.net/WeightExercises/Hamstrings/LVLegCurl", "ExRx"),
+            ("Abductor de cadera en máquina", "https://exrx.net/WeightExercises/HipAbductors/LVHipAbduction", "ExRx"),
+            ("Aductor de cadera en máquina", "https://exrx.net/WeightExercises/HipAdductors/LVHipAdduction", "ExRx"),
+            ("Elevación de talones sentado", "https://exrx.net/WeightExercises/Gastrocnemius/LVSeatedCalfRaise", "ExRx"),
+            ("Hack squat en máquina", "https://exrx.net/WeightExercises/Quadriceps/LVHackSquat", "ExRx"),
+            ("Curl femoral sentado", "https://exrx.net/WeightExercises/Hamstrings/LVSeatedLegCurl", "ExRx")
         ]
     },
     "hombros": {
@@ -118,6 +148,16 @@ CATALOGO: Dict[str, Dict[str, List[Tuple[str, str, str]]]] = {
             ("Remo al mentón moderado", "https://exrx.net/WeightExercises/TrapeziusUpper/BBUprightRow", "ExRx"),
             ("Face pull", "https://exrx.net/WeightExercises/DeltoidPosterior/CBFacePull", "ExRx"),
             ("Press en máquina", "https://exrx.net/WeightExercises/DeltoidAnterior/LVShoulderPress", "ExRx")
+        ],
+        "máquinas": [
+            ("Press de hombros en máquina", "https://exrx.net/WeightExercises/DeltoidAnterior/LVShoulderPress", "ExRx"),
+            ("Elevaciones laterales en polea", "https://exrx.net/WeightExercises/DeltoidLateral/CBLateralRaise", "ExRx"),
+            ("Face pull en polea", "https://exrx.net/WeightExercises/DeltoidPosterior/CBFacePull", "ExRx"),
+            ("Deltoides posterior en polea cruzada", "https://exrx.net/WeightExercises/DeltoidPosterior/CBRearDeltoidFly", "ExRx"),
+            ("Remo al mentón en cable", "https://exrx.net/WeightExercises/TrapeziusUpper/CBUprightRow", "ExRx"),
+            ("Elevación frontal en polea baja", "https://exrx.net/WeightExercises/DeltoidAnterior/CBFrontRaise", "ExRx"),
+            ("Press Arnold en máquina", "https://exrx.net/WeightExercises/DeltoidAnterior/LVShoulderPress", "ExRx"),
+            ("Encogimiento de trapecios en máquina", "https://exrx.net/WeightExercises/TrapeziusUpper/LVShrug", "ExRx")
         ]
     },
     "brazos": {
@@ -130,6 +170,16 @@ CATALOGO: Dict[str, Dict[str, List[Tuple[str, str, str]]]] = {
             ("Copa tríceps", "https://exrx.net/WeightExercises/Triceps/DBOneArmOverheadExtension", "ExRx"),
             ("Curl barra Z", "https://exrx.net/WeightExercises/Biceps/BBCurl", "ExRx"),
             ("Fondos entre bancos", "https://exrx.net/WeightExercises/Triceps/BWBenchDip", "ExRx")
+        ],
+        "máquinas": [
+            ("Curl en máquina", "https://exrx.net/WeightExercises/Biceps/LVCurl", "ExRx"),
+            ("Extensión de tríceps en polea alta", "https://exrx.net/WeightExercises/Triceps/CBPushdown", "ExRx"),
+            ("Curl Scott en polea baja", "https://exrx.net/WeightExercises/Biceps/CBPreacherCurl", "ExRx"),
+            ("Extensión overhead de tríceps en polea", "https://exrx.net/WeightExercises/Triceps/CBOverheadExtension", "ExRx"),
+            ("Curl en cable barra recta", "https://exrx.net/WeightExercises/Biceps/CBCurl", "ExRx"),
+            ("Press cerrado en máquina Smith", "https://exrx.net/WeightExercises/Triceps/SMCloseGripBenchPress", "ExRx"),
+            ("Curl concentrado en polea baja", "https://exrx.net/WeightExercises/Biceps/CBCurl", "ExRx"),
+            ("Extensión con cuerda en polea alta", "https://exrx.net/WeightExercises/Triceps/CBPushdown", "ExRx")
         ],
         "peso_corporal": [
             ("Flexiones diamante", "https://exrx.net/WeightExercises/Triceps/BWCloseTricepsPushup", "ExRx"),
@@ -152,6 +202,16 @@ CATALOGO: Dict[str, Dict[str, List[Tuple[str, str, str]]]] = {
             ("Plancha lateral", "https://exrx.net/WeightExercises/Obliques/BWSidePlank", "ExRx"),
             ("Mountain climbers", "https://exrx.net/WeightExercises/RectusAbdominis/BWMountainClimber", "ExRx"),
             ("Hollow hold", "https://exrx.net/WeightExercises/RectusAbdominis/BWHollowBodyHold", "ExRx")
+        ],
+        "máquinas": [
+            ("Ab crunch en máquina", "https://exrx.net/WeightExercises/RectusAbdominis/LVAbdominalMachine", "ExRx"),
+            ("Rotación de torso en cable", "https://exrx.net/WeightExercises/Obliques/CBWoodchop", "ExRx"),
+            ("Extensión de espalda en máquina", "https://exrx.net/WeightExercises/ErectorSpinae/LVHyperextension", "ExRx"),
+            ("Pallof press en cable", "https://exrx.net/WeightExercises/Obliques/CBBandPallofPress", "ExRx"),
+            ("Crunch en cable", "https://exrx.net/WeightExercises/RectusAbdominis/CBCrunch", "ExRx"),
+            ("Plancha", "https://exrx.net/WeightExercises/RectusAbdominis/BWPlank", "ExRx"),
+            ("Elevación de piernas colgado", "https://exrx.net/WeightExercises/RectusAbdominis/ASHangingLegRaiseKnee", "ExRx"),
+            ("Rotación lateral en polea", "https://exrx.net/WeightExercises/Obliques/CBSeatedRotation", "ExRx")
         ]
     },
     "fullbody": {
@@ -164,6 +224,16 @@ CATALOGO: Dict[str, Dict[str, List[Tuple[str, str, str]]]] = {
             ("Zancadas", "https://exrx.net/WeightExercises/Quadriceps/DBLunge", "ExRx"),
             ("Face pull", "https://exrx.net/WeightExercises/DeltoidPosterior/CBFacePull", "ExRx"),
             ("Elevación de talones", "https://exrx.net/WeightExercises/Gastrocnemius/BBCalfRaise", "ExRx")
+        ],
+        "máquinas": [
+            ("Prensa de piernas", "https://exrx.net/WeightExercises/Quadriceps/LVLegPress", "ExRx"),
+            ("Press de pecho en máquina", "https://exrx.net/WeightExercises/PectoralSternal/LVChestPress", "ExRx"),
+            ("Jalón al pecho en polea", "https://exrx.net/WeightExercises/LatissimusDorsi/LVFrontPulldown", "ExRx"),
+            ("Press de hombros en máquina", "https://exrx.net/WeightExercises/DeltoidAnterior/LVShoulderPress", "ExRx"),
+            ("Remo sentado en máquina", "https://exrx.net/WeightExercises/BackGeneral/LVSeatedRow", "ExRx"),
+            ("Extensión de cuádriceps", "https://exrx.net/WeightExercises/Quadriceps/LVLegExtension", "ExRx"),
+            ("Curl femoral tumbado", "https://exrx.net/WeightExercises/Hamstrings/LVLegCurl", "ExRx"),
+            ("Extensión de tríceps en polea", "https://exrx.net/WeightExercises/Triceps/CBPushdown", "ExRx")
         ]
     },
     "cardio": {
@@ -460,7 +530,9 @@ def _build_bank_por_prioridad(grupo: str, equip: str) -> List[Tuple[str, str]]:
                     _add(lista)
 
         # fallback
-        if "fullbody" in CATALOGO and "mancuernas" in CATALOGO["fullbody"]:
+        if "fullbody" in CATALOGO and "máquinas" in CATALOGO["fullbody"]:
+            _add(CATALOGO["fullbody"]["máquinas"])
+        elif "fullbody" in CATALOGO and "mancuernas" in CATALOGO["fullbody"]:
             _add(CATALOGO["fullbody"]["mancuernas"])
 
     return pool
