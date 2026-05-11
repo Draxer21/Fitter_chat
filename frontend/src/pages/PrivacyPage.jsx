@@ -114,16 +114,18 @@ export default function PrivacyPage() {
         </section>
 
         <section className="legal-card" id="derechos">
-          <h2 className="legal-section-title">5. Derechos de los titulares</h2>
-          <p>El titular de los datos podrá ejercer en cualquier momento los derechos reconocidos por la normativa chilena en materia de protección de datos personales, incluyendo:</p>
+          <h2 className="legal-section-title">5. Derechos ARCO de los titulares</h2>
+          <p>
+            De conformidad con la <strong>Ley N° 19.628 sobre Protección de la Vida Privada</strong> (y sus modificaciones introducidas por la Ley N° 21.459), el titular de los datos podrá ejercer en cualquier momento los denominados <strong>derechos ARCO</strong>:
+          </p>
           <ul className="ps-4">
-            <li>Derecho de acceso: conocer qué datos personales son tratados y con qué finalidad.</li>
-            <li>Derecho de rectificación: solicitar la corrección de datos inexactos o desactualizados.</li>
-            <li>Derecho de cancelación o eliminación: pedir la eliminación de sus datos cuando ya no sean necesarios para los fines declarados o cuando retire su consentimiento, en la medida en que la ley lo permita.</li>
-            <li>Derecho de oposición: oponerse al tratamiento basado en interés legítimo o a ciertas comunicaciones.</li>
+            <li><strong>Acceso (A):</strong> conocer qué datos personales son tratados, su origen y la finalidad de su uso.</li>
+            <li><strong>Rectificación (R):</strong> solicitar la corrección de datos inexactos, incompletos o desactualizados.</li>
+            <li><strong>Cancelación (C):</strong> pedir la eliminación de sus datos cuando ya no sean necesarios para los fines declarados o cuando retire su consentimiento, en la medida en que la ley lo permita.</li>
+            <li><strong>Oposición (O):</strong> oponerse al tratamiento basado en interés legítimo o a ciertas comunicaciones comerciales.</li>
           </ul>
           <p className="mb-0">
-            Las solicitudes podrán realizarse por escrito al correo: privacidad@fitter.cl, indicando nombre completo, medio de contacto y el derecho que se desea ejercer.
+            Las solicitudes podrán realizarse por escrito al correo: <strong>privacidad@fitter.cl</strong>, indicando nombre completo, medio de contacto y el derecho que se desea ejercer. FITTER responderá dentro del plazo legal establecido en la normativa vigente.
           </p>
         </section>
 
